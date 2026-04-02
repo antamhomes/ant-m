@@ -1,14 +1,14 @@
 import { motion } from "framer-motion";
-import bedroomImg from "@/assets/apartment-bedroom.jpg";
-import kitchenImg from "@/assets/apartment-kitchen.jpg";
-import bathroomImg from "@/assets/apartment-bathroom.jpg";
-import heroImg from "@/assets/hero-apartment.jpg";
+import realBedroomLuxury from "@/assets/real-bedroom-luxury.jpg";
+import realLivingRoom from "@/assets/real-living-room.jpg";
+import realBedroomModern from "@/assets/real-bedroom-modern.jpg";
+import realLivingCozy from "@/assets/real-living-cozy.jpg";
 
 const gallery = [
-  { src: heroImg, alt: "Luxusní obývací pokoj", span: "md:col-span-2 md:row-span-2" },
-  { src: bedroomImg, alt: "Designová ložnice", span: "" },
-  { src: kitchenImg, alt: "Moderní kuchyně", span: "" },
-  { src: bathroomImg, alt: "Elegantní koupelna", span: "md:col-span-2" },
+  { src: realBedroomLuxury, alt: "Luxusní ložnice s výhledem na Prahu", span: "md:col-span-2 md:row-span-2" },
+  { src: realLivingRoom, alt: "Moderní obývací pokoj s kuchyní", span: "" },
+  { src: realBedroomModern, alt: "Stylová ložnice s pracovním koutem", span: "" },
+  { src: realLivingCozy, alt: "Útulný obývací pokoj s atmosférou", span: "md:col-span-2" },
 ];
 
 const GallerySection = () => {

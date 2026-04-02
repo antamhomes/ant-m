@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import beforeImg from "@/assets/before-renovation.jpg";
-import afterImg from "@/assets/after-renovation.jpg";
+import beforeImg from "@/assets/real-living-room.jpg";
+import afterImg from "@/assets/real-bedroom-luxury.jpg";
 
 const BeforeAfterSection = () => {
   const [sliderPosition, setSliderPosition] = useState(50);
