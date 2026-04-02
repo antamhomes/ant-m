@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 
 const stats = [
-  { value: "150+", label: "Spravovaných bytů" },
+  { value: "15+", label: "Spravovaných bytů" },
   { value: "4.9★", label: "Průměrné hodnocení" },
   { value: "95%", label: "Obsazenost" },
   { value: "2.8×", label: "Vyšší výnos než klasický pronájem" },

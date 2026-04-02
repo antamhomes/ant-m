@@ -24,9 +24,9 @@ const Navbar = () => {
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         <a href="#" className="font-display text-xl font-semibold">
           <span className={scrolled ? "text-foreground" : "text-primary-foreground"}>
-            Premium
+            DAU AN{" "}
           </span>
-          <span className="text-gradient-gold">Host</span>
+          <span className="text-gradient-gold">s.r.o.</span>
         </a>
 
         <div className="hidden md:flex items-center gap-8">

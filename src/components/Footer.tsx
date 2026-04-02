@@ -4,7 +4,7 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="text-center md:text-left">
           <p className="font-display text-xl font-semibold text-primary-foreground">
-            Premium<span className="text-gradient-gold">Host</span>
+            DAU AN <span className="text-gradient-gold">s.r.o.</span>
           </p>
           <p className="font-body text-sm text-primary-foreground/40 mt-1">
             Kompletní správa bytů pro Airbnb
@@ -19,7 +19,7 @@ const Footer = () => {
           </a>
         </div>
         <p className="font-body text-xs text-primary-foreground/30">
-          © 2026 PremiumHost. Všechna práva vyhrazena.
+          © 2026 DAU AN s.r.o. Všechna práva vyhrazena.
         </p>
       </div>
     </footer>
