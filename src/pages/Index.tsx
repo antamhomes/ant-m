@@ -8,7 +8,7 @@ import GallerySection from "@/components/GallerySection";
 import ProcessSection from "@/components/ProcessSection";
 import ServicesSection from "@/components/ServicesSection";
 import CalculatorSection from "@/components/CalculatorSection";
-import TestimonialsSection from "@/components/TestimonialsSection";
+
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import AboutSection from "@/components/AboutSection";
@@ -27,7 +27,7 @@ const Index = () => {
       <AboutSection />
       <ServicesSection />
       <CalculatorSection />
-      <TestimonialsSection />
+      
       <ContactSection />
       <Footer />
     </div>
