@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { MessageSquare, Paintbrush, Camera, TrendingUp } from "lucide-react";
 
 const steps = [
-  { number: "01", title: "Nezávazná konzultace", description: "Probereme váš byt, lokalitu a potenciál výnosu." },
-  { number: "02", title: "Návrh a přestavba", description: "Naši designéři vytvoří koncept a zrealizují přestavbu." },
-  { number: "03", title: "Profesionální foto a listing", description: "Nafotíme byt a vytvoříme top inzerát na Airbnb." },
-  { number: "04", title: "Vy inkasujete", description: "My se staráme o vše. Vy sledujete rostoucí příjem." },
+  { number: "01", title: "Nezávazná konzultace", description: "Probereme váš byt, lokalitu a potenciál výnosu.", icon: MessageSquare },
+  { number: "02", title: "Návrh a přestavba", description: "Naši designéři vytvoří koncept a zrealizují přestavbu.", icon: Paintbrush },
+  { number: "03", title: "Profesionální foto a listing", description: "Nafotíme byt a vytvoříme top inzerát na Airbnb.", icon: Camera },
+  { number: "04", title: "Vy inkasujete", description: "My se staráme o vše. Vy sledujete rostoucí příjem.", icon: TrendingUp },
 ];
 
 const ProcessSection = () => {
@@ -27,32 +27,37 @@ const ProcessSection = () => {
           </h2>
         </motion.div>
 
-        <div className="space-y-0">
-          {steps.map((step, index) => (
-            <motion.div
-              key={step.number}
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.15 }}
-              className="flex items-start gap-6 md:gap-10 py-8 border-b border-primary-foreground/10 last:border-b-0"
-            >
-              <span className="font-display text-4xl md:text-5xl font-bold text-gradient-gold flex-shrink-0">
-                {step.number}
-              </span>
-              <div>
-                <h3 className="font-display text-xl md:text-2xl font-semibold text-primary-foreground mb-2">
-                  {step.title}
-                </h3>
-                <p className="font-body text-primary-foreground/60">
-                  {step.description}
-                </p>
-              </div>
-              {index < steps.length - 1 && (
-                <ArrowRight className="w-6 h-6 text-gold/40 flex-shrink-0 hidden md:block mt-2" />
-              )}
-            </motion.div>
-          ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {steps.map((step, index) => {
+            const Icon = step.icon;
+            return (
+              <motion.div
+                key={step.number}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="relative p-8 rounded-2xl border border-primary-foreground/10 bg-primary-foreground/5 backdrop-blur-sm hover:border-gold/30 transition-all duration-300 group"
+              >
+                <div className="flex items-start gap-5">
+                  <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-gold/10 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
+                    <Icon className="w-6 h-6 text-gold" />
+                  </div>
+                  <div>
+                    <span className="font-body text-xs tracking-[0.2em] uppercase text-gold/60 mb-1 block">
+                      Krok {step.number}
+                    </span>
+                    <h3 className="font-display text-xl font-semibold text-primary-foreground mb-2">
+                      {step.title}
+                    </h3>
+                    <p className="font-body text-primary-foreground/60 text-sm leading-relaxed">
+                      {step.description}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
