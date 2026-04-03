@@ -11,6 +11,7 @@ import CalculatorSection from "@/components/CalculatorSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import AboutSection from "@/components/AboutSection";
 
 const Index = () => {
   return (
@@ -23,6 +24,7 @@ const Index = () => {
       <BeforeAfterSection />
       <GallerySection />
       <ProcessSection />
+      <AboutSection />
       <ServicesSection />
       <CalculatorSection />
       <TestimonialsSection />
