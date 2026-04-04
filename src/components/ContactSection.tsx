@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Send } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { t } from "@/i18n/translations";
 
 const ContactSection = () => {
+  const { lang } = useLanguage();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -13,7 +16,7 @@ const ContactSection = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert("Děkujeme! Ozveme se vám do 24 hodin.");
+    alert(t(lang, "contact_success"));
   };
 
   return (
@@ -27,13 +30,13 @@ const ContactSection = () => {
           className="text-center mb-16"
         >
           <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
-            Začněte vydělávat
+            {t(lang, "contact_label")}
           </p>
           <h2 className="font-display text-3xl md:text-5xl font-semibold text-foreground mb-6">
-            Nezávazná konzultace zdarma
+            {t(lang, "contact_title")}
           </h2>
           <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">
-            Zanechte nám kontakt a do 24 hodin se vám ozveme s nezávaznou nabídkou.
+            {t(lang, "contact_desc")}
           </p>
         </motion.div>
 
@@ -48,7 +51,7 @@ const ContactSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block font-body text-sm font-medium text-foreground mb-2">
-                Jméno a příjmení
+                {t(lang, "contact_name")}
               </label>
               <input
                 type="text"
@@ -56,12 +59,12 @@ const ContactSection = () => {
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className="w-full px-4 py-3 bg-background border border-border rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold transition-colors"
-                placeholder="Jan Novák"
+                placeholder={t(lang, "contact_name_placeholder") as string}
               />
             </div>
             <div>
               <label className="block font-body text-sm font-medium text-foreground mb-2">
-                E-mail
+                {t(lang, "contact_email")}
               </label>
               <input
                 type="email"
@@ -69,44 +72,44 @@ const ContactSection = () => {
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-4 py-3 bg-background border border-border rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold transition-colors"
-                placeholder="jan@email.cz"
+                placeholder={t(lang, "contact_email_placeholder") as string}
               />
             </div>
             <div>
               <label className="block font-body text-sm font-medium text-foreground mb-2">
-                Telefon
+                {t(lang, "contact_phone")}
               </label>
               <input
                 type="tel"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className="w-full px-4 py-3 bg-background border border-border rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold transition-colors"
-                placeholder="+420 123 456 789"
+                placeholder={t(lang, "contact_phone_placeholder") as string}
               />
             </div>
             <div>
               <label className="block font-body text-sm font-medium text-foreground mb-2">
-                Adresa bytu
+                {t(lang, "contact_address")}
               </label>
               <input
                 type="text"
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 className="w-full px-4 py-3 bg-background border border-border rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold transition-colors"
-                placeholder="Praha 1, Staroměstské náměstí 1"
+                placeholder={t(lang, "contact_address_placeholder") as string}
               />
             </div>
           </div>
           <div>
             <label className="block font-body text-sm font-medium text-foreground mb-2">
-              Zpráva (nepovinné)
+              {t(lang, "contact_message")}
             </label>
             <textarea
               rows={4}
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
               className="w-full px-4 py-3 bg-background border border-border rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold transition-colors resize-none"
-              placeholder="Popište nám svůj byt — velikost, dispozice, aktuální stav..."
+              placeholder={t(lang, "contact_message_placeholder") as string}
             />
           </div>
           <button
@@ -114,7 +117,7 @@ const ContactSection = () => {
             className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-gold text-accent-foreground font-body font-semibold text-sm tracking-wider uppercase rounded-sm hover:brightness-110 transition-all duration-300"
           >
             <Send className="w-4 h-4" />
-            Odeslat nezávaznou poptávku
+            {t(lang, "contact_submit")}
           </button>
         </motion.form>
       </div>
