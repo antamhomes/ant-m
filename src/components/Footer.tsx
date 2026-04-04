@@ -1,4 +1,9 @@
+import { useLanguage } from "@/contexts/LanguageContext";
+import { t } from "@/i18n/translations";
+
 const Footer = () => {
+  const { lang } = useLanguage();
+
   return (
     <footer className="py-12 px-6 bg-gradient-dark border-t border-primary-foreground/10">
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
@@ -7,19 +12,19 @@ const Footer = () => {
             DAU AN <span className="text-gradient-gold">s.r.o.</span>
           </p>
           <p className="font-body text-sm text-primary-foreground/40 mt-1">
-            Kompletní správa bytů pro Airbnb
+            {t(lang, "footer_desc")}
           </p>
         </div>
         <div className="flex gap-8">
           <a href="#jak-to-funguje" className="font-body text-sm text-primary-foreground/60 hover:text-gold transition-colors">
-            Jak to funguje
+            {t(lang, "nav_howItWorks")}
           </a>
           <a href="#kontakt" className="font-body text-sm text-primary-foreground/60 hover:text-gold transition-colors">
-            Kontakt
+            {lang === "cs" ? "Kontakt" : "Liên hệ"}
           </a>
         </div>
         <p className="font-body text-xs text-primary-foreground/30">
-          © 2026 DAU AN s.r.o. Všechna práva vyhrazena.
+          {t(lang, "footer_rights")}
         </p>
       </div>
     </footer>

@@ -1,8 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { t } from "@/i18n/translations";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const { lang, toggleLang } = useLanguage();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -36,13 +39,47 @@ const Navbar = () => {
               scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/70 hover:text-primary-foreground"
             }`}
           >
-            Jak to funguje
+            {t(lang, "nav_howItWorks")}
           </a>
+
+          <button
+            onClick={toggleLang}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-body font-semibold tracking-wider uppercase transition-all border ${
+              scrolled
+                ? "border-border text-muted-foreground hover:text-foreground hover:border-gold/50"
+                : "border-primary-foreground/20 text-primary-foreground/70 hover:text-primary-foreground hover:border-primary-foreground/40"
+            }`}
+          >
+            <span className="text-sm">{lang === "cs" ? "🇻🇳" : "🇨🇿"}</span>
+            {lang === "cs" ? "VN" : "CZ"}
+          </button>
+
           <a
             href="#kontakt"
             className="px-6 py-2.5 bg-gold text-accent-foreground font-body font-semibold text-sm tracking-wider uppercase rounded-sm hover:brightness-110 transition-all"
           >
-            Konzultace zdarma
+            {t(lang, "nav_freeConsultation")}
+          </a>
+        </div>
+
+        {/* Mobile: just the toggle + CTA */}
+        <div className="flex md:hidden items-center gap-3">
+          <button
+            onClick={toggleLang}
+            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-sm text-xs font-body font-semibold tracking-wider uppercase transition-all border ${
+              scrolled
+                ? "border-border text-muted-foreground"
+                : "border-primary-foreground/20 text-primary-foreground/70"
+            }`}
+          >
+            <span className="text-sm">{lang === "cs" ? "🇻🇳" : "🇨🇿"}</span>
+            {lang === "cs" ? "VN" : "CZ"}
+          </button>
+          <a
+            href="#kontakt"
+            className="px-4 py-2 bg-gold text-accent-foreground font-body font-semibold text-xs tracking-wider uppercase rounded-sm"
+          >
+            {t(lang, "nav_freeConsultation")}
           </a>
         </div>
       </div>
