@@ -114,8 +114,10 @@ export async function generateBrochure(lang: Lang) {
   pdf.setFont(FONT, "bold");
   pdf.setFontSize(11);
   pdf.text("DAU AN", 15, 15);
+  const brandW = pdf.getTextWidth("DAU AN");
   pdf.setTextColor(...gold);
-  pdf.text("s.r.o.", 27.5, 15);
+  pdf.setFont(FONT, "normal");
+  pdf.text("s.r.o.", 15 + brandW + 2, 15);
 
   // Eyebrow
   pdf.setTextColor(...gold);
