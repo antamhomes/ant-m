@@ -219,7 +219,7 @@ export async function generateBrochure(lang: Lang) {
   pdf.setFont(FONT, "bold");
   pdf.setFontSize(8);
   pdf.text(c.moneyTitle.toUpperCase(), 20, y + 8);
-  pdf.setFontSize(20);
+  pdf.setFontSize(18);
   pdf.text(c.moneyBig, 20, y + 22);
   pdf.setTextColor(220, 220, 220);
   pdf.setFont(FONT, "normal");
