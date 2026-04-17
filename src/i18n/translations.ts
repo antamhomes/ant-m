@@ -3,6 +3,7 @@ const translations = {
     // Navbar
     nav_howItWorks: "Jak to funguje",
     nav_freeConsultation: "Konzultace zdarma",
+    footer_brochure: "Vytvořit přehled",
 
     // Hero
     hero_subtitle: "Kompletní správa vašeho bytu",
@@ -172,6 +173,7 @@ const translations = {
     // Navbar
     nav_howItWorks: "Cách hoạt động",
     nav_freeConsultation: "Tư vấn miễn phí",
+    footer_brochure: "Tạo tổng quan",
 
     // Hero
     hero_subtitle: "Quản lý toàn diện căn hộ của bạn",

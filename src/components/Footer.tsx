@@ -1,8 +1,21 @@
+import { useState } from "react";
+import { FileDown, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
 const Footer = () => {
   const { lang } = useLanguage();
+  const [loading, setLoading] = useState(false);
+
+  const handleDownload = async () => {
+    setLoading(true);
+    try {
+      const { generateBrochure } = await import("@/lib/generateBrochure");
+      await generateBrochure(lang);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <footer className="py-12 px-6 bg-gradient-dark border-t border-primary-foreground/10">
@@ -15,14 +28,31 @@ const Footer = () => {
             {t(lang, "footer_desc")}
           </p>
         </div>
-        <div className="flex gap-8">
-          <a href="#jak-to-funguje" className="font-body text-sm text-primary-foreground/60 hover:text-gold transition-colors">
-            {t(lang, "nav_howItWorks")}
-          </a>
-          <a href="#kontakt" className="font-body text-sm text-primary-foreground/60 hover:text-gold transition-colors">
-            {lang === "cs" ? "Kontakt" : "Liên hệ"}
-          </a>
+
+        <div className="flex flex-col sm:flex-row items-center gap-6">
+          <div className="flex gap-8">
+            <a href="#jak-to-funguje" className="font-body text-sm text-primary-foreground/60 hover:text-gold transition-colors">
+              {t(lang, "nav_howItWorks")}
+            </a>
+            <a href="#kontakt" className="font-body text-sm text-primary-foreground/60 hover:text-gold transition-colors">
+              {lang === "cs" ? "Kontakt" : "Liên hệ"}
+            </a>
+          </div>
+
+          <button
+            onClick={handleDownload}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gold text-accent-foreground font-body font-semibold text-xs tracking-wider uppercase rounded-sm hover:brightness-110 transition-all disabled:opacity-60"
+          >
+            {loading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <FileDown className="w-4 h-4" />
+            )}
+            {t(lang, "footer_brochure")}
+          </button>
         </div>
+
         <p className="font-body text-xs text-primary-foreground/30">
           {t(lang, "footer_rights")}
         </p>
