@@ -16,7 +16,7 @@ const copy = {
     stats: [
       { v: "2.8×", l: "vyšší výnos" },
       { v: "95%", l: "obsazenost" },
-      { v: "4.9★", l: "hodnocení hostů" },
+      { v: "4.9/5", l: "hodnocení hostů" },
       { v: "15+", l: "spravovaných bytů" },
     ],
     whyTitle: "Proč ne dlouhodobý pronájem?",
