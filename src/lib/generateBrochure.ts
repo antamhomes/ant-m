@@ -77,6 +77,14 @@ export async function generateBrochure(lang: Lang) {
   const c = copy[lang];
   const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
 
+  // Register Unicode font (NotoSans) so Czech & Vietnamese diacritics render correctly
+  const { notoSansRegular, notoSansBold } = await import("./notoSansFont");
+  pdf.addFileToVFS("NotoSans-Regular.ttf", notoSansRegular);
+  pdf.addFont("NotoSans-Regular.ttf", "NotoSans", "normal");
+  pdf.addFileToVFS("NotoSans-Bold.ttf", notoSansBold);
+  pdf.addFont("NotoSans-Bold.ttf", "NotoSans", "bold");
+  const FONT = "NotoSans";
+
   const W = 210;
   const H = 297;
 
