@@ -3,6 +3,7 @@ const translations = {
     // Navbar
     nav_howItWorks: "Jak to funguje",
     nav_freeConsultation: "Konzultace zdarma",
+    footer_brochure: "Vytvořit přehled",
 
     // Hero
     hero_subtitle: "Kompletní správa vašeho bytu",
