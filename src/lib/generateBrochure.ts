@@ -128,7 +128,7 @@ export async function generateBrochure(lang: Lang) {
   // Title
   pdf.setTextColor(255, 255, 255);
   pdf.setFont(FONT, "bold");
-  pdf.setFontSize(26);
+  pdf.setFontSize(lang === "vi" ? 19 : 24);
   pdf.text(c.title1, 15, 58);
   pdf.setTextColor(...gold);
   pdf.text(c.title2, 15, 70);
