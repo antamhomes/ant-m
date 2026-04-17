@@ -243,11 +243,12 @@ export async function generateBrochure(lang: Lang) {
   pdf.rect(0, y, W, 28, "F");
   pdf.setTextColor(...charcoal);
   pdf.setFont(FONT, "bold");
-  pdf.setFontSize(13);
-  pdf.text(c.ctaTitle, 15, y + 10);
+  pdf.setFontSize(12);
+  const ctaLines = pdf.splitTextToSize(c.ctaTitle, W - 30);
+  pdf.text(ctaLines, 15, y + 8);
   pdf.setFont(FONT, "normal");
-  pdf.setFontSize(10);
-  pdf.text(c.ctaText, 15, y + 17);
+  pdf.setFontSize(9);
+  pdf.text(c.ctaText, 15, y + 18);
   pdf.setFont(FONT, "bold");
   pdf.setFontSize(11);
   pdf.text(c.ctaUrl, 15, y + 24);
