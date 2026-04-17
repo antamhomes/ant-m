@@ -111,7 +111,7 @@ export async function generateBrochure(lang: Lang) {
 
   // Brand
   pdf.setTextColor(255, 255, 255);
-  pdf.setFont("helvetica", "bold");
+  pdf.setFont(FONT, "bold");
   pdf.setFontSize(11);
   pdf.text("DAU AN", 15, 15);
   pdf.setTextColor(...gold);
@@ -119,13 +119,13 @@ export async function generateBrochure(lang: Lang) {
 
   // Eyebrow
   pdf.setTextColor(...gold);
-  pdf.setFont("helvetica", "bold");
+  pdf.setFont(FONT, "bold");
   pdf.setFontSize(8);
   pdf.text(c.eyebrow, 15, 45);
 
   // Title
   pdf.setTextColor(255, 255, 255);
-  pdf.setFont("helvetica", "bold");
+  pdf.setFont(FONT, "bold");
   pdf.setFontSize(26);
   pdf.text(c.title1, 15, 58);
   pdf.setTextColor(...gold);
@@ -133,7 +133,7 @@ export async function generateBrochure(lang: Lang) {
 
   // Intro
   pdf.setTextColor(235, 235, 235);
-  pdf.setFont("helvetica", "normal");
+  pdf.setFont(FONT, "normal");
   pdf.setFontSize(10);
   const introLines = pdf.splitTextToSize(c.intro, W - 30);
   pdf.text(introLines, 15, 80);
@@ -143,7 +143,7 @@ export async function generateBrochure(lang: Lang) {
   pdf.rect(0, 95, W, 28, "F");
 
   pdf.setTextColor(...gold);
-  pdf.setFont("helvetica", "bold");
+  pdf.setFont(FONT, "bold");
   pdf.setFontSize(8);
   pdf.text(c.statsTitle.toUpperCase(), 15, 103);
 
@@ -151,11 +151,11 @@ export async function generateBrochure(lang: Lang) {
   c.stats.forEach((s, i) => {
     const x = 15 + i * colW;
     pdf.setTextColor(...gold);
-    pdf.setFont("helvetica", "bold");
+    pdf.setFont(FONT, "bold");
     pdf.setFontSize(18);
     pdf.text(s.v, x, 114);
     pdf.setTextColor(220, 220, 220);
-    pdf.setFont("helvetica", "normal");
+    pdf.setFont(FONT, "normal");
     pdf.setFontSize(7);
     pdf.text(s.l, x, 119);
   });
@@ -163,7 +163,7 @@ export async function generateBrochure(lang: Lang) {
   // === WHY NOT LONG-TERM (comparison table) ===
   let y = 132;
   pdf.setTextColor(...charcoal);
-  pdf.setFont("helvetica", "bold");
+  pdf.setFont(FONT, "bold");
   pdf.setFontSize(14);
   pdf.text(c.whyTitle, 15, y);
 
@@ -177,7 +177,7 @@ export async function generateBrochure(lang: Lang) {
   pdf.setFillColor(...charcoal);
   pdf.rect(15, y, W - 30, 7, "F");
   pdf.setTextColor(255, 255, 255);
-  pdf.setFont("helvetica", "bold");
+  pdf.setFont(FONT, "bold");
   pdf.setFontSize(8);
   pdf.text(lang === "cs" ? "PARAMETR" : "TIÊU CHÍ", 18, y + 4.7);
   pdf.text(lang === "cs" ? "DLOUHODOBÝ" : "DÀI HẠN", 78, y + 4.7);
@@ -185,7 +185,7 @@ export async function generateBrochure(lang: Lang) {
   pdf.text(lang === "cs" ? "DAU AN" : "DAU AN", 138, y + 4.7);
   y += 7;
 
-  pdf.setFont("helvetica", "normal");
+  pdf.setFont(FONT, "normal");
   pdf.setFontSize(8.5);
   c.whyRows.forEach((row, i) => {
     if (i % 2 === 0) {
@@ -196,9 +196,9 @@ export async function generateBrochure(lang: Lang) {
     pdf.rect(15, y, W - 30, 9, "F");
 
     pdf.setTextColor(...charcoal);
-    pdf.setFont("helvetica", "bold");
+    pdf.setFont(FONT, "bold");
     pdf.text(row[0], 18, y + 5.8);
-    pdf.setFont("helvetica", "normal");
+    pdf.setFont(FONT, "normal");
     pdf.setTextColor(...muted);
     const a = pdf.splitTextToSize(row[1], 55);
     pdf.text(a, 78, y + 5.8);
@@ -214,13 +214,13 @@ export async function generateBrochure(lang: Lang) {
   pdf.setFillColor(...charcoal);
   pdf.rect(15, y, 95, 42, "F");
   pdf.setTextColor(...gold);
-  pdf.setFont("helvetica", "bold");
+  pdf.setFont(FONT, "bold");
   pdf.setFontSize(8);
   pdf.text(c.moneyTitle.toUpperCase(), 20, y + 8);
   pdf.setFontSize(20);
   pdf.text(c.moneyBig, 20, y + 22);
   pdf.setTextColor(220, 220, 220);
-  pdf.setFont("helvetica", "normal");
+  pdf.setFont(FONT, "normal");
   pdf.setFontSize(8);
   const ms = pdf.splitTextToSize(c.moneySmall, 85);
   pdf.text(ms, 20, y + 30);
@@ -240,19 +240,19 @@ export async function generateBrochure(lang: Lang) {
   pdf.setFillColor(...gold);
   pdf.rect(0, y, W, 28, "F");
   pdf.setTextColor(...charcoal);
-  pdf.setFont("helvetica", "bold");
+  pdf.setFont(FONT, "bold");
   pdf.setFontSize(13);
   pdf.text(c.ctaTitle, 15, y + 10);
-  pdf.setFont("helvetica", "normal");
+  pdf.setFont(FONT, "normal");
   pdf.setFontSize(10);
   pdf.text(c.ctaText, 15, y + 17);
-  pdf.setFont("helvetica", "bold");
+  pdf.setFont(FONT, "bold");
   pdf.setFontSize(11);
   pdf.text(c.ctaUrl, 15, y + 24);
 
   // === FOOTER ===
   pdf.setTextColor(...muted);
-  pdf.setFont("helvetica", "normal");
+  pdf.setFont(FONT, "normal");
   pdf.setFontSize(7.5);
   pdf.text(c.footer, W / 2, H - 5, { align: "center" });
 
