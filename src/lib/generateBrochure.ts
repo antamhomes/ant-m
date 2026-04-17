@@ -44,7 +44,7 @@ const copy = {
     stats: [
       { v: "2.8×", l: "thu nhập cao hơn" },
       { v: "95%", l: "tỷ lệ lấp đầy" },
-      { v: "4.9★", l: "đánh giá của khách" },
+      { v: "4.9/5", l: "đánh giá của khách" },
       { v: "15+", l: "căn hộ quản lý" },
     ],
     whyTitle: "Tại sao không cho thuê dài hạn?",
