@@ -36,6 +36,7 @@ const HeroSection = () => {
           className="font-display text-4xl md:text-6xl lg:text-7xl font-semibold text-primary-foreground leading-tight mb-6"
         >
           {t(lang, "hero_title1")}
+          <br />
           <span className="text-gradient-gold">{t(lang, "hero_title2")}</span>
         </motion.h1>
 
