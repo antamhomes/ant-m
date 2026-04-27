@@ -177,7 +177,7 @@ const translations = {
 
     // Hero
     hero_subtitle: "Quản lý toàn diện căn hộ của bạn",
-    hero_title1: "Bạn có căn hộ. ",
+    hero_title1: "Bàn giao căn hộ. ",
     hero_title2: "Chúng tôi lo phần còn lại.",
     hero_desc: "Chúng tôi biến căn hộ của bạn thành chỗ ở cao cấp trên Airbnb. Từ cải tạo hoàn chỉnh đến quản lý hàng ngày — bạn chỉ cần nhận tiền.",
     hero_cta: "Tôi muốn tư vấn miễn phí",
