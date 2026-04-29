@@ -42,6 +42,15 @@ const Navbar = () => {
             {t(lang, "nav_howItWorks")}
           </a>
 
+          <a
+            href="#portfolio"
+            className={`font-body text-sm tracking-wide transition-colors ${
+              scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/70 hover:text-primary-foreground"
+            }`}
+          >
+            Portfolio
+          </a>
+
           <button
             onClick={toggleLang}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-body font-semibold tracking-wider uppercase transition-all border ${
