@@ -14,7 +14,7 @@ const translations = {
     hero_cta2: "Jak to funguje",
 
     // Benefits
-    benefits_label: "Proč se to vyplatí",
+    benefits_label: "Proč majitelé volí ANTAM Homes",
     benefits_title1: "Váš byt může vydělávat lépe, když se o něj někdo stará ",
     benefits_title2: "správně.",
     benefits_desc: "Nemusíte se starat o nic. Získáte prémiový příjem z nemovitosti, kterou vlastníte.",
@@ -24,10 +24,10 @@ const translations = {
     benefit2_desc: "Zařídíme vše od designu po realizaci. Váš byt bude vypadat jako z magazínu.",
     benefit3_title: "Pojištění a bezpečnost",
     benefit3_desc: "Každý host je prověřen. Byt je pojištěn a pod neustálým dohledem.",
-    benefit4_title: "Bez starostí",
+    benefit4_title: "Méně starostí",
     benefit4_desc: "Úklid, komunikace s hosty, údržba — vše řešíme my, 24/7.",
     benefit5_title: "Dynamické ceny",
-    benefit5_desc: "Naše algoritmy nastaví optimální cenu každý den pro maximální výnos.",
+    benefit5_desc: "Naše algoritmy nastaví optimální cenu každý den pro maximální výnos.\nCeny upravujeme podle sezóny, obsazenosti, poptávky a lokálních událostí.",
     benefit6_title: "5★ hodnocení",
     benefit6_desc: "Naši hosté hodnotí průměrně 4.9★. To znamená lepší viditelnost a více rezervací.",
 
@@ -42,13 +42,13 @@ const translations = {
     stat4_label: "Vyšší výnos než klasický pronájem",
 
     // WhyBetter
-    whyBetter_label: "Proč ne dlouhodobý pronájem",
+    whyBetter_label: "KDY DÁVÁ KRÁTKODOBÝ PRONÁJEM SMYSL",
     whyBetter_title1: "Váš byt si zaslouží ",
     whyBetter_title2: "lepší péči",
     whyBetter_title3: " i\u00a0výnos",
-    whyBetter_desc: "Dlouhodobý pronájem se zdá jako bezpečná volba — ale ve skutečnosti přicházíte o peníze i o kontrolu nad svým majetkem. Porovnejte sami.",
+    whyBetter_desc: "Dlouhodobý pronájem může být jednoduchý, ale ne vždy využije plný potenciál bytu. Krátkodobý pronájem při správné správě nabízí větší flexibilitu, lepší kontrolu a přehlednější provoz.",
     comp1_title: "Kontrola stavu bytu",
-    comp1_long: "Byt vidíte při podpisu a pak až při předání — za rok může být poškozený a vy to nevíte.",
+    comp1_long: "Stav bytu často zjistíte až po delší době nebo při předání.",
     comp1_short: "Po každém hostu probíhá důkladná kontrola. V praxi i 2× týdně. O stavu bytu máte neustálý přehled.",
     comp2_title: "Údržba a opravy",
     comp2_long: "Nájemník vám závadu často nenahlásí. Drobné problémy se kumulují a na konci nájmu vás čeká drahá oprava.",
@@ -64,7 +64,7 @@ const translations = {
     comp5_short: "Byt můžete kdykoli využít sami. Stačí zablokovat termín v kalendáři a je váš.",
     comp6_title: "Riziko neplatičů",
     comp6_long: "Jeden špatný nájemce = měsíce bez příjmu, právní spory a poškozený byt.",
-    comp6_short: "Platba probíhá předem. Žádní neplatiči, žádné vymáhání. Peníze máte vždy na účtu.",
+    comp6_short: "Peníze z pobytu jdou přímo k Vám. Žádní neplatiči, žádné vymáhání. Peníze máte vždy na účtu.",
     longTerm_label: "✕ Dlouhodobý pronájem",
     shortTerm_label: "✓ Správa s ANTAM",
     moneyFacts_title1: "O kolik peněz ",
