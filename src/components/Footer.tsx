@@ -22,7 +22,7 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="text-center md:text-left">
           <p className="font-display text-xl font-semibold text-primary-foreground">
-            DAU AN <span className="text-gradient-gold">s.r.o.</span>
+            Antám <span className="text-gradient-gold">s.r.o.</span>
           </p>
           <p className="font-body text-sm text-primary-foreground/40 mt-1">
             {t(lang, "footer_desc")}
