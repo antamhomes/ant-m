@@ -66,7 +66,7 @@ const translations = {
     comp6_long: "Jeden špatný nájemce = měsíce bez příjmu, právní spory a poškozený byt.",
     comp6_short: "Platba probíhá předem. Žádní neplatiči, žádné vymáhání. Peníze máte vždy na účtu.",
     longTerm_label: "✕ Dlouhodobý pronájem",
-    shortTerm_label: "✓ Správa s Antám",
+    shortTerm_label: "✓ Správa s ANTAM",
     moneyFacts_title1: "O kolik peněz ",
     moneyFacts_title2: "přicházíte?",
     money1_value: "38 000 Kč",
@@ -129,7 +129,7 @@ const translations = {
     calc_label: "Kalkulačka výnosu",
     calc_title1: "Kolik vám byt ",
     calc_title2: "vydělá?",
-    calc_desc: "Zadejte parametry vašeho bytu a zjistěte odhadovaný měsíční příjem při správě přes Antám s.r.o.",
+    calc_desc: "Zadejte parametry vašeho bytu a zjistěte odhadovaný měsíční příjem při správě přes ANTAM s.r.o.",
     calc_location: "Lokalita",
     calc_size: "Dispozice",
     calc_extras: "Vychytávky navíc",
@@ -140,7 +140,7 @@ const translations = {
     calc_extra_vybaveni: "Premium vybavení",
     calc_extra_wellness: "Vlastní wellness / sauna",
     calc_result: "Odhadovaný výnos",
-    calc_monthly: "Měsíční příjem s Antám",
+    calc_monthly: "Měsíční příjem s ANTAM",
     calc_yearly: "Roční příjem",
     calc_classic: "Klasický dlouhodobý pronájem",
     calc_compare: "S námi vyděláte až",
@@ -166,7 +166,7 @@ const translations = {
 
     // Footer
     footer_desc: "Kompletní správa bytů pro Airbnb",
-    footer_rights: "© 2026 Antám s.r.o. Všechna práva vyhrazena.",
+    footer_rights: "© 2026 ANTAM s.r.o. Všechna práva vyhrazena.",
   },
 
   vi: {
@@ -236,7 +236,7 @@ const translations = {
     comp6_long: "Một người thuê xấu = nhiều tháng không thu nhập, tranh chấp pháp lý và căn hộ hư hỏng.",
     comp6_short: "Thanh toán trước. Không có người không trả, không cần đòi nợ. Tiền luôn trong tài khoản của bạn.",
     longTerm_label: "✕ Cho thuê dài hạn",
-    shortTerm_label: "✓ Quản lý với Antám",
+    shortTerm_label: "✓ Quản lý với ANTAM",
     moneyFacts_title1: "Bạn đang mất bao nhiêu ",
     moneyFacts_title2: "tiền?",
     money1_value: "38 000 Kč",
@@ -299,7 +299,7 @@ const translations = {
     calc_label: "Máy tính lợi nhuận",
     calc_title1: "Căn hộ của bạn sẽ ",
     calc_title2: "kiếm được bao nhiêu?",
-    calc_desc: "Nhập thông số căn hộ và xem thu nhập ước tính hàng tháng khi quản lý qua Antám s.r.o.",
+    calc_desc: "Nhập thông số căn hộ và xem thu nhập ước tính hàng tháng khi quản lý qua ANTAM s.r.o.",
     calc_location: "Vị trí",
     calc_size: "Bố trí",
     calc_extras: "Tiện ích bổ sung",
@@ -310,7 +310,7 @@ const translations = {
     calc_extra_vybaveni: "Trang bị cao cấp",
     calc_extra_wellness: "Wellness / sauna riêng",
     calc_result: "Lợi nhuận ước tính",
-    calc_monthly: "Thu nhập hàng tháng với Antám",
+    calc_monthly: "Thu nhập hàng tháng với ANTAM",
     calc_yearly: "Thu nhập hàng năm",
     calc_classic: "Cho thuê dài hạn truyền thống",
     calc_compare: "Với chúng tôi bạn kiếm được",
@@ -336,7 +336,7 @@ const translations = {
 
     // Footer
     footer_desc: "Quản lý căn hộ toàn diện cho Airbnb",
-    footer_rights: "© 2026 Antám s.r.o. Mọi quyền được bảo lưu.",
+    footer_rights: "© 2026 ANTAM s.r.o. Mọi quyền được bảo lưu.",
   },
 } as const;
 

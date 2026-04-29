@@ -32,7 +32,7 @@ const copy = {
     ctaTitle: "Chcete vědět, kolik vydělá právě váš byt?",
     ctaText: "Nezávazná konzultace zdarma. Výpočet do 24 hodin.",
     ctaUrl: "Navštivte: dauan.cz",
-    footer: "Antám s.r.o. — Prémiová správa nemovitostí v Praze",
+    footer: "ANTAM s.r.o. — Prémiová správa nemovitostí v Praze",
   },
   vi: {
     eyebrow: "QUẢN LÝ TOÀN DIỆN CĂN HỘ CỦA BẠN",
@@ -60,7 +60,7 @@ const copy = {
     ctaTitle: "Muốn biết căn hộ của bạn kiếm được bao nhiêu?",
     ctaText: "Tư vấn miễn phí. Tính toán trong vòng 24 giờ.",
     ctaUrl: "Truy cập: dauan.cz",
-    footer: "Antám s.r.o. — Quản lý bất động sản cao cấp tại Praha",
+    footer: "ANTAM s.r.o. — Quản lý bất động sản cao cấp tại Praha",
   },
 };
 
@@ -113,8 +113,8 @@ export async function generateBrochure(lang: Lang) {
   pdf.setTextColor(255, 255, 255);
   pdf.setFont(FONT, "bold");
   pdf.setFontSize(11);
-  pdf.text("Antám", 15, 15);
-  const brandW = pdf.getTextWidth("Antám");
+  pdf.text("ANTAM", 15, 15);
+  const brandW = pdf.getTextWidth("ANTAM");
   pdf.setTextColor(...gold);
   pdf.setFont(FONT, "normal");
   pdf.text("s.r.o.", 15 + brandW + 2, 15);
@@ -184,7 +184,7 @@ export async function generateBrochure(lang: Lang) {
   pdf.text(lang === "cs" ? "PARAMETR" : "TIÊU CHÍ", 18, y + 4.7);
   pdf.text(lang === "cs" ? "DLOUHODOBÝ" : "DÀI HẠN", 78, y + 4.7);
   pdf.setTextColor(...gold);
-  pdf.text(lang === "cs" ? "Antám" : "Antám", 138, y + 4.7);
+  pdf.text(lang === "cs" ? "ANTAM" : "ANTAM", 138, y + 4.7);
   y += 7;
 
   pdf.setFont(FONT, "normal");

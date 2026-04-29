@@ -27,7 +27,7 @@ const Navbar = () => {
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         <a href="#" className="font-display text-xl font-semibold">
           <span className={scrolled ? "text-foreground" : "text-primary-foreground"}>
-            Antám{" "}
+            ANTAM{" "}
           </span>
           <span className="text-gradient-gold">s.r.o.</span>
         </a>
