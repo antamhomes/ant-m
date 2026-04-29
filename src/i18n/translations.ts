@@ -102,11 +102,11 @@ const translations = {
     step4_desc: "My se staráme o vše. Vy sledujete rostoucí příjem.",
 
     // About
-    about_label: "O nás",
-    about_title: "Tři kamarádi, jedna vize",
-    about_p1: "Jsme mladý a ambiciózní tým — jeden Čech a dva Vietnamci, které spojila láska k designu a nemovitostem. Věříme, že každý byt má potenciál být něčím víc než jen čtyři stěny a střecha.",
-    about_p2: "Naše různorodé zázemí nám dává unikátní perspektivu. Kombinujeme české know‑how s mezinárodním pohledem na pohostinnost a design, díky čemuž tvoříme prostory, do kterých se hosté rádi vrací.",
-    about_p3: "Nejsme korporace. Jsme lidé, kterým záleží na každém detailu — od výběru polštářů po cenovou strategii. Vaši nemovitost bereme jako svou vlastní.",
+    about_label: "Náš přístup",
+    about_title: "Neřešíme byty podle šablony.",
+    about_p1: "Krátkodobý pronájem nevnímáme jako jednorázové spuštění nabídky. V antam homes průběžně sledujeme, jak si byt vede - nejen podle obsazenosti, ale i podle toho, jak se mění okolní nabídka, sezóna a zájem hostů.",
+    about_p2: "Víme, že svěřit byt někomu jinému není malé rozhodnutí. Proto stavíme na osobním přístupu, jasné komunikaci a práci, která zůstává blízko každodennímu provozu. Časem lépe poznáváme rytmus konkrétního bytu: kdo ho nejčastěji rezervuje, kdy má nejsilnější termíny a kde má ještě nevyužitý potenciál.",
+    about_p3: "Cíl je jednoduchý: dobře vedený byt, spokojení hosté a majitel, který má přehled bez zbytečných starostí.",
     about_card1_title: "Vášeň pro detail",
     about_card1_desc: "Každý byt navrhujeme s citem pro estetiku a pohodlí hostů. Interiéry, které vypadají skvěle a fungují ještě lépe.",
     about_card2_title: "Mladí & ambiciózní",
