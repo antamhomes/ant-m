@@ -104,9 +104,9 @@ const translations = {
     // About
     about_label: "Náš přístup",
     about_title: "Neřešíme byty podle šablony.",
-    about_p1: "Krátkodobý pronájem nevnímáme jako jednorázové spuštění nabídky. V antam homes průběžně sledujeme, jak si byt vede - nejen podle obsazenosti, ale i podle toho, jak se mění okolní nabídka, sezóna a zájem hostů.",
-    about_p2: "Víme, že svěřit byt někomu jinému není malé rozhodnutí. Proto stavíme na osobním přístupu, jasné komunikaci a práci, která zůstává blízko každodennímu provozu. Časem lépe poznáváme rytmus konkrétního bytu: kdo ho nejčastěji rezervuje, kdy má nejsilnější termíny a kde má ještě nevyužitý potenciál.",
-    about_p3: "Cíl je jednoduchý: dobře vedený byt, spokojení hosté a majitel, který má přehled bez zbytečných starostí.",
+    about_p1: "Každý byt má jinou lokalitu, jiný typ hostů a jiný potenciál. Proto nehledáme univerzální řešení, ale způsob, jak z konkrétního bytu dostat co nejlepší výsledek.",
+    about_p2: "Po spuštění nabídky práce nekončí. Průběžně sledujeme obsazenost, cenu, okolní nabídku, sezónu i zpětnou vazbu hostů — a podle toho byt dál ladíme.",
+    about_p3: "Cíl je jednoduchý: byt, který dobře funguje, hosté, kteří jsou spokojení, a majitel, který má přehled bez zbytečných starostí.\n",
     about_card1_title: "Vášeň pro detail",
     about_card1_desc: "Každý byt navrhujeme s citem pro estetiku a pohodlí hostů. Interiéry, které vypadají skvěle a fungují ještě lépe.",
     about_card2_title: "Mladí & ambiciózní",
