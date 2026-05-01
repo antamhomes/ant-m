@@ -55,7 +55,7 @@ const AboutSection = () => {
           <p className="font-body text-muted-foreground text-lg leading-relaxed mb-6">
             {t(lang, "about_p2")}
           </p>
-          <p className="font-body text-foreground/85 text-lg leading-relaxed border-l-2 border-gold/40 pl-5 inline-block text-left mt-2">
+          <p className="font-body text-foreground/85 text-lg leading-relaxed border-l-2 border-gold/40 pl-5 inline-block mt-2 text-center">
             {t(lang, "about_p3")}
           </p>
         </motion.div>
