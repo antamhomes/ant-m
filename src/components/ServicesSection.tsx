@@ -10,7 +10,7 @@ const ServicesSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section className="py-24 md:py-32 px-6 bg-secondary">
+    <section id="sluzby" className="py-24 md:py-32 px-6 bg-secondary">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
