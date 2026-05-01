@@ -67,9 +67,22 @@ const GallerySection = () => {
           <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">
             {t(lang, "gallery_desc")}
           </p>
+          <p className="md:hidden font-body text-[11px] text-muted-foreground/70 tracking-[0.2em] uppercase mt-5">
+            ← {lang === "cs" ? "přejeďte prstem" : "vuốt để xem"} →
+          </p>
         </motion.div>
 
-        <div ref={ref} className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <div
+          ref={ref}
+          className="
+            flex md:grid md:grid-cols-3 gap-6 md:gap-8
+            overflow-x-auto md:overflow-visible
+            snap-x snap-mandatory md:snap-none
+            -mx-6 md:mx-0 px-6 md:px-0 pb-4 md:pb-0
+            scrollbar-none
+            [&::-webkit-scrollbar]:hidden
+          "
+        >
           {portfolio.map((item, index) => {
             const tags = t(lang, item.tagsKey) as unknown as string[];
             const visibleTags = tags.slice(0, 2);
@@ -88,7 +101,7 @@ const GallerySection = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.7, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
                 style={motionStyle}
-                className="group bg-card border border-border rounded-sm overflow-hidden hover:border-gold/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500 will-change-transform"
+                className="group bg-card border border-border rounded-sm overflow-hidden hover:border-gold/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500 will-change-transform shrink-0 w-[82%] sm:w-[60%] md:w-auto snap-center md:snap-align-none"
               >
                 <div className="relative aspect-[4/5] md:aspect-[5/6] overflow-hidden">
                   <img
