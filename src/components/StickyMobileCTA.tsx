@@ -29,7 +29,7 @@ const StickyMobileCTA = () => {
         href="#kontakt"
         className="relative flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-gold text-accent-foreground font-body font-semibold text-sm tracking-wider uppercase rounded-sm shadow-lg shadow-charcoal/20 hover:brightness-110 transition-all"
       >
-        {t(lang, "hero_cta")}
+        {t(lang, "mobile_cta")}
         <ChevronRight className="w-4 h-4" />
       </a>
     </div>

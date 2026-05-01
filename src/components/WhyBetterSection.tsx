@@ -53,7 +53,7 @@ const WhyBetterSection = () => {
 
               <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
                 <div className="p-4 md:p-6 relative">
-                  <span className="inline-block font-body text-[11px] md:text-xs font-semibold uppercase tracking-wider text-destructive/70 mb-2 md:mb-3">
+                  <span className="inline-block font-body text-[11px] md:text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2 md:mb-3">
                     {t(lang, "longTerm_label")}
                   </span>
                   <p className="font-body text-sm md:text-base text-muted-foreground leading-relaxed">

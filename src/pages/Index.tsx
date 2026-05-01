@@ -15,6 +15,7 @@ import OwnerReportSection from "@/components/OwnerReportSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
+import FAQSection from "@/components/FAQSection";
 
 const Index = () => {
   return (
@@ -22,8 +23,8 @@ const Index = () => {
       <Navbar />
       <HeroSection />
       <TrustStrip />
-      <BenefitsSection />
       <StatsSection />
+      <BenefitsSection />
       <ServicesSection />
       <WhyBetterSection />
       <PotentialCTA />
@@ -33,6 +34,7 @@ const Index = () => {
       <AboutSection />
       <CalculatorSection />
       <OwnerReportSection />
+      <FAQSection />
       <ContactSection />
       <Footer />
       <StickyMobileCTA />

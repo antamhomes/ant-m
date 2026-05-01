@@ -107,10 +107,10 @@ const HeroSection = () => {
           </div>
           <div className="text-left">
             <p className="font-body text-[10px] tracking-[0.2em] uppercase text-foreground/55">
-              {lang === "cs" ? "Pro hosty" : "Cho khách"}
+              {t(lang, "hero_card1_label")}
             </p>
             <p className="font-display text-sm font-semibold text-foreground">
-              {lang === "cs" ? "Byt připravený pro hosty" : "Căn hộ sẵn sàng đón khách"}
+              {t(lang, "hero_card1_text")}
             </p>
           </div>
         </div>
@@ -129,10 +129,10 @@ const HeroSection = () => {
           </div>
           <div className="text-left">
             <p className="font-body text-[10px] tracking-[0.2em] uppercase text-gold/80">
-              {lang === "cs" ? "Pro majitele" : "Cho chủ nhà"}
+              {t(lang, "hero_card2_label")}
             </p>
             <p className="font-display text-sm font-semibold text-primary-foreground">
-              {lang === "cs" ? "Přehled pro majitele" : "Báo cáo cho chủ nhà"}
+              {t(lang, "hero_card2_text")}
             </p>
           </div>
         </div>
