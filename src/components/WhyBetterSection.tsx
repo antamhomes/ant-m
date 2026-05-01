@@ -12,14 +12,14 @@ const WhyBetterSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section className="py-24 md:py-32 bg-background">
+    <section className="py-14 md:py-32 bg-background">
       <div className="max-w-6xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-10 md:mb-16"
         >
           <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
             {t(lang, "whyBetter_label")}
@@ -34,7 +34,7 @@ const WhyBetterSection = () => {
           </p>
         </motion.div>
 
-        <div className="space-y-6">
+        <div className="space-y-3 md:space-y-6">
           {compIcons.map((Icon, index) => (
             <motion.div
               key={index}
@@ -44,28 +44,28 @@ const WhyBetterSection = () => {
               transition={{ duration: 0.5, delay: index * 0.08 }}
               className="rounded-sm border border-border bg-card overflow-hidden"
             >
-              <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-muted/40">
+              <div className="flex items-center gap-3 px-4 md:px-6 py-3 md:py-4 border-b border-border bg-muted/40">
                 <Icon className="w-5 h-5 text-gold shrink-0" />
-                <h3 className="font-display text-lg font-semibold text-foreground">
+                <h3 className="font-display text-base md:text-lg font-semibold text-foreground">
                   {t(lang, compTitleKeys[index])}
                 </h3>
               </div>
 
               <div className="grid md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
-                <div className="p-6 relative">
-                  <span className="inline-block font-body text-xs font-semibold uppercase tracking-wider text-destructive/70 mb-3">
+                <div className="p-4 md:p-6 relative">
+                  <span className="inline-block font-body text-[11px] md:text-xs font-semibold uppercase tracking-wider text-destructive/70 mb-2 md:mb-3">
                     {t(lang, "longTerm_label")}
                   </span>
-                  <p className="font-body text-muted-foreground leading-relaxed">
+                  <p className="font-body text-sm md:text-base text-muted-foreground leading-relaxed">
                     {t(lang, compLongKeys[index])}
                   </p>
                 </div>
 
-                <div className="p-6 bg-gold/5 relative">
-                  <span className="inline-block font-body text-xs font-semibold uppercase tracking-wider text-gold mb-3">
+                <div className="p-4 md:p-6 bg-gold/5 relative">
+                  <span className="inline-block font-body text-[11px] md:text-xs font-semibold uppercase tracking-wider text-gold mb-2 md:mb-3">
                     {t(lang, "shortTerm_label")}
                   </span>
-                  <p className="font-body text-foreground leading-relaxed">
+                  <p className="font-body text-sm md:text-base text-foreground leading-relaxed">
                     {t(lang, compShortKeys[index])}
                   </p>
                 </div>

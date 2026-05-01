@@ -20,14 +20,14 @@ const ProcessSection = () => {
   const lineHeight = useTransform(scrollYProgress, [0, 1], reduce ? ["100%", "100%"] : ["0%", "100%"]);
 
   return (
-    <section className="py-24 md:py-32 px-6 bg-gradient-dark">
+    <section className="py-14 md:py-32 px-6 bg-gradient-dark">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-10 md:mb-16"
         >
           <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
             {t(lang, "process_label")}
@@ -46,7 +46,7 @@ const ProcessSection = () => {
             className="absolute left-5 md:left-1/2 md:-translate-x-1/2 top-2 w-px bg-gradient-to-b from-gold/80 via-gold to-gold/40 origin-top"
           />
 
-          <ul className="space-y-12 md:space-y-16">
+          <ul className="space-y-8 md:space-y-16">
             {icons.map((Icon, index) => {
               const isRight = index % 2 === 1;
               return (
