@@ -6,7 +6,7 @@ import { t } from "@/i18n/translations";
 const PotentialCTA = () => {
   const { lang } = useLanguage();
   return (
-    <section className="py-20 md:py-24 px-6 bg-gradient-dark">
+    <section className="py-16 md:py-20 px-6 bg-gradient-dark">
       <div className="max-w-4xl mx-auto text-center">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}

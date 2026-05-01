@@ -16,7 +16,7 @@ const PartnersStrip = () => {
   const { lang } = useLanguage();
 
   return (
-    <section className="py-14 md:py-16 px-6 bg-background border-y border-border/60">
+    <section className="py-10 md:py-14 px-6 bg-background border-y border-border/60">
       <div className="max-w-6xl mx-auto">
         <motion.p
           initial={{ opacity: 0, y: 8 }}

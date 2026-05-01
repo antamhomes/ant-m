@@ -6,7 +6,7 @@ const AboutSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section id="o-nas" className="relative py-24 md:py-32 px-6 bg-background overflow-hidden">
+    <section id="o-nas" className="relative py-16 md:py-16 md:py-20 px-6 bg-background overflow-hidden">
       {/* Decorative accents */}
       <div
         aria-hidden
