@@ -79,7 +79,7 @@ const HeroSection = () => {
         >
           <a
             href="#kontakt"
-            className="inline-flex items-center justify-center px-8 py-4 bg-gold text-accent-foreground font-body font-semibold text-sm tracking-wider uppercase rounded-sm hover:brightness-110 transition-all duration-300"
+            className="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground font-body font-medium text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-primary transition-all duration-300"
           >
             {t(lang, "hero_cta")}
           </a>

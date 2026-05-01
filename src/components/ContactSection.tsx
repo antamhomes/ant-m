@@ -114,7 +114,7 @@ const ContactSection = () => {
           </div>
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-gold text-accent-foreground font-body font-semibold text-sm tracking-wider uppercase rounded-sm hover:brightness-110 transition-all duration-300"
+            className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-body font-medium text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-primary transition-all duration-300"
           >
             <Send className="w-4 h-4" />
             {t(lang, "contact_submit")}
