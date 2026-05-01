@@ -90,13 +90,13 @@ const translations = {
     gallery_desc: "Každý byt má jinou lokalitu, jiný typ hostů a jiný potenciál. Proto u každého hledáme směr, který dává největší smysl.",
     portfolio1_title: "Praha 1 — byt s výhledem na Muzeum",
     portfolio1_desc: "Silná lokalita, výhled a turistická poptávka. Zaměřujeme se na prezentaci, cenu a dobrý dojem z pobytu.",
-    portfolio1_tags: ["Fotky", "Cena", "Hosté", "Provoz"],
+    portfolio1_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
     portfolio2_title: "Mladá Boleslav — byt pro pracovní pobyty",
     portfolio2_desc: "Byt vhodný pro hosty, kteří přijíždějí za prací a potřebují pohodlný delší pobyt.",
-    portfolio2_tags: ["Pracovní pobyty", "Delší rezervace", "Úklid", "Přehled"],
+    portfolio2_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
     portfolio3_title: "Praha 3 — moderní byt s garáží",
     portfolio3_desc: "Novější byt, kde dává smysl pracovat s klidem, garáží a dobrou dostupností do centra.",
-    portfolio3_tags: ["Garáž", "Dostupnost", "Komfort", "Obsazenost"],
+    portfolio3_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
 
     // Process
     process_label: "Jak to funguje",
@@ -289,13 +289,13 @@ const translations = {
     gallery_desc: "Một số căn hộ chúng tôi đang chuẩn bị, trình bày hoặc quản lý cho cho thuê ngắn hạn.",
     portfolio1_title: "Praha 1 — căn hộ view Bảo tàng",
     portfolio1_desc: "Vị trí mạnh, view và nhu cầu du lịch cao. Tập trung vào trình bày, giá và ấn tượng tốt.",
-    portfolio1_tags: ["Ảnh", "Giá", "Khách", "Vận hành"],
+    portfolio1_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
     portfolio2_title: "Mladá Boleslav — căn cho khách công tác",
     portfolio2_desc: "Phù hợp khách đến công tác và cần lưu trú dài ngày thoải mái.",
-    portfolio2_tags: ["Khách công tác", "Đặt dài hạn", "Dọn dẹp", "Báo cáo"],
+    portfolio2_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
     portfolio3_title: "Praha 3 — căn hộ hiện đại có garage",
     portfolio3_desc: "Căn mới, ưu tiên sự yên tĩnh, garage và tiếp cận trung tâm thuận tiện.",
-    portfolio3_tags: ["Garage", "Tiếp cận", "Tiện nghi", "Tỷ lệ lấp đầy"],
+    portfolio3_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
 
     // Process
     process_label: "Cách hoạt động",
