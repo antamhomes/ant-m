@@ -58,8 +58,8 @@ const OwnerReportSection = () => {
                   {t(lang, "report_period")}
                 </span>
               </div>
-              <span className="font-body text-xs text-muted-foreground tracking-wider uppercase">
-                ANTAM s.r.o.
+              <span className="font-body text-xs text-muted-foreground tracking-wider lowercase">
+                antam homes
               </span>
             </div>
 
