@@ -13,7 +13,7 @@ const items = [
 const TrustStrip = () => {
   const { lang } = useLanguage();
   return (
-    <section className="pt-8 pb-10 md:pb-12 px-6 bg-background">
+    <section className="pt-8 pb-10 md:pb-12 px-6 bg-secondary/40">
       <div className="max-w-6xl mx-auto grid grid-cols-2 md:flex md:flex-wrap items-center justify-center gap-3 md:gap-4">
         {items.map(({ icon: Icon, key }, i) => (
           <motion.div
