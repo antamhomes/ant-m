@@ -223,6 +223,7 @@ const translations = {
     footer_link_services: "Co za vás řešíme",
     footer_link_contact: "Kontakt",
     footer_link_privacy: "Ochrana osobních údajů",
+    footer_link_cookies: "Cookies",
     footer_cta: "Nezávazně probrat byt",
     footer_rights: "© 2026 Antám s.r.o. Všechna práva vyhrazena.",
 
@@ -454,6 +455,7 @@ const translations = {
     footer_link_services: "Dịch vụ",
     footer_link_contact: "Liên hệ",
     footer_link_privacy: "Bảo mật thông tin",
+    footer_link_cookies: "Cookies",
     footer_cta: "Trao đổi về căn hộ",
     footer_rights: "© 2026 Antám s.r.o. Mọi quyền được bảo lưu.",
 

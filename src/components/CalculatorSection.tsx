@@ -168,7 +168,7 @@ const CalculatorSection = () => {
               </div>
 
               <div>
-                <p className="font-body text-sm text-primary-foreground/50 uppercase tracking-wider mb-1">
+                <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
                   {t(lang, "calc_monthly")}
                 </p>
                 <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold">
@@ -177,7 +177,7 @@ const CalculatorSection = () => {
               </div>
 
               <div className="border-t border-primary-foreground/10 pt-6">
-                <p className="font-body text-sm text-primary-foreground/50 uppercase tracking-wider mb-1">
+                <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
                   {t(lang, "calc_yearly")}
                 </p>
                 <p className="font-display text-2xl font-bold text-primary-foreground">
@@ -186,34 +186,44 @@ const CalculatorSection = () => {
               </div>
 
               <div className="border-t border-primary-foreground/10 pt-6">
-                <p className="font-body text-sm text-primary-foreground/50 uppercase tracking-wider mb-1">
+                <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
                   {t(lang, "calc_classic")}
                 </p>
-                <p className="font-display text-2xl font-bold text-primary-foreground/40 line-through">
+                <p className="font-display text-2xl font-bold text-primary-foreground/55 line-through">
                   {result.classic.toLocaleString("cs-CZ")}&nbsp;Kč
                 </p>
-                <p className="font-body text-xs text-gold mt-2">
+                <p className="font-body text-xs text-primary-foreground/80 mt-2">
                   {t(lang, "calc_compare")}{" "}
-                  <strong>
+                  <strong className="text-gold">
                     {Math.round((result.monthly / result.classic) * 10) / 10}×{" "}
                   </strong>
                   {t(lang, "calc_compare2")}
                 </p>
               </div>
 
-              <a
-                href="#kontakt"
-                className="block w-full text-center px-6 py-3.5 bg-primary text-primary-foreground font-body font-medium text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-primary transition-all"
-              >
-                {t(lang, "calc_cta")}
-              </a>
+              <div className="space-y-3">
+                <a
+                  href="#kontakt"
+                  className="block w-full text-center px-6 py-3.5 bg-primary text-primary-foreground font-body font-semibold text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-gold/60 ring-1 ring-gold/30 hover:ring-gold/60 transition-all"
+                >
+                  {t(lang, "calc_cta")}
+                </a>
+                <a
+                  href="#kontakt"
+                  className="block w-full text-center font-body text-xs text-primary-foreground/65 hover:text-gold tracking-[0.15em] uppercase transition-colors"
+                >
+                  {lang === "cs" ? "nebo nezávazně probrat byt →" : "hoặc trao đổi nhẹ nhàng →"}
+                </a>
+              </div>
             </div>
           </motion.div>
         </div>
 
-        <p className="font-body text-xs text-muted-foreground text-center mt-8 max-w-2xl mx-auto">
-          {t(lang, "calc_disclaimer")}
-        </p>
+        <div className="mt-10 max-w-2xl mx-auto border-t border-border/60 pt-6">
+          <p className="font-body text-xs md:text-[13px] text-muted-foreground text-center leading-relaxed">
+            {t(lang, "calc_disclaimer")}
+          </p>
+        </div>
       </div>
     </section>
   );

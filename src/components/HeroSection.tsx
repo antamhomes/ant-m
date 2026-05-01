@@ -28,7 +28,7 @@ const HeroSection = () => {
         />
         <motion.div
           style={{ opacity: overlayOpacity }}
-          className="absolute inset-0 bg-gradient-to-b from-charcoal/75 via-charcoal/55 to-charcoal/85"
+          className="absolute inset-0 bg-gradient-to-b from-charcoal/55 via-charcoal/55 to-charcoal/90"
         />
       </motion.div>
 
@@ -66,7 +66,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.5 }}
-          className="font-body text-sm md:text-base text-primary-foreground/60 mb-10 max-w-xl mx-auto"
+          className="font-body text-sm md:text-base text-primary-foreground/75 mb-10 max-w-xl mx-auto"
         >
           {t(lang, "hero_extra")}
         </motion.p>
@@ -75,17 +75,17 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center max-w-md sm:max-w-none mx-auto"
         >
           <a
             href="#kontakt"
-            className="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground font-body font-medium text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-primary transition-all duration-300"
+            className="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground font-body font-semibold text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-gold/60 ring-1 ring-gold/30 hover:ring-gold/60 shadow-lg shadow-charcoal/30 transition-all duration-300"
           >
             {t(lang, "hero_cta")}
           </a>
           <a
             href="#kalkulacka"
-            className="inline-flex items-center justify-center px-8 py-4 border border-primary-foreground/30 text-primary-foreground font-body font-medium text-sm tracking-wider uppercase rounded-sm hover:bg-primary-foreground/10 transition-all duration-300"
+            className="inline-flex items-center justify-center px-8 py-4 border border-primary-foreground/35 text-primary-foreground font-body font-medium text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-primary-foreground/10 transition-all duration-300"
           >
             {t(lang, "hero_cta2")}
           </a>

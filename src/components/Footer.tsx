@@ -98,16 +98,25 @@ const Footer = () => {
 
         {/* Bottom row */}
         <div className="pt-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 font-body text-[12px] text-primary-foreground/45">
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 font-body text-[12px] text-primary-foreground/55">
             <span>{t(lang, "footer_legal")}</span>
-            <span className="hidden md:inline">·</span>
+            <span className="hidden md:inline text-primary-foreground/25">·</span>
             <span>{t(lang, "footer_ico")}</span>
+            <span className="hidden md:inline text-primary-foreground/25">·</span>
+            <a href="#" className="hover:text-gold transition-colors">
+              {t(lang, "footer_link_privacy")}
+            </a>
+            <span className="hidden md:inline text-primary-foreground/25">·</span>
+            <a href="#" className="hover:text-gold transition-colors">
+              {t(lang, "footer_link_cookies")}
+            </a>
           </div>
 
           <div className="flex items-center gap-4">
             <button
               onClick={toggleLang}
-              className="font-body text-[11px] tracking-[0.25em] uppercase text-primary-foreground/55 hover:text-gold transition-colors"
+              className="font-body text-[11px] tracking-[0.25em] uppercase text-primary-foreground/55 hover:text-gold transition-colors min-h-[44px] inline-flex items-center"
+              aria-label="Přepnout jazyk / Đổi ngôn ngữ"
             >
               {lang === "cs" ? "CZ / VI" : "VI / CZ"}
             </button>
