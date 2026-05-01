@@ -28,14 +28,12 @@ const Index = () => {
       <BenefitsSection />
       <PartnersStrip />
       <WhyBetterSection />
-      <SectionDivider />
       <GallerySection />
       <CalculatorSection />
       <ServicesSection />
       <BeforeAfterSection />
       <ProcessSection />
       <OwnerReportSection />
-      <SectionDivider />
       <AboutSection />
       <PotentialCTA />
       <FAQSection />
