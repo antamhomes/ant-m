@@ -1,66 +1,72 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
-import beforeImg from "@/assets/before-renovation.png";
-import afterImg from "@/assets/after-renovation.jpg";
+import realBedroomLuxury from "@/assets/real-bedroom-luxury.jpg";
+import realLivingCozy from "@/assets/real-living-cozy.jpg";
+import apartmentBathroom from "@/assets/apartment-bathroom.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { t } from "@/i18n/translations";
+import { t, type TranslationKey } from "@/i18n/translations";
+
+const cards: { src: string; titleKey: TranslationKey; descKey: TranslationKey; alt: string }[] = [
+  { src: realBedroomLuxury, titleKey: "detail1_title", descKey: "detail1_desc", alt: "Připravená ložnice pro hosty" },
+  { src: realLivingCozy, titleKey: "detail2_title", descKey: "detail2_desc", alt: "Čistý obývací prostor" },
+  { src: apartmentBathroom, titleKey: "detail3_title", descKey: "detail3_desc", alt: "Detail péče o byt" },
+];
 
 const BeforeAfterSection = () => {
-  const [sliderPosition, setSliderPosition] = useState(50);
   const { lang } = useLanguage();
 
-  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSliderPosition(Number(e.target.value));
-  };
-
   return (
-    <section id="jak-to-funguje" className="py-20 md:py-24 px-6 bg-background">
-      <div className="max-w-4xl mx-auto">
+    <section id="jak-to-funguje" className="py-24 md:py-32 px-6 bg-background">
+      <div className="max-w-6xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-10"
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="text-center mb-14"
         >
           <p className="text-gold/80 font-body text-xs tracking-[0.3em] uppercase mb-3">
             {t(lang, "beforeAfter_label")}
           </p>
-          <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground mb-4">
+          <h2 className="font-display text-3xl md:text-5xl font-semibold text-foreground mb-5">
             {t(lang, "beforeAfter_title")}
           </h2>
-          <p className="font-body text-muted-foreground text-base max-w-xl mx-auto">
+          <p className="font-body text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
             {t(lang, "beforeAfter_desc")}
           </p>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
-          className="relative w-full aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-sm shadow-lg border border-border"
-        >
-          <img src={afterImg} alt="Byt po renovaci" className="absolute inset-0 w-full h-full object-cover" loading="lazy" width={1024} height={768} />
-          <div className="absolute inset-0 overflow-hidden" style={{ width: `${sliderPosition}%` }}>
-            <img src={beforeImg} alt="Byt před renovací" className="absolute inset-0 w-full h-full object-cover" style={{ minWidth: `${100 / (sliderPosition / 100)}%` }} loading="lazy" width={1024} height={768} />
-          </div>
-
-          <div className="absolute top-0 bottom-0 w-1 bg-gold cursor-ew-resize z-10" style={{ left: `${sliderPosition}%` }}>
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 bg-gold rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-accent-foreground font-bold text-xs">⟨⟩</span>
-            </div>
-          </div>
-
-          <input type="range" min="5" max="95" value={sliderPosition} onChange={handleSliderChange} className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20" />
-
-          <div className="absolute top-4 left-4 bg-charcoal/80 text-primary-foreground font-body text-xs tracking-wider uppercase px-3 py-1.5 rounded-sm">
-            {t(lang, "before")}
-          </div>
-          <div className="absolute top-4 right-4 bg-gold/90 text-accent-foreground font-body text-xs tracking-wider uppercase px-3 py-1.5 rounded-sm">
-            {t(lang, "after")}
-          </div>
-        </motion.div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          {cards.map((card, index) => (
+            <motion.article
+              key={card.titleKey}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
+              className="group rounded-sm overflow-hidden bg-card border border-border hover:border-gold/40 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500"
+            >
+              <div className="relative aspect-[4/5] overflow-hidden">
+                <img
+                  src={card.src}
+                  alt={card.alt}
+                  className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-[1100ms] ease-out"
+                  loading="lazy"
+                  width={1200}
+                  height={1500}
+                />
+                <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-charcoal/85 via-charcoal/30 to-transparent" />
+                <div className="absolute left-5 right-5 bottom-5 text-primary-foreground">
+                  <h3 className="font-display text-lg md:text-xl font-semibold mb-1.5">
+                    {t(lang, card.titleKey)}
+                  </h3>
+                  <p className="font-body text-[13px] md:text-sm text-primary-foreground/80 leading-relaxed">
+                    {t(lang, card.descKey)}
+                  </p>
+                </div>
+              </div>
+            </motion.article>
+          ))}
+        </div>
       </div>
     </section>
   );
