@@ -47,8 +47,8 @@ const ServicesSection = () => {
                 index !== items.length - 1 ? "border-b border-border/60" : ""
               }`}
             >
-              <div className="w-12 h-12 md:w-14 md:h-14 rounded-md border border-gold/30 bg-background/60 flex items-center justify-center shrink-0">
-                <Icon className="w-5 h-5 md:w-6 md:h-6 text-gold" strokeWidth={1.5} />
+              <div className="shrink-0 pt-1">
+                <Icon className="w-7 h-7 md:w-8 md:h-8 text-gold" strokeWidth={1.25} />
               </div>
               <div className="pt-1">
                 <h3 className="font-display text-xl md:text-2xl font-semibold text-foreground mb-2 leading-snug">
