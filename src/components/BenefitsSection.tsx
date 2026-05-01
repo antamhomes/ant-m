@@ -11,14 +11,14 @@ const BenefitsSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section className="py-24 md:py-32 px-6 bg-background">
+    <section className="py-14 md:py-32 px-6 bg-background">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-10 md:mb-16"
         >
           <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
             {t(lang, "benefits_label")}
@@ -31,7 +31,7 @@ const BenefitsSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-8">
           {icons.map((Icon, index) => (
             <motion.div
               key={index}
@@ -39,15 +39,15 @@ const BenefitsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group p-8 rounded-sm bg-card border border-border hover:border-gold/30 transition-all duration-500 hover:shadow-lg"
+              className="group p-4 md:p-8 rounded-sm bg-card border border-border hover:border-gold/30 transition-all duration-500 hover:shadow-lg"
             >
-              <div className="w-12 h-12 rounded-sm bg-gold/10 flex items-center justify-center mb-6 group-hover:bg-gold/20 transition-colors duration-300">
-                <Icon className="w-6 h-6 text-gold" />
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm bg-gold/10 flex items-center justify-center mb-3 md:mb-6 group-hover:bg-gold/20 transition-colors duration-300">
+                <Icon className="w-5 h-5 md:w-6 md:h-6 text-gold" />
               </div>
-              <h3 className="font-display text-xl font-semibold text-foreground mb-3">
+              <h3 className="font-display text-base md:text-xl font-semibold text-foreground mb-2 md:mb-3">
                 {t(lang, titleKeys[index])}
               </h3>
-              <p className="font-body text-muted-foreground leading-relaxed">
+              <p className="font-body text-sm md:text-base text-muted-foreground leading-relaxed">
                 {t(lang, descKeys[index])}
               </p>
             </motion.div>
