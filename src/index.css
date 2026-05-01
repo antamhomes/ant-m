@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext,vietnamese');
 
 @tailwind base;
 @tailwind components;
@@ -6,45 +6,56 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 150 30% 12%;
+    /* Cream background #F7F1E7 */
+    --background: 36 50% 94%;
+    /* Dark text #17211D */
+    --foreground: 150 14% 11%;
 
-    --card: 140 15% 96%;
-    --card-foreground: 150 30% 12%;
+    /* Cream/white card #FFF8EE */
+    --card: 38 80% 97%;
+    --card-foreground: 150 14% 11%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 150 30% 12%;
+    --popover: 38 80% 97%;
+    --popover-foreground: 150 14% 11%;
 
-    --primary: 150 30% 12%;
-    --primary-foreground: 0 0% 100%;
+    /* Dark green #12352F */
+    --primary: 168 49% 14%;
+    /* Cream/white text #FFF8EE */
+    --primary-foreground: 38 80% 97%;
 
-    --secondary: 140 12% 93%;
-    --secondary-foreground: 150 30% 12%;
+    /* Warm beige #E8D8C3 surface */
+    --secondary: 33 40% 84%;
+    --secondary-foreground: 168 49% 14%;
 
-    --muted: 140 8% 93%;
-    --muted-foreground: 150 10% 40%;
+    --muted: 36 35% 90%;
+    /* Muted text #5F675F */
+    --muted-foreground: 132 4% 39%;
 
-    --accent: 38 60% 55%;
-    --accent-foreground: 150 30% 12%;
+    /* Gold accent #C9A45C */
+    --accent: 38 50% 58%;
+    --accent-foreground: 168 49% 14%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 38 80% 97%;
 
-    --border: 140 12% 88%;
-    --input: 140 12% 88%;
-    --ring: 38 60% 55%;
+    --border: 33 30% 82%;
+    --input: 33 30% 82%;
+    --ring: 38 50% 58%;
 
     --radius: 0.5rem;
 
-    --gold: 38 60% 55%;
-    --gold-light: 38 50% 75%;
-    --warm-cream: 0 0% 100%;
-    --warm-sand: 140 10% 93%;
-    --charcoal: 152 35% 14%;
-    --charcoal-light: 150 20% 25%;
+    --gold: 38 50% 58%;
+    --gold-deep: 38 47% 44%;
+    --gold-light: 38 60% 75%;
+    --warm-cream: 38 80% 97%;
+    --warm-sand: 33 40% 84%;
+    /* Deep green #0B241F */
+    --charcoal: 168 49% 9%;
+    /* Dark green #173D36 */
+    --charcoal-light: 168 41% 16%;
 
-    --font-display: 'Playfair Display', serif;
-    --font-body: 'DM Sans', sans-serif;
+    --font-display: 'Manrope', system-ui, sans-serif;
+    --font-body: 'Inter', system-ui, sans-serif;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 150 10% 26%;
@@ -65,10 +76,30 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'kern', 'liga', 'calt';
+  }
+
+  /* Body text — readable, dobře vykresleno i pro vietnamskou diakritiku */
+  p, li, label, input, textarea, button, a, span {
+    line-height: 1.6;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  h1 { line-height: 1.15; }
+  h2 { line-height: 1.2; }
+
+  /* Vietnamská diakritika potřebuje trochu víc vzduchu */
+  :lang(vi) {
+    line-height: 1.7;
+  }
+  :lang(vi) h1, :lang(vi) h2, :lang(vi) h3, :lang(vi) h4 {
+    line-height: 1.3;
   }
 }
 
