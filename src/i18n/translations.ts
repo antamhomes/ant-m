@@ -52,6 +52,7 @@ const translations = {
     stat4_value: "až 2.8×",
     stat4_label: "vyšší výnos u vybraných bytů",
     stats_disclaimer: "Výsledky se liší podle lokality, stavu bytu, sezóny a nastavení ceny.",
+    partners_label: "Pracujeme s nejlepšími nástroji a platformami v oboru",
 
     // Services — Co za vás řešíme (bento)
     services_label: "Co za vás řešíme",
@@ -282,6 +283,7 @@ const translations = {
     stat4_value: "đến 2.8×",
     stat4_label: "doanh thu cao hơn ở một số căn hộ",
     stats_disclaimer: "Kết quả có thể khác nhau tùy theo vị trí, tình trạng căn hộ, mùa vụ và cách thiết lập giá.",
+    partners_label: "Chúng tôi sử dụng các công cụ và nền tảng hàng đầu trong ngành",
 
     // Services
     services_label: "antam homes hỗ trợ những gì",
