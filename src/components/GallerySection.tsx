@@ -101,7 +101,7 @@ const GallerySection = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.7, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
                 style={motionStyle}
-                className="group bg-card border border-border rounded-sm overflow-hidden hover:border-gold/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500 will-change-transform shrink-0 w-[82%] sm:w-[60%] md:w-auto snap-center md:snap-align-none"
+                className="group bg-card border border-border rounded-sm overflow-hidden hover:border-gold/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500 will-change-transform shrink-0 w-[82%] sm:w-[46%] md:w-auto snap-center md:snap-align-none"
               >
                 <div className="relative aspect-[4/5] md:aspect-[5/6] overflow-hidden">
                   <img
