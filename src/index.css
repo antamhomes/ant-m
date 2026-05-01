@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext,vietnamese');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext,vietnamese');
 
 @tailwind base;
 @tailwind components;
@@ -54,7 +54,7 @@
     /* Dark green #173D36 */
     --charcoal-light: 168 41% 16%;
 
-    --font-display: 'Manrope', system-ui, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
     --font-body: 'Inter', system-ui, sans-serif;
 
     --sidebar-background: 0 0% 98%;
