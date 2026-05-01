@@ -14,7 +14,7 @@ const TrustStrip = () => {
   const { lang } = useLanguage();
   return (
     <section className="py-8 px-6 bg-background border-b border-border">
-      <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-center gap-3 md:gap-4">
+      <div className="max-w-6xl mx-auto grid grid-cols-2 md:flex md:flex-wrap items-center justify-center gap-3 md:gap-4">
         {items.map(({ icon: Icon, key }, i) => (
           <motion.div
             key={key}
@@ -22,7 +22,7 @@ const TrustStrip = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.4, delay: i * 0.08 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border bg-card"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-full border border-border bg-card"
           >
             <Icon className="w-4 h-4 text-gold" />
             <span className="font-body text-sm text-foreground">{t(lang, key)}</span>
