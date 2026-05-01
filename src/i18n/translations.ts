@@ -63,7 +63,7 @@ const translations = {
     comp2_short: "Cena se průběžně upravuje podle sezóny, obsazenosti, okolní nabídky a zájmu hostů.",
     comp3_title: "Flexibilita",
     comp3_long: "Byt je vázaný smlouvou a změny se řeší složitěji.",
-    comp3_short: "Kalendář lze plánovat pružněji a byt zůstává flexibilnější pro další využití.",
+    comp3_short: "Po každém pobytu byt kontrolujeme a průběžně řešíme drobnosti, aby si udržel dobrý stav i hodnotu pro další pronájmy.",
     comp4_title: "Platby a přehled",
     comp4_long: "Platby a případné zpoždění řešíte přímo s nájemníkem.",
     comp4_short: "Rezervace a platby probíhají přes platformy, vše je dohledatelné a přehledné.",
