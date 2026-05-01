@@ -24,10 +24,10 @@ const Index = () => {
       <Navbar />
       <HeroSection />
       <TrustStrip />
-      <GallerySection />
       <BenefitsSection />
       <CalculatorSection />
       <WhyBetterSection />
+      <GallerySection />
       <ServicesSection />
       <BeforeAfterSection />
       <ProcessSection />
