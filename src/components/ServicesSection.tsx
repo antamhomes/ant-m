@@ -49,7 +49,7 @@ const ServicesSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section id="sluzby" className="py-20 md:py-32 px-6 bg-warm-cream">
+    <section id="sluzby" className="py-16 md:py-32 px-6 bg-secondary">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -70,7 +70,7 @@ const ServicesSection = () => {
         </motion.div>
 
         {/* Bento grid: 4 sloupce na desktopu */}
-        <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[minmax(190px,auto)] gap-5 md:gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[minmax(180px,auto)] gap-4 md:gap-5">
           {items.map(({ icon: Icon, titleKey, descKey, className }, index) => (
             <motion.article
               key={titleKey}
@@ -78,15 +78,17 @@ const ServicesSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-              className={`group relative overflow-hidden bg-white border border-border/60 rounded-lg p-7 md:p-9 shadow-[0_1px_2px_hsl(var(--charcoal)/0.04)] hover:border-gold/50 hover:shadow-[0_30px_60px_-30px_hsl(var(--charcoal)/0.25)] hover:-translate-y-0.5 transition-all duration-500 ${className}`}
+              className={`group relative overflow-hidden bg-card border border-border rounded-md p-6 md:p-8 hover:border-gold/40 hover:shadow-[0_24px_60px_-30px_hsl(var(--charcoal)/0.35)] transition-all duration-500 ${className}`}
             >
-              <div className="w-11 h-11 rounded-md bg-gold/10 flex items-center justify-center mb-5 group-hover:bg-gold/20 transition-colors">
-                <Icon className="w-5 h-5 text-gold" strokeWidth={1.5} />
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-sm bg-gold/10 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
+                  <Icon className="w-5 h-5 text-gold" />
+                </div>
+                <h3 className="font-display text-lg md:text-xl font-semibold text-foreground">
+                  {t(lang, titleKey)}
+                </h3>
               </div>
-              <h3 className="font-display text-xl md:text-2xl font-medium text-foreground mb-3 tracking-tight">
-                {t(lang, titleKey)}
-              </h3>
-              <p className="font-body text-[15px] text-muted-foreground leading-relaxed max-w-prose">
+              <p className="font-body text-sm md:text-[15px] text-muted-foreground leading-relaxed max-w-prose">
                 {t(lang, descKey)}
               </p>
             </motion.article>
