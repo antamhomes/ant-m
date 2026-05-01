@@ -1,10 +1,20 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
 import { FileBarChart, ChevronRight, CalendarDays, TrendingUp, Wallet, Receipt, ClipboardList, BedDouble } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
 const OwnerReportSection = () => {
   const { lang } = useLanguage();
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 0.9", "start 0.35"],
+  });
+  const cardY = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [60, 0]);
+  const cardRotate = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [-1.5, 0]);
+  const cardScale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [0.96, 1]);
 
   const rows = [
     { icon: CalendarDays, key: "report_row_reservations" as const, value: "12" },
@@ -16,7 +26,7 @@ const OwnerReportSection = () => {
   ];
 
   return (
-    <section className="py-24 md:py-32 px-6 bg-background">
+    <section ref={ref} className="py-24 md:py-32 px-6 bg-background">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -38,11 +48,8 @@ const OwnerReportSection = () => {
 
         <div className="grid md:grid-cols-2 gap-10 items-center">
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="bg-card border border-border rounded-md p-6 md:p-8 shadow-sm"
+            style={{ y: cardY, rotate: cardRotate, scale: cardScale }}
+            className="bg-card border border-border rounded-md p-6 md:p-8 shadow-[0_30px_60px_-30px_hsl(var(--charcoal)/0.35)] will-change-transform"
           >
             <div className="flex items-center justify-between pb-4 border-b border-border mb-4">
               <div className="flex items-center gap-2">
