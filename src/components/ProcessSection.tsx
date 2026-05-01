@@ -1,4 +1,5 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { useRef } from "react";
 import { Send, Search, Sparkles, PlayCircle, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
@@ -10,6 +11,13 @@ const descKeys = ["step1_desc", "step2_desc", "step3_desc", "step4_desc"] as con
 
 const ProcessSection = () => {
   const { lang } = useLanguage();
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 0.7", "end 0.4"],
+  });
+  const lineHeight = useTransform(scrollYProgress, [0, 1], reduce ? ["100%", "100%"] : ["0%", "100%"]);
 
   return (
     <section className="py-24 md:py-32 px-6 bg-gradient-dark">
@@ -29,34 +37,48 @@ const ProcessSection = () => {
           </h2>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {icons.map((Icon, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="relative p-8 rounded-2xl border border-primary-foreground/10 bg-primary-foreground/5 backdrop-blur-sm hover:border-gold/30 transition-all duration-300 group"
-            >
-              <div className="flex items-start gap-5">
-                <div className="flex-shrink-0 w-14 h-14 rounded-xl bg-gold/10 flex items-center justify-center group-hover:bg-gold/20 transition-colors">
-                  <Icon className="w-6 h-6 text-gold" />
-                </div>
-                <div>
-                  <span className="font-body text-xs tracking-[0.2em] uppercase text-gold/60 mb-1 block">
-                    {lang === "cs" ? "Krok" : "Bước"} {numberLabels[index]}
-                  </span>
-                  <h3 className="font-display text-xl font-semibold text-primary-foreground mb-2">
-                    {t(lang, titleKeys[index])}
-                  </h3>
-                  <p className="font-body text-primary-foreground/60 text-sm leading-relaxed">
-                    {t(lang, descKeys[index])}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
+        <div ref={ref} className="relative max-w-4xl mx-auto">
+          {/* Track line — left on mobile, center on desktop */}
+          <div className="absolute left-5 md:left-1/2 md:-translate-x-1/2 top-2 bottom-2 w-px bg-primary-foreground/15" />
+          {/* Filling gold line */}
+          <motion.div
+            style={{ height: lineHeight }}
+            className="absolute left-5 md:left-1/2 md:-translate-x-1/2 top-2 w-px bg-gradient-to-b from-gold/80 via-gold to-gold/40 origin-top"
+          />
+
+          <ul className="space-y-12 md:space-y-16">
+            {icons.map((Icon, index) => {
+              const isRight = index % 2 === 1;
+              return (
+                <motion.li
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.6 }}
+                  transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                  className="relative pl-14 md:pl-0 md:grid md:grid-cols-2 md:gap-12 md:items-center"
+                >
+                  {/* Node dot */}
+                  <div className="absolute left-5 md:left-1/2 md:-translate-x-1/2 top-3 -translate-x-1/2 w-3 h-3 rounded-full bg-gold ring-4 ring-charcoal" />
+
+                  <div className={isRight ? "md:col-start-2 md:pl-10" : "md:col-start-1 md:pr-10 md:text-right"}>
+                    <span className="font-body text-[11px] tracking-[0.3em] uppercase text-gold/70 mb-2 block">
+                      {lang === "cs" ? "Krok" : "Bước"} {numberLabels[index]}
+                    </span>
+                    <h3 className="font-display text-xl md:text-2xl font-semibold text-primary-foreground mb-2 inline-flex items-center gap-3">
+                      {!isRight && <Icon className="hidden md:inline-block w-5 h-5 text-gold order-2" />}
+                      <span>{t(lang, titleKeys[index])}</span>
+                      {isRight && <Icon className="hidden md:inline-block w-5 h-5 text-gold" />}
+                      <Icon className="md:hidden w-5 h-5 text-gold" />
+                    </h3>
+                    <p className="font-body text-primary-foreground/65 text-sm md:text-[15px] leading-relaxed max-w-md md:inline-block">
+                      {t(lang, descKeys[index])}
+                    </p>
+                  </div>
+                </motion.li>
+              );
+            })}
+          </ul>
         </div>
 
         <div className="text-center mt-12">

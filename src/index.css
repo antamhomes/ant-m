@@ -87,4 +87,45 @@
   .bg-gradient-dark {
     background: linear-gradient(180deg, hsl(var(--charcoal)) 0%, hsl(var(--charcoal-light)) 100%);
   }
+
+  /* Quiet luxury: very subtle floating motion for hero cards */
+  @keyframes float-soft {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .animate-float-soft {
+    animation: float-soft 7s ease-in-out infinite;
+  }
+  .animate-float-soft-delay {
+    animation: float-soft 9s ease-in-out infinite;
+    animation-delay: -3s;
+  }
+
+  .glass-card {
+    background: hsl(var(--charcoal) / 0.55);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid hsl(var(--gold) / 0.25);
+    box-shadow: 0 20px 50px -20px hsl(var(--charcoal) / 0.6);
+  }
+  .glass-card-cream {
+    background: hsl(var(--warm-cream) / 0.85);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid hsl(var(--gold) / 0.3);
+    box-shadow: 0 20px 50px -20px hsl(var(--charcoal) / 0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-soft,
+  .animate-float-soft-delay {
+    animation: none !important;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

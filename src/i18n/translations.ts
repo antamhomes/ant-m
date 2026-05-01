@@ -79,10 +79,16 @@ const translations = {
 
     // BeforeAfter
     beforeAfter_label: "Detail z realizace",
-    beforeAfter_title: "Malé úpravy mohou změnit celý dojem z bytu.",
-    beforeAfter_desc: "Ukázka, jak může drobná péče o byt změnit první dojem hosta.",
+    beforeAfter_title: "Detaily, které mění první dojem",
+    beforeAfter_desc: "Někdy rozhoduje světlo, čistota, atmosféra a pocit, který byt udělá na první pohled.",
     before: "Před",
     after: "Po péči ANTAM",
+    detail1_title: "Připraveno pro hosty",
+    detail1_desc: "Každý byt prochází přípravou ještě před tím, než hosté dorazí.",
+    detail2_title: "Čistý první dojem",
+    detail2_desc: "Pořádek, světlo a klidná atmosféra pomáhají vytvořit dobrou první vzpomínku.",
+    detail3_title: "Prostor, který působí důvěryhodně",
+    detail3_desc: "Detaily a péče o byt rozhodují, jak hosté vnímají kvalitu pobytu.",
 
     // Gallery / Portfolio
     gallery_label: "Portfolio",
@@ -90,13 +96,13 @@ const translations = {
     gallery_desc: "Každý byt má jinou lokalitu, jiný typ hostů a jiný potenciál. Proto u každého hledáme směr, který dává největší smysl.",
     portfolio1_title: "Praha 1 — byt s výhledem na Muzeum",
     portfolio1_desc: "Silná lokalita, výhled a turistická poptávka. Zaměřujeme se na prezentaci, cenu a dobrý dojem z pobytu.",
-    portfolio1_tags: ["Fotky", "Cena", "Hosté", "Provoz"],
+    portfolio1_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
     portfolio2_title: "Mladá Boleslav — byt pro pracovní pobyty",
     portfolio2_desc: "Byt vhodný pro hosty, kteří přijíždějí za prací a potřebují pohodlný delší pobyt.",
-    portfolio2_tags: ["Pracovní pobyty", "Delší rezervace", "Úklid", "Přehled"],
+    portfolio2_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
     portfolio3_title: "Praha 3 — moderní byt s garáží",
     portfolio3_desc: "Novější byt, kde dává smysl pracovat s klidem, garáží a dobrou dostupností do centra.",
-    portfolio3_tags: ["Garáž", "Dostupnost", "Komfort", "Obsazenost"],
+    portfolio3_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
 
     // Process
     process_label: "Jak to funguje",
@@ -105,8 +111,8 @@ const translations = {
     step1_desc: "Adresa, fotky nebo odkaz, základní informace o bytu a vašem cíli.",
     step2_title: "Zhodnotíme potenciál",
     step2_desc: "Podíváme se na lokalitu, stav bytu, okolní nabídku a možný směr pronájmu.",
-    step3_title: "Připravíme nabídku",
-    step3_desc: "Nastavíme prezentaci, cenu, pravidla, texty a další věci potřebné pro spuštění.",
+    step3_title: "Navrhneme postup",
+    step3_desc: "Připravíme prezentaci, nastavení a domluvíme směr, který dává smysl pro váš byt.",
     step4_title: "Spustíme správu",
     step4_desc: "Řešíme hosty, úklid, cenu, obsazenost a průběžné zlepšování nabídky.",
     process_cta: "Zjistit potenciál bytu zdarma",
@@ -278,10 +284,16 @@ const translations = {
 
     // BeforeAfter
     beforeAfter_label: "Trước và sau",
-    beforeAfter_title: "Những thay đổi nhỏ có thể thay đổi toàn bộ ấn tượng.",
-    beforeAfter_desc: "Với cho thuê ngắn hạn, ấn tượng đầu tiên rất quan trọng.",
+    beforeAfter_title: "Những chi tiết tạo nên ấn tượng đầu tiên",
+    beforeAfter_desc: "Đôi khi ánh sáng, sự sạch sẽ, không khí và cảm giác đầu tiên quyết định tất cả.",
     before: "Trước",
     after: "Sau khi ANTAM chăm sóc",
+    detail1_title: "Sẵn sàng đón khách",
+    detail1_desc: "Mỗi căn hộ đều được chuẩn bị kỹ trước khi khách đến.",
+    detail2_title: "Ấn tượng đầu tiên sạch sẽ",
+    detail2_desc: "Trật tự, ánh sáng và không khí yên tĩnh tạo nên kỷ niệm tốt đầu tiên.",
+    detail3_title: "Không gian đáng tin cậy",
+    detail3_desc: "Chi tiết và sự chăm sóc quyết định cảm nhận của khách về chất lượng kỳ nghỉ.",
 
     // Gallery
     gallery_label: "Dự án",
@@ -289,13 +301,13 @@ const translations = {
     gallery_desc: "Một số căn hộ chúng tôi đang chuẩn bị, trình bày hoặc quản lý cho cho thuê ngắn hạn.",
     portfolio1_title: "Praha 1 — căn hộ view Bảo tàng",
     portfolio1_desc: "Vị trí mạnh, view và nhu cầu du lịch cao. Tập trung vào trình bày, giá và ấn tượng tốt.",
-    portfolio1_tags: ["Ảnh", "Giá", "Khách", "Vận hành"],
+    portfolio1_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
     portfolio2_title: "Mladá Boleslav — căn cho khách công tác",
     portfolio2_desc: "Phù hợp khách đến công tác và cần lưu trú dài ngày thoải mái.",
-    portfolio2_tags: ["Khách công tác", "Đặt dài hạn", "Dọn dẹp", "Báo cáo"],
+    portfolio2_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
     portfolio3_title: "Praha 3 — căn hộ hiện đại có garage",
     portfolio3_desc: "Căn mới, ưu tiên sự yên tĩnh, garage và tiếp cận trung tâm thuận tiện.",
-    portfolio3_tags: ["Garage", "Tiếp cận", "Tiện nghi", "Tỷ lệ lấp đầy"],
+    portfolio3_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
 
     // Process
     process_label: "Cách hoạt động",
@@ -304,8 +316,8 @@ const translations = {
     step1_desc: "Địa chỉ, ảnh hoặc link, thông tin cơ bản và mục tiêu của bạn.",
     step2_title: "Đánh giá tiềm năng",
     step2_desc: "Chúng tôi xem vị trí, tình trạng, nguồn cung xung quanh và hướng cho thuê.",
-    step3_title: "Chuẩn bị tin đăng",
-    step3_desc: "Chúng tôi cài đặt trình bày, giá, quy tắc và mọi thứ cần thiết để khởi chạy.",
+    step3_title: "Đề xuất hướng đi",
+    step3_desc: "Chuẩn bị trình bày, cài đặt và thống nhất hướng phù hợp với căn hộ của bạn.",
     step4_title: "Bắt đầu quản lý",
     step4_desc: "Chúng tôi lo khách, dọn dẹp, giá, tỷ lệ lấp đầy và cải thiện liên tục.",
     process_cta: "Tìm hiểu tiềm năng căn hộ miễn phí",
