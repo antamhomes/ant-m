@@ -1,23 +1,37 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { BedDouble, FileBarChart } from "lucide-react";
+import { useRef } from "react";
 import heroImg from "@/assets/real-bedroom-luxury.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
 const HeroSection = () => {
   const { lang } = useLanguage();
+  const ref = useRef<HTMLElement>(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+  // Very subtle parallax: image moves slower than scroll
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "18%"]);
+  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <div className="absolute inset-0">
+    <section ref={ref} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <motion.div className="absolute inset-0 will-change-transform" style={{ y: imageY }}>
         <img
           src={heroImg}
           alt="Luxusní byt spravovaný naším týmem"
-          className="w-full h-full object-cover"
+          className="w-full h-[115%] object-cover"
           width={1920}
           height={1080}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/70 via-charcoal/50 to-charcoal/80" />
-      </div>
+        <motion.div
+          style={{ opacity: overlayOpacity }}
+          className="absolute inset-0 bg-gradient-to-b from-charcoal/75 via-charcoal/55 to-charcoal/85"
+        />
+      </motion.div>
 
       <div className="relative z-10 text-center px-6 max-w-4xl mx-auto">
         <motion.p
@@ -78,6 +92,51 @@ const HeroSection = () => {
           </a>
         </motion.div>
       </div>
+
+      {/* Decorative floating cards (desktop only, hidden on mobile for performance) */}
+      <motion.div
+        aria-hidden="true"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
+        className="hidden lg:flex absolute left-[6%] top-[28%] z-10 pointer-events-none"
+      >
+        <div className="glass-card-cream rounded-md px-5 py-4 flex items-center gap-3 animate-float-soft">
+          <div className="w-9 h-9 rounded-sm bg-gold/15 flex items-center justify-center">
+            <BedDouble className="w-4 h-4 text-gold" />
+          </div>
+          <div className="text-left">
+            <p className="font-body text-[10px] tracking-[0.2em] uppercase text-foreground/55">
+              {lang === "cs" ? "Pro hosty" : "Cho khách"}
+            </p>
+            <p className="font-display text-sm font-semibold text-foreground">
+              {lang === "cs" ? "Byt připravený pro hosty" : "Căn hộ sẵn sàng đón khách"}
+            </p>
+          </div>
+        </div>
+      </motion.div>
+
+      <motion.div
+        aria-hidden="true"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 1.3, ease: [0.22, 1, 0.36, 1] }}
+        className="hidden lg:flex absolute right-[6%] bottom-[22%] z-10 pointer-events-none"
+      >
+        <div className="glass-card rounded-md px-5 py-4 flex items-center gap-3 animate-float-soft-delay">
+          <div className="w-9 h-9 rounded-sm bg-gold/20 flex items-center justify-center">
+            <FileBarChart className="w-4 h-4 text-gold" />
+          </div>
+          <div className="text-left">
+            <p className="font-body text-[10px] tracking-[0.2em] uppercase text-gold/80">
+              {lang === "cs" ? "Pro majitele" : "Cho chủ nhà"}
+            </p>
+            <p className="font-display text-sm font-semibold text-primary-foreground">
+              {lang === "cs" ? "Přehled pro majitele" : "Báo cáo cho chủ nhà"}
+            </p>
+          </div>
+        </div>
+      </motion.div>
 
       <motion.div
         initial={{ opacity: 0 }}
