@@ -1,5 +1,4 @@
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { BedDouble, FileBarChart } from "lucide-react";
 import { useRef } from "react";
 import heroImg from "@/assets/real-bedroom-luxury.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -92,51 +91,6 @@ const HeroSection = () => {
           </a>
         </motion.div>
       </div>
-
-      {/* Decorative floating cards (desktop only, hidden on mobile for performance) */}
-      <motion.div
-        aria-hidden="true"
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, delay: 1.1, ease: [0.22, 1, 0.36, 1] }}
-        className="hidden lg:flex absolute left-[6%] top-[28%] z-10 pointer-events-none"
-      >
-        <div className="glass-card-cream rounded-md px-5 py-4 flex items-center gap-3 animate-float-soft">
-          <div className="w-9 h-9 rounded-sm bg-gold/15 flex items-center justify-center">
-            <BedDouble className="w-4 h-4 text-gold" />
-          </div>
-          <div className="text-left">
-            <p className="font-body text-[10px] tracking-[0.2em] uppercase text-foreground/55">
-              {t(lang, "hero_card1_label")}
-            </p>
-            <p className="font-display text-sm font-semibold text-foreground">
-              {t(lang, "hero_card1_text")}
-            </p>
-          </div>
-        </div>
-      </motion.div>
-
-      <motion.div
-        aria-hidden="true"
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.9, delay: 1.3, ease: [0.22, 1, 0.36, 1] }}
-        className="hidden lg:flex absolute right-[6%] bottom-[22%] z-10 pointer-events-none"
-      >
-        <div className="glass-card rounded-md px-5 py-4 flex items-center gap-3 animate-float-soft-delay">
-          <div className="w-9 h-9 rounded-sm bg-gold/20 flex items-center justify-center">
-            <FileBarChart className="w-4 h-4 text-gold" />
-          </div>
-          <div className="text-left">
-            <p className="font-body text-[10px] tracking-[0.2em] uppercase text-gold/80">
-              {t(lang, "hero_card2_label")}
-            </p>
-            <p className="font-display text-sm font-semibold text-primary-foreground">
-              {t(lang, "hero_card2_text")}
-            </p>
-          </div>
-        </div>
-      </motion.div>
 
       <motion.div
         initial={{ opacity: 0 }}
