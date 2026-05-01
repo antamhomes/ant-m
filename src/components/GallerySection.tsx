@@ -1,5 +1,4 @@
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 import { MapPin } from "lucide-react";
 import portfolioLivingDining from "@/assets/portfolio-living-dining.jpg";
 import portfolioBedroomMaster from "@/assets/portfolio-bedroom-master.jpg";
@@ -36,17 +35,6 @@ const portfolio: { src: string; titleKey: TranslationKey; descKey: TranslationKe
 
 const GallerySection = () => {
   const { lang } = useLanguage();
-  const ref = useRef<HTMLDivElement>(null);
-  const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start 0.85", "start 0.25"],
-  });
-  const leftX = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["12%", "0%"]);
-  const rightX = useTransform(scrollYProgress, [0, 1], reduce ? ["0%", "0%"] : ["-12%", "0%"]);
-  const sideRotate = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [-2, 0]);
-  const sideRotateRight = useTransform(scrollYProgress, [0, 1], reduce ? [0, 0] : [2, 0]);
-  const sideScale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [0.94, 1]);
 
   return (
     <section id="portfolio" className="py-16 md:py-24 px-6 bg-background">
@@ -73,7 +61,6 @@ const GallerySection = () => {
         </motion.div>
 
         <div
-          ref={ref}
           className="
             flex gap-6 lg:gap-8
             overflow-x-auto
@@ -86,13 +73,6 @@ const GallerySection = () => {
           {portfolio.map((item, index) => {
             const tags = t(lang, item.tagsKey) as unknown as string[];
             const visibleTags = tags.slice(0, 2);
-            const isLeft = index === 0;
-            const isRight = index === 2;
-            const motionStyle = isLeft
-              ? { x: leftX, rotate: sideRotate, scale: sideScale }
-              : isRight
-                ? { x: rightX, rotate: sideRotateRight, scale: sideScale }
-                : undefined;
             return (
               <motion.article
                 key={item.titleKey}
@@ -100,8 +80,7 @@ const GallerySection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.7, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                style={motionStyle}
-                className="group bg-card border border-border rounded-sm overflow-hidden hover:border-gold/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500 will-change-transform shrink-0 w-[82%] sm:w-[46%] md:w-[44%] lg:w-[31%] snap-center lg:snap-start"
+                className="group bg-card border border-border rounded-sm overflow-hidden hover:border-gold/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500 shrink-0 w-[82%] sm:w-[46%] md:w-[44%] lg:w-[31%] snap-center lg:snap-start"
               >
                 <div className="relative aspect-[4/5] md:aspect-[5/6] overflow-hidden">
                   <img
