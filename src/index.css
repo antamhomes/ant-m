@@ -154,9 +154,11 @@
     color: #12352F;
     border: 1px solid rgba(201, 164, 92, 0.7);
     border-radius: 6px;
-    padding: 14px 26px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
+    padding: 18px 44px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 13px;
     box-shadow:
       0 10px 30px rgba(0, 0, 0, 0.25),
       inset 0 1px 0 rgba(255, 248, 238, 0.45);
@@ -201,9 +203,11 @@
     color: #FFF8EE;
     border: 1px solid rgba(255, 248, 238, 0.35);
     border-radius: 6px;
-    padding: 14px 26px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
+    padding: 18px 44px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 13px;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     transition:
