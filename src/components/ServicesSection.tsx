@@ -3,8 +3,8 @@ import { CheckCircle } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
-const titleKeys = ["svc1_title", "svc2_title", "svc3_title"] as const;
-const itemKeys = ["svc1_items", "svc2_items", "svc3_items"] as const;
+const titleKeys = ["svc1_title", "svc2_title", "svc3_title", "svc4_title", "svc5_title"] as const;
+const itemKeys = ["svc1_items", "svc2_items", "svc3_items", "svc4_items", "svc5_items"] as const;
 
 const ServicesSection = () => {
   const { lang } = useLanguage();
@@ -30,7 +30,7 @@ const ServicesSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           {titleKeys.map((tk, index) => {
             const items = t(lang, itemKeys[index]) as unknown as string[];
             return (

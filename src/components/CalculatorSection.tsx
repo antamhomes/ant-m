@@ -210,6 +210,10 @@ const CalculatorSection = () => {
             </div>
           </motion.div>
         </div>
+
+        <p className="font-body text-xs text-muted-foreground text-center mt-8 max-w-2xl mx-auto">
+          {t(lang, "calc_disclaimer")}
+        </p>
       </div>
     </section>
   );

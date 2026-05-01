@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { MessageSquare, Paintbrush, Camera, TrendingUp } from "lucide-react";
+import { Send, Search, Sparkles, PlayCircle, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
-const icons = [MessageSquare, Paintbrush, Camera, TrendingUp];
+const icons = [Send, Search, Sparkles, PlayCircle];
 const numberLabels = ["01", "02", "03", "04"];
 const titleKeys = ["step1_title", "step2_title", "step3_title", "step4_title"] as const;
 const descKeys = ["step1_desc", "step2_desc", "step3_desc", "step4_desc"] as const;
@@ -57,6 +57,16 @@ const ProcessSection = () => {
               </div>
             </motion.div>
           ))}
+        </div>
+
+        <div className="text-center mt-12">
+          <a
+            href="#kontakt"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-gold text-accent-foreground font-body font-semibold text-sm tracking-wider uppercase rounded-sm hover:brightness-110 transition-all"
+          >
+            {t(lang, "process_cta")}
+            <ChevronRight className="w-4 h-4" />
+          </a>
         </div>
       </div>
     </section>

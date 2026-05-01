@@ -30,12 +30,18 @@ const Footer = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center gap-6">
-          <div className="flex gap-8">
+          <div className="flex flex-wrap justify-center gap-6">
             <a href="#jak-to-funguje" className="font-body text-sm text-primary-foreground/60 hover:text-gold transition-colors">
-              {t(lang, "nav_howItWorks")}
+              {t(lang, "footer_link_how")}
+            </a>
+            <a href="#portfolio" className="font-body text-sm text-primary-foreground/60 hover:text-gold transition-colors">
+              {t(lang, "footer_link_portfolio")}
+            </a>
+            <a href="#sluzby" className="font-body text-sm text-primary-foreground/60 hover:text-gold transition-colors">
+              {t(lang, "footer_link_services")}
             </a>
             <a href="#kontakt" className="font-body text-sm text-primary-foreground/60 hover:text-gold transition-colors">
-              {lang === "cs" ? "Kontakt" : "Liên hệ"}
+              {t(lang, "footer_link_contact")}
             </a>
           </div>
 

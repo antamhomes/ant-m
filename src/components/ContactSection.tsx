@@ -119,6 +119,9 @@ const ContactSection = () => {
             <Send className="w-4 h-4" />
             {t(lang, "contact_submit")}
           </button>
+          <p className="font-body text-xs text-muted-foreground text-center">
+            {t(lang, "contact_small")}
+          </p>
         </motion.form>
       </div>
     </section>
