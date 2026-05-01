@@ -1,9 +1,9 @@
 import { motion } from "framer-motion";
-import { TrendingUp, Shield, Clock, Wrench, Star, Banknote } from "lucide-react";
+import { TrendingUp, Shield, FileText, Headset, LineChart, Award } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
-const icons = [Banknote, Wrench, Shield, Clock, TrendingUp, Star];
+const icons = [TrendingUp, FileText, Shield, Headset, LineChart, Award];
 const titleKeys = ["benefit1_title", "benefit2_title", "benefit3_title", "benefit4_title", "benefit5_title", "benefit6_title"] as const;
 const descKeys = ["benefit1_desc", "benefit2_desc", "benefit3_desc", "benefit4_desc", "benefit5_desc", "benefit6_desc"] as const;
 

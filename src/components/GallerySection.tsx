@@ -1,25 +1,29 @@
 import { motion } from "framer-motion";
 import portfolioLivingDining from "@/assets/portfolio-living-dining.jpg";
 import portfolioBedroomMaster from "@/assets/portfolio-bedroom-master.jpg";
-import portfolioLivingTerrace from "@/assets/portfolio-living-terrace.jpg";
-import portfolioBedroomCozy from "@/assets/portfolio-bedroom-cozy.jpg";
-import realBedroomLuxury from "@/assets/real-bedroom-luxury.jpg";
 import realLivingRoom from "@/assets/real-living-room.jpg";
-import realBedroomModern from "@/assets/real-bedroom-modern.jpg";
-import realLivingCozy from "@/assets/real-living-cozy.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { t } from "@/i18n/translations";
+import { t, type TranslationKey } from "@/i18n/translations";
 
-// Editoriální mozaika 8 fotek na 4 sloupcích / 4 řádcích
-const gallery = [
-  { src: portfolioLivingDining, alt: "Obývací pokoj s jídelnou", span: "md:col-span-2 md:row-span-2" },
-  { src: portfolioBedroomMaster, alt: "Hlavní ložnice", span: "md:col-span-2" },
-  { src: portfolioLivingTerrace, alt: "Obývací pokoj s výhledem na terasu", span: "" },
-  { src: portfolioBedroomCozy, alt: "Útulná ložnice", span: "" },
-  { src: realBedroomLuxury, alt: "Luxusní ložnice", span: "md:col-span-2" },
-  { src: realLivingRoom, alt: "Moderní obývací pokoj", span: "" },
-  { src: realBedroomModern, alt: "Stylová ložnice", span: "" },
-  { src: realLivingCozy, alt: "Útulný obývací pokoj", span: "md:col-span-2" },
+const portfolio: { src: string; titleKey: TranslationKey; descKey: TranslationKey; alt: string }[] = [
+  {
+    src: portfolioLivingDining,
+    titleKey: "portfolio1_title",
+    descKey: "portfolio1_desc",
+    alt: "Byt v centru Prahy",
+  },
+  {
+    src: portfolioBedroomMaster,
+    titleKey: "portfolio2_title",
+    descKey: "portfolio2_desc",
+    alt: "Byt pro pracovní pobyty",
+  },
+  {
+    src: realLivingRoom,
+    titleKey: "portfolio3_title",
+    descKey: "portfolio3_desc",
+    alt: "Moderní byt s garáží",
+  },
 ];
 
 const GallerySection = () => {
@@ -46,25 +50,35 @@ const GallerySection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 auto-rows-[200px] md:auto-rows-[220px] gap-4">
-          {gallery.map((item, index) => (
-            <motion.div
-              key={item.alt}
-              initial={{ opacity: 0, y: 20 }}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          {portfolio.map((item, index) => (
+            <motion.article
+              key={item.titleKey}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: Math.min(index * 0.08, 0.4) }}
-              className={`overflow-hidden rounded-sm group relative ${item.span}`}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              className="group bg-card border border-border rounded-sm overflow-hidden hover:border-gold/30 transition-all duration-500"
             >
-              <img
-                src={item.src}
-                alt={item.alt}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                loading="lazy"
-                width={1600}
-                height={1067}
-              />
-            </motion.div>
+              <div className="aspect-[4/3] overflow-hidden">
+                <img
+                  src={item.src}
+                  alt={item.alt}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                  width={1600}
+                  height={1200}
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="font-display text-lg md:text-xl font-semibold text-foreground mb-2">
+                  {t(lang, item.titleKey)}
+                </h3>
+                <p className="font-body text-muted-foreground text-sm leading-relaxed">
+                  {t(lang, item.descKey)}
+                </p>
+              </div>
+            </motion.article>
           ))}
         </div>
       </div>

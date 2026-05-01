@@ -1,15 +1,12 @@
 import { motion } from "framer-motion";
-import { ShieldCheck, Eye, TrendingUp, Wrench, CalendarCheck, AlertTriangle, ChevronRight } from "lucide-react";
+import { Eye, TrendingUp, CalendarCheck, Wallet } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
-const compIcons = [Eye, Wrench, TrendingUp, ShieldCheck, CalendarCheck, AlertTriangle];
-const compTitleKeys = ["comp1_title", "comp2_title", "comp3_title", "comp4_title", "comp5_title", "comp6_title"] as const;
-const compLongKeys = ["comp1_long", "comp2_long", "comp3_long", "comp4_long", "comp5_long", "comp6_long"] as const;
-const compShortKeys = ["comp1_short", "comp2_short", "comp3_short", "comp4_short", "comp5_short", "comp6_short"] as const;
-
-const moneyValueKeys = ["money1_value", "money2_value", "money3_value"] as const;
-const moneyLabelKeys = ["money1_label", "money2_label", "money3_label"] as const;
+const compIcons = [Eye, TrendingUp, CalendarCheck, Wallet];
+const compTitleKeys = ["comp1_title", "comp2_title", "comp3_title", "comp4_title"] as const;
+const compLongKeys = ["comp1_long", "comp2_long", "comp3_long", "comp4_long"] as const;
+const compShortKeys = ["comp1_short", "comp2_short", "comp3_short", "comp4_short"] as const;
 
 const WhyBetterSection = () => {
   const { lang } = useLanguage();
@@ -37,7 +34,7 @@ const WhyBetterSection = () => {
           </p>
         </motion.div>
 
-        <div className="space-y-6 mb-20">
+        <div className="space-y-6">
           {compIcons.map((Icon, index) => (
             <motion.div
               key={index}
@@ -76,53 +73,6 @@ const WhyBetterSection = () => {
             </motion.div>
           ))}
         </div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="bg-gradient-dark rounded-md p-8 md:p-12"
-        >
-          <h3 className="font-display text-2xl md:text-3xl font-semibold text-primary-foreground text-center mb-10">
-            {t(lang, "moneyFacts_title1")}
-            <span className="text-gradient-gold">{t(lang, "moneyFacts_title2")}</span>
-          </h3>
-
-          <div className="grid md:grid-cols-3 gap-8 mb-10">
-            {moneyValueKeys.map((vk, i) => (
-              <motion.div
-                key={vk}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15, duration: 0.5 }}
-                className="text-center"
-              >
-                <div
-                  className={`font-display text-3xl md:text-4xl font-bold mb-2 ${
-                    i === 2 ? "text-gradient-gold" : "text-primary-foreground"
-                  }`}
-                >
-                  {t(lang, vk)}
-                </div>
-                <p className="font-body text-sm text-primary-foreground/60">
-                  {t(lang, moneyLabelKeys[i])}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="text-center">
-            <a
-              href="#kontakt"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gold text-accent-foreground font-body font-semibold text-sm tracking-wider uppercase rounded-sm hover:brightness-110 transition-all"
-            >
-              {t(lang, "moneyFacts_cta")}
-              <ChevronRight className="w-4 h-4" />
-            </a>
-          </div>
-        </motion.div>
       </div>
     </section>
   );

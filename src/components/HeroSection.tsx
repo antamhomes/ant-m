@@ -44,9 +44,18 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="font-body text-lg md:text-xl text-primary-foreground/80 mb-10 max-w-2xl mx-auto"
+          className="font-body text-lg md:text-xl text-primary-foreground/85 mb-3 max-w-2xl mx-auto"
         >
           {t(lang, "hero_desc")}
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="font-body text-sm md:text-base text-primary-foreground/60 mb-10 max-w-xl mx-auto"
+        >
+          {t(lang, "hero_extra")}
         </motion.p>
 
         <motion.div
