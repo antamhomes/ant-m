@@ -10,14 +10,14 @@ const ServicesSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section id="sluzby" className="py-24 md:py-32 px-6 bg-secondary">
+    <section id="sluzby" className="py-14 md:py-32 px-6 bg-secondary">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-10 md:mb-16"
         >
           <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
             {t(lang, "services_label")}
@@ -30,7 +30,7 @@ const ServicesSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
           {titleKeys.map((tk, index) => {
             const items = t(lang, itemKeys[index]) as unknown as string[];
             return (
@@ -40,16 +40,16 @@ const ServicesSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.15 }}
-                className="bg-card border border-border p-8 rounded-sm"
+                className="bg-card border border-border p-5 md:p-8 rounded-sm"
               >
-                <h3 className="font-display text-xl font-semibold text-foreground mb-6 pb-4 border-b border-border">
+                <h3 className="font-display text-lg md:text-xl font-semibold text-foreground mb-4 md:mb-6 pb-3 md:pb-4 border-b border-border">
                   {t(lang, tk)}
                 </h3>
-                <ul className="space-y-4">
+                <ul className="space-y-2.5 md:space-y-4">
                   {items.map((item: string) => (
                     <li key={item} className="flex items-start gap-3">
-                      <CheckCircle className="w-5 h-5 text-gold flex-shrink-0 mt-0.5" />
-                      <span className="font-body text-muted-foreground">{item}</span>
+                      <CheckCircle className="w-4 h-4 md:w-5 md:h-5 text-gold flex-shrink-0 mt-0.5" />
+                      <span className="font-body text-sm md:text-base text-muted-foreground">{item}</span>
                     </li>
                   ))}
                 </ul>
