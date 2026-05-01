@@ -13,6 +13,47 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Update <html lang> attribute
+  useEffect(() => {
+    document.documentElement.lang = lang === "cs" ? "cs" : "vi";
+  }, [lang]);
+
+  const LangSwitch = ({ compact = false }: { compact?: boolean }) => (
+    <div
+      className={`inline-flex items-center rounded-full border ${
+        scrolled ? "border-border bg-card/60" : "border-primary-foreground/20 bg-transparent"
+      } overflow-hidden`}
+    >
+      <button
+        onClick={() => lang !== "cs" && toggleLang()}
+        className={`px-2.5 py-1 text-[11px] font-body font-semibold tracking-wider uppercase transition-colors ${
+          lang === "cs"
+            ? "bg-gold/15 text-gold"
+            : scrolled
+              ? "text-muted-foreground hover:text-foreground"
+              : "text-primary-foreground/60 hover:text-primary-foreground"
+        }`}
+        aria-pressed={lang === "cs"}
+      >
+        CZ
+      </button>
+      <span className={`w-px h-4 ${scrolled ? "bg-border" : "bg-primary-foreground/20"}`} />
+      <button
+        onClick={() => lang !== "vi" && toggleLang()}
+        className={`px-2.5 py-1 text-[11px] font-body font-semibold tracking-wider uppercase transition-colors ${
+          lang === "vi"
+            ? "bg-gold/15 text-gold"
+            : scrolled
+              ? "text-muted-foreground hover:text-foreground"
+              : "text-primary-foreground/60 hover:text-primary-foreground"
+        }`}
+        aria-pressed={lang === "vi"}
+      >
+        VI
+      </button>
+    </div>
+  );
+
   return (
     <motion.nav
       initial={{ y: -100 }}
@@ -20,23 +61,23 @@ const Navbar = () => {
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-background/95 backdrop-blur-md border-b border-border shadow-sm py-4"
-          : "bg-transparent py-6"
+          ? "bg-background/95 backdrop-blur-md border-b border-border shadow-sm py-3"
+          : "bg-transparent py-5"
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-        <a href="#" className="font-display text-xl font-semibold">
+        <a href="#" className="font-display text-lg md:text-xl font-semibold tracking-tight lowercase">
           <span className={scrolled ? "text-foreground" : "text-primary-foreground"}>
-            ANTAM{" "}
+            antam{" "}
           </span>
-          <span className="text-gradient-gold">s.r.o.</span>
+          <span className="text-gold">homes</span>
         </a>
 
-        <div className="hidden md:flex items-center gap-8">
+        <div className="hidden md:flex items-center gap-7">
           <a
             href="#jak-to-funguje"
-            className={`font-body text-sm tracking-wide transition-colors ${
-              scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/70 hover:text-primary-foreground"
+            className={`font-body text-sm transition-colors ${
+              scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/75 hover:text-primary-foreground"
             }`}
           >
             {t(lang, "nav_howItWorks")}
@@ -44,52 +85,30 @@ const Navbar = () => {
 
           <a
             href="#portfolio"
-            className={`font-body text-sm tracking-wide transition-colors ${
-              scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/70 hover:text-primary-foreground"
+            className={`font-body text-sm transition-colors ${
+              scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/75 hover:text-primary-foreground"
             }`}
           >
             Portfolio
           </a>
 
-          <button
-            onClick={toggleLang}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-sm text-xs font-body font-semibold tracking-wider uppercase transition-all border ${
-              scrolled
-                ? "border-border text-muted-foreground hover:text-foreground hover:border-gold/50"
-                : "border-primary-foreground/20 text-primary-foreground/70 hover:text-primary-foreground hover:border-primary-foreground/40"
-            }`}
-          >
-            <span className="text-sm">{lang === "cs" ? "🇻🇳" : "🇨🇿"}</span>
-            {lang === "cs" ? "VN" : "CZ"}
-          </button>
+          <LangSwitch />
 
           <a
             href="#kontakt"
-            className="px-6 py-2.5 bg-gold text-accent-foreground font-body font-semibold text-sm tracking-wider uppercase rounded-sm hover:brightness-110 transition-all"
+            className={`px-5 py-2.5 font-body font-semibold text-xs tracking-wider uppercase rounded-sm transition-all ${
+              scrolled
+                ? "bg-primary text-primary-foreground hover:brightness-110"
+                : "bg-primary-foreground text-primary hover:brightness-95"
+            }`}
           >
             {t(lang, "nav_freeConsultation")}
           </a>
         </div>
 
-        {/* Mobile: just the toggle + CTA */}
-        <div className="flex md:hidden items-center gap-3">
-          <button
-            onClick={toggleLang}
-            className={`flex items-center gap-1 px-2.5 py-1.5 rounded-sm text-xs font-body font-semibold tracking-wider uppercase transition-all border ${
-              scrolled
-                ? "border-border text-muted-foreground"
-                : "border-primary-foreground/20 text-primary-foreground/70"
-            }`}
-          >
-            <span className="text-sm">{lang === "cs" ? "🇻🇳" : "🇨🇿"}</span>
-            {lang === "cs" ? "VN" : "CZ"}
-          </button>
-          <a
-            href="#kontakt"
-            className="px-4 py-2 bg-gold text-accent-foreground font-body font-semibold text-xs tracking-wider uppercase rounded-sm"
-          >
-            {t(lang, "nav_freeConsultation")}
-          </a>
+        {/* Mobile */}
+        <div className="flex md:hidden items-center gap-2">
+          <LangSwitch compact />
         </div>
       </div>
     </motion.nav>
