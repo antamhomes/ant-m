@@ -15,7 +15,7 @@ const translations = {
     hero_cta2: "Jak to funguje",
 
     // Trust strip
-    trust1: "Správa od A do Z",
+    trust1: "Správa od A-Z",
     trust2: "Ceny podle trhu",
     trust3: "Kontrola po každém pobytu",
     trust4: "Přehled pro majitele",
@@ -220,7 +220,7 @@ const translations = {
     hero_cta2: "Cách hoạt động",
 
     // Trust strip
-    trust1: "Quản lý từ A đến Z",
+    trust1: "Quản lý từ A-Z",
     trust2: "Giá theo thị trường",
     trust3: "Kiểm tra sau mỗi lượt khách",
     trust4: "Báo cáo cho chủ nhà",
