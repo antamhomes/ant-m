@@ -84,7 +84,7 @@ const HeroSection = () => {
             {t(lang, "hero_cta")}
           </a>
           <a
-            href="#jak-to-funguje"
+            href="#kalkulacka"
             className="inline-flex items-center justify-center px-8 py-4 border border-primary-foreground/30 text-primary-foreground font-body font-medium text-sm tracking-wider uppercase rounded-sm hover:bg-primary-foreground/10 transition-all duration-300"
           >
             {t(lang, "hero_cta2")}
