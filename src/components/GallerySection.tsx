@@ -75,8 +75,8 @@ const GallerySection = () => {
                     height={2000}
                   />
                 </div>
-                <div className="p-7 md:p-8">
-                  <h3 className="font-display text-xl md:text-2xl font-semibold text-foreground mb-3 leading-snug">
+                <div className="p-6 md:p-8">
+                  <h3 className="font-display text-lg md:text-2xl font-semibold text-foreground mb-3 leading-snug">
                     {t(lang, item.titleKey)}
                   </h3>
                   <p className="font-body text-muted-foreground text-sm md:text-[15px] leading-relaxed mb-5">
