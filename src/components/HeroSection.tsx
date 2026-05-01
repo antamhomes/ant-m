@@ -33,7 +33,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-display text-4xl md:text-6xl lg:text-7xl font-semibold text-primary-foreground leading-tight mb-6"
+          className="font-display text-[2.25rem] sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-primary-foreground leading-[1.1] mb-6"
         >
           {t(lang, "hero_title1")}
           <br />
