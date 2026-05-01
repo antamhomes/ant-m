@@ -79,10 +79,16 @@ const translations = {
 
     // BeforeAfter
     beforeAfter_label: "Detail z realizace",
-    beforeAfter_title: "Malé úpravy mohou změnit celý dojem z bytu.",
-    beforeAfter_desc: "Ukázka, jak může drobná péče o byt změnit první dojem hosta.",
+    beforeAfter_title: "Detaily, které mění první dojem",
+    beforeAfter_desc: "Někdy rozhoduje světlo, čistota, atmosféra a pocit, který byt udělá na první pohled.",
     before: "Před",
     after: "Po péči ANTAM",
+    detail1_title: "Připraveno pro hosty",
+    detail1_desc: "Každý byt prochází přípravou ještě před tím, než hosté dorazí.",
+    detail2_title: "Čistý první dojem",
+    detail2_desc: "Pořádek, světlo a klidná atmosféra pomáhají vytvořit dobrou první vzpomínku.",
+    detail3_title: "Prostor, který působí důvěryhodně",
+    detail3_desc: "Detaily a péče o byt rozhodují, jak hosté vnímají kvalitu pobytu.",
 
     // Gallery / Portfolio
     gallery_label: "Portfolio",
@@ -278,10 +284,16 @@ const translations = {
 
     // BeforeAfter
     beforeAfter_label: "Trước và sau",
-    beforeAfter_title: "Những thay đổi nhỏ có thể thay đổi toàn bộ ấn tượng.",
-    beforeAfter_desc: "Với cho thuê ngắn hạn, ấn tượng đầu tiên rất quan trọng.",
+    beforeAfter_title: "Những chi tiết tạo nên ấn tượng đầu tiên",
+    beforeAfter_desc: "Đôi khi ánh sáng, sự sạch sẽ, không khí và cảm giác đầu tiên quyết định tất cả.",
     before: "Trước",
     after: "Sau khi ANTAM chăm sóc",
+    detail1_title: "Sẵn sàng đón khách",
+    detail1_desc: "Mỗi căn hộ đều được chuẩn bị kỹ trước khi khách đến.",
+    detail2_title: "Ấn tượng đầu tiên sạch sẽ",
+    detail2_desc: "Trật tự, ánh sáng và không khí yên tĩnh tạo nên kỷ niệm tốt đầu tiên.",
+    detail3_title: "Không gian đáng tin cậy",
+    detail3_desc: "Chi tiết và sự chăm sóc quyết định cảm nhận của khách về chất lượng kỳ nghỉ.",
 
     // Gallery
     gallery_label: "Dự án",
