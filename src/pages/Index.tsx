@@ -25,6 +25,7 @@ const Index = () => {
       <HeroSection />
       <TrustStrip />
       <BenefitsSection />
+      <PartnersStrip />
       <WhyBetterSection />
       <GallerySection />
       <CalculatorSection />
@@ -33,7 +34,6 @@ const Index = () => {
       <ProcessSection />
       <OwnerReportSection />
       <AboutSection />
-      <PartnersStrip />
       <PotentialCTA />
       <FAQSection />
       <ContactSection />
