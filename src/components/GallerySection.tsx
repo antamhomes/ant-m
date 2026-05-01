@@ -91,9 +91,11 @@ const GallerySection = () => {
                     width={1600}
                     height={2000}
                   />
-                  <div className="absolute top-3 right-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-charcoal/65 backdrop-blur-sm text-primary-foreground">
-                    <MapPin className="w-3 h-3 text-gold" />
-                    <span className="font-body text-[10px] tracking-[0.2em] uppercase">
+                  {/* Spodní zelený gradient s názvem města */}
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-charcoal via-charcoal/70 to-transparent" />
+                  <div className="absolute bottom-4 left-4 inline-flex items-center gap-1.5 text-primary-foreground">
+                    <MapPin className="w-3.5 h-3.5 text-gold" />
+                    <span className="font-body text-[11px] tracking-[0.25em] uppercase">
                       {item.location}
                     </span>
                   </div>
