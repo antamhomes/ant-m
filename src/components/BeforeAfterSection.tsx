@@ -14,22 +14,22 @@ const BeforeAfterSection = () => {
   };
 
   return (
-    <section id="jak-to-funguje" className="py-24 md:py-32 px-6 bg-secondary">
-      <div className="max-w-5xl mx-auto">
+    <section id="jak-to-funguje" className="py-20 md:py-24 px-6 bg-background">
+      <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-10"
         >
-          <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
+          <p className="text-gold/80 font-body text-xs tracking-[0.3em] uppercase mb-3">
             {t(lang, "beforeAfter_label")}
           </p>
-          <h2 className="font-display text-3xl md:text-5xl font-semibold text-foreground mb-6">
+          <h2 className="font-display text-2xl md:text-3xl font-semibold text-foreground mb-4">
             {t(lang, "beforeAfter_title")}
           </h2>
-          <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="font-body text-muted-foreground text-base max-w-xl mx-auto">
             {t(lang, "beforeAfter_desc")}
           </p>
         </motion.div>
@@ -39,7 +39,7 @@ const BeforeAfterSection = () => {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="relative w-full aspect-[4/3] md:aspect-[16/10] overflow-hidden rounded-sm shadow-2xl"
+          className="relative w-full aspect-[4/3] md:aspect-[16/9] overflow-hidden rounded-sm shadow-lg border border-border"
         >
           <img src={afterImg} alt="Byt po renovaci" className="absolute inset-0 w-full h-full object-cover" loading="lazy" width={1024} height={768} />
           <div className="absolute inset-0 overflow-hidden" style={{ width: `${sliderPosition}%` }}>

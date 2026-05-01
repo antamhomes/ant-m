@@ -21,7 +21,7 @@ const StatsSection = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="text-center"
             >
-              <div className="font-display text-4xl md:text-5xl font-bold text-gradient-gold mb-2">
+              <div className="font-display text-3xl md:text-5xl font-bold text-gradient-gold mb-2">
                 {t(lang, vk)}
               </div>
               <div className="font-body text-sm text-primary-foreground/60 tracking-wider uppercase">
@@ -30,6 +30,9 @@ const StatsSection = () => {
             </motion.div>
           ))}
         </div>
+        <p className="font-body text-xs text-primary-foreground/45 text-center mt-10 max-w-2xl mx-auto leading-relaxed">
+          {t(lang, "stats_disclaimer")}
+        </p>
       </div>
     </section>
   );
