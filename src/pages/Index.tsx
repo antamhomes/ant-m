@@ -24,8 +24,8 @@ const Index = () => {
       <TrustStrip />
       <BenefitsSection />
       <ServicesSection />
-      <StatsSection />
       <WhyBetterSection />
+      <StatsSection />
       <PotentialCTA />
       <GallerySection />
       <BeforeAfterSection />
