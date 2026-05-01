@@ -17,7 +17,7 @@ const translations = {
     // Trust strip
     trust1: "Správa od A do Z",
     trust2: "Ceny podle trhu",
-    trust3: "Úklid po každém pobytu",
+    trust3: "Kontrola po každém pobytu",
     trust4: "Přehled pro majitele",
 
     // Benefits
@@ -222,7 +222,7 @@ const translations = {
     // Trust strip
     trust1: "Quản lý từ A đến Z",
     trust2: "Giá theo thị trường",
-    trust3: "Dọn dẹp sau mỗi lượt khách",
+    trust3: "Kiểm tra sau mỗi lượt khách",
     trust4: "Báo cáo cho chủ nhà",
 
     // Benefits
