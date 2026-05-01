@@ -145,6 +145,86 @@
     border: 1px solid hsl(var(--gold) / 0.3);
     box-shadow: 0 20px 50px -20px hsl(var(--charcoal) / 0.4);
   }
+
+  /* ===== Hero CTAs — premium ===== */
+  .btn-hero-primary {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #FFF8EE 0%, #F3E4C8 100%);
+    color: #12352F;
+    border: 1px solid rgba(201, 164, 92, 0.45);
+    border-radius: 999px;
+    padding: 14px 26px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.65);
+    transition:
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.35s ease,
+      box-shadow 0.35s ease;
+  }
+  .btn-hero-primary:hover {
+    transform: translateY(-2px);
+    border-color: rgba(201, 164, 92, 0.75);
+    box-shadow:
+      0 14px 36px rgba(0, 0, 0, 0.28),
+      0 0 0 4px rgba(201, 164, 92, 0.10),
+      inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  }
+  .btn-hero-primary::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+      120deg,
+      transparent 20%,
+      rgba(255, 255, 255, 0.55) 50%,
+      transparent 80%
+    );
+    transform: translateX(-120%);
+    transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    opacity: 0;
+  }
+  .btn-hero-primary:hover::before {
+    transform: translateX(120%);
+    opacity: 1;
+  }
+
+  .btn-hero-secondary {
+    background: rgba(255, 248, 238, 0.06);
+    color: #FFF8EE;
+    border: 1px solid rgba(255, 248, 238, 0.35);
+    border-radius: 999px;
+    padding: 14px 26px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition:
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      background-color 0.3s ease,
+      border-color 0.3s ease;
+  }
+  .btn-hero-secondary:hover {
+    background: rgba(255, 248, 238, 0.12);
+    border-color: rgba(255, 248, 238, 0.55);
+    transform: translateY(-1px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn-hero-primary,
+    .btn-hero-secondary {
+      transition: none;
+    }
+    .btn-hero-primary::before {
+      display: none;
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -79,13 +79,13 @@ const HeroSection = () => {
         >
           <a
             href="#kontakt"
-            className="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground font-body font-semibold text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-gold/60 ring-1 ring-gold/30 hover:ring-gold/60 shadow-lg shadow-charcoal/30 transition-all duration-300"
+            className="btn-hero-primary inline-flex items-center justify-center font-body text-[14px]"
           >
-            {t(lang, "hero_cta")}
+            <span className="relative z-10">{t(lang, "hero_cta")}</span>
           </a>
           <a
-            href="#kalkulacka"
-            className="inline-flex items-center justify-center px-8 py-4 border border-primary-foreground/35 text-primary-foreground font-body font-medium text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-primary-foreground/10 transition-all duration-300"
+            href="#jak-to-funguje"
+            className="btn-hero-secondary inline-flex items-center justify-center font-body text-[14px]"
           >
             {t(lang, "hero_cta2")}
           </a>
