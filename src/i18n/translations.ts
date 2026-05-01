@@ -63,7 +63,7 @@ const translations = {
     comp2_short: "Cena se průběžně upravuje podle sezóny, obsazenosti, okolní nabídky a zájmu hostů.",
     comp3_title: "Flexibilita",
     comp3_long: "Byt je vázaný smlouvou a změny se řeší složitěji.",
-    comp3_short: "Kalendář lze plánovat pružněji a byt zůstává flexibilnější pro další využití.",
+    comp3_short: "Po každém pobytu byt kontrolujeme a průběžně řešíme drobnosti, aby si udržel dobrý stav i hodnotu pro další pronájmy.",
     comp4_title: "Platby a přehled",
     comp4_long: "Platby a případné zpoždění řešíte přímo s nájemníkem.",
     comp4_short: "Rezervace a platby probíhají přes platformy, vše je dohledatelné a přehledné.",
@@ -122,7 +122,7 @@ const translations = {
     about_title: "Neřešíme byty podle šablony.",
     about_p1: "Každý byt má jinou lokalitu, jiný typ hostů a jiný potenciál. Proto nehledáme univerzální řešení, ale způsob, jak pro konkrétní byt najít jeho nejlepší využití.",
     about_p2: "Po spuštění nabídky práce nekončí. Průběžně sledujeme obsazenost, cenu, okolní nabídku, sezónu i zpětnou vazbu hostů — a podle toho byt dál ladíme.",
-    about_p3: "Cíl je jednoduchý: byt, který dobře funguje, hosté, kteří jsou spokojení, a majitel, který má přehled bez zbytečných starostí.",
+    about_p3: "Byt, který dobře funguje, hosté, kteří jsou spokojení, a majitel, který má přehled bez zbytečných starostí.",
 
     // Services (5 kategorií)
     services_label: "Služby",
