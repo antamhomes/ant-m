@@ -49,7 +49,7 @@ const GallerySection = () => {
   const sideScale = useTransform(scrollYProgress, [0, 1], reduce ? [1, 1] : [0.94, 1]);
 
   return (
-    <section id="portfolio" className="py-24 md:py-32 px-6 bg-background">
+    <section id="portfolio" className="py-16 md:py-16 md:py-20 px-6 bg-background">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

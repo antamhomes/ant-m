@@ -26,7 +26,7 @@ const OwnerReportSection = () => {
   ];
 
   return (
-    <section ref={ref} className="py-24 md:py-32 px-6 bg-background">
+    <section ref={ref} className="py-16 md:py-16 md:py-20 px-6 bg-background">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}

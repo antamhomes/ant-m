@@ -60,7 +60,7 @@ const CalculatorSection = () => {
   }, [location, size, selectedExtras]);
 
   return (
-    <section id="kalkulacka" className="py-24 bg-muted/30">
+    <section id="kalkulacka" className="py-16 md:py-20 bg-muted/30">
       <div className="max-w-5xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
