@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext,vietnamese');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext,vietnamese');
 
 @tailwind base;
 @tailwind components;
@@ -6,56 +6,55 @@
 
 @layer base {
   :root {
-    /* Cream background #F7F1E7 */
-    --background: 36 50% 94%;
-    /* Dark text #17211D */
-    --foreground: 150 14% 11%;
+    /* Bright off-white #FBFAF7 */
+    --background: 40 25% 98%;
+    /* Deep ink #14201C */
+    --foreground: 160 18% 10%;
 
-    /* Cream/white card #FFF8EE */
-    --card: 38 80% 97%;
-    --card-foreground: 150 14% 11%;
+    /* Pure white card */
+    --card: 0 0% 100%;
+    --card-foreground: 160 18% 10%;
 
-    --popover: 38 80% 97%;
-    --popover-foreground: 150 14% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 160 18% 10%;
 
-    /* Dark green #12352F */
+    /* Dark green #12352F — kept as accent / dark sections */
     --primary: 168 49% 14%;
-    /* Cream/white text #FFF8EE */
-    --primary-foreground: 38 80% 97%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Warm beige #E8D8C3 surface */
-    --secondary: 33 40% 84%;
+    /* Very light neutral surface #F2EFEA */
+    --secondary: 36 18% 94%;
     --secondary-foreground: 168 49% 14%;
 
-    --muted: 36 35% 90%;
-    /* Muted text #5F675F */
-    --muted-foreground: 132 4% 39%;
+    --muted: 36 14% 96%;
+    --muted-foreground: 150 6% 38%;
 
-    /* Gold accent #C9A45C */
-    --accent: 38 50% 58%;
-    --accent-foreground: 168 49% 14%;
+    /* Gold accent #B8893E — slightly deeper for premium feel on light bg */
+    --accent: 36 50% 48%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 60% 45%;
-    --destructive-foreground: 38 80% 97%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 33 30% 82%;
-    --input: 33 30% 82%;
-    --ring: 38 50% 58%;
+    /* Hairline borders */
+    --border: 36 14% 88%;
+    --input: 36 14% 88%;
+    --ring: 36 50% 48%;
 
     --radius: 0.5rem;
 
-    --gold: 38 50% 58%;
-    --gold-deep: 38 47% 44%;
-    --gold-light: 38 60% 75%;
-    --warm-cream: 38 80% 97%;
-    --warm-sand: 33 40% 84%;
+    --gold: 36 50% 48%;
+    --gold-deep: 36 55% 38%;
+    --gold-light: 36 55% 72%;
+    --warm-cream: 0 0% 100%;
+    --warm-sand: 36 18% 94%;
     /* Deep green #0B241F */
     --charcoal: 168 49% 9%;
     /* Dark green #173D36 */
     --charcoal-light: 168 41% 16%;
 
-    --font-display: 'Manrope', system-ui, sans-serif;
-    --font-body: 'Inter', system-ui, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+    --font-body: 'DM Sans', system-ui, sans-serif;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 150 10% 26%;
