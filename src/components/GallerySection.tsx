@@ -90,7 +90,7 @@ const GallerySection = () => {
                 style={motionStyle}
                 className="group bg-card border border-border rounded-sm overflow-hidden hover:border-gold/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500 will-change-transform"
               >
-                <div className="relative aspect-[3/4] overflow-hidden">
+                <div className="relative aspect-[4/5] md:aspect-[5/6] overflow-hidden">
                   <img
                     src={item.src}
                     alt={item.alt}
