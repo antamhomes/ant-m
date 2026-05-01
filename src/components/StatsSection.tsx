@@ -21,10 +21,10 @@ const StatsSection = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="text-center"
             >
-              <div className="font-display text-3xl md:text-5xl font-bold text-gradient-gold mb-2">
+              <div className="font-display text-2xl sm:text-3xl md:text-5xl font-bold text-gradient-gold mb-2">
                 {t(lang, vk)}
               </div>
-              <div className="font-body text-sm text-primary-foreground/60 tracking-wider uppercase">
+              <div className="font-body text-[11px] sm:text-sm text-primary-foreground/60 tracking-wider uppercase leading-snug">
                 {t(lang, labelKeys[index])}
               </div>
             </motion.div>
