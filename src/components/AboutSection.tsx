@@ -15,7 +15,7 @@ const AboutSection = () => {
       <svg
         aria-hidden
         viewBox="0 0 600 200"
-        className="pointer-events-none absolute -top-10 left-1/2 -translate-x-1/2 w-[700px] max-w-none opacity-[0.08] text-gold"
+        className="pointer-events-none absolute -top-8 left-1/2 -translate-x-1/2 w-[140%] sm:w-[700px] max-w-none opacity-[0.07] text-gold"
       >
         <path d="M0 100 Q150 0 300 100 T600 100" stroke="currentColor" strokeWidth="1.2" fill="none" />
         <path d="M0 130 Q150 30 300 130 T600 130" stroke="currentColor" strokeWidth="0.8" fill="none" />
@@ -47,17 +47,23 @@ const AboutSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="max-w-3xl mx-auto text-center mb-4 relative"
+          className="max-w-3xl mx-auto text-center relative"
         >
-          <p className="font-body text-muted-foreground text-lg leading-relaxed mb-6">
+          <p className="font-body text-muted-foreground text-base md:text-lg leading-relaxed mb-6">
             {t(lang, "about_p1")}
           </p>
-          <p className="font-body text-muted-foreground text-lg leading-relaxed mb-6">
+          <p className="font-body text-muted-foreground text-base md:text-lg leading-relaxed mb-10">
             {t(lang, "about_p2")}
           </p>
-          <p className="font-body text-foreground/85 text-lg leading-relaxed border-l-2 border-gold/40 pl-5 inline-block mt-2 text-center">
-            {t(lang, "about_p3")}
-          </p>
+
+          {/* Závěrečná teze – centrovaný "pull-quote" */}
+          <div className="relative mx-auto max-w-2xl px-6 py-8 md:py-10">
+            <span className="absolute left-1/2 -translate-x-1/2 -top-px h-px w-24 bg-gold/50" />
+            <span className="absolute left-1/2 -translate-x-1/2 -bottom-px h-px w-24 bg-gold/50" />
+            <p className="font-display italic text-foreground/90 text-lg md:text-2xl leading-relaxed">
+              {t(lang, "about_p3")}
+            </p>
+          </div>
         </motion.div>
       </div>
     </section>
