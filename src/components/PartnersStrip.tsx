@@ -16,19 +16,19 @@ const PartnersStrip = () => {
   const { lang } = useLanguage();
 
   return (
-    <section className="py-10 md:py-14 px-6 bg-background border-y border-border/60">
+    <section className="py-8 md:py-10 px-6 bg-background border-y border-border/60">
       <div className="max-w-6xl mx-auto">
         <motion.p
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-center font-body text-[11px] md:text-xs text-muted-foreground tracking-[0.25em] uppercase mb-8 md:mb-10"
+          className="text-center font-body text-[11px] md:text-xs text-muted-foreground tracking-[0.25em] uppercase mb-6 md:mb-7"
         >
           {t(lang, "partners_label")}
         </motion.p>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:gap-x-16 md:gap-y-8">
+        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-5 md:gap-x-12 md:gap-y-6">
           {partners.map((p, i) => (
             <motion.span
               key={p.name}

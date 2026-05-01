@@ -1,18 +1,14 @@
 import { motion } from "framer-motion";
+import { FileText, MessageSquare, Sparkles, LineChart, FileBarChart } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t, type TranslationKey } from "@/i18n/translations";
 
-type Item = {
-  titleKey: TranslationKey;
-  descKey: TranslationKey;
-};
-
-const items: Item[] = [
-  { titleKey: "svc1_title", descKey: "svc1_desc" },
-  { titleKey: "svc2_title", descKey: "svc2_desc" },
-  { titleKey: "svc3_title", descKey: "svc3_desc" },
-  { titleKey: "svc4_title", descKey: "svc4_desc" },
-  { titleKey: "svc5_title", descKey: "svc5_desc" },
+const items: { icon: typeof FileText; titleKey: TranslationKey; descKey: TranslationKey }[] = [
+  { icon: FileText,     titleKey: "svc1_title", descKey: "svc1_desc" },
+  { icon: MessageSquare,titleKey: "svc2_title", descKey: "svc2_desc" },
+  { icon: Sparkles,     titleKey: "svc3_title", descKey: "svc3_desc" },
+  { icon: LineChart,    titleKey: "svc4_title", descKey: "svc4_desc" },
+  { icon: FileBarChart, titleKey: "svc5_title", descKey: "svc5_desc" },
 ];
 
 const ServicesSection = () => {
@@ -39,23 +35,22 @@ const ServicesSection = () => {
           </p>
         </motion.div>
 
-        {/* Editorial číslovaný seznam — klidný, čte se shora dolů */}
         <div className="max-w-3xl mx-auto">
-          {items.map(({ titleKey, descKey }, index) => (
+          {items.map(({ icon: Icon, titleKey, descKey }, index) => (
             <motion.article
               key={titleKey}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-              className={`grid grid-cols-[auto_1fr] gap-5 md:gap-10 py-7 md:py-9 ${
+              className={`grid grid-cols-[auto_1fr] gap-5 md:gap-8 py-7 md:py-9 ${
                 index !== items.length - 1 ? "border-b border-border/60" : ""
               }`}
             >
-              <div className="font-display text-2xl md:text-3xl text-gold/80 font-light tabular-nums leading-none pt-1 w-12 md:w-14">
-                {String(index + 1).padStart(2, "0")}
+              <div className="w-12 h-12 md:w-14 md:h-14 rounded-md border border-gold/30 bg-background/60 flex items-center justify-center shrink-0">
+                <Icon className="w-5 h-5 md:w-6 md:h-6 text-gold" strokeWidth={1.5} />
               </div>
-              <div>
+              <div className="pt-1">
                 <h3 className="font-display text-xl md:text-2xl font-semibold text-foreground mb-2 leading-snug">
                   {t(lang, titleKey)}
                 </h3>
