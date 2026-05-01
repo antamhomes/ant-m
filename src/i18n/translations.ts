@@ -10,7 +10,7 @@ const translations = {
     hero_title1: "Váš byt. Naše péče. ",
     hero_title2: "Váš zisk.",
     hero_desc: "Přeměníme váš byt v prémiové ubytování na Airbnb. Od kompletní přestavby po každodenní správu — vy jen inkasujete.",
-    hero_cta: "Chci nezávaznou konzultaci",
+    hero_cta: "Zjistit potenciál bytu zdarma",
     hero_cta2: "Jak to funguje",
 
     // Benefits
