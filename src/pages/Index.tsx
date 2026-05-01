@@ -14,6 +14,7 @@ import CalculatorSection from "@/components/CalculatorSection";
 import OwnerReportSection from "@/components/OwnerReportSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import StickyMobileCTA from "@/components/StickyMobileCTA";
 
 const Index = () => {
   return (
@@ -34,6 +35,7 @@ const Index = () => {
       <OwnerReportSection />
       <ContactSection />
       <Footer />
+      <StickyMobileCTA />
     </div>
   );
 };

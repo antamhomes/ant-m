@@ -85,7 +85,7 @@ const CalculatorSection = () => {
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="space-y-8"
+            className="space-y-8 order-2 md:order-1"
           >
             <div>
               <label className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
@@ -157,7 +157,7 @@ const CalculatorSection = () => {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="flex items-center"
+            className="flex items-center order-1 md:order-2"
           >
             <div className="w-full bg-gradient-dark rounded-md p-8 md:p-10 space-y-8">
               <div className="flex items-center gap-3 mb-2">
