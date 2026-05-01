@@ -17,6 +17,7 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
 import FAQSection from "@/components/FAQSection";
+import SectionDivider from "@/components/SectionDivider";
 
 const Index = () => {
   return (
@@ -25,14 +26,17 @@ const Index = () => {
       <HeroSection />
       <TrustStrip />
       <BenefitsSection />
+      <SectionDivider />
       <PartnersStrip />
       <WhyBetterSection />
+      <SectionDivider />
       <GallerySection />
       <CalculatorSection />
       <ServicesSection />
       <BeforeAfterSection />
       <ProcessSection />
       <OwnerReportSection />
+      <SectionDivider />
       <AboutSection />
       <PotentialCTA />
       <FAQSection />
