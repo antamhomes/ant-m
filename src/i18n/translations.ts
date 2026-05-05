@@ -217,7 +217,7 @@ const translations = {
     footer_ico: "IČO: 03328511",
     footer_location: "Praha, Česká republika",
     footer_phone: "+420 776 123 456",
-    footer_email: "info@antamhomes.com",
+    footer_email: "info@an-tam.com",
     footer_link_how: "Jak to funguje",
     footer_link_portfolio: "Portfolio",
     footer_link_services: "Co za vás řešíme",
