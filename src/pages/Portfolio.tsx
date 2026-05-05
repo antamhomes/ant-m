@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -28,6 +28,14 @@ const photos: { src: string; alt: string; span: string }[] = [
 
 const Portfolio = () => {
   const { lang } = useLanguage();
+  const navigate = useNavigate();
+
+  const handleContactClick = () => {
+    navigate("/");
+    setTimeout(() => {
+      document.getElementById("kontakt")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  };
 
   return (
     <main className="min-h-screen bg-background">
@@ -80,13 +88,13 @@ const Portfolio = () => {
               ? "Ozvěte se nám a my se postaráme o zbytek – od návrhu interiéru až po správu pronájmu."
               : "Liên hệ với chúng tôi và chúng tôi sẽ lo phần còn lại – từ thiết kế nội thất đến quản lý cho thuê."}
           </p>
-          <Link
-            to="/#kontakt"
+          <button
+            onClick={handleContactClick}
             className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-body font-medium text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-gold/60 ring-1 ring-gold/30 hover:ring-gold/60 transition-all"
           >
             {lang === "cs" ? "Nezávazná poptávka" : "Yêu cầu không ràng buộc"}
             <ChevronRight className="w-4 h-4" />
-          </Link>
+          </button>
         </div>
       </section>
     </main>
