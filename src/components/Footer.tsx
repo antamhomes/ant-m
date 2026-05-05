@@ -1,21 +1,9 @@
-import { useState } from "react";
-import { FileDown, Loader2, Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
 const Footer = () => {
   const { lang, toggleLang } = useLanguage();
-  const [loading, setLoading] = useState(false);
-
-  const handleDownload = async () => {
-    setLoading(true);
-    try {
-      const { generateBrochure } = await import("@/lib/generateBrochure");
-      await generateBrochure(lang);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <footer className="bg-gradient-dark border-t border-primary-foreground/10 pb-[max(2rem,env(safe-area-inset-bottom))] pt-16 px-6">
@@ -30,15 +18,6 @@ const Footer = () => {
             <p className="font-body text-sm text-primary-foreground/55 mt-3 max-w-sm leading-relaxed">
               {t(lang, "footer_desc")}
             </p>
-
-            <button
-              onClick={handleDownload}
-              disabled={loading}
-              className="mt-6 inline-flex items-center gap-2 px-5 py-2.5 border border-primary-foreground/20 text-primary-foreground/85 font-body font-medium text-xs tracking-wider uppercase rounded-sm hover:border-gold/50 hover:text-primary-foreground transition-all disabled:opacity-60"
-            >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileDown className="w-4 h-4" />}
-              {t(lang, "footer_brochure")}
-            </button>
           </div>
 
           {/* Nav links */}
