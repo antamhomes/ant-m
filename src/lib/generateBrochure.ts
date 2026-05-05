@@ -1,66 +1,90 @@
 import jsPDF from "jspdf";
 import heroImg from "@/assets/real-bedroom-luxury.jpg";
-import livingImg from "@/assets/real-living-room.jpg";
-import bedroomImg from "@/assets/real-bedroom-modern.jpg";
 
 type Lang = "cs" | "vi";
 
 const copy = {
   cs: {
-    eyebrow: "KOMPLETNÍ SPRÁVA VAŠEHO BYTU",
+    eyebrow: "PÉČE O BYT A KRÁTKODOBÝ PRONÁJEM",
     title1: "Váš byt. Naše péče.",
     title2: "Váš zisk.",
     intro:
-      "Přeměníme váš byt v prémiové ubytování na Airbnb. Od kompletní přestavby po každodenní správu — vy jen inkasujete.",
-    statsTitle: "Čísla, která mluví za nás",
+      "Kompletní správa krátkodobého pronájmu — od přípravy nabídky po hosty, úklid a přehledné výnosy.",
+    statsTitle: "antam homes v číslech",
     stats: [
-      { v: "2.8×", l: "vyšší výnos" },
-      { v: "95%", l: "obsazenost" },
-      { v: "4.9/5", l: "hodnocení hostů" },
-      { v: "15+", l: "spravovaných bytů" },
+      { v: "15+", l: "bytů v provozu" },
+      { v: "4.9★", l: "hodnocení hostů" },
+      { v: "až 95 %", l: "obsazenost" },
+      { v: "až 2.8×", l: "vyšší výnos" },
     ],
-    whyTitle: "Proč ne dlouhodobý pronájem?",
+    servicesTitle: "Co za vás řešíme",
+    services: [
+      ["Příprava nabídky", "Fotky, popis, pravidla a nastavení bytu na platformách."],
+      ["Hosté a komunikace", "Dotazy, příjezd, podpora a řešení situací."],
+      ["Úklid a kontrola", "Po každém pobytu byt kontrolujeme a hlídáme detaily."],
+      ["Cena a obsazenost", "Pracujeme s cenou, sezónou a kalendářem."],
+      ["Přehled pro majitele", "Rezervace, výnosy, náklady a důležité informace."],
+    ],
+    whyTitle: "Krátkodobý vs. dlouhodobý pronájem",
     whyRows: [
-      ["Kontrola bytu", "Vidíte ho 1× ročně", "Kontrola po každém hostu"],
-      ["Údržba", "Závady se kumulují", "Opravy řešíme ihned"],
-      ["Cena", "Stále stejný nájem", "Optimalizace každý den"],
-      ["Riziko", "Neplatiči, spory", "Platba vždy předem"],
+      ["Kontrola stavu bytu", "Až po delší době", "Po každém pobytu"],
+      ["Výnos", "Nereaguje na sezónu", "Cena podle sezóny a poptávky"],
+      ["Flexibilita", "Vázáno smlouvou", "Termíny lze blokovat dopředu"],
+      ["Přehled plateb", "Řeší majitel", "Reporty z platforem"],
     ],
-    moneyTitle: "O kolik přicházíte?",
-    moneyBig: "+ 240 000 Kč / rok",
-    moneySmall: "Rozdíl mezi krátkodobým a dlouhodobým pronájmem bytu 2+kk v Praze.",
-    ctaTitle: "Chcete vědět, kolik vydělá právě váš byt?",
-    ctaText: "Nezávazná konzultace zdarma. Výpočet do 24 hodin.",
-    ctaUrl: "Navštivte: dauan.cz",
-    footer: "ANTAM s.r.o. — Prémiová správa nemovitostí v Praze",
+    processTitle: "Jak začíná spolupráce",
+    process: [
+      ["1.", "Pošlete nám byt", "Adresa, fotky nebo odkaz a pár informací."],
+      ["2.", "Zhodnotíme směr", "Lokalita, stav bytu, okolní nabídka."],
+      ["3.", "Navrhneme postup", "Co dává smysl připravit nebo nastavit."],
+      ["4.", "Spustíme správu", "Hosté, úklid, cena, obsazenost i provoz."],
+    ],
+    ctaTitle: "Nezávazně probereme váš byt.",
+    ctaText: "Pošlete nám základní informace. Ozveme se a řekneme, jaký směr může dávat smysl.",
+    contactLine: "+420 776 123 456  ·  info@an-tam.com  ·  antamhomes.com",
+    disclaimer: "Výsledky se liší podle lokality, stavu bytu, sezóny a nastavení ceny.",
+    footer: "Antám s.r.o. (dříve DAU AN s.r.o.) — IČO: 03328511 — Praha, Česká republika",
   },
   vi: {
-    eyebrow: "QUẢN LÝ TOÀN DIỆN CĂN HỘ CỦA BẠN",
+    eyebrow: "CHĂM SÓC CĂN HỘ VÀ CHO THUÊ NGẮN HẠN",
     title1: "Căn hộ của bạn. Sự chăm sóc của chúng tôi.",
     title2: "Lợi nhuận của bạn.",
     intro:
-      "Chúng tôi biến căn hộ của bạn thành nơi lưu trú cao cấp trên Airbnb. Từ cải tạo đến quản lý hàng ngày — bạn chỉ việc thu tiền.",
-    statsTitle: "Những con số nói lên tất cả",
+      "Quản lý toàn diện cho thuê ngắn hạn — từ chuẩn bị listing đến khách, dọn dẹp và báo cáo rõ ràng.",
+    statsTitle: "antam homes qua những con số",
     stats: [
-      { v: "2.8×", l: "thu nhập cao hơn" },
-      { v: "95%", l: "tỷ lệ lấp đầy" },
-      { v: "4.9/5", l: "đánh giá của khách" },
-      { v: "15+", l: "căn hộ quản lý" },
+      { v: "15+", l: "căn hộ vận hành" },
+      { v: "4.9★", l: "đánh giá của khách" },
+      { v: "đến 95 %", l: "tỷ lệ lấp đầy" },
+      { v: "đến 2.8×", l: "doanh thu cao hơn" },
     ],
-    whyTitle: "Tại sao không cho thuê dài hạn?",
+    servicesTitle: "antam homes hỗ trợ những gì",
+    services: [
+      ["Chuẩn bị listing", "Hình ảnh, mô tả, quy định và thiết lập trên nền tảng."],
+      ["Khách và giao tiếp", "Trả lời, hướng dẫn nhận phòng, hỗ trợ khi cần."],
+      ["Dọn dẹp và kiểm tra", "Sau mỗi lượt khách, căn hộ được kiểm tra kỹ."],
+      ["Giá và tỷ lệ lấp đầy", "Theo dõi giá, mùa vụ và lịch trống."],
+      ["Báo cáo cho chủ nhà", "Đặt phòng, doanh thu, chi phí và ghi chú quan trọng."],
+    ],
+    whyTitle: "Ngắn hạn vs. dài hạn",
     whyRows: [
-      ["Kiểm tra căn hộ", "1 lần/năm", "Sau mỗi khách"],
-      ["Bảo trì", "Hư hỏng tích tụ", "Sửa chữa ngay"],
-      ["Giá thuê", "Cố định", "Tối ưu hàng ngày"],
-      ["Rủi ro", "Khách không trả", "Thanh toán trước"],
+      ["Tình trạng căn hộ", "Sau thời gian dài", "Sau mỗi lượt khách"],
+      ["Doanh thu", "Cố định theo hợp đồng", "Điều chỉnh theo mùa vụ"],
+      ["Linh hoạt", "Bị ràng buộc bởi hợp đồng", "Có thể chặn lịch trước"],
+      ["Theo dõi thanh toán", "Chủ nhà tự xử lý", "Báo cáo từ nền tảng"],
     ],
-    moneyTitle: "Bạn đang mất bao nhiêu?",
-    moneyBig: "+ 240 000 Kč / năm",
-    moneySmall: "Chênh lệch giữa cho thuê ngắn hạn và dài hạn căn 2+kk tại Praha.",
-    ctaTitle: "Muốn biết căn hộ của bạn kiếm được bao nhiêu?",
-    ctaText: "Tư vấn miễn phí. Tính toán trong vòng 24 giờ.",
-    ctaUrl: "Truy cập: dauan.cz",
-    footer: "ANTAM s.r.o. — Quản lý bất động sản cao cấp tại Praha",
+    processTitle: "Quy trình hợp tác",
+    process: [
+      ["1.", "Gửi thông tin căn hộ", "Địa chỉ, hình ảnh hoặc link và vài thông tin."],
+      ["2.", "Xem hướng phù hợp", "Vị trí, tình trạng căn hộ, khu vực xung quanh."],
+      ["3.", "Đề xuất cách làm", "Những gì nên chuẩn bị, điều chỉnh hoặc thiết lập."],
+      ["4.", "Bắt đầu vận hành", "Khách, dọn dẹp, giá thuê, lấp đầy và vận hành."],
+    ],
+    ctaTitle: "Trao đổi nhẹ nhàng về căn hộ của cô chú.",
+    ctaText: "Gửi vài thông tin cơ bản. Chúng tôi sẽ liên hệ và trao đổi hướng phù hợp.",
+    contactLine: "+420 776 123 456  ·  info@antamhomes.com  ·  antamhomes.com",
+    disclaimer: "Kết quả khác nhau tùy vị trí, tình trạng căn hộ, mùa vụ và giá.",
+    footer: "Antám s.r.o. (trước đây DAU AN s.r.o.) — IČO: 03328511 — Praha, Cộng hòa Séc",
   },
 };
 
@@ -88,176 +112,196 @@ export async function generateBrochure(lang: Lang) {
   const W = 210;
   const H = 297;
 
-  // Brand colors (charcoal + gold)
+  // Brand colors
   const charcoal: [number, number, number] = [26, 26, 26];
   const gold: [number, number, number] = [201, 162, 39];
   const cream: [number, number, number] = [248, 245, 240];
   const muted: [number, number, number] = [110, 110, 110];
+  const line: [number, number, number] = [225, 220, 210];
 
   // Background
   pdf.setFillColor(...cream);
   pdf.rect(0, 0, W, H, "F");
 
-  // === HERO ===
+  // === HERO (compact) ===
+  const heroH = 70;
   try {
     const hero = await loadImg(heroImg);
-    pdf.addImage(hero, "JPEG", 0, 0, W, 95, undefined, "FAST");
+    pdf.addImage(hero, "JPEG", 0, 0, W, heroH, undefined, "FAST");
   } catch {}
-  // dark overlay
   pdf.setFillColor(26, 26, 26);
-  pdf.setGState(pdf.GState({ opacity: 0.55 }));
-  pdf.rect(0, 0, W, 95, "F");
+  pdf.setGState(pdf.GState({ opacity: 0.6 }));
+  pdf.rect(0, 0, W, heroH, "F");
   pdf.setGState(pdf.GState({ opacity: 1 }));
 
   // Brand
   pdf.setTextColor(255, 255, 255);
   pdf.setFont(FONT, "bold");
   pdf.setFontSize(11);
-  pdf.text("ANTAM", 15, 15);
-  const brandW = pdf.getTextWidth("ANTAM");
+  pdf.text("antam", 15, 13);
+  const brandW = pdf.getTextWidth("antam");
   pdf.setTextColor(...gold);
-  pdf.setFont(FONT, "normal");
-  pdf.text("s.r.o.", 15 + brandW + 2, 15);
+  pdf.text(" homes", 15 + brandW, 13);
 
   // Eyebrow
   pdf.setTextColor(...gold);
   pdf.setFont(FONT, "bold");
-  pdf.setFontSize(8);
-  pdf.text(c.eyebrow, 15, 45);
+  pdf.setFontSize(7.5);
+  pdf.text(c.eyebrow, 15, 32);
 
   // Title
   pdf.setTextColor(255, 255, 255);
   pdf.setFont(FONT, "bold");
-  pdf.setFontSize(lang === "vi" ? 19 : 24);
-  pdf.text(c.title1, 15, 58);
+  pdf.setFontSize(lang === "vi" ? 17 : 22);
+  pdf.text(c.title1, 15, 45);
   pdf.setTextColor(...gold);
-  pdf.text(c.title2, 15, 70);
+  pdf.text(c.title2, 15, 56);
 
   // Intro
   pdf.setTextColor(235, 235, 235);
   pdf.setFont(FONT, "normal");
-  pdf.setFontSize(10);
+  pdf.setFontSize(9);
   const introLines = pdf.splitTextToSize(c.intro, W - 30);
-  pdf.text(introLines, 15, 80);
+  pdf.text(introLines, 15, 64);
 
   // === STATS BAR ===
+  const statsY = heroH;
   pdf.setFillColor(...charcoal);
-  pdf.rect(0, 95, W, 28, "F");
-
-  pdf.setTextColor(...gold);
-  pdf.setFont(FONT, "bold");
-  pdf.setFontSize(8);
-  pdf.text(c.statsTitle.toUpperCase(), 15, 103);
-
+  pdf.rect(0, statsY, W, 20, "F");
   const colW = (W - 30) / 4;
   c.stats.forEach((s, i) => {
     const x = 15 + i * colW;
     pdf.setTextColor(...gold);
     pdf.setFont(FONT, "bold");
-    pdf.setFontSize(18);
-    pdf.text(s.v, x, 114);
+    pdf.setFontSize(13);
+    pdf.text(s.v, x, statsY + 9);
     pdf.setTextColor(220, 220, 220);
     pdf.setFont(FONT, "normal");
     pdf.setFontSize(7);
-    pdf.text(s.l, x, 119);
+    pdf.text(s.l, x, statsY + 14.5);
   });
 
-  // === WHY NOT LONG-TERM (comparison table) ===
-  let y = 132;
-  pdf.setTextColor(...charcoal);
-  pdf.setFont(FONT, "bold");
-  pdf.setFontSize(14);
-  pdf.text(c.whyTitle, 15, y);
+  let y = statsY + 28;
 
-  // gold underline
-  pdf.setDrawColor(...gold);
-  pdf.setLineWidth(0.6);
-  pdf.line(15, y + 2, 45, y + 2);
-
-  y += 9;
-  // header row
-  pdf.setFillColor(...charcoal);
-  pdf.rect(15, y, W - 30, 7, "F");
-  pdf.setTextColor(255, 255, 255);
-  pdf.setFont(FONT, "bold");
-  pdf.setFontSize(8);
-  pdf.text(lang === "cs" ? "PARAMETR" : "TIÊU CHÍ", 18, y + 4.7);
-  pdf.text(lang === "cs" ? "DLOUHODOBÝ" : "DÀI HẠN", 78, y + 4.7);
-  pdf.setTextColor(...gold);
-  pdf.text(lang === "cs" ? "ANTAM" : "ANTAM", 138, y + 4.7);
-  y += 7;
-
-  pdf.setFont(FONT, "normal");
-  pdf.setFontSize(8.5);
-  c.whyRows.forEach((row, i) => {
-    if (i % 2 === 0) {
-      pdf.setFillColor(255, 255, 255);
-    } else {
-      pdf.setFillColor(243, 240, 233);
-    }
-    pdf.rect(15, y, W - 30, 9, "F");
-
-    pdf.setTextColor(...charcoal);
-    pdf.setFont(FONT, "bold");
-    pdf.text(row[0], 18, y + 5.8);
-    pdf.setFont(FONT, "normal");
-    pdf.setTextColor(...muted);
-    const a = pdf.splitTextToSize(row[1], 55);
-    pdf.text(a, 78, y + 5.8);
-    pdf.setTextColor(...charcoal);
-    const b = pdf.splitTextToSize(row[2], 55);
-    pdf.text(b, 138, y + 5.8);
-    y += 9;
-  });
-
-  // === MONEY HIGHLIGHT + GALLERY ===
-  y += 6;
-  // left money box
-  pdf.setFillColor(...charcoal);
-  pdf.rect(15, y, 95, 42, "F");
-  pdf.setTextColor(...gold);
-  pdf.setFont(FONT, "bold");
-  pdf.setFontSize(8);
-  pdf.text(c.moneyTitle.toUpperCase(), 20, y + 8);
-  pdf.setFontSize(18);
-  pdf.text(c.moneyBig, 20, y + 22);
-  pdf.setTextColor(220, 220, 220);
-  pdf.setFont(FONT, "normal");
-  pdf.setFontSize(8);
-  const ms = pdf.splitTextToSize(c.moneySmall, 85);
-  pdf.text(ms, 20, y + 30);
-
-  // right images (2 stacked)
-  try {
-    const i1 = await loadImg(livingImg);
-    pdf.addImage(i1, "JPEG", 115, y, 80, 20, undefined, "FAST");
-  } catch {}
-  try {
-    const i2 = await loadImg(bedroomImg);
-    pdf.addImage(i2, "JPEG", 115, y + 22, 80, 20, undefined, "FAST");
-  } catch {}
-
-  // === CTA ===
-  y += 50;
-  pdf.setFillColor(...gold);
-  pdf.rect(0, y, W, 28, "F");
+  // === SERVICES ===
   pdf.setTextColor(...charcoal);
   pdf.setFont(FONT, "bold");
   pdf.setFontSize(12);
-  const ctaLines = pdf.splitTextToSize(c.ctaTitle, W - 30);
-  pdf.text(ctaLines, 15, y + 8);
-  pdf.setFont(FONT, "normal");
-  pdf.setFontSize(9);
-  pdf.text(c.ctaText, 15, y + 18);
+  pdf.text(c.servicesTitle, 15, y);
+  pdf.setDrawColor(...gold);
+  pdf.setLineWidth(0.6);
+  pdf.line(15, y + 1.5, 35, y + 1.5);
+  y += 7;
+
+  c.services.forEach(([title, desc]) => {
+    pdf.setFillColor(...gold);
+    pdf.circle(17, y - 1.2, 0.9, "F");
+    pdf.setTextColor(...charcoal);
+    pdf.setFont(FONT, "bold");
+    pdf.setFontSize(9);
+    pdf.text(title, 21, y);
+    pdf.setFont(FONT, "normal");
+    pdf.setTextColor(...muted);
+    pdf.setFontSize(8.5);
+    const dl = pdf.splitTextToSize(desc, W - 70);
+    pdf.text(dl, 70, y);
+    y += Math.max(5.5, dl.length * 4);
+  });
+
+  y += 4;
+
+  // === WHY (comparison table) ===
+  pdf.setTextColor(...charcoal);
+  pdf.setFont(FONT, "bold");
+  pdf.setFontSize(12);
+  pdf.text(c.whyTitle, 15, y);
+  pdf.setDrawColor(...gold);
+  pdf.line(15, y + 1.5, 35, y + 1.5);
+  y += 6;
+
+  // header
+  pdf.setFillColor(...charcoal);
+  pdf.rect(15, y, W - 30, 6.5, "F");
+  pdf.setTextColor(255, 255, 255);
+  pdf.setFont(FONT, "bold");
+  pdf.setFontSize(7.5);
+  pdf.text(lang === "cs" ? "PARAMETR" : "TIÊU CHÍ", 17, y + 4.4);
+  pdf.text(lang === "cs" ? "DLOUHODOBÝ" : "DÀI HẠN", 78, y + 4.4);
+  pdf.setTextColor(...gold);
+  pdf.text("antam homes", 138, y + 4.4);
+  y += 6.5;
+
+  pdf.setFontSize(8);
+  c.whyRows.forEach((row, i) => {
+    pdf.setFillColor(...(i % 2 === 0 ? [255, 255, 255] : [243, 240, 233] as [number, number, number]));
+    pdf.rect(15, y, W - 30, 7.5, "F");
+    pdf.setTextColor(...charcoal);
+    pdf.setFont(FONT, "bold");
+    pdf.text(row[0], 17, y + 4.9);
+    pdf.setFont(FONT, "normal");
+    pdf.setTextColor(...muted);
+    pdf.text(pdf.splitTextToSize(row[1], 55), 78, y + 4.9);
+    pdf.setTextColor(...charcoal);
+    pdf.text(pdf.splitTextToSize(row[2], 55), 138, y + 4.9);
+    y += 7.5;
+  });
+
+  y += 6;
+
+  // === PROCESS ===
+  pdf.setTextColor(...charcoal);
+  pdf.setFont(FONT, "bold");
+  pdf.setFontSize(12);
+  pdf.text(c.processTitle, 15, y);
+  pdf.setDrawColor(...gold);
+  pdf.line(15, y + 1.5, 35, y + 1.5);
+  y += 6;
+
+  // 2x2 grid (per project memory rule)
+  const stepW = (W - 30 - 6) / 2;
+  const stepH = 18;
+  c.process.forEach((s, i) => {
+    const col = i % 2;
+    const row = Math.floor(i / 2);
+    const sx = 15 + col * (stepW + 6);
+    const sy = y + row * (stepH + 4);
+    pdf.setDrawColor(...line);
+    pdf.setLineWidth(0.3);
+    pdf.rect(sx, sy, stepW, stepH);
+    pdf.setTextColor(...gold);
+    pdf.setFont(FONT, "bold");
+    pdf.setFontSize(11);
+    pdf.text(s[0], sx + 3, sy + 6);
+    pdf.setTextColor(...charcoal);
+    pdf.setFontSize(9);
+    pdf.text(s[1], sx + 11, sy + 6);
+    pdf.setFont(FONT, "normal");
+    pdf.setTextColor(...muted);
+    pdf.setFontSize(8);
+    pdf.text(pdf.splitTextToSize(s[2], stepW - 6), sx + 3, sy + 11);
+  });
+  y += stepH * 2 + 4 + 6;
+
+  // === CTA ===
+  pdf.setFillColor(...gold);
+  pdf.rect(0, y, W, 22, "F");
+  pdf.setTextColor(...charcoal);
   pdf.setFont(FONT, "bold");
   pdf.setFontSize(11);
-  pdf.text(c.ctaUrl, 15, y + 24);
+  pdf.text(c.ctaTitle, 15, y + 8);
+  pdf.setFont(FONT, "normal");
+  pdf.setFontSize(8.5);
+  pdf.text(pdf.splitTextToSize(c.ctaText, W - 30), 15, y + 13);
+  pdf.setFont(FONT, "bold");
+  pdf.setFontSize(9);
+  pdf.text(c.contactLine, 15, y + 19);
 
   // === FOOTER ===
   pdf.setTextColor(...muted);
   pdf.setFont(FONT, "normal");
-  pdf.setFontSize(7.5);
-  pdf.text(c.footer, W / 2, H - 5, { align: "center" });
+  pdf.setFontSize(6.5);
+  pdf.text(c.disclaimer, W / 2, H - 8, { align: "center" });
+  pdf.text(c.footer, W / 2, H - 4, { align: "center" });
 
-  pdf.save(lang === "cs" ? "DAU-AN-prehled.pdf" : "DAU-AN-tong-quan.pdf");
+  pdf.save(lang === "cs" ? "antam-homes-prehled.pdf" : "antam-homes-tong-quan.pdf");
 }
