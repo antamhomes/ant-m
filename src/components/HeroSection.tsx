@@ -53,15 +53,6 @@ const HeroSection = () => {
           {t(lang, "hero_desc")}
         </motion.p>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="font-body text-sm md:text-base text-primary-foreground/75 mb-10 max-w-xl mx-auto"
-        >
-          {t(lang, "hero_extra")}
-        </motion.p>
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
