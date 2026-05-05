@@ -1,4 +1,4 @@
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Mail, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
@@ -55,12 +55,6 @@ const Footer = () => {
               {lang === "cs" ? "Kontakt" : "Liên hệ"}
             </p>
             <ul className="space-y-3">
-              <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
-                <Phone className="w-4 h-4 text-gold mt-0.5 shrink-0" />
-                <a href={`tel:${t(lang, "footer_phone")}`} className="hover:text-gold transition-colors font-body">
-                  {t(lang, "footer_phone")}
-                </a>
-              </li>
               <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
                 <Mail className="w-4 h-4 text-gold mt-0.5 shrink-0" />
                 <a href={`mailto:${t(lang, "footer_email")}`} className="hover:text-gold transition-colors font-body">
