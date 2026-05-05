@@ -66,7 +66,7 @@ const HeroSection = () => {
             <span className="relative z-10">{t(lang, "hero_cta")}</span>
           </a>
           <a
-            href="#jak-to-funguje"
+            href="#jak-zacina"
             className="btn-hero-secondary inline-flex items-center justify-center font-body text-[14px]"
           >
             {t(lang, "hero_cta2")}

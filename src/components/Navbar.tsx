@@ -75,7 +75,7 @@ const Navbar = () => {
 
         <div className="hidden md:flex items-center gap-7">
           <a
-            href="#jak-to-funguje"
+            href="#jak-zacina"
             className={`font-body text-sm transition-colors ${
               scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/75 hover:text-primary-foreground"
             }`}

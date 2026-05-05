@@ -27,7 +27,7 @@ const Footer = () => {
             </p>
             <ul className="space-y-2.5">
               <li>
-                <a href="#jak-to-funguje" className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
+                <a href="#jak-zacina" className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
                   {t(lang, "footer_link_how")}
                 </a>
               </li>
