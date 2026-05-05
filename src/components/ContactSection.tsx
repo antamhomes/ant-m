@@ -9,7 +9,6 @@ const ContactSection = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
     address: "",
     message: "",
   });
@@ -73,18 +72,6 @@ const ContactSection = () => {
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="w-full px-4 py-3 text-base md:text-[15px] bg-background border border-border rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors"
                 placeholder={t(lang, "contact_email_placeholder") as string}
-              />
-            </div>
-            <div>
-              <label className="block font-body text-sm font-medium text-foreground mb-2">
-                {t(lang, "contact_phone")}
-              </label>
-              <input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="w-full px-4 py-3 text-base md:text-[15px] bg-background border border-border rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors"
-                placeholder={t(lang, "contact_phone_placeholder") as string}
               />
             </div>
             <div>
