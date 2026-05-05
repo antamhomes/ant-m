@@ -2,16 +2,6 @@ import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-import afterRenovation from "@/assets/after-renovation.jpg";
-import apartmentBathroom from "@/assets/apartment-bathroom.jpg";
-import apartmentBedroom from "@/assets/apartment-bedroom.jpg";
-import apartmentKitchen from "@/assets/apartment-kitchen.jpg";
-import beforeRenovation from "@/assets/before-renovation.jpg";
-import heroApartment from "@/assets/hero-apartment.jpg";
-import portfolioBedroomCozy from "@/assets/portfolio-bedroom-cozy.jpg";
-import portfolioBedroomMaster from "@/assets/portfolio-bedroom-master.jpg";
-import portfolioLivingDining from "@/assets/portfolio-living-dining.jpg";
-import portfolioLivingTerrace from "@/assets/portfolio-living-terrace.jpg";
 import realBedroomLuxury from "@/assets/real-bedroom-luxury.jpg";
 import realBedroomModern from "@/assets/real-bedroom-modern.jpg";
 import realLivingCozy from "@/assets/real-living-cozy.jpg";
@@ -19,19 +9,9 @@ import realLivingRoom from "@/assets/real-living-room.jpg";
 
 const photos: { src: string; alt: string; span: string }[] = [
   { src: realBedroomLuxury, alt: "Luxusní ložnice", span: "md:col-span-2 md:row-span-2" },
-  { src: portfolioLivingTerrace, alt: "Obývací pokoj s terasou", span: "md:col-span-1 md:row-span-1" },
-  { src: apartmentKitchen, alt: "Kuchyň", span: "md:col-span-1 md:row-span-2" },
   { src: realLivingCozy, alt: "Útulný obývací pokoj", span: "md:col-span-1 md:row-span-1" },
-  { src: portfolioBedroomMaster, alt: "Hlavní ložnice", span: "md:col-span-2 md:row-span-1" },
-  { src: apartmentBathroom, alt: "Koupelna", span: "md:col-span-1 md:row-span-2" },
-  { src: portfolioLivingDining, alt: "Obývací pokoj s jídelnou", span: "md:col-span-2 md:row-span-1" },
-  { src: realBedroomModern, alt: "Moderní ložnice", span: "md:col-span-1 md:row-span-1" },
-  { src: heroApartment, alt: "Reprezentativní byt", span: "md:col-span-2 md:row-span-2" },
-  { src: portfolioBedroomCozy, alt: "Útulná ložnice", span: "md:col-span-1 md:row-span-1" },
-  { src: apartmentBedroom, alt: "Ložnice apartmánu", span: "md:col-span-1 md:row-span-1" },
+  { src: realBedroomModern, alt: "Moderní ložnice", span: "md:col-span-1 md:row-span-2" },
   { src: realLivingRoom, alt: "Obývací pokoj", span: "md:col-span-2 md:row-span-1" },
-  { src: beforeRenovation, alt: "Před rekonstrukcí", span: "md:col-span-1 md:row-span-1" },
-  { src: afterRenovation, alt: "Po rekonstrukci", span: "md:col-span-2 md:row-span-1" },
 ];
 
 const Portfolio = () => {
