@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 
 const ContactSection = () => {
   const { lang } = useLanguage();
+  const [submitting, setSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,9 +17,38 @@ const ContactSection = () => {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    alert(t(lang, "contact_success"));
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const { error } = await supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "contact-inquiry",
+          recipientEmail: "info@an-tam.com",
+          idempotencyKey: `contact-${Date.now()}-${formData.email}`,
+          templateData: {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+            message: formData.message,
+          },
+        },
+      });
+      if (error) throw error;
+      toast({ title: t(lang, "contact_success") as string });
+      setFormData({ name: "", email: "", phone: "", address: "", message: "" });
+    } catch (err) {
+      console.error("Failed to send inquiry", err);
+      toast({
+        title: "Něco se nepovedlo",
+        description: "Zkuste to prosím znovu nebo nám napište přímo na info@an-tam.com.",
+        variant: "destructive",
+      });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -114,9 +146,10 @@ const ContactSection = () => {
           </div>
           <button
             type="submit"
-            className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-body font-semibold text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-gold/60 ring-1 ring-gold/30 hover:ring-gold/60 transition-all duration-300"
+            disabled={submitting}
+            className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-body font-semibold text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-gold/60 ring-1 ring-gold/30 hover:ring-gold/60 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <Send className="w-4 h-4" />
+            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             {t(lang, "contact_submit")}
           </button>
           <p className="font-body text-xs text-muted-foreground text-center">
