@@ -1,21 +1,9 @@
-import { useState } from "react";
-import { FileDown, Loader2, Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
 const Footer = () => {
   const { lang, toggleLang } = useLanguage();
-  const [loading, setLoading] = useState(false);
-
-  const handleDownload = async () => {
-    setLoading(true);
-    try {
-      const { generateBrochure } = await import("@/lib/generateBrochure");
-      await generateBrochure(lang);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <footer className="bg-gradient-dark border-t border-primary-foreground/10 pb-[max(2rem,env(safe-area-inset-bottom))] pt-16 px-6">
