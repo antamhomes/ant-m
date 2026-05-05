@@ -233,7 +233,8 @@ export async function generateBrochure(lang: Lang) {
 
   pdf.setFontSize(8);
   c.whyRows.forEach((row, i) => {
-    pdf.setFillColor(...(i % 2 === 0 ? [255, 255, 255] : [243, 240, 233] as [number, number, number]));
+    const rowFill: [number, number, number] = i % 2 === 0 ? [255, 255, 255] : [243, 240, 233];
+    pdf.setFillColor(...rowFill);
     pdf.rect(15, y, W - 30, 7.5, "F");
     pdf.setTextColor(...charcoal);
     pdf.setFont(FONT, "bold");
