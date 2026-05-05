@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 import realBedroomLuxury from "@/assets/real-bedroom-luxury.jpg";
@@ -62,6 +62,31 @@ const Portfolio = () => {
               />
             </figure>
           ))}
+        </div>
+      </section>
+
+      <section className="px-6 pb-24">
+        <div className="max-w-3xl mx-auto text-center bg-gradient-dark rounded-sm p-10 md:p-16 border border-border">
+          <p className="text-gold font-body text-xs tracking-[0.3em] uppercase mb-4">
+            {lang === "cs" ? "A máme jich mnohem víc…" : "Và chúng tôi còn rất nhiều…"}
+          </p>
+          <h2 className="font-display text-3xl md:text-5xl font-semibold text-primary-foreground mb-6">
+            {lang === "cs"
+              ? "Chcete, aby Váš byt byl další?"
+              : "Bạn muốn căn hộ của mình là tiếp theo?"}
+          </h2>
+          <p className="font-body text-primary-foreground/70 text-base md:text-lg mb-10">
+            {lang === "cs"
+              ? "Ozvěte se nám a my se postaráme o zbytek – od návrhu interiéru až po správu pronájmu."
+              : "Liên hệ với chúng tôi và chúng tôi sẽ lo phần còn lại – từ thiết kế nội thất đến quản lý cho thuê."}
+          </p>
+          <Link
+            to="/#kontakt"
+            className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-body font-medium text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-gold/60 ring-1 ring-gold/30 hover:ring-gold/60 transition-all"
+          >
+            {lang === "cs" ? "Nezávazná poptávka" : "Yêu cầu không ràng buộc"}
+            <ChevronRight className="w-4 h-4" />
+          </Link>
         </div>
       </section>
     </main>
