@@ -6,12 +6,18 @@ import realBedroomLuxury from "@/assets/real-bedroom-luxury.jpg";
 import realBedroomModern from "@/assets/real-bedroom-modern.jpg";
 import realLivingCozy from "@/assets/real-living-cozy.jpg";
 import realLivingRoom from "@/assets/real-living-room.jpg";
+import realLivingTv from "@/assets/real-living-tv.jpg";
+import realCoffeeDetail from "@/assets/real-coffee-detail.jpg";
+import realTerrace from "@/assets/real-terrace.jpg";
 
 const photos: { src: string; alt: string; span: string }[] = [
   { src: realBedroomLuxury, alt: "Luxusní ložnice", span: "md:col-span-2 md:row-span-2" },
   { src: realLivingCozy, alt: "Útulný obývací pokoj", span: "md:col-span-1 md:row-span-1" },
   { src: realBedroomModern, alt: "Moderní ložnice", span: "md:col-span-1 md:row-span-2" },
   { src: realLivingRoom, alt: "Obývací pokoj", span: "md:col-span-2 md:row-span-1" },
+  { src: realLivingTv, alt: "Obývací pokoj s TV stěnou", span: "md:col-span-2 md:row-span-2" },
+  { src: realTerrace, alt: "Terasa s posezením", span: "md:col-span-2 md:row-span-1" },
+  { src: realCoffeeDetail, alt: "Detail kávy s výhledem", span: "md:col-span-1 md:row-span-1" },
 ];
 
 const Portfolio = () => {
