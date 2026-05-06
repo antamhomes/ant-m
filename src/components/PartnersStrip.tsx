@@ -7,9 +7,10 @@ import { t } from "@/i18n/translations";
 const partners = [
   { name: "Airbnb", className: "font-display italic text-2xl md:text-[28px] tracking-tight" },
   { name: "Booking.com", className: "font-body font-semibold text-xl md:text-2xl tracking-tight" },
-  { name: "PriceLabs", className: "font-body font-medium text-xl md:text-2xl tracking-[-0.02em]" },
-  { name: "TTLock", className: "font-body font-semibold text-xl md:text-2xl tracking-tight" },
   { name: "Hospitable", className: "font-display text-xl md:text-2xl tracking-wide" },
+  { name: "PriceLabs", className: "font-body font-medium text-xl md:text-2xl tracking-[-0.02em]" },
+  { name: "Claude AI", className: "font-body font-semibold text-xl md:text-2xl tracking-tight" },
+  { name: "TTLock", className: "font-body font-semibold text-xl md:text-2xl tracking-tight" },
 ];
 
 const PartnersStrip = () => {
