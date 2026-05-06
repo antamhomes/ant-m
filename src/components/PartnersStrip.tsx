@@ -1,39 +1,20 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
+import airbnbLogo from "@/assets/partners/airbnb.png";
+import bookingLogo from "@/assets/partners/booking.png";
+import hospitableLogo from "@/assets/partners/hospitable.png";
+import pricelabsLogo from "@/assets/partners/pricelabs.png";
+import claudeLogo from "@/assets/partners/claude.png";
+import ttlockLogo from "@/assets/partners/ttlock.png";
 
-// Per-brand wordmark styling that approximates each company's own typography.
-const partners: { name: string; className: string; style?: React.CSSProperties }[] = [
-  {
-    name: "airbnb",
-    className: "text-2xl md:text-[28px] font-semibold tracking-tight lowercase",
-    style: { fontFamily: '"Circular", "Nunito", "Inter", system-ui, sans-serif' },
-  },
-  {
-    name: "Booking.com",
-    className: "text-xl md:text-2xl font-bold tracking-tight",
-    style: { fontFamily: '"Helvetica Neue", Helvetica, Arial, sans-serif' },
-  },
-  {
-    name: "Hospitable",
-    className: "text-xl md:text-2xl font-semibold tracking-tight",
-    style: { fontFamily: '"Inter", "Helvetica Neue", Arial, sans-serif' },
-  },
-  {
-    name: "PriceLabs",
-    className: "text-xl md:text-2xl font-bold tracking-[-0.01em]",
-    style: { fontFamily: '"Montserrat", "Inter", sans-serif' },
-  },
-  {
-    name: "Claude",
-    className: "text-xl md:text-2xl tracking-tight",
-    style: { fontFamily: '"Copernicus", "Tiempos", "Charter", Georgia, serif' },
-  },
-  {
-    name: "TTLock",
-    className: "text-xl md:text-2xl font-bold tracking-wide uppercase",
-    style: { fontFamily: '"Helvetica Neue", Arial, sans-serif' },
-  },
+const partners = [
+  { name: "Airbnb", logo: airbnbLogo },
+  { name: "Booking.com", logo: bookingLogo },
+  { name: "Hospitable", logo: hospitableLogo },
+  { name: "PriceLabs", logo: pricelabsLogo },
+  { name: "Claude", logo: claudeLogo },
+  { name: "TTLock", logo: ttlockLogo },
 ];
 
 const PartnersStrip = () => {
@@ -52,19 +33,24 @@ const PartnersStrip = () => {
           {t(lang, "partners_label")}
         </motion.p>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 md:gap-x-14 md:gap-y-6">
+        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:gap-x-14 md:gap-y-8">
           {partners.map((p, i) => (
-            <motion.span
+            <motion.div
               key={p.name}
               initial={{ opacity: 0, y: 6 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.06 }}
-              style={p.style}
-              className={`text-foreground/55 hover:text-foreground transition-colors duration-300 select-none ${p.className}`}
+              className="opacity-80 hover:opacity-100 transition-opacity duration-300"
+              title={p.name}
             >
-              {p.name}
-            </motion.span>
+              <img
+                src={p.logo}
+                alt={p.name}
+                loading="lazy"
+                className="h-10 md:h-12 w-auto object-contain rounded-md"
+              />
+            </motion.div>
           ))}
         </div>
       </div>
