@@ -1,21 +1,14 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
-import airbnbLogo from "@/assets/partners/airbnb.svg";
-import bookingLogo from "@/assets/partners/booking.svg";
-import claudeLogo from "@/assets/partners/claude.svg";
 
-type Partner =
-  | { name: string; logo: string; logoClass?: string }
-  | { name: string; className: string };
-
-const partners: Partner[] = [
-  { name: "Airbnb", logo: airbnbLogo, logoClass: "h-7 md:h-8" },
-  { name: "Booking.com", logo: bookingLogo, logoClass: "h-5 md:h-6" },
-  { name: "Hospitable", className: "font-display text-xl md:text-2xl tracking-wide" },
-  { name: "PriceLabs", className: "font-body font-medium text-xl md:text-2xl tracking-[-0.02em]" },
-  { name: "Claude AI", logo: claudeLogo, logoClass: "h-6 md:h-7" },
-  { name: "TTLock", className: "font-body font-semibold text-xl md:text-2xl tracking-tight" },
+const partners = [
+  "Airbnb",
+  "Booking.com",
+  "Hospitable",
+  "PriceLabs",
+  "Claude AI",
+  "TTLock",
 ];
 
 const PartnersStrip = () => {
@@ -34,27 +27,18 @@ const PartnersStrip = () => {
           {t(lang, "partners_label")}
         </motion.p>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:gap-x-14 md:gap-y-7">
-          {partners.map((p, i) => (
-            <motion.div
-              key={p.name}
+        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 md:gap-x-14 md:gap-y-6">
+          {partners.map((name, i) => (
+            <motion.span
+              key={name}
               initial={{ opacity: 0, y: 6 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.06 }}
-              className="opacity-60 hover:opacity-100 transition-opacity duration-300 select-none flex items-center"
+              className="font-display text-xl md:text-2xl tracking-tight text-foreground/55 hover:text-foreground transition-colors duration-300 select-none"
             >
-              {"logo" in p ? (
-                <img
-                  src={p.logo}
-                  alt={p.name}
-                  loading="lazy"
-                  className={`${p.logoClass ?? "h-6"} w-auto object-contain [filter:grayscale(1)_brightness(0.4)]`}
-                />
-              ) : (
-                <span className={`text-foreground ${p.className}`}>{p.name}</span>
-              )}
-            </motion.div>
+              {name}
+            </motion.span>
           ))}
         </div>
       </div>
