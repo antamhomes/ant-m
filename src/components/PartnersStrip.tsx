@@ -6,7 +6,7 @@ const partners = [
   "Airbnb",
   "Booking.com",
   "PriceLabs",
-  "Claude AI",
+  "Claude",
   "TTLock",
   "Hospitable",
 ];
