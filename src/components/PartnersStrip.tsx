@@ -5,10 +5,10 @@ import { t } from "@/i18n/translations";
 const partners = [
   "Airbnb",
   "Booking.com",
-  "Hospitable",
   "PriceLabs",
   "Claude AI",
   "TTLock",
+  "Hospitable",
 ];
 
 const PartnersStrip = () => {
