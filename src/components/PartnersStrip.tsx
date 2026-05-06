@@ -8,8 +8,8 @@ const partners = [
   { name: "Airbnb", className: "font-display italic text-2xl md:text-[28px] tracking-tight" },
   { name: "Booking.com", className: "font-body font-semibold text-xl md:text-2xl tracking-tight" },
   { name: "PriceLabs", className: "font-body font-medium text-xl md:text-2xl tracking-[-0.02em]" },
-  { name: "Hostaway", className: "font-body font-semibold text-xl md:text-2xl" },
-  { name: "Smoobu", className: "font-display text-xl md:text-2xl tracking-wide" },
+  { name: "TTLock", className: "font-body font-semibold text-xl md:text-2xl tracking-tight" },
+  { name: "Hospitable", className: "font-display text-xl md:text-2xl tracking-wide" },
 ];
 
 const PartnersStrip = () => {
