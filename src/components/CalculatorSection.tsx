@@ -1,43 +1,77 @@
 import { useState, useMemo } from "react";
-import { motion } from "framer-motion";
-import { Calculator, MapPin, Home, Plus, Check } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Calculator, MapPin, Home, Plus, Check, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
-const locations = [
-  { value: "praha1", label: "Praha 1", multiplier: 1.4 },
-  { value: "praha2", label: "Praha 2", multiplier: 1.25 },
-  { value: "praha3", label: "Praha 3", multiplier: 1.05 },
-  { value: "praha4", label: "Praha 4", multiplier: 1.0 },
-  { value: "praha5", label: "Praha 5", multiplier: 1.05 },
-  { value: "praha6", label: "Praha 6", multiplier: 1.1 },
-  { value: "praha7", label: "Praha 7", multiplier: 1.15 },
-  { value: "praha8", label: "Praha 8", multiplier: 0.95 },
-  { value: "praha9", label: "Praha 9", multiplier: 0.9 },
-  { value: "praha10", label: "Praha 10", multiplier: 0.95 },
+type SizeKey = "1kk" | "2kk" | "3kk" | "4kk";
+type LocationKey =
+  | "praha1" | "praha2" | "praha3" | "praha4" | "praha5"
+  | "praha6" | "praha7" | "praha8" | "praha9" | "praha10";
+
+const locations: { value: LocationKey; label: string; multiplier: number; occupancy: number }[] = [
+  { value: "praha1",  label: "Praha 1",  multiplier: 1.55, occupancy: 0.88 },
+  { value: "praha2",  label: "Praha 2",  multiplier: 1.30, occupancy: 0.88 },
+  { value: "praha3",  label: "Praha 3",  multiplier: 1.05, occupancy: 0.82 },
+  { value: "praha4",  label: "Praha 4",  multiplier: 0.85, occupancy: 0.75 },
+  { value: "praha5",  label: "Praha 5",  multiplier: 1.00, occupancy: 0.82 },
+  { value: "praha6",  label: "Praha 6",  multiplier: 1.00, occupancy: 0.82 },
+  { value: "praha7",  label: "Praha 7",  multiplier: 1.15, occupancy: 0.88 },
+  { value: "praha8",  label: "Praha 8",  multiplier: 0.85, occupancy: 0.75 },
+  { value: "praha9",  label: "Praha 9",  multiplier: 0.75, occupancy: 0.70 },
+  { value: "praha10", label: "Praha 10", multiplier: 0.80, occupancy: 0.75 },
 ];
 
-const sizes = [
-  { value: "1kk", label: "1+kk", base: 28000 },
-  { value: "2kk", label: "2+kk", base: 42000 },
-  { value: "3kk", label: "3+kk", base: 58000 },
-  { value: "4kk", label: "4+kk", base: 75000 },
+// Base ADR (Kč/noc) podle dispozice — Praha průměr 2024-25
+const sizes: { value: SizeKey; label: string; baseADR: number; opex: number }[] = [
+  { value: "1kk", label: "1+kk", baseADR: 1950, opex: 2800 },
+  { value: "2kk", label: "2+kk", baseADR: 2600, opex: 3400 },
+  { value: "3kk", label: "3+kk", baseADR: 3600, opex: 4200 },
+  { value: "4kk", label: "4+kk", baseADR: 4900, opex: 5000 },
 ];
 
+// Extras jako % bonus na ADR
 const extraKeys = [
-  { id: "balkon", labelKey: "calc_extra_balkon" as const, bonus: 3000, icon: "🌿" },
-  { id: "parking", labelKey: "calc_extra_parking" as const, bonus: 2500, icon: "🅿️" },
-  { id: "klima", labelKey: "calc_extra_klima" as const, bonus: 2000, icon: "❄️" },
-  { id: "vyhled", labelKey: "calc_extra_vyhled" as const, bonus: 4000, icon: "🏰" },
-  { id: "vybaveni", labelKey: "calc_extra_vybaveni" as const, bonus: 3500, icon: "✨" },
-  { id: "vyuziti", labelKey: "calc_extra_wellness" as const, bonus: 5000, icon: "🧖" },
+  { id: "balkon",   labelKey: "calc_extra_balkon"   as const, pct: 0.04, icon: "🌿" },
+  { id: "parking",  labelKey: "calc_extra_parking"  as const, pct: 0.05, icon: "🅿️" },
+  { id: "klima",    labelKey: "calc_extra_klima"    as const, pct: 0.03, icon: "❄️" },
+  { id: "vyhled",   labelKey: "calc_extra_vyhled"   as const, pct: 0.08, icon: "🏰" },
+  { id: "vybaveni", labelKey: "calc_extra_vybaveni" as const, pct: 0.06, icon: "✨" },
+  { id: "vyuziti",  labelKey: "calc_extra_wellness" as const, pct: 0.05, icon: "🧖" },
 ];
+
+// Dlouhodobý nájem (Kč/měs) — sreality benchmark 2025
+const ltrTable: Record<LocationKey, Record<SizeKey, number>> = {
+  praha1:  { "1kk": 22000, "2kk": 32000, "3kk": 45000, "4kk": 62000 },
+  praha2:  { "1kk": 19000, "2kk": 28000, "3kk": 38000, "4kk": 52000 },
+  praha3:  { "1kk": 17000, "2kk": 24000, "3kk": 32000, "4kk": 44000 },
+  praha4:  { "1kk": 15000, "2kk": 21000, "3kk": 28000, "4kk": 38000 },
+  praha5:  { "1kk": 16500, "2kk": 23000, "3kk": 31000, "4kk": 42000 },
+  praha6:  { "1kk": 17500, "2kk": 25000, "3kk": 34000, "4kk": 46000 },
+  praha7:  { "1kk": 17500, "2kk": 25000, "3kk": 34000, "4kk": 46000 },
+  praha8:  { "1kk": 14500, "2kk": 20000, "3kk": 27000, "4kk": 36000 },
+  praha9:  { "1kk": 13000, "2kk": 18000, "3kk": 24000, "4kk": 32000 },
+  praha10: { "1kk": 14000, "2kk": 19500, "3kk": 26000, "4kk": 35000 },
+};
+
+type Season = "year" | "summer" | "winter";
+const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
+  year:   { adr: 1.00, occDelta: 0    },
+  summer: { adr: 1.25, occDelta: 0.08 },
+  winter: { adr: 0.80, occDelta: -0.12 },
+};
+
+const PLATFORM_FEE = 0.08;
+const OUR_FEE = 0.20;
+const DAYS = 30;
 
 const CalculatorSection = () => {
   const { lang } = useLanguage();
-  const [location, setLocation] = useState("praha1");
-  const [size, setSize] = useState("2kk");
+  const [location, setLocation] = useState<LocationKey>("praha2");
+  const [size, setSize] = useState<SizeKey>("2kk");
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
+  const [season, setSeason] = useState<Season>("year");
+  const [breakdownOpen, setBreakdownOpen] = useState(false);
 
   const toggleExtra = (id: string) => {
     setSelectedExtras((prev) =>
@@ -48,16 +82,24 @@ const CalculatorSection = () => {
   const result = useMemo(() => {
     const sizeData = sizes.find((s) => s.value === size);
     const locationData = locations.find((l) => l.value === location);
-    if (!sizeData || !locationData) return { monthly: 0, yearly: 0, classic: 0 };
-
-    const extrasBonus = extraKeys
+    if (!sizeData || !locationData) {
+      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, opex: 0, ourFee: 0, net: 0, netYear: 0, ltr: 0, ratio: 0 };
+    }
+    const extrasPct = extraKeys
       .filter((e) => selectedExtras.includes(e.id))
-      .reduce((sum, e) => sum + e.bonus, 0);
-
-    const monthly = Math.round((sizeData.base + extrasBonus) * locationData.multiplier);
-    const classic = Math.round(monthly * 0.45);
-    return { monthly, yearly: monthly * 12, classic };
-  }, [location, size, selectedExtras]);
+      .reduce((sum, e) => sum + e.pct, 0);
+    const seasonAdj = seasonAdjust[season];
+    const adr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * seasonAdj.adr);
+    const occupancy = Math.max(0.4, Math.min(0.98, locationData.occupancy + seasonAdj.occDelta));
+    const gross = Math.round(adr * occupancy * DAYS);
+    const platformFee = Math.round(gross * PLATFORM_FEE);
+    const opex = sizeData.opex;
+    const ourFee = Math.round(gross * OUR_FEE);
+    const net = gross - platformFee - opex - ourFee;
+    const ltr = ltrTable[location][size];
+    const ratio = ltr > 0 ? net / ltr : 0;
+    return { adr, occupancy, gross, platformFee, opex, ourFee, net, netYear: net * 12, ltr, ratio };
+  }, [location, size, selectedExtras, season]);
 
   return (
     <section id="kalkulacka" className="py-16 md:py-20 bg-muted/30">
@@ -129,6 +171,26 @@ const CalculatorSection = () => {
 
             <div>
               <label className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
+                <Calculator className="w-4 h-4 text-gold" />
+                {t(lang, "calc_season")}
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {(["year", "summer", "winter"] as Season[]).map((s) => (
+                  <button key={s} type="button" onClick={() => setSeason(s)}
+                    className={`px-2 py-2.5 rounded-sm text-xs sm:text-sm font-body font-medium transition-all border ${
+                      season === s
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-card border-border text-foreground hover:border-gold/50"
+                    }`}
+                  >
+                    {t(lang, `calc_season_${s}` as const)}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
                 <Plus className="w-4 h-4 text-gold" />
                 {t(lang, "calc_extras")}
               </label>
@@ -159,46 +221,112 @@ const CalculatorSection = () => {
             viewport={{ once: true }}
             className="flex items-center order-1 md:order-2"
           >
-            <div className="w-full bg-gradient-dark rounded-md p-8 md:p-10 space-y-8">
-              <div className="flex items-center gap-3 mb-2">
+            <div className="w-full bg-gradient-dark rounded-md p-7 md:p-9 space-y-6">
+              <div className="flex items-center gap-3">
                 <Calculator className="w-5 h-5 text-gold" />
                 <h3 className="font-display text-lg font-semibold text-primary-foreground">
                   {t(lang, "calc_result")}
                 </h3>
               </div>
 
-              <div>
-                <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
-                  {t(lang, "calc_monthly")}
+              {/* ADR */}
+              <div className="flex items-baseline justify-between">
+                <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em]">
+                  {t(lang, "calc_adr")}
                 </p>
-                <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold">
-                  {result.monthly.toLocaleString("cs-CZ")}&nbsp;Kč
-                </p>
-              </div>
-
-              <div className="border-t border-primary-foreground/10 pt-6">
-                <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
-                  {t(lang, "calc_yearly")}
-                </p>
-                <p className="font-display text-2xl font-bold text-primary-foreground">
-                  {result.yearly.toLocaleString("cs-CZ")}&nbsp;Kč
+                <p className="font-display text-xl font-semibold text-primary-foreground">
+                  {result.adr.toLocaleString("cs-CZ")}&nbsp;Kč
                 </p>
               </div>
 
-              <div className="border-t border-primary-foreground/10 pt-6">
+              {/* Hrubý */}
+              <div className="border-t border-primary-foreground/10 pt-5">
+                <div className="flex items-baseline justify-between">
+                  <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em]">
+                    {t(lang, "calc_gross")}
+                  </p>
+                  <p className="font-display text-2xl font-semibold text-primary-foreground">
+                    {result.gross.toLocaleString("cs-CZ")}&nbsp;Kč
+                  </p>
+                </div>
+                <p className="font-body text-[11px] text-primary-foreground/50 mt-1 text-right">
+                  {Math.round(result.occupancy * 100)}% {t(lang, "calc_occupancy")} × {DAYS} {lang === "cs" ? "nocí" : "đêm"}
+                </p>
+              </div>
+
+              {/* Rozpad */}
+              <div className="border-t border-primary-foreground/10 pt-4">
+                <button
+                  type="button"
+                  onClick={() => setBreakdownOpen((o) => !o)}
+                  className="w-full flex items-center justify-between font-body text-xs text-primary-foreground/75 uppercase tracking-[0.15em] hover:text-gold transition-colors"
+                >
+                  <span>{t(lang, "calc_breakdown")}</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${breakdownOpen ? "rotate-180" : ""}`} />
+                </button>
+                <AnimatePresence initial={false}>
+                  {breakdownOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="overflow-hidden"
+                    >
+                      <ul className="mt-4 space-y-2 font-body text-sm text-primary-foreground/80">
+                        <li className="flex justify-between">
+                          <span>{t(lang, "calc_platforms")} ({Math.round(PLATFORM_FEE * 100)} %)</span>
+                          <span>− {result.platformFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
+                        </li>
+                        <li className="flex justify-between">
+                          <span>{t(lang, "calc_operations")}</span>
+                          <span>− {result.opex.toLocaleString("cs-CZ")}&nbsp;Kč</span>
+                        </li>
+                        <li className="flex justify-between">
+                          <span>{t(lang, "calc_our_fee")} ({Math.round(OUR_FEE * 100)} %)</span>
+                          <span>− {result.ourFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
+                        </li>
+                        <li className="text-[11px] text-primary-foreground/50 italic pt-1">
+                          {t(lang, "calc_cleaning_note")}
+                        </li>
+                      </ul>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Net */}
+              <div className="border-t border-primary-foreground/10 pt-5">
                 <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
-                  {t(lang, "calc_classic")}
+                  {t(lang, "calc_net")}
                 </p>
-                <p className="font-display text-2xl font-bold text-primary-foreground/55 line-through">
-                  {result.classic.toLocaleString("cs-CZ")}&nbsp;Kč
+                <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold leading-tight">
+                  {result.net.toLocaleString("cs-CZ")}&nbsp;Kč
                 </p>
-                <p className="font-body text-xs text-primary-foreground/80 mt-2">
-                  {t(lang, "calc_compare")}{" "}
-                  <strong className="text-gold">
-                    {Math.round((result.monthly / result.classic) * 10) / 10}×{" "}
-                  </strong>
-                  {t(lang, "calc_compare2")}
+                <p className="font-body text-sm text-primary-foreground/70 mt-1">
+                  {result.netYear.toLocaleString("cs-CZ")}&nbsp;Kč {t(lang, "calc_net_year")}
                 </p>
+              </div>
+
+              {/* LTR srovnání */}
+              <div className="border-t border-primary-foreground/10 pt-5">
+                <div className="flex items-baseline justify-between">
+                  <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em]">
+                    {t(lang, "calc_ltr")}
+                  </p>
+                  <p className="font-display text-xl font-semibold text-primary-foreground/60">
+                    {result.ltr.toLocaleString("cs-CZ")}&nbsp;Kč
+                  </p>
+                </div>
+                {result.ratio > 0 && (
+                  <p className="font-body text-xs text-primary-foreground/85 mt-2">
+                    →{" "}
+                    <strong className="text-gold">
+                      {(Math.round(result.ratio * 10) / 10).toLocaleString("cs-CZ")}×{" "}
+                    </strong>
+                    {t(lang, "calc_vs_ltr")}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-3">
