@@ -281,15 +281,16 @@ const CalculatorSection = () => {
                           <span>− {result.platformFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
                         <li className="flex justify-between">
-                          <span>{t(lang, "calc_operations")}</span>
-                          <span>− {result.opex.toLocaleString("cs-CZ")}&nbsp;Kč</span>
+                          <span>{t(lang, "calc_cleaning")}</span>
+                          <span>− {result.cleaning.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
                         <li className="flex justify-between">
-                          <span>{t(lang, "calc_our_fee")} ({Math.round(OUR_FEE * 100)} %)</span>
-                          <span>− {result.ourFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
+                          <span>{t(lang, "calc_operations")}</span>
+                          <span>− {result.supplies.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
-                        <li className="text-[11px] text-primary-foreground/50 italic pt-1">
-                          {t(lang, "calc_cleaning_note")}
+                        <li className="flex justify-between">
+                          <span>{t(lang, "calc_our_fee")} ({(OUR_FEE * 100).toLocaleString("cs-CZ")} %)</span>
+                          <span>− {result.ourFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
                       </ul>
                     </motion.div>
