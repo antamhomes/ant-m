@@ -1,90 +1,125 @@
 
-# Finální polish — antam homes
+# Realistická kalkulačka výnosu
 
-Cíl: dotáhnout existující web do hotového premium stavu. Žádné nové sekce, žádné nové animace, žádné stock fotky. Pouze úpravy kontrastu, spacingu, mobile, čitelnosti a konverze.
+## Co se mění
 
-## Poznámka k typografii
-V zadání zmiňuješ Manrope + Inter, ale projekt (a tvoje uložená brand pravidla) používá **Playfair Display (nadpisy) + DM Sans (body)**. Držím tedy Playfair + DM Sans — pokud chceš opravdu přepnout na Manrope/Inter, řekni a udělám zvlášť.
+Současný model `(base + extras) × multiplier × 0.45` je příliš plochý. Nahradíme ho transparentním výpočtem v krocích, který odpovídá tomu, jak Airbnb výnos reálně vzniká.
 
----
+## Nový vzorec
 
-## 1. Hero (`HeroSection.tsx`)
-- Mírně zesílit gradient overlay zespodu, aby měl text větší prioritu, ale obraz nebyl celkově tmavší (zesílit jen spodní 60 % gradientu, horní část ponechat světlejší).
-- Primární CTA „Nezávazně probrat byt" — přidat jemný gold glow / outline ring, aby vystupovala nad sekundárním CTA. Zvětšit padding o ~2 px na mobilu.
-- Sekundární CTA „Spočítat výnos" — ponechat outline, sjednotit šířku na mobilu (`w-full` ve stacku).
-- Floating dekorativní karty (pokud jsou v hero) — ověřit `pointer-events-none` a `aria-hidden`.
-- Subtitle text zesvětlit z `/60` na `/75` pro lepší čitelnost.
+```
+ADR (cena/noc)        = base_ADR[dispozice] × multiplier_lokality × bonus_extras
+hrubý měsíční výnos   = ADR × obsazenost × 30
+─ úklid (přefakturace hostům, neutrální, jen zobrazit)
+─ provize platforem (Airbnb 3 %, Booking 15 % → mix ~8 %)
+─ provoz (energie + internet + drobné: paušál podle dispozice)
+─ naše provize (% z hrubého)
+= čistý výnos do kapsy majitele
 
-## 2. Stats (`StatsSection.tsx`)
-- Disclaimer už existuje (`stats_disclaimer`) — zkontrolovat / upravit text v `i18n/translations.ts` na: „Výsledky se liší podle lokality, stavu bytu, sezóny a nastavení ceny." (CZ + VI).
-- Ověřit, že hodnoty stat1/stat2 obsahují slovo „až" (např. „až 95 %", „až 2,8×"). Pokud ne, upravit překlady.
-- Zmenšit horizontální gap na mobilu, aby se 2x2 grid lépe vešel.
+dlouhodobý nájem      = LTR_table[lokalita][dispozice]   (vlastní tabulka, nezávislá)
+```
 
-## 3. Portfolio (`GallerySection.tsx`)
-- Aspect ratio karet upravit na `aspect-[3/4]` (dominantnější fotka, méně textu pod ní).
-- Hover zoom zjemnit z `scale-[1.05]` na `scale-[1.025]`, prodloužit duration.
-- Padding textové části zmenšit (`p-5 md:p-6`), zkrátit popisky max 2 řádky (`line-clamp-2`).
-- Tagy zredukovat na max 2 — přebytek skrýt.
-- **Mobile**: přepnout grid na horizontální swipe carousel pomocí existujícího `ui/carousel.tsx` (Embla). Na `md:` zpět grid.
-- Lokační badge nechat, ale přesunout do horního rohu s polo-průhledným pozadím.
+## Datové tabulky (Praha 2024–2025, AirDNA / PriceLabs / sreality benchmark)
 
-## 4. Kalkulačka (`CalculatorSection.tsx`)
-- Disclaimer už existuje pod kalkulačkou (`calc_disclaimer`) — upravit text na: „Výpočet je orientační. Přesnější odhad uděláme po zhlédnutí bytu a lokality." (CZ + VI).
-- Pod existující CTA „Mám zájem o spolupráci" přidat **sekundární textový odkaz** „Chci přesnější odhad →" který scrolluje na `#kontakt` s předvyplněnou message (jen scroll, bez form prefill — držíme jednoduché).
-- Disclaimer vizuálně oddělit jemnou tenkou linkou nahoře (`border-t border-border/50 pt-6`).
-- Ověřit kontrast labelů (`text-primary-foreground/50` → `/65`) v dark výsledkové kartě.
+### Base ADR podle dispozice (Praha průměr, Kč/noc)
+- 1+kk: 1 950
+- 2+kk: 2 600
+- 3+kk: 3 600
+- 4+kk: 4 900
 
-## 5. Karty & spacing (globální průchod)
-Projít: `BenefitsSection`, `ServicesSection`, `WhyBetterSection`, `ProcessSection`, `OwnerReportSection`, `AboutSection`, `FAQSection`.
-- Sjednotit vertikální padding sekcí: `py-16 md:py-24` (teď je mix `py-16 md:py-16 md:py-20` — duplicitní třídy, opravit).
-- Karty: pokud má karta velkou prázdnou plochu pod krátkým textem, zmenšit padding místo přidávání textu.
-- Zarovnat všechny gridy na `gap-6 md:gap-8`.
-- Zkontrolovat, že žádná karta nemá `min-h` který tvoří díry.
+### Multiplier lokality (na ADR)
+Reálnější rozpětí než dnešních 0.9–1.4:
+- Praha 1: 1.55
+- Praha 2: 1.30
+- Praha 7: 1.15
+- Praha 3: 1.05
+- Praha 5: 1.00
+- Praha 6: 1.00
+- Praha 8: 0.85
+- Praha 4: 0.85
+- Praha 10: 0.80
+- Praha 9: 0.75
 
-## 6. Typography (čitelnost)
-- Body text: zvýšit kontrast tam, kde je `text-muted-foreground` na světlém pozadí pod 14 px — minimální velikost body 15 px.
-- Gold barva (`text-gold`, `text-gradient-gold`) — audit: použít **pouze** na malé eyebrow labely, čísla a 1-3slovné akcenty. Nahradit gold u jakéhokoliv odstavce delšího než ~6 slov za `text-foreground` nebo `text-muted-foreground`.
-- VI line-height v `index.css` už nastaven (`:lang(vi) { line-height: 1.7 }`) — přidat `lang="vi"` atribut na `<html>` přes `LanguageContext` (teď chybí), aby pravidla zabrala.
-- Upravit `LanguageProvider` aby setoval `document.documentElement.lang` při změně jazyka.
+### Obsazenost (default podle lokality)
+- P1, P2, P7: 88 %
+- P3, P5, P6: 82 %
+- P4, P8, P10: 75 %
+- P9: 70 %
 
-## 7. Mobile audit (priorita)
-- Hero CTA: `flex-col` stack, oba buttony `w-full` s `max-w-xs mx-auto`.
-- Sticky CTA `StickyMobileCTA` — ověřit že se neskrývá pod systémovým UI (safe-area už je řešena, OK).
-- Portfolio carousel (viz #3).
-- Kalkulačka: location grid `grid-cols-2` (teď `grid-cols-2 sm:grid-cols-3` — OK), ověřit že tlačítka nepřetékají s VI textem.
-- Form (`ContactSection`): inputy na mobilu `text-base` (16 px) aby iOS nezoomoval.
-- Jazykový přepínač CZ/VI — zvětšit tap target na min 44×44 px.
-- Projít všechny sekce při 375 px viewportu a opravit horizontální overflow.
+### Extras (jako % bonus na ADR, ne fixní Kč)
+- Balkon/terasa: +4 %
+- Parking: +5 %
+- Klima: +3 %
+- Výhled (hrad/řeka): +8 %
+- Prémiové vybavení / design: +6 %
+- Wellness (vana, sauna): +5 %
 
-## 8. Animace
-Ponechat beze změny (hero parallax, portfolio reveal, timeline fill, report float, fade-up sekcí). Pouze:
-- Zkontrolovat, že všechny `whileInView` mají `viewport={{ once: true, margin: "-50px" }}` aby nezáblo na mobilu.
-- Žádné nové animace.
+### Náklady
+- Provize platforem: 8 % z hrubého
+- Provoz (energie+internet+spotřeba): 1+kk 2 800 / 2+kk 3 400 / 3+kk 4 200 / 4+kk 5 000 Kč/měs
+- Úklid: zobrazit jako "přefakturováno hostům" → neutrální, neodečítá se
+- Naše provize: 20 % z hrubého (nastavíme jako konstantu, zobrazí se transparentně)
 
-## 9. Footer (`Footer.tsx`)
-Stávající má: brand, IČO, telefon, e-mail, Praha, copyright, jazyk. Doplnit:
-- Přidat řádek odkazů: **„Zásady ochrany osobních údajů" / „Cookies"** v bottom row vedle IČO. Zatím odkazy `href="#"` (placeholder) — pokud chceš reálné stránky, řeknu.
-- Zarovnání kontaktů zkontrolovat na mobilu (telefon clickable `tel:` — už je).
-- Přidat `rel="noopener"` kde chybí.
+### Tabulka dlouhodobých nájmů (Kč/měsíc, sreality 2025)
+Samostatná matice lokalita × dispozice, např.:
+- Praha 1: 1+kk 22 000 / 2+kk 32 000 / 3+kk 45 000 / 4+kk 62 000
+- Praha 2: 1+kk 19 000 / 2+kk 28 000 / 3+kk 38 000 / 4+kk 52 000
+- Praha 4: 1+kk 15 000 / 2+kk 21 000 / 3+kk 28 000 / 4+kk 38 000
+- Praha 9: 1+kk 13 000 / 2+kk 18 000 / 3+kk 24 000 / 4+kk 32 000
+- (atd. pro P3, P5, P6, P7, P8, P10 — vyplním všechny)
 
----
+## UI změny v `CalculatorSection.tsx`
 
-## Soubory k editaci
-- `src/components/HeroSection.tsx`
-- `src/components/StatsSection.tsx`
-- `src/components/GallerySection.tsx` (carousel na mobilu)
-- `src/components/CalculatorSection.tsx`
-- `src/components/ContactSection.tsx` (font-size mobile)
-- `src/components/Footer.tsx` (GDPR/Cookies)
-- `src/contexts/LanguageContext.tsx` (set `<html lang>`)
-- `src/i18n/translations.ts` (texty disclaimers, CTA, GDPR)
-- Lehké úpravy v: `BenefitsSection`, `ServicesSection`, `WhyBetterSection`, `ProcessSection`, `AboutSection`, `FAQSection`, `OwnerReportSection` (jen spacing/padding sjednocení a gold audit).
+**Inputy (zachované):** lokalita, dispozice, extras — beze změn vizuálně.
 
-## Co NEBUDU dělat
-- Nepřidávám nové sekce.
-- Nepřidávám nové animace.
-- Neměním fonty na Manrope/Inter (držím Playfair + DM Sans dle brandu).
-- Nepřidávám stock fotky.
-- Neměním strukturu Index.tsx.
+**Nový input:** segmented control "Sezóna":
+- "Celoroční průměr" (default, použije base obsazenost)
+- "Letní špička" (obsazenost +8 pp, ADR ×1.25)
+- "Zimní mimosezóna" (obsazenost −12 pp, ADR ×0.80)
 
-Schvaluješ? Po schválení projdu vše v jednom průchodu.
+**Výsledková karta (přepracovaná):**
+
+```
+PRŮMĚRNÁ CENA / NOC
+2 850 Kč
+
+─────────────────
+HRUBÝ MĚSÍČNÍ VÝNOS
+75 240 Kč   (88 % obsazenost × 30 nocí)
+
+ROZPAD NÁKLADŮ ▾  (rozbalovací)
+  Provize platforem (8 %)        − 6 020
+  Provoz (energie, internet)     − 3 400
+  Naše provize (20 %)            − 15 050
+  (úklid hradí host, neodečítá se)
+
+─────────────────
+ČISTÝ VÝNOS DO KAPSY
+50 770 Kč / měsíc
+609 240 Kč / rok
+
+─────────────────
+DLOUHODOBÝ NÁJEM (P2, 2+kk)
+28 000 Kč / měsíc
+
+→ 1.81× více čistého oproti klasickému pronájmu
+```
+
+Hrubý zobrazit menším písmem, **čistý výnos je hlavní hero číslo** (gold gradient). Rozpad nákladů default zabalený, na klik se otevře — buduje důvěru bez zahlcení.
+
+## Texty / disclaimer
+
+Aktualizovat `calc_disclaimer` (CZ + VI):
+> "Odhad vychází z veřejných benchmarků pro Prahu (AirDNA, PriceLabs, sreality, 2024–2025) a typického nastavení správy. Skutečný výnos závisí na stavu bytu, focení, recenzích a dynamickém pricingu — přesnější odhad uděláme po prohlídce."
+
+## Soubory k úpravě
+
+- `src/components/CalculatorSection.tsx` — kompletní přepis logiky `useMemo`, nová výsledková karta s rozpadem nákladů, segmented control sezóny
+- `src/i18n/translations.ts` — nové klíče: `calc_season`, `calc_season_year`, `calc_season_summer`, `calc_season_winter`, `calc_adr`, `calc_gross`, `calc_breakdown`, `calc_platforms`, `calc_operations`, `calc_our_fee`, `calc_cleaning_note`, `calc_net`, `calc_ltr`, `calc_vs_ltr`, aktualizace `calc_disclaimer`
+
+## Co se NEMĚNÍ
+
+- Vizuální styl (gold akcenty, gradient dark karta, layout 2 sloupců)
+- Sekce kolem (žádné nové sekce)
+- Inputy lokalita/dispozice/extras zůstávají stejné UX
+- CTA tlačítka pod výsledkem
