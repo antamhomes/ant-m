@@ -84,7 +84,7 @@ const CalculatorSection = () => {
     const sizeData = sizes.find((s) => s.value === size);
     const locationData = locations.find((l) => l.value === location);
     if (!sizeData || !locationData) {
-      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, opex: 0, ourFee: 0, net: 0, netYear: 0, ltr: 0, ratio: 0 };
+      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, cleaning: 0, supplies: 0, ourFee: 0, net: 0, netYear: 0, ltr: 0, ratio: 0 };
     }
     const extrasPct = extraKeys
       .filter((e) => selectedExtras.includes(e.id))
@@ -94,12 +94,13 @@ const CalculatorSection = () => {
     const occupancy = Math.max(0.4, Math.min(0.98, locationData.occupancy + seasonAdj.occDelta));
     const gross = Math.round(adr * occupancy * DAYS);
     const platformFee = Math.round(gross * PLATFORM_FEE);
-    const opex = sizeData.opex;
+    const cleaning = sizeData.cleaningPrice * CLEANINGS_PER_MONTH;
+    const supplies = sizeData.supplies;
     const ourFee = Math.round(gross * OUR_FEE);
-    const net = gross - platformFee - opex - ourFee;
+    const net = gross - platformFee - cleaning - supplies - ourFee;
     const ltr = ltrTable[location][size];
     const ratio = ltr > 0 ? net / ltr : 0;
-    return { adr, occupancy, gross, platformFee, opex, ourFee, net, netYear: net * 12, ltr, ratio };
+    return { adr, occupancy, gross, platformFee, cleaning, supplies, ourFee, net, netYear: net * 12, ltr, ratio };
   }, [location, size, selectedExtras, season]);
 
   return (
