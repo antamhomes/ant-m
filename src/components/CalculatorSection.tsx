@@ -22,12 +22,12 @@ const locations: { value: LocationKey; label: string; multiplier: number; occupa
   { value: "praha10", label: "Praha 10", multiplier: 0.80, occupancy: 0.75 },
 ];
 
-// Base ADR (Kč/noc) podle dispozice — Praha průměr 2024-25
-const sizes: { value: SizeKey; label: string; baseADR: number; opex: number }[] = [
-  { value: "1kk", label: "1+kk", baseADR: 1950, opex: 2800 },
-  { value: "2kk", label: "2+kk", baseADR: 2600, opex: 3400 },
-  { value: "3kk", label: "3+kk", baseADR: 3600, opex: 4200 },
-  { value: "4kk", label: "4+kk", baseADR: 4900, opex: 5000 },
+// Base ADR (Kč/noc), supplies (internet+drogerie/měs), cena 1 úklidu
+const sizes: { value: SizeKey; label: string; baseADR: number; supplies: number; cleaningPrice: number }[] = [
+  { value: "1kk", label: "1+kk", baseADR: 1950, supplies: 1200, cleaningPrice: 600  },
+  { value: "2kk", label: "2+kk", baseADR: 2600, supplies: 1400, cleaningPrice: 700  },
+  { value: "3kk", label: "3+kk", baseADR: 3600, supplies: 1700, cleaningPrice: 900  },
+  { value: "4kk", label: "4+kk", baseADR: 4900, supplies: 2000, cleaningPrice: 1100 },
 ];
 
 // Extras jako % bonus na ADR
@@ -62,7 +62,8 @@ const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
 };
 
 const PLATFORM_FEE = 0.08;
-const OUR_FEE = 0.20;
+const OUR_FEE = 0.155;
+const CLEANINGS_PER_MONTH = 10;
 const DAYS = 30;
 
 const CalculatorSection = () => {
