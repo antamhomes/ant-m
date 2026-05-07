@@ -22,12 +22,12 @@ const locations: { value: LocationKey; label: string; multiplier: number; occupa
   { value: "praha10", label: "Praha 10", multiplier: 0.80, occupancy: 0.75 },
 ];
 
-// Base ADR (Kč/noc) podle dispozice — Praha průměr 2024-25
-const sizes: { value: SizeKey; label: string; baseADR: number; opex: number }[] = [
-  { value: "1kk", label: "1+kk", baseADR: 1950, opex: 2800 },
-  { value: "2kk", label: "2+kk", baseADR: 2600, opex: 3400 },
-  { value: "3kk", label: "3+kk", baseADR: 3600, opex: 4200 },
-  { value: "4kk", label: "4+kk", baseADR: 4900, opex: 5000 },
+// Base ADR (Kč/noc), supplies (internet+drogerie/měs), cena 1 úklidu
+const sizes: { value: SizeKey; label: string; baseADR: number; supplies: number; cleaningPrice: number }[] = [
+  { value: "1kk", label: "1+kk", baseADR: 1950, supplies: 1200, cleaningPrice: 600  },
+  { value: "2kk", label: "2+kk", baseADR: 2600, supplies: 1400, cleaningPrice: 700  },
+  { value: "3kk", label: "3+kk", baseADR: 3600, supplies: 1700, cleaningPrice: 900  },
+  { value: "4kk", label: "4+kk", baseADR: 4900, supplies: 2000, cleaningPrice: 1100 },
 ];
 
 // Extras jako % bonus na ADR
@@ -62,7 +62,8 @@ const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
 };
 
 const PLATFORM_FEE = 0.08;
-const OUR_FEE = 0.20;
+const OUR_FEE = 0.155;
+const CLEANINGS_PER_MONTH = 10;
 const DAYS = 30;
 
 const CalculatorSection = () => {
@@ -83,7 +84,7 @@ const CalculatorSection = () => {
     const sizeData = sizes.find((s) => s.value === size);
     const locationData = locations.find((l) => l.value === location);
     if (!sizeData || !locationData) {
-      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, opex: 0, ourFee: 0, net: 0, netYear: 0, ltr: 0, ratio: 0 };
+      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, cleaning: 0, supplies: 0, ourFee: 0, net: 0, netYear: 0, ltr: 0, ratio: 0 };
     }
     const extrasPct = extraKeys
       .filter((e) => selectedExtras.includes(e.id))
@@ -93,12 +94,13 @@ const CalculatorSection = () => {
     const occupancy = Math.max(0.4, Math.min(0.98, locationData.occupancy + seasonAdj.occDelta));
     const gross = Math.round(adr * occupancy * DAYS);
     const platformFee = Math.round(gross * PLATFORM_FEE);
-    const opex = sizeData.opex;
+    const cleaning = sizeData.cleaningPrice * CLEANINGS_PER_MONTH;
+    const supplies = sizeData.supplies;
     const ourFee = Math.round(gross * OUR_FEE);
-    const net = gross - platformFee - opex - ourFee;
+    const net = gross - platformFee - cleaning - supplies - ourFee;
     const ltr = ltrTable[location][size];
     const ratio = ltr > 0 ? net / ltr : 0;
-    return { adr, occupancy, gross, platformFee, opex, ourFee, net, netYear: net * 12, ltr, ratio };
+    return { adr, occupancy, gross, platformFee, cleaning, supplies, ourFee, net, netYear: net * 12, ltr, ratio };
   }, [location, size, selectedExtras, season]);
 
   return (
@@ -279,15 +281,16 @@ const CalculatorSection = () => {
                           <span>− {result.platformFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
                         <li className="flex justify-between">
-                          <span>{t(lang, "calc_operations")}</span>
-                          <span>− {result.opex.toLocaleString("cs-CZ")}&nbsp;Kč</span>
+                          <span>{t(lang, "calc_cleaning")}</span>
+                          <span>− {result.cleaning.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
                         <li className="flex justify-between">
-                          <span>{t(lang, "calc_our_fee")} ({Math.round(OUR_FEE * 100)} %)</span>
-                          <span>− {result.ourFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
+                          <span>{t(lang, "calc_operations")}</span>
+                          <span>− {result.supplies.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
-                        <li className="text-[11px] text-primary-foreground/50 italic pt-1">
-                          {t(lang, "calc_cleaning_note")}
+                        <li className="flex justify-between">
+                          <span>{t(lang, "calc_our_fee")} ({(OUR_FEE * 100).toLocaleString("cs-CZ")} %)</span>
+                          <span>− {result.ourFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
                       </ul>
                     </motion.div>
