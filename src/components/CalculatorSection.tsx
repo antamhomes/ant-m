@@ -58,7 +58,7 @@ type Season = "year" | "summer" | "winter" | "xmas";
 const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   year:   { adr: 1.05, occDelta: 0.02 },
   summer: { adr: 1.33, occDelta: 0.08 },
-  winter: { adr: 0.72, occDelta: -0.03 },
+  winter: { adr: 0.88, occDelta: 0.05 },
   xmas:   { adr: 1.75, occDelta: 0.12 },
 };
 
@@ -91,7 +91,7 @@ const CalculatorSection = () => {
       .reduce((sum, e) => sum + e.pct, 0);
     const seasonAdj = seasonAdjust[season];
     const adr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * seasonAdj.adr);
-    const occupancy = Math.max(0.78, Math.min(0.98, locationData.occupancy + seasonAdj.occDelta));
+    const occupancy = Math.max(0.88, Math.min(0.98, locationData.occupancy + seasonAdj.occDelta));
     const gross = Math.round(adr * occupancy * DAYS);
     const platformFee = Math.round(gross * PLATFORM_FEE);
     const cleanings = Math.max(1, Math.round((occupancy * DAYS) / sizeData.avgStayNights));
@@ -105,7 +105,7 @@ const CalculatorSection = () => {
     // Roční průměr — vždy počítaný ze sezóny "year", nezávisle na výběru
     const yAdj = seasonAdjust.year;
     const yAdr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * yAdj.adr);
-    const yOcc = Math.max(0.78, Math.min(0.98, locationData.occupancy + yAdj.occDelta));
+    const yOcc = Math.max(0.88, Math.min(0.98, locationData.occupancy + yAdj.occDelta));
     const yGross = Math.round(yAdr * yOcc * DAYS);
     const yPlatform = Math.round(yGross * PLATFORM_FEE);
     const yCleanings = Math.max(1, Math.round((yOcc * DAYS) / sizeData.avgStayNights));
