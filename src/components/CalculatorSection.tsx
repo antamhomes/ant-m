@@ -58,7 +58,7 @@ type Season = "year" | "summer" | "winter" | "xmas";
 const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   year:   { adr: 1.00, occDelta: 0    },
   summer: { adr: 1.20, occDelta: 0.05 },
-  winter: { adr: 0.75, occDelta: -0.18 },
+  winter: { adr: 0.78, occDelta: -0.03 },
   xmas:   { adr: 1.55, occDelta: 0.10 },
 };
 
