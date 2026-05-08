@@ -176,27 +176,19 @@ const CalculatorSection = () => {
                 {t(lang, "calc_season")}
               </label>
               <div className="grid grid-cols-2 gap-2">
-                {([
-                  { key: "year",   icon: "📅" },
-                  { key: "summer", icon: "☀️" },
-                  { key: "winter", icon: "❄️" },
-                  { key: "xmas",   icon: "🎄" },
-                ] as { key: Season; icon: string }[]).map((s) => (
-                  <button key={s.key} type="button" onClick={() => setSeason(s.key)}
-                    className={`flex items-start gap-3 px-3 py-3 rounded-sm font-body transition-all border text-left ${
-                      season === s.key
+                {(["year", "summer", "winter", "xmas"] as Season[]).map((key) => (
+                  <button key={key} type="button" onClick={() => setSeason(key)}
+                    className={`flex flex-col px-3 py-3 rounded-sm font-body transition-all border text-left leading-tight ${
+                      season === key
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-card border-border text-foreground hover:border-gold/50"
                     }`}
                   >
-                    <span className="text-lg leading-none mt-0.5">{s.icon}</span>
-                    <span className="flex flex-col leading-tight min-w-0">
-                      <span className="text-[13px] font-semibold truncate">
-                        {t(lang, `calc_season_${s.key}` as const)}
-                      </span>
-                      <span className={`text-[11px] mt-0.5 ${season === s.key ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
-                        {t(lang, `calc_season_${s.key}_sub` as const)}
-                      </span>
+                    <span className="text-[13px] font-semibold truncate">
+                      {t(lang, `calc_season_${key}` as const)}
+                    </span>
+                    <span className={`text-[11px] mt-0.5 ${season === key ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                      {t(lang, `calc_season_${key}_sub` as const)}
                     </span>
                   </button>
                 ))}
