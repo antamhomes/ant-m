@@ -23,11 +23,11 @@ const locations: { value: LocationKey; label: string; multiplier: number; occupa
 ];
 
 // Base ADR (Kč/noc), supplies (internet+drogerie/měs), cena 1 úklidu
-const sizes: { value: SizeKey; label: string; baseADR: number; supplies: number; cleaningPrice: number; avgStayNights: number }[] = [
-  { value: "1kk", label: "1+kk", baseADR: 1850, supplies: 1200, cleaningPrice: 600,  avgStayNights: 3   },
-  { value: "2kk", label: "2+kk", baseADR: 2500, supplies: 1400, cleaningPrice: 700,  avgStayNights: 3   },
-  { value: "3kk", label: "3+kk", baseADR: 3400, supplies: 1700, cleaningPrice: 900,  avgStayNights: 3.5 },
-  { value: "4kk", label: "4+kk", baseADR: 4600, supplies: 2000, cleaningPrice: 1100, avgStayNights: 4   },
+const sizes: { value: SizeKey; label: string; baseADR: number; supplies: number; cleaningPrice: number; avgStayNights: number; energy: number }[] = [
+  { value: "1kk", label: "1+kk", baseADR: 1850, supplies: 1200, cleaningPrice: 600,  avgStayNights: 3,   energy: 2500 },
+  { value: "2kk", label: "2+kk", baseADR: 2500, supplies: 1400, cleaningPrice: 700,  avgStayNights: 3,   energy: 3500 },
+  { value: "3kk", label: "3+kk", baseADR: 3400, supplies: 1700, cleaningPrice: 900,  avgStayNights: 3.5, energy: 4500 },
+  { value: "4kk", label: "4+kk", baseADR: 4600, supplies: 2000, cleaningPrice: 1100, avgStayNights: 4,   energy: 6000 },
 ];
 
 // Extras jako % bonus na ADR
@@ -63,6 +63,7 @@ const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
 };
 
 const PLATFORM_FEE = 0.155;
+const MGMT_FEE = 0.22; // 22 % z net po platformě/úklidu/supplies — střed pásma 20–25 %
 const DAYS = 30;
 
 const CalculatorSection = () => {
@@ -83,7 +84,7 @@ const CalculatorSection = () => {
     const sizeData = sizes.find((s) => s.value === size);
     const locationData = locations.find((l) => l.value === location);
     if (!sizeData || !locationData) {
-      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, cleaning: 0, cleanings: 0, supplies: 0, net: 0, netYearAvg: 0, ltr: 0, ratio: 0 };
+      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, cleaning: 0, cleanings: 0, supplies: 0, mgmt: 0, energy: 0, net: 0, netYearAvg: 0, ltr: 0, ratio: 0 };
     }
     const extrasPct = extraKeys
       .filter((e) => selectedExtras.includes(e.id))
@@ -96,7 +97,10 @@ const CalculatorSection = () => {
     const cleanings = Math.max(1, Math.round((occupancy * DAYS) / sizeData.avgStayNights));
     const cleaning = sizeData.cleaningPrice * cleanings;
     const supplies = sizeData.supplies;
-    const net = gross - platformFee - cleaning - supplies;
+    const netBeforeMgmt = gross - platformFee - cleaning - supplies;
+    const mgmt = Math.round(netBeforeMgmt * MGMT_FEE);
+    const net = netBeforeMgmt - mgmt;
+    const energy = sizeData.energy;
 
     // Roční průměr — vždy počítaný ze sezóny "year", nezávisle na výběru
     const yAdj = seasonAdjust.year;
@@ -106,12 +110,13 @@ const CalculatorSection = () => {
     const yPlatform = Math.round(yGross * PLATFORM_FEE);
     const yCleanings = Math.max(1, Math.round((yOcc * DAYS) / sizeData.avgStayNights));
     const yCleaning = sizeData.cleaningPrice * yCleanings;
-    const yNetMonth = yGross - yPlatform - yCleaning - sizeData.supplies;
+    const yNetBeforeMgmt = yGross - yPlatform - yCleaning - sizeData.supplies;
+    const yNetMonth = yNetBeforeMgmt - Math.round(yNetBeforeMgmt * MGMT_FEE);
     const netYearAvg = yNetMonth * 12;
 
     const ltr = ltrTable[location][size];
     const ratio = ltr > 0 ? yNetMonth / ltr : 0;
-    return { adr, occupancy, gross, platformFee, cleaning, cleanings, supplies, net, netYearAvg, ltr, ratio };
+    return { adr, occupancy, gross, platformFee, cleaning, cleanings, supplies, mgmt, energy, net, netYearAvg, ltr, ratio };
   }, [location, size, selectedExtras, season]);
 
   return (
@@ -304,6 +309,10 @@ const CalculatorSection = () => {
                           <span>{t(lang, "calc_operations")}</span>
                           <span>− {result.supplies.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
+                        <li className="flex justify-between">
+                          <span>{t(lang, "calc_our_fee")} ({Math.round(MGMT_FEE * 100)} %)</span>
+                          <span>− {result.mgmt.toLocaleString("cs-CZ")}&nbsp;Kč</span>
+                        </li>
                       </ul>
                       <p className="mt-3 font-body text-[11px] text-primary-foreground/55 leading-relaxed">
                         {t(lang, "calc_excluded_note")}
@@ -325,7 +334,7 @@ const CalculatorSection = () => {
                   {result.net.toLocaleString("cs-CZ")}&nbsp;Kč
                 </p>
                 <p className="font-body text-[11px] text-primary-foreground/50 mt-2 leading-relaxed">
-                  {t(lang, "calc_excluded_note")}
+                  {t(lang, "calc_excluded_note").replace("{energy}", result.energy.toLocaleString("cs-CZ"))}
                 </p>
               </div>
 
