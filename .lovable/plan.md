@@ -1,53 +1,70 @@
-## Kalkulačka — realističtější data + poctivější popisky
+## Kalkulačka — provize a energie
 
-Soubor: `src/components/CalculatorSection.tsx` (+ drobně `src/i18n/translations.ts`).
+Soubor: `src/components/CalculatorSection.tsx` (+ klíče v `src/i18n/translations.ts`).
 
-### 1. Slabší sezóna: nepropadat obsazeností, propadat cenou
+### 1. Konstanty
 
-Logika: dobrý operátor drží obsazenost vysoko i v listopadu–březnu, ale **cena za noc** klesá. Proto upravit `seasonAdjust`:
-
-| Sezóna | ADR (dnes → nově) | occDelta (dnes → nově) |
-|---|---|---|
-| Celý rok | 1.08 → **1.05** | +0.03 → **+0.02** |
-| Hlavní sezóna | 1.45 → **1.40** | +0.10 → **+0.08** |
-| Slabší sezóna | 0.60 → **0.72** | −0.15 → **−0.03** |
-| Vánoce & NY | 1.75 (beze změny) | +0.12 (beze změny) |
-
-Navíc zvednout dolní clamp obsazenosti z `0.40` na `0.78` — odráží realitu majitele s dobře vedeným bytem (min ~80–85 %).
-
-### 2. Počet úklidů podle obsazenosti
-
-Dnes pevně `CLEANINGS_PER_MONTH = 10` → ve slabší sezóně nesmyslně drahé.
-
-Změna: úklidy = počet pobytů ≈ `obsazené noci / průměrná délka pobytu`.
-
-```text
-avgStayNights = 3            // přidat do sizes (1+kk a 2+kk = 3, 3+kk = 3.5, 4+kk = 4)
-cleanings = round(occupancy × 30 / avgStayNights)
-cleaningCost = cleanings × cleaningPrice
+```ts
+const MGMT_FEE = 0.22;            // 22 % z net (po platformě/úklidu/supplies) — střed pásma 20–25 %
+// Energie (Kč/měs) — fixní dle dispozice
+energy: 1kk=2500, 2kk=3500, 3kk=4500, 4kk=6000
 ```
 
-V breakdownu zobrazit dynamický počet: „Úklid (Nx měs.)".
+`MGMT_FEE` necháme jako jednu konstantu nahoře (snadno přepneš na 0.20 / 0.25). `energy` přidáme do pole `sizes` vedle `supplies`.
 
-### 3. Poctivější label čistého výnosu
+### 2. Výpočet
 
-Dnes „Čistý výnos do kapsy" — ale není, majitel ještě platí naši provizi a energie. Marketingově silné a zároveň pravdivé řešení:
+Aktuálně:
+```
+net = gross − platforma − úklid − supplies
+```
 
-- Hlavní velký řádek přejmenovat z **„Čistý výnos do kapsy"** na **„Výnos pro majitele"** s podtitulkem *„po platformě, úklidu a drobné drogerii"*.
-- Pod číslo přidat tenkou poznámku: *„Bez naší provize a energií, které hradí majitel zvlášť."*
-- V breakdownu nahradit větu `calc_excluded_note` jasnějším: *„V kalkulaci nejsou: naše provize za správu a energie bytu — ty hradí majitel."*
+Nově (pro měsíc i pro roční průměr):
+```
+netBeforeMgmt = gross − platforma − úklid − supplies
+mgmtFee       = round(netBeforeMgmt × 0.22)
+netOwner      = netBeforeMgmt − mgmtFee        // hlavní číslo
+// energie zůstávají STRANOU — jen v poznámce
+energyMonth   = sizeData.energy
+```
 
-### 4. Texty (CS + VI)
+Roční průměr stejnou logikou ze sezóny `year` × 12.
 
-- `calc_net` CS: „Výnos pro majitele" / VI: „Doanh thu cho chủ nhà"
-- nový klíč `calc_net_sub` CS: „po platformě, úklidu a drogerii" / VI: „sau phí nền tảng, dọn dẹp, vật tư"
-- aktualizace `calc_excluded_note` podle bodu 3
-- `calc_cleaning` zůstává klíč, ale label se renderuje dynamicky s počtem (`Úklid (${n}× měs.)`)
+Poměr vůči LTR (`ratio`) přepočítat z `netOwner` (poctivější srovnání).
 
-### Co se NEMĚNÍ
+### 3. UI změny v zelené kartě
 
-- ADR podle dispozice / lokality, extras, LTR tabulka, provize platforem 15,5 %, supplies, ratio vs. dlouhodobý pronájem.
+Breakdown (rozbalovací sekce) — přidat řádek **nad** Net:
+
+```
+− Naše správa (22 %)        − X Kč
+```
+
+Hlavní velký řádek **„Výnos pro majitele"**:
+- velké číslo = `netOwner` (po naší provizi)
+- podtitulek upravit: *„po platformě, úklidu, drogerii a naší správě"*
+- malá poznámka pod číslem nahradit za:
+  *„Energie bytu (~{energyMonth} Kč/měs) hradí majitel zvlášť dle reálné spotřeby."*
+
+Roční průměr pod tím — beze změny vizuálně, jen číslo je `netOwner_year × 12`.
+
+LTR srovnání — text `ratio×` se počítá z nové (nižší, ale poctivé) hodnoty.
+
+### 4. Texty
+
+- `calc_net_sub` CS: „po platformě, úklidu, drogerii a naší správě" / VI: „sau phí nền tảng, dọn dẹp, vật tư và phí quản lý"
+- nový klíč `calc_mgmt` CS: „Naše správa" / VI: „Phí quản lý"
+- `calc_excluded_note` CS: „Energie bytu hradí majitel zvlášť — orientačně {X} Kč/měs dle dispozice a reálné spotřeby." / VI obdoba.
+  (placeholder `{X}` nahradíme `energyMonth` přímo v komponentě, nikoli v překladu — překlad bude bez čísla a číslo doplníme inline.)
 
 ### Dopad
 
-Pro Prahu 2, 2+kk, slabší sezónu: obsazenost ~80 % místo 68 %, ADR mírně níž, úklidů ~8 místo 10. Výsledný „Výnos pro majitele" ve slabé sezóně **vyšší a věrohodnější**, popisek nelže o tom, co majitel reálně dostane.
+Pro Prahu 2, 2+kk, celý rok (orientačně):
+- dnes net ≈ 38–42k Kč/měs
+- nově po provizi 22 %: ~30–33k Kč/měs (poctivé „toto vám reálně chodí")
+- pod tím poznámka o ~3 500 Kč/měs energií
+- roční ~370–400k → vs LTR 28k (ratio ~1.1–1.2×) — pořád zisk, navíc bez rizik dlouhodobého nájmu
+
+### Co se NEMĚNÍ
+
+ADR tabulky, occupancy, sezónní koeficienty, platforma 15,5 %, úklidy, supplies, LTR tabulka.
