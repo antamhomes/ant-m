@@ -141,7 +141,7 @@ const translations = {
     about_title: "Neřešíme byty podle šablony.",
     about_p1: "Každý byt má jinou lokalitu, jiný typ hostů a jiný potenciál. Proto nehledáme univerzální řešení, ale způsob, jak pro konkrétní byt najít jeho nejlepší využití.",
     about_p2: "Po spuštění nabídky práce nekončí. Průběžně sledujeme obsazenost, cenu, okolní nabídku, sezónu i zpětnou vazbu hostů — a podle toho byt dál ladíme.",
-    about_p3: "Cíl je jednoduchý: byt, který dobře funguje, hosté, kteří jsou spokojení, a majitel, který má přehled bez zbytečných starostí.",
+    about_p3: "Byt, který dobře funguje, hosté, kteří jsou spokojení, a majitel, který má přehled bez zbytečných starostí.",
 
     // Calculator
     calc_label: "Kalkulačka výnosu",
