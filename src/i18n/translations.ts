@@ -188,7 +188,7 @@ const translations = {
     calc_vs_ltr: "více čistého oproti klasickému pronájmu",
     calc_cta: "Chci přesnější odhad",
     calc_disclaimer: "Odhad vychází z veřejných benchmarků pro Prahu (AirDNA, Airbtics, sreality, 2025) a typického nastavení správy Antám. Skutečný výnos záleží na stavu bytu, focení, recenzích a dynamickém pricingu — přesnější odhad uděláme po prohlídce.",
-    calc_excluded_note: "Energie bytu hradí majitel zvlášť — orientačně {energy} Kč/měs dle dispozice a reálné spotřeby.",
+    calc_excluded_note: "Energie bytu hradí majitel zvlášť — orientačně {energy} Kč/měs dle reálné spotřeby.",
 
     // Owner report
     report_label: "Přehled pro majitele",
@@ -444,7 +444,7 @@ const translations = {
     calc_vs_ltr: "lợi nhuận ròng cao hơn so với cho thuê dài hạn",
     calc_cta: "Muốn nhận ước tính rõ hơn",
     calc_disclaimer: "Ước tính dựa trên dữ liệu công khai cho Praha (AirDNA, Airbtics, sreality, 2025) và mô hình quản lý điển hình của Antám. Kết quả thực tế phụ thuộc vào tình trạng căn hộ, ảnh chụp, đánh giá và pricing động — chúng tôi sẽ ước tính chính xác hơn sau khi xem căn hộ.",
-    calc_excluded_note: "Tiền điện/nước căn hộ do chủ nhà tự chi trả — khoảng {energy} Kč/tháng tùy diện tích và mức sử dụng thực tế.",
+    calc_excluded_note: "Tiền điện/nước căn hộ do chủ nhà tự chi trả — khoảng {energy} Kč/tháng tùy mức sử dụng thực tế.",
 
     // Owner report
     report_label: "Báo cáo cho chủ nhà",
