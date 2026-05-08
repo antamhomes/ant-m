@@ -149,16 +149,16 @@
   /* ===== Hero CTAs — premium ===== */
   .btn-hero-primary {
     position: relative;
-    background: hsl(var(--charcoal));
-    color: #FFF8EE;
+    background: #FFF8EE;
+    color: hsl(var(--charcoal));
     border: none;
     border-radius: 2px;
     padding: 20px 40px 22px;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.28em;
     text-transform: uppercase;
     font-size: 12px;
-    box-shadow: 0 14px 40px -18px hsl(var(--charcoal) / 0.7);
+    box-shadow: 0 14px 40px -10px rgba(0, 0, 0, 0.45);
     transition:
       transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
       background 0.4s ease,
@@ -166,8 +166,9 @@
   }
   .btn-hero-primary:hover {
     transform: translateY(-1px);
-    background: hsl(var(--charcoal-light));
-    box-shadow: 0 18px 50px -18px hsl(var(--charcoal) / 0.85);
+    background: hsl(var(--gold));
+    color: #FFF8EE;
+    box-shadow: 0 18px 50px -10px hsl(var(--gold) / 0.55);
   }
   .btn-hero-primary::before {
     content: "";
@@ -185,12 +186,17 @@
   .btn-hero-primary:hover::before,
   .btn-hero-primary:focus-visible::before {
     transform: scaleX(1);
+    background: #FFF8EE;
   }
   .btn-hero-primary .arrow {
     display: inline-block;
     margin-left: 14px;
     color: hsl(var(--gold));
     transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .btn-hero-primary:hover .arrow,
+  .btn-hero-primary:focus-visible .arrow {
+    color: #FFF8EE;
   }
   .btn-hero-primary:hover .arrow,
   .btn-hero-primary:focus-visible .arrow {
