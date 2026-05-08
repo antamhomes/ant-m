@@ -39,19 +39,33 @@ const ServicesSection = () => {
           {items.map(({ icon: Icon, titleKey, descKey }, index) => (
             <motion.article
               key={titleKey}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-              className={`grid grid-cols-[auto_1fr] gap-5 md:gap-8 py-7 md:py-9 ${
+              initial={{ opacity: 0, x: index % 2 === 0 ? -60 : 60 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: false, amount: 0.45 }}
+              transition={{ duration: 0.7, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
+              whileHover={{ x: 6, transition: { duration: 0.25 } }}
+              className={`group grid grid-cols-[auto_1fr] gap-5 md:gap-8 py-7 md:py-9 cursor-default ${
                 index !== items.length - 1 ? "border-b border-border/60" : ""
               }`}
             >
-              <div className="shrink-0 pt-1">
-                <Icon className="w-7 h-7 md:w-8 md:h-8 text-gold" strokeWidth={1.25} />
-              </div>
+              <motion.div
+                className="shrink-0 pt-1 relative"
+                animate={{ y: [0, -6, 0] }}
+                transition={{
+                  duration: 3 + index * 0.3,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: index * 0.4,
+                }}
+              >
+                <span className="absolute inset-0 rounded-full bg-gold/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <Icon
+                  className="relative w-7 h-7 md:w-8 md:h-8 text-gold transition-transform duration-500 group-hover:scale-125 group-hover:rotate-6"
+                  strokeWidth={1.25}
+                />
+              </motion.div>
               <div className="pt-1">
-                <h3 className="font-display text-xl md:text-2xl font-semibold text-foreground mb-2 leading-snug">
+                <h3 className="font-display text-xl md:text-2xl font-semibold text-foreground mb-2 leading-snug transition-colors duration-300 group-hover:text-gold-deep">
                   {t(lang, titleKey)}
                 </h3>
                 <p className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed">
