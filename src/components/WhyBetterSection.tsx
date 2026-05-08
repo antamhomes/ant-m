@@ -105,21 +105,21 @@ const WhyBetterSection = () => {
                 </div>
 
                 <div className="grid md:grid-cols-2 md:divide-x divide-border">
-                  <div className="p-6">
-                    <span className="inline-block font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                      {t(lang, "longTerm_label")}
-                    </span>
-                    <p className="font-body text-base text-muted-foreground leading-relaxed">
-                      {t(lang, compLongKeys[index])}
-                    </p>
-                  </div>
-
                   <div className="p-6 bg-gold/5">
                     <span className="inline-block font-body text-xs font-semibold uppercase tracking-wider text-gold mb-3">
                       {t(lang, "shortTerm_label")}
                     </span>
                     <p className="font-body text-base text-foreground leading-relaxed">
                       {t(lang, compShortKeys[index])}
+                    </p>
+                  </div>
+
+                  <div className="p-6">
+                    <span className="inline-block font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                      {t(lang, "longTerm_label")}
+                    </span>
+                    <p className="font-body text-base text-muted-foreground leading-relaxed">
+                      {t(lang, compLongKeys[index])}
                     </p>
                   </div>
                 </div>
