@@ -153,11 +153,11 @@
     color: hsl(var(--charcoal));
     border: none;
     border-radius: 2px;
-    padding: 20px 40px 22px;
+    padding: 16px 36px 18px;
     font-weight: 600;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    font-size: 12px;
+    font-size: 14px;
     box-shadow: 0 14px 40px -10px rgba(0, 0, 0, 0.45);
     transition:
       transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
@@ -173,9 +173,9 @@
   .btn-hero-primary::before {
     content: "";
     position: absolute;
-    left: 40px;
-    right: 40px;
-    bottom: 14px;
+    left: 36px;
+    right: 36px;
+    bottom: 11px;
     height: 1px;
     background: hsl(var(--gold));
     transform: scaleX(0.18);
@@ -208,11 +208,11 @@
     color: #FFF8EE;
     border: 1px solid rgba(255, 248, 238, 0.3);
     border-radius: 2px;
-    padding: 20px 40px 22px;
+    padding: 16px 36px 18px;
     font-weight: 500;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    font-size: 12px;
+    font-size: 14px;
     transition:
       transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
       border-color 0.35s ease;
