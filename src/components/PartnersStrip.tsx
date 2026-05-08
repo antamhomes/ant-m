@@ -7,7 +7,6 @@ const partners = [
   "Booking.com",
   "PriceLabs",
   "Claude",
-  "​",
   "Hospitable",
 ];
 
@@ -27,7 +26,7 @@ const PartnersStrip = () => {
           {t(lang, "partners_label")}
         </motion.p>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-10 gap-y-5 md:gap-x-14 md:gap-y-6">
+        <div className="flex flex-wrap items-center justify-center gap-x-14 gap-y-6 md:gap-x-20 md:gap-y-8">
           {partners.map((name, i) => (
             <motion.span
               key={name}
