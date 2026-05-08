@@ -187,7 +187,7 @@ const translations = {
     calc_ltr: "Klasický dlouhodobý pronájem",
     calc_vs_ltr: "více čistého oproti klasickému pronájmu",
     calc_cta: "Chci přesnější odhad",
-    calc_disclaimer: "Odhad vychází z veřejných benchmarků pro Prahu (AirDNA, Airbtics, sreality, 2025) a typického nastavení správy Antám. Skutečný výnos záleží na stavu bytu, focení, recenzích a dynamickém pricingu — přesnější odhad uděláme po prohlídce.",
+    calc_disclaimer: "Odhad vychází z veřejných benchmarků pro Prahu (AirDNA, Airbtics, sreality, 2025) a typického nastavení správy Antám. Skutečný výnos záleží na stavu bytu, focení, recenzích a dynamickém pricingu.",
     calc_excluded_note: "Energie bytu hradí majitel zvlášť — orientačně {energy} Kč/měs dle reálné spotřeby.",
 
     // Owner report
