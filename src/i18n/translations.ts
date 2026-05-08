@@ -182,7 +182,7 @@ const translations = {
     calc_ltr: "Klasický dlouhodobý pronájem",
     calc_vs_ltr: "více čistého oproti klasickému pronájmu",
     calc_cta: "Chci přesnější odhad",
-    calc_disclaimer: "Odhad vychází z veřejných benchmarků pro Prahu (AirDNA, PriceLabs, sreality, 2024–2025) a typického nastavení správy. Skutečný výnos závisí na stavu bytu, focení, recenzích a dynamickém pricingu — přesnější odhad uděláme po prohlídce.",
+    calc_disclaimer: "Odhad vychází z veřejných benchmarků pro Prahu (AirDNA, Airbtics, sreality, 2025) a typického nastavení správy Antám. Skutečný výnos záleží na stavu bytu, focení, recenzích a dynamickém pricingu — přesnější odhad uděláme po prohlídce.",
 
     // Owner report
     report_label: "Přehled pro majitele",
@@ -432,7 +432,7 @@ const translations = {
     calc_ltr: "Cho thuê dài hạn truyền thống",
     calc_vs_ltr: "lợi nhuận ròng cao hơn so với cho thuê dài hạn",
     calc_cta: "Muốn nhận ước tính rõ hơn",
-    calc_disclaimer: "Ước tính dựa trên dữ liệu công khai cho Praha (AirDNA, PriceLabs, sreality, 2024–2025) và mô hình quản lý điển hình. Kết quả thực tế phụ thuộc vào tình trạng căn hộ, ảnh chụp, đánh giá và pricing động — chúng tôi sẽ ước tính chính xác hơn sau khi xem căn hộ.",
+    calc_disclaimer: "Ước tính dựa trên dữ liệu công khai cho Praha (AirDNA, Airbtics, sreality, 2025) và mô hình quản lý điển hình của Antám. Kết quả thực tế phụ thuộc vào tình trạng căn hộ, ảnh chụp, đánh giá và pricing động — chúng tôi sẽ ước tính chính xác hơn sau khi xem căn hộ.",
 
     // Owner report
     report_label: "Báo cáo cho chủ nhà",
