@@ -420,7 +420,6 @@ const translations = {
     calc_compare2: "cao hơn cho thuê dài hạn",
     calc_season: "Mùa",
     calc_season_year: "Cả năm",
-    calc_season_year: "Cả năm",
     calc_season_year_sub: "tháng trung bình",
     calc_season_summer: "Mùa cao điểm",
     calc_season_summer_sub: "tháng 4–10",
