@@ -61,13 +61,16 @@ const HeroSection = () => {
         >
           <a
             href="#kontakt"
-            className="btn-hero-primary cta-shine inline-flex items-center justify-center font-body text-[14px]"
+            className="btn-hero-primary inline-flex items-center justify-center font-body"
           >
-            <span className="relative z-10">{t(lang, "hero_cta")}</span>
+            <span className="relative z-10 inline-flex items-center">
+              {t(lang, "hero_cta")}
+              <span className="arrow" aria-hidden="true">→</span>
+            </span>
           </a>
           <a
             href="#jak-zacina"
-            className="btn-hero-secondary inline-flex items-center justify-center font-body text-[14px]"
+            className="btn-hero-secondary inline-flex items-center justify-center font-body"
           >
             {t(lang, "hero_cta2")}
           </a>
