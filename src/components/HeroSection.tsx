@@ -61,7 +61,7 @@ const HeroSection = () => {
         >
           <a
             href="#kontakt"
-            className="btn-hero-primary inline-flex items-center justify-center font-body text-[14px]"
+            className="btn-hero-primary cta-shine inline-flex items-center justify-center font-body text-[14px]"
           >
             <span className="relative z-10">{t(lang, "hero_cta")}</span>
           </a>

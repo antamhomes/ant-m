@@ -93,10 +93,21 @@ export default {
             height: "0",
           },
         },
+        shimmer: {
+          "0%": { transform: "translateX(-120%)" },
+          "60%": { transform: "translateX(120%)" },
+          "100%": { transform: "translateX(120%)" },
+        },
+        "gold-pulse": {
+          "0%, 100%": { boxShadow: "0 0 0 0 hsl(var(--gold) / 0.55)" },
+          "50%": { boxShadow: "0 0 0 8px hsl(var(--gold) / 0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        shimmer: "shimmer 3.4s ease-in-out infinite",
+        "gold-pulse": "gold-pulse 2.6s ease-in-out infinite",
       },
     },
   },

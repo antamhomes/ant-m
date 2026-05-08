@@ -96,7 +96,7 @@ const Navbar = () => {
 
           <a
             href="#kontakt"
-            className={`px-5 py-2.5 font-body font-semibold text-xs tracking-wider uppercase rounded-sm transition-all ${
+            className={`cta-shine px-5 py-2.5 font-body font-semibold text-xs tracking-wider uppercase rounded-sm transition-all ${
               scrolled
                 ? "bg-primary text-primary-foreground hover:brightness-110"
                 : "bg-primary-foreground text-primary hover:brightness-95"
