@@ -334,7 +334,7 @@ const CalculatorSection = () => {
                   {result.net.toLocaleString("cs-CZ")}&nbsp;Kč
                 </p>
                 <p className="font-body text-[11px] text-primary-foreground/50 mt-2 leading-relaxed">
-                  {t(lang, "calc_excluded_note").replace("{energy}", result.energy.toLocaleString("cs-CZ"))}
+                  {String(t(lang, "calc_excluded_note")).replace("{energy}", result.energy.toLocaleString("cs-CZ"))}
                 </p>
               </div>
 
