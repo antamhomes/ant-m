@@ -262,21 +262,6 @@ const CalculatorSection = () => {
                 </p>
               </div>
 
-              {/* Hrubý */}
-              <div className="border-t border-primary-foreground/10 pt-5">
-                <div className="flex items-baseline justify-between">
-                  <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em]">
-                    {t(lang, "calc_gross")}
-                  </p>
-                  <p className="font-display text-2xl font-semibold text-primary-foreground">
-                    {result.gross.toLocaleString("cs-CZ")}&nbsp;Kč
-                  </p>
-                </div>
-                <p className="font-body text-[11px] text-primary-foreground/50 mt-1 text-right">
-                  {Math.round(result.occupancy * 100)}% {t(lang, "calc_occupancy")} × {DAYS} {lang === "cs" ? "nocí" : "đêm"}
-                </p>
-              </div>
-
               {/* Rozpad */}
               <div className="border-t border-primary-foreground/10 pt-4">
                 <button
