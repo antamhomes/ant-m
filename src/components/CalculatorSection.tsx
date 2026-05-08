@@ -10,24 +10,24 @@ type LocationKey =
   | "praha6" | "praha7" | "praha8" | "praha9" | "praha10";
 
 const locations: { value: LocationKey; label: string; multiplier: number; occupancy: number }[] = [
-  { value: "praha1",  label: "Praha 1",  multiplier: 1.55, occupancy: 0.88 },
-  { value: "praha2",  label: "Praha 2",  multiplier: 1.30, occupancy: 0.88 },
-  { value: "praha3",  label: "Praha 3",  multiplier: 1.05, occupancy: 0.82 },
-  { value: "praha4",  label: "Praha 4",  multiplier: 0.85, occupancy: 0.75 },
-  { value: "praha5",  label: "Praha 5",  multiplier: 1.00, occupancy: 0.82 },
-  { value: "praha6",  label: "Praha 6",  multiplier: 1.00, occupancy: 0.82 },
-  { value: "praha7",  label: "Praha 7",  multiplier: 1.15, occupancy: 0.88 },
-  { value: "praha8",  label: "Praha 8",  multiplier: 0.85, occupancy: 0.75 },
-  { value: "praha9",  label: "Praha 9",  multiplier: 0.75, occupancy: 0.70 },
-  { value: "praha10", label: "Praha 10", multiplier: 0.80, occupancy: 0.75 },
+  { value: "praha1",  label: "Praha 1",  multiplier: 1.45, occupancy: 0.85 },
+  { value: "praha2",  label: "Praha 2",  multiplier: 1.25, occupancy: 0.83 },
+  { value: "praha3",  label: "Praha 3",  multiplier: 1.05, occupancy: 0.80 },
+  { value: "praha4",  label: "Praha 4",  multiplier: 0.80, occupancy: 0.72 },
+  { value: "praha5",  label: "Praha 5",  multiplier: 1.00, occupancy: 0.78 },
+  { value: "praha6",  label: "Praha 6",  multiplier: 0.95, occupancy: 0.76 },
+  { value: "praha7",  label: "Praha 7",  multiplier: 1.15, occupancy: 0.83 },
+  { value: "praha8",  label: "Praha 8",  multiplier: 0.85, occupancy: 0.74 },
+  { value: "praha9",  label: "Praha 9",  multiplier: 0.70, occupancy: 0.68 },
+  { value: "praha10", label: "Praha 10", multiplier: 0.80, occupancy: 0.73 },
 ];
 
 // Base ADR (Kč/noc), supplies (internet+drogerie/měs), cena 1 úklidu
 const sizes: { value: SizeKey; label: string; baseADR: number; supplies: number; cleaningPrice: number }[] = [
-  { value: "1kk", label: "1+kk", baseADR: 1950, supplies: 1200, cleaningPrice: 600  },
-  { value: "2kk", label: "2+kk", baseADR: 2600, supplies: 1400, cleaningPrice: 700  },
-  { value: "3kk", label: "3+kk", baseADR: 3600, supplies: 1700, cleaningPrice: 900  },
-  { value: "4kk", label: "4+kk", baseADR: 4900, supplies: 2000, cleaningPrice: 1100 },
+  { value: "1kk", label: "1+kk", baseADR: 1850, supplies: 1200, cleaningPrice: 600  },
+  { value: "2kk", label: "2+kk", baseADR: 2500, supplies: 1400, cleaningPrice: 700  },
+  { value: "3kk", label: "3+kk", baseADR: 3400, supplies: 1700, cleaningPrice: 900  },
+  { value: "4kk", label: "4+kk", baseADR: 4600, supplies: 2000, cleaningPrice: 1100 },
 ];
 
 // Extras jako % bonus na ADR
@@ -57,9 +57,9 @@ const ltrTable: Record<LocationKey, Record<SizeKey, number>> = {
 type Season = "year" | "summer" | "winter" | "xmas";
 const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   year:   { adr: 1.00, occDelta: 0    },
-  summer: { adr: 1.25, occDelta: 0.08 },
-  winter: { adr: 0.80, occDelta: -0.12 },
-  xmas:   { adr: 1.60, occDelta: 0.10 },
+  summer: { adr: 1.20, occDelta: 0.05 },
+  winter: { adr: 0.75, occDelta: -0.18 },
+  xmas:   { adr: 1.55, occDelta: 0.10 },
 };
 
 const PLATFORM_FEE = 0.08;
