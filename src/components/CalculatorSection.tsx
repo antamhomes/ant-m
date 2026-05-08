@@ -57,9 +57,9 @@ const ltrTable: Record<LocationKey, Record<SizeKey, number>> = {
 type Season = "year" | "summer" | "winter" | "xmas";
 const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   year:   { adr: 1.08, occDelta: 0.03 },
-  summer: { adr: 1.20, occDelta: 0.05 },
-  winter: { adr: 0.80, occDelta: -0.04 },
-  xmas:   { adr: 1.55, occDelta: 0.10 },
+  summer: { adr: 1.32, occDelta: 0.07 },
+  winter: { adr: 0.70, occDelta: -0.10 },
+  xmas:   { adr: 1.75, occDelta: 0.12 },
 };
 
 const PLATFORM_FEE = 0.155;
