@@ -23,11 +23,11 @@ const locations: { value: LocationKey; label: string; multiplier: number; occupa
 ];
 
 // Base ADR (Kč/noc), supplies (internet+drogerie/měs), cena 1 úklidu
-const sizes: { value: SizeKey; label: string; baseADR: number; supplies: number; cleaningPrice: number }[] = [
-  { value: "1kk", label: "1+kk", baseADR: 1850, supplies: 1200, cleaningPrice: 600  },
-  { value: "2kk", label: "2+kk", baseADR: 2500, supplies: 1400, cleaningPrice: 700  },
-  { value: "3kk", label: "3+kk", baseADR: 3400, supplies: 1700, cleaningPrice: 900  },
-  { value: "4kk", label: "4+kk", baseADR: 4600, supplies: 2000, cleaningPrice: 1100 },
+const sizes: { value: SizeKey; label: string; baseADR: number; supplies: number; cleaningPrice: number; avgStayNights: number }[] = [
+  { value: "1kk", label: "1+kk", baseADR: 1850, supplies: 1200, cleaningPrice: 600,  avgStayNights: 3   },
+  { value: "2kk", label: "2+kk", baseADR: 2500, supplies: 1400, cleaningPrice: 700,  avgStayNights: 3   },
+  { value: "3kk", label: "3+kk", baseADR: 3400, supplies: 1700, cleaningPrice: 900,  avgStayNights: 3.5 },
+  { value: "4kk", label: "4+kk", baseADR: 4600, supplies: 2000, cleaningPrice: 1100, avgStayNights: 4   },
 ];
 
 // Extras jako % bonus na ADR
@@ -56,14 +56,13 @@ const ltrTable: Record<LocationKey, Record<SizeKey, number>> = {
 
 type Season = "year" | "summer" | "winter" | "xmas";
 const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
-  year:   { adr: 1.08, occDelta: 0.03 },
-  summer: { adr: 1.32, occDelta: 0.07 },
-  winter: { adr: 0.70, occDelta: -0.10 },
+  year:   { adr: 1.05, occDelta: 0.02 },
+  summer: { adr: 1.40, occDelta: 0.08 },
+  winter: { adr: 0.72, occDelta: -0.03 },
   xmas:   { adr: 1.75, occDelta: 0.12 },
 };
 
 const PLATFORM_FEE = 0.155;
-const CLEANINGS_PER_MONTH = 10;
 const DAYS = 30;
 
 const CalculatorSection = () => {
@@ -84,22 +83,23 @@ const CalculatorSection = () => {
     const sizeData = sizes.find((s) => s.value === size);
     const locationData = locations.find((l) => l.value === location);
     if (!sizeData || !locationData) {
-      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, cleaning: 0, supplies: 0, net: 0, netYear: 0, ltr: 0, ratio: 0 };
+      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, cleaning: 0, cleanings: 0, supplies: 0, net: 0, netYear: 0, ltr: 0, ratio: 0 };
     }
     const extrasPct = extraKeys
       .filter((e) => selectedExtras.includes(e.id))
       .reduce((sum, e) => sum + e.pct, 0);
     const seasonAdj = seasonAdjust[season];
     const adr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * seasonAdj.adr);
-    const occupancy = Math.max(0.4, Math.min(0.98, locationData.occupancy + seasonAdj.occDelta));
+    const occupancy = Math.max(0.78, Math.min(0.98, locationData.occupancy + seasonAdj.occDelta));
     const gross = Math.round(adr * occupancy * DAYS);
     const platformFee = Math.round(gross * PLATFORM_FEE);
-    const cleaning = sizeData.cleaningPrice * CLEANINGS_PER_MONTH;
+    const cleanings = Math.max(1, Math.round((occupancy * DAYS) / sizeData.avgStayNights));
+    const cleaning = sizeData.cleaningPrice * cleanings;
     const supplies = sizeData.supplies;
     const net = gross - platformFee - cleaning - supplies;
     const ltr = ltrTable[location][size];
     const ratio = ltr > 0 ? net / ltr : 0;
-    return { adr, occupancy, gross, platformFee, cleaning, supplies, net, netYear: net * 12, ltr, ratio };
+    return { adr, occupancy, gross, platformFee, cleaning, cleanings, supplies, net, netYear: net * 12, ltr, ratio };
   }, [location, size, selectedExtras, season]);
 
   return (
@@ -285,7 +285,7 @@ const CalculatorSection = () => {
                           <span>− {result.platformFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
                         <li className="flex justify-between">
-                          <span>{t(lang, "calc_cleaning")}</span>
+                          <span>{t(lang, "calc_cleaning")} ({result.cleanings}× {lang === "cs" ? "měs." : "/tháng"})</span>
                           <span>− {result.cleaning.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
                         <li className="flex justify-between">
@@ -306,11 +306,17 @@ const CalculatorSection = () => {
                 <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
                   {t(lang, "calc_net")}
                 </p>
+                <p className="font-body text-[11px] text-primary-foreground/55 -mt-0.5 mb-1">
+                  {t(lang, "calc_net_sub")}
+                </p>
                 <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold leading-tight">
                   {result.net.toLocaleString("cs-CZ")}&nbsp;Kč
                 </p>
                 <p className="font-body text-sm text-primary-foreground/70 mt-1">
                   {result.netYear.toLocaleString("cs-CZ")}&nbsp;Kč {t(lang, "calc_net_year")}
+                </p>
+                <p className="font-body text-[11px] text-primary-foreground/50 mt-2 leading-relaxed">
+                  {t(lang, "calc_excluded_note")}
                 </p>
               </div>
 
