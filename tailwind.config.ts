@@ -94,20 +94,26 @@ export default {
           },
         },
         shimmer: {
-          "0%": { transform: "translateX(-120%)" },
-          "60%": { transform: "translateX(120%)" },
-          "100%": { transform: "translateX(120%)" },
+          "0%": { transform: "translateX(-150%) skewX(-12deg)" },
+          "55%": { transform: "translateX(150%) skewX(-12deg)" },
+          "100%": { transform: "translateX(150%) skewX(-12deg)" },
         },
         "gold-pulse": {
-          "0%, 100%": { boxShadow: "0 0 0 0 hsl(var(--gold) / 0.55)" },
-          "50%": { boxShadow: "0 0 0 8px hsl(var(--gold) / 0)" },
+          "0%, 100%": {
+            boxShadow: "0 0 0 0 hsl(var(--gold) / 0.75), 0 0 16px 0 hsl(var(--gold) / 0.35)",
+            transform: "scale(1)",
+          },
+          "50%": {
+            boxShadow: "0 0 0 14px hsl(var(--gold) / 0), 0 0 28px 4px hsl(var(--gold) / 0.15)",
+            transform: "scale(1.035)",
+          },
         },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        shimmer: "shimmer 3.4s ease-in-out infinite",
-        "gold-pulse": "gold-pulse 2.6s ease-in-out infinite",
+        shimmer: "shimmer 2.4s ease-in-out infinite",
+        "gold-pulse": "gold-pulse 2s ease-in-out infinite",
       },
     },
   },
