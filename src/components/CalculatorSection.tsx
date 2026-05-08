@@ -115,7 +115,7 @@ const CalculatorSection = () => {
     const netYearAvg = yNetMonth * 12;
 
     const ltr = ltrTable[location][size];
-    const ratio = ltr > 0 ? yNetMonth / ltr : 0;
+    const ratio = ltr > 0 ? net / ltr : 0;
     return { adr, occupancy, gross, platformFee, cleaning, cleanings, supplies, mgmt, energy, net, netYearAvg, ltr, ratio };
   }, [location, size, selectedExtras, season]);
 
