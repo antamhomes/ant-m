@@ -238,6 +238,22 @@
     overflow: hidden;
     isolation: isolate;
     animation: gold-pulse 2.6s ease-in-out infinite;
+    transition: box-shadow 0.3s ease, transform 0.25s ease, filter 0.25s ease;
+  }
+  .cta-shine:hover,
+  .cta-shine:focus-visible {
+    animation-play-state: paused;
+    transform: translateY(-2px) scale(1.04);
+    box-shadow:
+      0 0 0 3px hsl(var(--gold) / 0.45),
+      0 0 24px 4px hsl(var(--gold) / 0.65),
+      0 0 48px 12px hsl(var(--gold) / 0.35);
+    filter: brightness(1.08);
+    outline: none;
+  }
+  .cta-shine:hover::after,
+  .cta-shine:focus-visible::after {
+    animation-duration: 1.2s;
   }
   .cta-shine::after {
     content: "";
