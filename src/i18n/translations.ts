@@ -182,13 +182,13 @@ const translations = {
     calc_our_fee: "Naše provize",
     calc_cleaning_note: "",
     calc_net: "Výnos pro majitele",
-    calc_net_sub: "po platformě, úklidu a drogerii",
+    calc_net_sub: "po platformě, úklidu, drogerii a naší správě",
     calc_net_year: "Roční průměr (čistý)",
     calc_ltr: "Klasický dlouhodobý pronájem",
     calc_vs_ltr: "více čistého oproti klasickému pronájmu",
     calc_cta: "Chci přesnější odhad",
     calc_disclaimer: "Odhad vychází z veřejných benchmarků pro Prahu (AirDNA, Airbtics, sreality, 2025) a typického nastavení správy Antám. Skutečný výnos záleží na stavu bytu, focení, recenzích a dynamickém pricingu — přesnější odhad uděláme po prohlídce.",
-    calc_excluded_note: "V kalkulaci nejsou: naše provize za správu a energie bytu — ty hradí majitel zvlášť.",
+    calc_excluded_note: "Energie bytu hradí majitel zvlášť — orientačně {energy} Kč/měs dle dispozice a reálné spotřeby.",
 
     // Owner report
     report_label: "Přehled pro majitele",
@@ -438,13 +438,13 @@ const translations = {
     calc_our_fee: "Phí dịch vụ của chúng tôi",
     calc_cleaning_note: "",
     calc_net: "Doanh thu cho chủ nhà",
-    calc_net_sub: "sau phí nền tảng, dọn dẹp, vật tư",
+    calc_net_sub: "sau phí nền tảng, dọn dẹp, vật tư và phí quản lý",
     calc_net_year: "Trung bình năm (ròng)",
     calc_ltr: "Cho thuê dài hạn truyền thống",
     calc_vs_ltr: "lợi nhuận ròng cao hơn so với cho thuê dài hạn",
     calc_cta: "Muốn nhận ước tính rõ hơn",
     calc_disclaimer: "Ước tính dựa trên dữ liệu công khai cho Praha (AirDNA, Airbtics, sreality, 2025) và mô hình quản lý điển hình của Antám. Kết quả thực tế phụ thuộc vào tình trạng căn hộ, ảnh chụp, đánh giá và pricing động — chúng tôi sẽ ước tính chính xác hơn sau khi xem căn hộ.",
-    calc_excluded_note: "Chưa tính: phí quản lý của chúng tôi và tiền điện/nước căn hộ — chủ nhà tự chi trả riêng.",
+    calc_excluded_note: "Tiền điện/nước căn hộ do chủ nhà tự chi trả — khoảng {energy} Kč/tháng tùy diện tích và mức sử dụng thực tế.",
 
     // Owner report
     report_label: "Báo cáo cho chủ nhà",
