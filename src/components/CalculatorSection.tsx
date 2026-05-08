@@ -83,7 +83,7 @@ const CalculatorSection = () => {
     const sizeData = sizes.find((s) => s.value === size);
     const locationData = locations.find((l) => l.value === location);
     if (!sizeData || !locationData) {
-      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, cleaning: 0, cleanings: 0, supplies: 0, net: 0, netYear: 0, ltr: 0, ratio: 0 };
+      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, cleaning: 0, cleanings: 0, supplies: 0, net: 0, netYearAvg: 0, ltr: 0, ratio: 0 };
     }
     const extrasPct = extraKeys
       .filter((e) => selectedExtras.includes(e.id))
@@ -97,9 +97,21 @@ const CalculatorSection = () => {
     const cleaning = sizeData.cleaningPrice * cleanings;
     const supplies = sizeData.supplies;
     const net = gross - platformFee - cleaning - supplies;
+
+    // Roční průměr — vždy počítaný ze sezóny "year", nezávisle na výběru
+    const yAdj = seasonAdjust.year;
+    const yAdr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * yAdj.adr);
+    const yOcc = Math.max(0.78, Math.min(0.98, locationData.occupancy + yAdj.occDelta));
+    const yGross = Math.round(yAdr * yOcc * DAYS);
+    const yPlatform = Math.round(yGross * PLATFORM_FEE);
+    const yCleanings = Math.max(1, Math.round((yOcc * DAYS) / sizeData.avgStayNights));
+    const yCleaning = sizeData.cleaningPrice * yCleanings;
+    const yNetMonth = yGross - yPlatform - yCleaning - sizeData.supplies;
+    const netYearAvg = yNetMonth * 12;
+
     const ltr = ltrTable[location][size];
-    const ratio = ltr > 0 ? net / ltr : 0;
-    return { adr, occupancy, gross, platformFee, cleaning, cleanings, supplies, net, netYear: net * 12, ltr, ratio };
+    const ratio = ltr > 0 ? yNetMonth / ltr : 0;
+    return { adr, occupancy, gross, platformFee, cleaning, cleanings, supplies, net, netYearAvg, ltr, ratio };
   }, [location, size, selectedExtras, season]);
 
   return (
@@ -312,12 +324,21 @@ const CalculatorSection = () => {
                 <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold leading-tight">
                   {result.net.toLocaleString("cs-CZ")}&nbsp;Kč
                 </p>
-                <p className="font-body text-sm text-primary-foreground/70 mt-1">
-                  {result.netYear.toLocaleString("cs-CZ")}&nbsp;Kč {t(lang, "calc_net_year")}
-                </p>
                 <p className="font-body text-[11px] text-primary-foreground/50 mt-2 leading-relaxed">
                   {t(lang, "calc_excluded_note")}
                 </p>
+              </div>
+
+              {/* Roční průměr (vždy ze sezóny year) */}
+              <div className="border-t border-primary-foreground/10 pt-5">
+                <div className="flex items-baseline justify-between">
+                  <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em]">
+                    {t(lang, "calc_net_year")}
+                  </p>
+                  <p className="font-display text-xl font-semibold text-primary-foreground">
+                    {result.netYearAvg.toLocaleString("cs-CZ")}&nbsp;Kč
+                  </p>
+                </div>
               </div>
 
               {/* LTR srovnání */}
