@@ -177,16 +177,24 @@ const CalculatorSection = () => {
                 <Calculator className="w-4 h-4 text-gold" />
                 {t(lang, "calc_season")}
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                {(["year", "summer", "winter", "xmas"] as Season[]).map((s) => (
-                  <button key={s} type="button" onClick={() => setSeason(s)}
-                    className={`px-2 py-2.5 rounded-sm text-xs sm:text-sm font-body font-medium transition-all border ${
-                      season === s
+              <div className="grid grid-cols-4 gap-2">
+                {([
+                  { key: "year",   icon: "📅" },
+                  { key: "summer", icon: "☀️" },
+                  { key: "winter", icon: "❄️" },
+                  { key: "xmas",   icon: "🎄" },
+                ] as { key: Season; icon: string }[]).map((s) => (
+                  <button key={s.key} type="button" onClick={() => setSeason(s.key)}
+                    className={`flex flex-col items-center justify-center gap-1 px-1 py-3 rounded-sm font-body font-medium transition-all border ${
+                      season === s.key
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-card border-border text-foreground hover:border-gold/50"
                     }`}
                   >
-                    {t(lang, `calc_season_${s}` as const)}
+                    <span className="text-lg leading-none">{s.icon}</span>
+                    <span className="text-[11px] sm:text-xs leading-tight text-center">
+                      {t(lang, `calc_season_${s.key}` as const)}
+                    </span>
                   </button>
                 ))}
               </div>
