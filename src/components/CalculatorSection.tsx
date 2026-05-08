@@ -62,7 +62,7 @@ const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   xmas:   { adr: 1.55, occDelta: 0.10 },
 };
 
-const OUR_FEE = 0.155;
+const PLATFORM_FEE = 0.155;
 const CLEANINGS_PER_MONTH = 10;
 const DAYS = 30;
 
@@ -84,7 +84,7 @@ const CalculatorSection = () => {
     const sizeData = sizes.find((s) => s.value === size);
     const locationData = locations.find((l) => l.value === location);
     if (!sizeData || !locationData) {
-      return { adr: 0, occupancy: 0, gross: 0, cleaning: 0, supplies: 0, ourFee: 0, net: 0, netYear: 0, ltr: 0, ratio: 0 };
+      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, cleaning: 0, supplies: 0, net: 0, netYear: 0, ltr: 0, ratio: 0 };
     }
     const extrasPct = extraKeys
       .filter((e) => selectedExtras.includes(e.id))
@@ -93,13 +93,13 @@ const CalculatorSection = () => {
     const adr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * seasonAdj.adr);
     const occupancy = Math.max(0.4, Math.min(0.98, locationData.occupancy + seasonAdj.occDelta));
     const gross = Math.round(adr * occupancy * DAYS);
+    const platformFee = Math.round(gross * PLATFORM_FEE);
     const cleaning = sizeData.cleaningPrice * CLEANINGS_PER_MONTH;
     const supplies = sizeData.supplies;
-    const ourFee = Math.round(gross * OUR_FEE);
-    const net = gross - cleaning - supplies - ourFee;
+    const net = gross - platformFee - cleaning - supplies;
     const ltr = ltrTable[location][size];
     const ratio = ltr > 0 ? net / ltr : 0;
-    return { adr, occupancy, gross, cleaning, supplies, ourFee, net, netYear: net * 12, ltr, ratio };
+    return { adr, occupancy, gross, platformFee, cleaning, supplies, net, netYear: net * 12, ltr, ratio };
   }, [location, size, selectedExtras, season]);
 
   return (
@@ -284,16 +284,16 @@ const CalculatorSection = () => {
                     >
                       <ul className="mt-4 space-y-2 font-body text-sm text-primary-foreground/80">
                         <li className="flex justify-between">
+                          <span>{t(lang, "calc_platforms")} ({(PLATFORM_FEE * 100).toLocaleString("cs-CZ")} %)</span>
+                          <span>− {result.platformFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
+                        </li>
+                        <li className="flex justify-between">
                           <span>{t(lang, "calc_cleaning")}</span>
                           <span>− {result.cleaning.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
                         <li className="flex justify-between">
                           <span>{t(lang, "calc_operations")}</span>
                           <span>− {result.supplies.toLocaleString("cs-CZ")}&nbsp;Kč</span>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>{t(lang, "calc_our_fee")} ({(OUR_FEE * 100).toLocaleString("cs-CZ")} %)</span>
-                          <span>− {result.ourFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
                       </ul>
                       <p className="mt-3 font-body text-[11px] text-primary-foreground/55 leading-relaxed">
