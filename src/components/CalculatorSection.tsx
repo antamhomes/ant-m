@@ -54,11 +54,12 @@ const ltrTable: Record<LocationKey, Record<SizeKey, number>> = {
   praha10: { "1kk": 14000, "2kk": 19500, "3kk": 26000, "4kk": 35000 },
 };
 
-type Season = "year" | "summer" | "winter";
+type Season = "year" | "summer" | "winter" | "xmas";
 const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   year:   { adr: 1.00, occDelta: 0    },
   summer: { adr: 1.25, occDelta: 0.08 },
   winter: { adr: 0.80, occDelta: -0.12 },
+  xmas:   { adr: 1.60, occDelta: 0.10 },
 };
 
 const PLATFORM_FEE = 0.08;
@@ -176,8 +177,8 @@ const CalculatorSection = () => {
                 <Calculator className="w-4 h-4 text-gold" />
                 {t(lang, "calc_season")}
               </label>
-              <div className="grid grid-cols-3 gap-2">
-                {(["year", "summer", "winter"] as Season[]).map((s) => (
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {(["year", "summer", "winter", "xmas"] as Season[]).map((s) => (
                   <button key={s} type="button" onClick={() => setSeason(s)}
                     className={`px-2 py-2.5 rounded-sm text-xs sm:text-sm font-body font-medium transition-all border ${
                       season === s
