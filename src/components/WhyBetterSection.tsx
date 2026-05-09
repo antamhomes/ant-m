@@ -119,12 +119,12 @@ const WhyBetterSection = () => {
                     </p>
                   </div>
 
-                  {/* Long-term — footnote, fading */}
-                  <div className="pl-5 [mask-image:linear-gradient(180deg,#000_0%,#000_55%,transparent_100%)]">
+                  {/* Long-term — quiet footnote */}
+                  <div className="pl-5 border-l border-border/60">
                     <span className="font-body text-[10px] font-medium uppercase tracking-[0.28em] text-muted-foreground/70">
                       {t(lang, "longTerm_label")}
                     </span>
-                    <p className="mt-1.5 font-body text-[13px] text-muted-foreground/80 leading-[1.55] italic">
+                    <p className="mt-1.5 font-body text-[13px] text-muted-foreground leading-[1.55]">
                       {t(lang, compLongKeys[index])}
                     </p>
                   </div>
