@@ -66,7 +66,7 @@ const ContactSection = () => {
           <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
             {t(lang, "contact_label")}
           </p>
-          <h2 className="font-display text-3xl md:text-5xl font-semibold text-foreground mb-6">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground mb-6">
             {t(lang, "contact_title")}
           </h2>
           <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">

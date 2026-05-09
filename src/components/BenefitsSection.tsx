@@ -23,7 +23,7 @@ const BenefitsSection = () => {
           <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
             {t(lang, "benefits_label")}
           </p>
-          <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-semibold text-foreground mb-6 leading-[1.2] tracking-tight max-w-2xl mx-auto text-balance">
+          <h2 className="font-display text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground mb-6 leading-[1.2] tracking-tight max-w-2xl mx-auto text-balance">
             <span className="text-foreground/70">{t(lang, "benefits_title1")}</span>{" "}
             <span className="text-gradient-gold">{t(lang, "benefits_title2")}</span>
           </h2>
