@@ -218,7 +218,7 @@ const translations = {
 
     // Contact
     contact_label: "Kontakt",
-    contact_title: "Nezávazně probereme váš byt.",
+    contact_title: "",
     contact_desc: "Pošlete nám základní informace. Podíváme se na lokalitu, stav bytu a řekneme vám, jaký směr může dávat smysl.",
     contact_name: "Jméno",
     contact_name_placeholder: "Jan Novák",
