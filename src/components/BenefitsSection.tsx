@@ -11,28 +11,28 @@ const BenefitsSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section className="py-20 md:py-32 px-6 bg-background">
+    <section className="py-16 md:py-24 px-6 bg-background">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-14 md:mb-20"
+          className="text-center mb-12 md:mb-16"
         >
-          <p className="eyebrow eyebrow-center mb-6">
+          <p className="eyebrow eyebrow-center mb-5">
             {t(lang, "benefits_label")}
           </p>
-          <h2 className="font-display text-[2.25rem] sm:text-5xl md:text-[3.75rem] lg:text-[4.25rem] font-semibold tracking-[-0.02em] text-foreground mb-7 leading-[1.05] max-w-4xl mx-auto text-balance">
+          <h2 className="font-display text-[2rem] sm:text-[2.75rem] md:text-[3.25rem] lg:text-[3.75rem] font-semibold tracking-[-0.02em] text-foreground mb-6 leading-[1.05] max-w-3xl mx-auto text-balance">
             <span className="block text-foreground">{t(lang, "benefits_title1")}</span>
-            <span className="block text-gradient-gold mt-2 md:mt-3">{t(lang, "benefits_title2")}</span>
+            <span className="block text-gradient-gold mt-1.5 md:mt-2">{t(lang, "benefits_title2")}</span>
           </h2>
-          <p className="font-body text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+          <p className="font-body text-muted-foreground text-[15px] md:text-base max-w-lg mx-auto leading-relaxed">
             {t(lang, "benefits_desc")}
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 lg:gap-7">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
           {icons.map((Icon, index) => (
             <motion.div
               key={index}
@@ -40,16 +40,16 @@ const BenefitsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group p-5 md:p-8 rounded-sm bg-card border border-border hover:border-gold/30 transition-all duration-500 hover:shadow-lg flex md:block items-start gap-4"
+              className="group p-5 md:p-7 rounded-sm bg-card border border-border hover:border-gold/40 hover:-translate-y-0.5 transition-all duration-500 hover:shadow-elegant flex md:block items-start gap-4"
             >
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm bg-gold/10 flex items-center justify-center shrink-0 md:mb-6 group-hover:bg-gold/20 transition-colors duration-300">
-                <Icon className="w-5 h-5 md:w-6 md:h-6 text-gold" />
+              <div className="w-10 h-10 md:w-11 md:h-11 rounded-sm bg-gold/10 flex items-center justify-center shrink-0 md:mb-5 group-hover:bg-gold/20 transition-colors duration-300">
+                <Icon className="w-5 h-5 md:w-[22px] md:h-[22px] text-gold" strokeWidth={1.5} />
               </div>
               <div className="flex-1">
-                <h3 className="font-display text-lg md:text-xl font-semibold text-foreground mb-1.5 md:mb-3">
+                <h3 className="font-display text-lg md:text-xl font-semibold text-foreground mb-1.5 md:mb-2.5 leading-snug">
                   {t(lang, titleKeys[index])}
                 </h3>
-                <p className="font-body text-sm md:text-base text-muted-foreground leading-relaxed">
+                <p className="font-body text-sm md:text-[15px] text-muted-foreground leading-relaxed">
                   {t(lang, descKeys[index])}
                 </p>
               </div>
