@@ -39,7 +39,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-display text-[2.5rem] sm:text-6xl md:text-7xl lg:text-[5.5rem] font-bold text-primary-foreground leading-[1.05] tracking-[-0.025em] mb-6 [text-shadow:0_2px_24px_hsl(var(--charcoal)/0.55)]"
+          className="font-display text-[2.25rem] sm:text-6xl md:text-7xl lg:text-[5.5rem] font-bold text-primary-foreground leading-[1.15] sm:leading-[1.05] tracking-[-0.02em] sm:tracking-[-0.025em] mb-5 sm:mb-6 [text-shadow:0_2px_24px_hsl(var(--charcoal)/0.55)] text-balance"
         >
           {t(lang, "hero_title1")}
           <br />
@@ -50,7 +50,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="font-body text-lg md:text-xl text-primary-foreground/95 mb-3 max-w-2xl mx-auto [text-shadow:0_1px_12px_hsl(var(--charcoal)/0.6)]"
+          className="font-body text-base sm:text-lg md:text-xl leading-relaxed text-primary-foreground/95 mb-6 sm:mb-4 max-w-2xl mx-auto [text-shadow:0_1px_12px_hsl(var(--charcoal)/0.6)]"
         >
           {t(lang, "hero_desc")}
         </motion.p>
