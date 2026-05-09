@@ -262,10 +262,10 @@ const translations = {
     mobile_cta: "Probrat byt",
 
     // For you if…
-    foryou_label: "Antam Homes vs dlouhodobý pronájem",
-    foryou_title1: "Co děláme ",
-    foryou_title2: "jinak.",
-    foryou_desc: "Čtyři věci, ve kterých se krátkodobá správa s Antam Homes liší od klasického nájmu.",
+    foryou_label: "Proč to dává smysl",
+    foryou_title1: "Stejný byt umí vydělat víc — když ho někdo ",
+    foryou_title2: "umí spravovat.",
+    foryou_desc: "Většina bytů nevydělává málo kvůli lokalitě, ale kvůli slabé správě. Tady jsou čtyři věci, ve kterých se krátkodobá správa s Antam Homes liší od klasického nájmu.",
     foryou_antam_label: "Antam Homes",
     foryou_long_label: "Dlouhodobý nájem",
     foryou1_title: "Kontrola stavu bytu",
@@ -549,10 +549,10 @@ const translations = {
     mobile_cta: "Trao đổi",
 
     // For you if…
-    foryou_label: "Antam Homes vs cho thuê dài hạn",
-    foryou_title1: "Chúng tôi làm ",
-    foryou_title2: "khác biệt.",
-    foryou_desc: "Bốn điểm khiến cho thuê ngắn hạn với Antam Homes khác hẳn cho thuê dài hạn.",
+    foryou_label: "Vì sao điều này quan trọng",
+    foryou_title1: "Cùng một căn hộ có thể thu nhiều hơn — khi được ",
+    foryou_title2: "quản lý đúng cách.",
+    foryou_desc: "Hầu hết căn hộ không kém vì vị trí, mà vì quản lý yếu. Đây là bốn điểm khiến cho thuê ngắn hạn với Antam Homes khác hẳn cho thuê dài hạn.",
     foryou_antam_label: "Antam Homes",
     foryou_long_label: "Cho thuê dài hạn",
     foryou1_title: "Kiểm soát căn hộ",
