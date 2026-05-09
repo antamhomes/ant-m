@@ -361,6 +361,9 @@ const translations = {
     potential_desc: "Gửi cho antam homes vài thông tin cơ bản. Chúng tôi sẽ xem vị trí, tình trạng căn hộ và trao đổi hướng phù hợp.",
     potential_cta: "Trao đổi về căn hộ",
     potential_note: "Không ràng buộc. Chỉ cần thông tin cơ bản về căn hộ.",
+    potential_bullet1: "Báo cáo hàng tháng minh bạch",
+    potential_bullet2: "Giá thuê linh hoạt theo mùa",
+    potential_bullet3: "Tối ưu tỷ lệ lấp đầy và giá mỗi đêm",
 
     // Detaily
     beforeAfter_label: "Những chi tiết quan trọng",
