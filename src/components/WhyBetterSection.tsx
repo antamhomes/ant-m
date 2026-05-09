@@ -20,7 +20,7 @@ const WhyBetterSection = () => {
   const isMobile = useIsMobile();
 
   return (
-    <section className="py-16 md:py-20 bg-background">
+    <section className="py-12 md:py-16 bg-background">
       <div className="max-w-4xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
