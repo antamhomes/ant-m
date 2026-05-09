@@ -98,6 +98,9 @@ const translations = {
     potential_desc: "Pošlete nám základní informace. Podíváme se na lokalitu, stav bytu a okolní nabídku a řekneme vám, jaký směr může dávat smysl.",
     potential_cta: "Nezávazně probrat byt",
     potential_note: "Nezávazně. Bez tlaku. Stačí základní informace o bytě.",
+    potential_bullet1: "Transparentní měsíční přehled",
+    potential_bullet2: "Dynamické ceny podle sezóny",
+    potential_bullet3: "Optimalizace obsazenosti i ceny za noc",
 
     // Detaily místo Before/After
     beforeAfter_label: "Detaily, na kterých záleží",
