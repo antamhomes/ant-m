@@ -69,8 +69,8 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* GDPR download */}
-        <div className="pt-6 flex justify-center md:justify-start">
+        {/* Legal documents */}
+        <div className="pt-6 flex flex-col md:flex-row gap-3 md:gap-6 items-center md:items-start justify-center md:justify-start">
           <a
             href="/gdpr-informacni-memorandum.pdf"
             download
@@ -80,6 +80,16 @@ const Footer = () => {
             {lang === "cs"
               ? "Informační memorandum o zpracování osobních údajů (GDPR)"
               : "Bản ghi nhớ thông tin về xử lý dữ liệu cá nhân (GDPR)"}
+          </a>
+          <a
+            href="/vop-majitele-nemovitosti.pdf"
+            download
+            className="inline-flex items-center gap-2 text-xs text-primary-foreground/65 hover:text-gold transition-colors font-body tracking-wide"
+          >
+            <Download className="w-3.5 h-3.5" />
+            {lang === "cs"
+              ? "Všeobecné obchodní podmínky pro majitele nemovitostí"
+              : "Điều khoản và điều kiện chung cho chủ sở hữu bất động sản"}
           </a>
         </div>
 
