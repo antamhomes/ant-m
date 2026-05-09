@@ -16,8 +16,16 @@ const ServicesSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section id="sluzby" className="py-12 md:py-14 px-6 bg-secondary">
-      <div className="max-w-5xl mx-auto">
+    <section id="sluzby" className="relative py-16 md:py-20 px-6 bg-gradient-dark border-y border-gold/15 overflow-hidden">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 -top-1/3 h-[60%] opacity-60"
+        style={{
+          background:
+            "radial-gradient(ellipse at 50% 0%, hsl(var(--gold) / 0.18), transparent 60%)",
+        }}
+      />
+      <div className="relative max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -28,10 +36,10 @@ const ServicesSection = () => {
           <p className="text-gold font-body text-xs tracking-[0.3em] uppercase mb-4">
             {t(lang, "services_label")}
           </p>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground mb-5">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-primary-foreground mb-5">
             {t(lang, "services_title")}
           </h2>
-          <p className="font-body text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
+          <p className="font-body text-primary-foreground/70 text-base md:text-lg max-w-2xl mx-auto">
             {t(lang, "services_desc")}
           </p>
         </motion.div>
@@ -46,7 +54,7 @@ const ServicesSection = () => {
               transition={{ duration: 0.7, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ x: 6, transition: { duration: 0.25 } }}
               className={`group grid grid-cols-[auto_1fr] gap-5 md:gap-8 py-5 md:py-6 cursor-default ${
-                index !== items.length - 1 ? "border-b border-border/60" : ""
+                index !== items.length - 1 ? "border-b border-primary-foreground/10" : ""
               }`}
             >
               <motion.div
@@ -66,10 +74,10 @@ const ServicesSection = () => {
                 />
               </motion.div>
               <div className="pt-1">
-                <h3 className="font-display text-xl md:text-2xl font-semibold text-foreground mb-2 leading-snug transition-colors duration-300 group-hover:text-gold-deep">
+                <h3 className="font-display text-xl md:text-2xl font-semibold text-primary-foreground mb-2 leading-snug transition-colors duration-300 group-hover:text-gold">
                   {t(lang, titleKey)}
                 </h3>
-                <p className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed">
+                <p className="font-body text-[15px] md:text-base text-primary-foreground/70 leading-relaxed">
                   {t(lang, descKey)}
                 </p>
               </div>
