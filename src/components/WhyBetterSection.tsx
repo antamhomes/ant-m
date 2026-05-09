@@ -81,7 +81,7 @@ const WhyBetterSection = () => {
                       <span className="font-body text-[10px] font-medium uppercase tracking-[0.28em] text-muted-foreground/70">
                         {t(lang, "longTerm_label")}
                       </span>
-                      <p className="mt-1.5 font-body text-[12.5px] text-muted-foreground leading-[1.55]">
+                      <p className="mt-2 font-body text-[15px] text-muted-foreground leading-[1.55]">
                         {t(lang, compLongKeys[index])}
                       </p>
                     </div>
