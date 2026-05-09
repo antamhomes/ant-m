@@ -49,36 +49,40 @@ const WhyBetterSection = () => {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <Accordion type="single" collapsible defaultValue="item-0" className="space-y-3">
+            <Accordion type="single" collapsible defaultValue="item-0" className="divide-y divide-border/70 border-y border-border/70">
               {compIcons.map((Icon, index) => (
                 <AccordionItem
                   key={index}
                   value={`item-${index}`}
-                  className="rounded-sm border border-border bg-card overflow-hidden"
+                  className="border-0"
                 >
-                  <AccordionTrigger className="px-4 py-3 hover:no-underline data-[state=open]:bg-muted/40 transition-colors">
+                  <AccordionTrigger className="px-1 py-5 hover:no-underline transition-colors">
                     <div className="flex items-center gap-3 text-left">
-                      <Icon className="w-5 h-5 text-gold shrink-0" />
-                      <span className="font-display text-base font-semibold text-foreground">
+                      <Icon className="w-5 h-5 text-gold shrink-0" strokeWidth={1.5} />
+                      <span className="font-display text-lg font-medium tracking-tight text-foreground">
                         {t(lang, compTitleKeys[index])}
                       </span>
                     </div>
                   </AccordionTrigger>
-                  <AccordionContent className="pb-0">
-                    <div className="px-4 py-4 border-t border-border">
-                      <span className="inline-block font-body text-[11px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-                        {t(lang, "longTerm_label")}
-                      </span>
-                      <p className="font-body text-sm text-muted-foreground leading-relaxed">
-                        {t(lang, compLongKeys[index])}
-                      </p>
-                    </div>
-                    <div className="px-4 py-4 bg-gold/5 border-t border-border">
-                      <span className="inline-block font-body text-[11px] font-semibold uppercase tracking-wider text-gold mb-2">
+                  <AccordionContent className="pb-6 pt-1">
+                    <div className="relative pl-5 mb-6">
+                      <span
+                        aria-hidden
+                        className="absolute left-0 top-1.5 bottom-1.5 w-px bg-gradient-to-b from-gold via-gold/60 to-transparent"
+                      />
+                      <span className="font-body text-[10px] font-semibold uppercase tracking-[0.28em] text-gold">
                         {t(lang, "shortTerm_label")}
                       </span>
-                      <p className="font-body text-sm text-foreground leading-relaxed">
+                      <p className="mt-2 font-body text-[15px] text-foreground leading-[1.55]">
                         {t(lang, compShortKeys[index])}
+                      </p>
+                    </div>
+                    <div className="pl-5 border-l border-border/60">
+                      <span className="font-body text-[10px] font-medium uppercase tracking-[0.28em] text-muted-foreground/70">
+                        {t(lang, "longTerm_label")}
+                      </span>
+                      <p className="mt-1.5 font-body text-[12.5px] text-muted-foreground leading-[1.55]">
+                        {t(lang, compLongKeys[index])}
                       </p>
                     </div>
                   </AccordionContent>
