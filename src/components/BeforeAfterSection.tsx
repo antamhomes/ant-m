@@ -35,7 +35,18 @@ const BeforeAfterSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+        <p className="md:hidden font-body text-[11px] text-muted-foreground/70 tracking-[0.2em] uppercase text-center mb-5">
+          ← {lang === "cs" ? "přejeďte prstem" : "vuốt để xem"} →
+        </p>
+        <div
+          className="
+            flex md:grid md:grid-cols-3 gap-6 md:gap-8
+            overflow-x-auto md:overflow-visible
+            snap-x snap-mandatory md:snap-none
+            -mx-6 md:mx-0 px-6 md:px-0 pb-4 md:pb-0
+            [&::-webkit-scrollbar]:hidden
+          "
+        >
           {cards.map((card, index) => (
             <motion.article
               key={card.titleKey}
@@ -43,7 +54,7 @@ const BeforeAfterSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
-              className="group rounded-sm overflow-hidden bg-card border border-border hover:border-gold/40 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500"
+              className="group rounded-sm overflow-hidden bg-card border border-border hover:border-gold/40 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500 shrink-0 w-[82%] sm:w-[60%] md:w-auto snap-center"
             >
               <div className="relative aspect-[4/5] overflow-hidden">
                 <img
