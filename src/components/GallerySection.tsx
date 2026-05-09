@@ -37,7 +37,7 @@ const GallerySection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section id="portfolio" className="py-16 md:py-24 px-6 bg-background">
+    <section id="portfolio" className="pt-6 md:pt-10 pb-16 md:pb-24 px-6 bg-background">
       <div className="max-w-6xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
