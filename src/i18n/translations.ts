@@ -260,6 +260,20 @@ const translations = {
 
     // Sticky mobile
     mobile_cta: "Probrat byt",
+
+    // For you if…
+    foryou_label: "Pro koho je antam homes",
+    foryou_title1: "Tohle je pro vás, ",
+    foryou_title2: "pokud…",
+    foryou_desc: "Většina majitelů, se kterými pracujeme, řeší stejné věci. Možná některou z nich poznáváte.",
+    foryou1_title: "Nemáte čas řešit hosty",
+    foryou1_desc: "Dotazy, check-iny, klíče a problémy v noci nechcete řešit po práci ani o víkendu.",
+    foryou2_title: "Bojíte se o stav bytu",
+    foryou2_desc: "Chcete vědět, kdo do bytu chodí, jestli se uklízí pořádně a jestli se po hostech kontroluje.",
+    foryou3_title: "Chcete vyšší a stabilnější výnos",
+    foryou3_desc: "Nestačí vám dlouhodobý nájem a víte, že krátkodobý pronájem může vydělat víc — když ho někdo dělá pořádně.",
+    foryou4_title: "Chcete si byt občas nechat pro sebe",
+    foryou4_desc: "Rodina, návštěvy, vlastní pobyty — kalendář si chcete plánovat sami a flexibilně.",
   },
 
   vi: {
@@ -523,6 +537,20 @@ const translations = {
 
     // Sticky mobile
     mobile_cta: "Trao đổi",
+
+    // For you if…
+    foryou_label: "antam homes phù hợp với ai",
+    foryou_title1: "Phù hợp với cô chú ",
+    foryou_title2: "nếu…",
+    foryou_desc: "Hầu hết chủ nhà chúng tôi làm cùng đều gặp những điều giống nhau. Có thể cô chú cũng vậy.",
+    foryou1_title: "Không có thời gian lo cho khách",
+    foryou1_desc: "Câu hỏi, nhận phòng, chìa khóa và sự cố ban đêm — cô chú không muốn xử lý sau giờ làm hay cuối tuần.",
+    foryou2_title: "Lo lắng về tình trạng căn hộ",
+    foryou2_desc: "Cô chú muốn biết ai vào căn hộ, có được dọn sạch không và có được kiểm tra sau mỗi lượt khách không.",
+    foryou3_title: "Muốn doanh thu cao và ổn định hơn",
+    foryou3_desc: "Cho thuê dài hạn không đủ và cô chú biết cho thuê ngắn hạn có thể tốt hơn — nếu được làm bài bản.",
+    foryou4_title: "Muốn giữ căn hộ cho riêng mình thỉnh thoảng",
+    foryou4_desc: "Gia đình, khách đến thăm, hoặc dùng riêng — cô chú muốn tự lên lịch một cách linh hoạt.",
   },
 } as const;
 
