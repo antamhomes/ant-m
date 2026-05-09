@@ -332,9 +332,6 @@ const CalculatorSection = () => {
                           <span>− {result.mgmt.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
                       </ul>
-                      <p className="mt-3 font-body text-[11px] text-primary-foreground/55 leading-relaxed">
-                        {t(lang, "calc_excluded_note")}
-                      </p>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -350,9 +347,6 @@ const CalculatorSection = () => {
                 </p>
                 <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold leading-tight">
                   {result.net.toLocaleString("cs-CZ")}&nbsp;Kč
-                </p>
-                <p className="font-body text-[11px] text-primary-foreground/50 mt-2 leading-relaxed">
-                  {String(t(lang, "calc_excluded_note")).replace("{energy}", result.energy.toLocaleString("cs-CZ"))}
                 </p>
               </div>
 
