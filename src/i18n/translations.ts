@@ -9,7 +9,7 @@ const translations = {
     hero_subtitle: "antam homes — péče o byt a krátkodobý pronájem",
     hero_title1: "Váš byt. Naše péče. ",
     hero_title2: "Váš zisk.",
-    hero_desc: "Kompletní správa krátkodobého pronájmu — od přípravy nabídky po hosty, úklid a přehledné výnosy.",
+    hero_desc: "Správa krátkodobých pronájmů v Praze pro majitele, kteří chtějí víc výnosu a méně starostí.",
     hero_extra: "Pro majitele bytů v Praze a okolí. Bez tlaku, bez přehnaných slibů.",
     hero_cta: "Nezávazně probrat byt",
     hero_cta2: "Jak to funguje",
