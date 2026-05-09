@@ -115,7 +115,7 @@ const translations = {
 
     // Gallery / Portfolio
     gallery_label: "Portfolio",
-    gallery_title: "Byty v naší péči",
+    gallery_title: "V naší péči",
     gallery_desc: "Každý byt má jinou lokalitu, jiný typ hostů a jiný potenciál. Proto u každého hledáme směr, který dává největší smysl.",
     portfolio1_title: "Praha 1 — byt s výhledem na Muzeum",
     portfolio1_desc: "Silná lokalita, výhled a turistická poptávka. Důležitý je první dojem, prezentace a hladký průběh pobytu.",
