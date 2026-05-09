@@ -1,48 +1,9 @@
-## Cíl
+## Remove bullet boxes from PotentialCTA section
 
-Zkrátit pocit opakování na hlavní stránce: sloučit dvě benefitové sekce do jedné a oddělit dva foto-bloky tak, aby na sebe nenavazovaly.
+In `src/components/PotentialCTA.tsx`:
 
-## Změny
+1. Remove the entire `<ul>` block (the 3 boxed bullets: "Transparentní měsíční přehled", "Dynamické ceny podle sezóny", "Optimalizace obsazenosti i ceny za noc").
+2. Remove the now-unused `bulletKeys` constant and the `Check` icon import.
+3. Restore the spacing on the description paragraph (`mb-8` → `mb-10`) so the CTA button has proper breathing room without the bullets.
 
-### 1. Sloučit BenefitsSection + ForYouSection do jedné sekce
-
-- Smazat `BenefitsSection` z `src/pages/Index.tsx` (a její import).
-- Komponentu `src/components/BenefitsSection.tsx` smazat.
-- `ForYouSection` zůstává jako **jediný** „proč my" blok hned za Hero. Mírně posílit nadpis a podnadpis, aby fungoval jako kompletní hodnotová sekce (ne jen srovnání). Zbytek karet (4× Antam vs dlouhodobý nájem) zůstává beze změny.
-- Překladové klíče `benefits_*` a `benefit1..6_*` v `src/i18n/translations.ts` smazat (CS i VI).
-
-### 2. Oddělit BeforeAfterSection a GallerySection
-
-Dnes jdou těsně za sebou (dva foto bloky v řadě). Nový pořadí:
-
-```text
-Hero
-ForYouSection         (merged „proč my")
-PartnersStrip
-CalculatorSection
-ServicesSection
-BeforeAfterSection    (detaily fotek — důkaz řemesla)
-ProcessSection
-OwnerReportSection
-GallerySection        (portfolio jako social proof před About)
-AboutSection
-PotentialCTA
-FAQSection
-ContactSection
-```
-
-Tím je mezi BeforeAfter a Gallery proklad Process + OwnerReport, takže se vizuálně neopakují.
-
-### 3. Drobnost
-
-V `Index.tsx` smazat i nepoužívané importy (`TrustStrip`, `StatsSection`, `SectionDivider`), pokud nikde nejsou použité — vyčistí soubor.
-
-## Co se NEMĚNÍ
-
-- ServicesSection, ProcessSection, OwnerReportSection zůstávají všechny tři (dle tvé volby).
-- Žádné texty v Process / Services / Report / Calculator / FAQ / Contact se neupravují.
-- Design tokens, fonty, barvy beze změny.
-
-## Výsledek
-
-Stránka se zkrátí o jednu redundantní sekci a dva foto bloky už nebudou hned vedle sebe — funnel by měl působit svižněji a méně repetitivně.
+Optionally keep the translation keys `potential_bullet1/2/3` in `src/i18n/translations.ts` (CS + VI) in case you want to bring them back later — or also remove them. Default: leave them in translations, they're unused but harmless.
