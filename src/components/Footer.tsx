@@ -91,6 +91,16 @@ const Footer = () => {
               ? "Všeobecné obchodní podmínky pro majitele nemovitostí"
               : "Điều khoản và điều kiện chung cho chủ sở hữu bất động sản"}
           </a>
+          <a
+            href="/formular-odstoupeni-od-smlouvy.pdf"
+            download
+            className="inline-flex items-center gap-2 text-xs text-primary-foreground/65 hover:text-gold transition-colors font-body tracking-wide"
+          >
+            <Download className="w-3.5 h-3.5" />
+            {lang === "cs"
+              ? "Formulář pro odstoupení od smlouvy"
+              : "Mẫu đơn rút khỏi hợp đồng"}
+          </a>
         </div>
 
       </div>
