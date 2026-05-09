@@ -260,6 +260,20 @@ const translations = {
 
     // Sticky mobile
     mobile_cta: "Probrat byt",
+
+    // For you if…
+    foryou_label: "Pro koho je antam homes",
+    foryou_title1: "Tohle je pro vás, ",
+    foryou_title2: "pokud…",
+    foryou_desc: "Většina majitelů, se kterými pracujeme, řeší stejné věci. Možná některou z nich poznáváte.",
+    foryou1_title: "Nemáte čas řešit hosty",
+    foryou1_desc: "Dotazy, check-iny, klíče a problémy v noci nechcete řešit po práci ani o víkendu.",
+    foryou2_title: "Bojíte se o stav bytu",
+    foryou2_desc: "Chcete vědět, kdo do bytu chodí, jestli se uklízí pořádně a jestli se po hostech kontroluje.",
+    foryou3_title: "Chcete vyšší a stabilnější výnos",
+    foryou3_desc: "Nestačí vám dlouhodobý nájem a víte, že krátkodobý pronájem může vydělat víc — když ho někdo dělá pořádně.",
+    foryou4_title: "Chcete si byt občas nechat pro sebe",
+    foryou4_desc: "Rodina, návštěvy, vlastní pobyty — kalendář si chcete plánovat sami a flexibilně.",
   },
 
   vi: {
