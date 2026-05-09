@@ -67,7 +67,7 @@ const translations = {
     svc4_title: "Úklid a kontrola kvality",
     svc4_desc: "Po každém pobytu byt kontrolujeme a hlídáme detaily, aby zůstal v dobrém stavu.",
     svc5_title: "Údržba a řešení problémů",
-    svc5_desc: "Drobné opravy, rychlé zásahy a koordinace řemeslníků, když je potřeba.",
+    svc5_desc: "Drobné opravy, pohotové zásahy a koordinace řemeslníků, když je potřeba.",
     svc6_title: "Měsíční reporting",
     svc6_desc: "Jasný přehled rezervací, výnosů, nákladů a důležitých informací o bytu.",
 
