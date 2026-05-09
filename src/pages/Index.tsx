@@ -12,6 +12,8 @@ import ProcessSection from "@/components/ProcessSection";
 import AboutSection from "@/components/AboutSection";
 import ServicesSection from "@/components/ServicesSection";
 import CalculatorSection from "@/components/CalculatorSection";
+import ForOwnersSection from "@/components/ForOwnersSection";
+import PricingSection from "@/components/PricingSection";
 import OwnerReportSection from "@/components/OwnerReportSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
@@ -24,11 +26,14 @@ const Index = () => {
     <div className="min-h-screen">
       <Navbar />
       <HeroSection />
+      <StatsSection />
       <BenefitsSection />
       <PartnersStrip />
       <CalculatorSection />
+      <ForOwnersSection />
       <WhyBetterSection />
       <ServicesSection />
+      <PricingSection />
       <BeforeAfterSection />
       <ProcessSection />
       <OwnerReportSection />
