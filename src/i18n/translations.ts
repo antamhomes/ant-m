@@ -260,33 +260,6 @@ const translations = {
 
     // Sticky mobile
     mobile_cta: "Probrat byt",
-
-    // For Owners — pain points
-    forOwners_label: "Pro koho to dává smysl",
-    forOwners_title1: "Toto je pro vás, pokud ",
-    forOwners_title2: "se v tom poznáte.",
-    forOwners_desc: "Mluvíme se stovkami majitelů. Většinou řeší jednu z těchto čtyř věcí.",
-    forOwners1_title: "Nemáte čas na hosty",
-    forOwners1_desc: "Dotazy v noci, check-in v pondělí ráno, ztracené klíče. Řešíme za vás 24/7.",
-    forOwners2_title: "Bojíte se o stav bytu",
-    forOwners2_desc: "Po každém pobytu kontrolujeme byt i vybavení. Drobné opravy řešíme dřív, než si jich všimnete.",
-    forOwners3_title: "Daně a evidence vás odrazují",
-    forOwners3_desc: "Vedeme přehled rezervací, plateb a podkladů pro účetní. Měsíční report dostanete na e-mail.",
-    forOwners4_title: "Chcete byt občas pro sebe",
-    forOwners4_desc: "Kalendář si plánujete vy. Vybrané termíny si jednoduše zablokujete pro rodinu nebo známé.",
-
-    // Pricing
-    pricing_label: "Cena za správu",
-    pricing_title1: "Jasná cena. ",
-    pricing_title2: "Bez překvapení.",
-    pricing_desc: "Žádné vstupní poplatky. Žádná vázaná smlouva. Platíte jen tehdy, když byt vydělává.",
-    pricing_value: "22 %",
-    pricing_value_sub: "z čistého výnosu po platformách a úklidu",
-    pricing_point1: "Bez vstupních poplatků",
-    pricing_point2: "Bez vázané smlouvy",
-    pricing_point3: "Měsíční vyúčtování a report",
-    pricing_cta: "Spočítat váš výnos",
-    pricing_note: "Cena se může lehce lišit u bytů s netypickým provozem (rekonstrukce, sezónní využití). Vždy ji dohodneme předem.",
   },
 
   vi: {
@@ -550,33 +523,6 @@ const translations = {
 
     // Sticky mobile
     mobile_cta: "Trao đổi",
-
-    // For Owners — pain points
-    forOwners_label: "Dành cho ai phù hợp",
-    forOwners_title1: "Đây là dành cho cô chú nếu ",
-    forOwners_title2: "thấy mình ở đây.",
-    forOwners_desc: "Chúng tôi nói chuyện với rất nhiều chủ nhà. Hầu hết đều gặp một trong bốn điều này.",
-    forOwners1_title: "Không có thời gian cho khách",
-    forOwners1_desc: "Tin nhắn lúc nửa đêm, nhận phòng sáng sớm, chìa khóa thất lạc. Chúng tôi xử lý 24/7.",
-    forOwners2_title: "Lo lắng về tình trạng căn hộ",
-    forOwners2_desc: "Sau mỗi lượt khách, căn hộ và đồ đạc được kiểm tra. Sửa chữa nhỏ được xử lý sớm.",
-    forOwners3_title: "Thuế và giấy tờ làm cô chú ngại",
-    forOwners3_desc: "Chúng tôi theo dõi đặt phòng, thanh toán và chuẩn bị giấy tờ cho kế toán. Báo cáo gửi qua email mỗi tháng.",
-    forOwners4_title: "Muốn dùng căn hộ riêng đôi khi",
-    forOwners4_desc: "Cô chú tự lên lịch. Những ngày muốn giữ riêng cho gia đình hoặc bạn bè đều dễ dàng chặn lại.",
-
-    // Pricing
-    pricing_label: "Phí quản lý",
-    pricing_title1: "Giá rõ ràng. ",
-    pricing_title2: "Không bất ngờ.",
-    pricing_desc: "Không phí khởi đầu. Không hợp đồng ràng buộc. Cô chú chỉ trả khi căn hộ có thu nhập.",
-    pricing_value: "22 %",
-    pricing_value_sub: "trên doanh thu thực sau phí nền tảng và dọn dẹp",
-    pricing_point1: "Không phí khởi đầu",
-    pricing_point2: "Không hợp đồng ràng buộc",
-    pricing_point3: "Báo cáo và tổng kết hàng tháng",
-    pricing_cta: "Tính thử thu nhập của cô chú",
-    pricing_note: "Mức phí có thể khác một chút với căn hộ vận hành đặc biệt (đang sửa chữa, dùng theo mùa). Luôn được thống nhất trước.",
   },
 } as const;
 
