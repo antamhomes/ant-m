@@ -5,7 +5,6 @@ import BenefitsSection from "@/components/BenefitsSection";
 import ForYouSection from "@/components/ForYouSection";
 import StatsSection from "@/components/StatsSection";
 import PartnersStrip from "@/components/PartnersStrip";
-import WhyBetterSection from "@/components/WhyBetterSection";
 import PotentialCTA from "@/components/PotentialCTA";
 import GallerySection from "@/components/GallerySection";
 import BeforeAfterSection from "@/components/BeforeAfterSection";
@@ -29,7 +28,6 @@ const Index = () => {
       <ForYouSection />
       <PartnersStrip />
       <CalculatorSection />
-      <WhyBetterSection />
       <ServicesSection />
       <BeforeAfterSection />
       <GallerySection />
