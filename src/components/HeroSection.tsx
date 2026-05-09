@@ -62,7 +62,7 @@ const HeroSection = () => {
           className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center max-w-md sm:max-w-none mx-auto"
         >
           <a
-            href="#kontakt"
+            href="#kalkulacka"
             className="btn-hero-primary inline-flex items-center justify-center font-body"
           >
             <span className="relative z-10 inline-flex items-center">
@@ -71,7 +71,7 @@ const HeroSection = () => {
             </span>
           </a>
           <a
-            href="#jak-zacina"
+            href="#kontakt"
             className="btn-hero-secondary inline-flex items-center justify-center font-body"
           >
             {t(lang, "hero_cta2")}
