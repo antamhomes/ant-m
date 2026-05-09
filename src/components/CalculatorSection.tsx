@@ -317,10 +317,6 @@ const CalculatorSection = () => {
                     >
                       <ul className="mt-4 space-y-2 font-body text-sm text-primary-foreground/80">
                         <li className="flex justify-between">
-                          <span>{t(lang, "calc_platforms")} ({(PLATFORM_FEE * 100).toLocaleString("cs-CZ")} %)</span>
-                          <span>− {result.platformFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
-                        </li>
-                        <li className="flex justify-between">
                           <span>{t(lang, "calc_cleaning")} ({result.cleanings}× {lang === "cs" ? "měs." : "/tháng"})</span>
                           <span>− {result.cleaning.toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </li>
