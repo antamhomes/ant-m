@@ -7,6 +7,7 @@ import ProcessSection from "@/components/ProcessSection";
 import ServicesSection from "@/components/ServicesSection";
 import CalculatorSection from "@/components/CalculatorSection";
 import OwnerReportSection from "@/components/OwnerReportSection";
+import BeforeAfterSection from "@/components/BeforeAfterSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
@@ -22,6 +23,7 @@ const Index = () => {
       <CalculatorSection />
       <ServicesSection />
       <WhyBetterSection />
+      <BeforeAfterSection />
       <ProcessSection />
       <OwnerReportSection />
       <FAQSection />
