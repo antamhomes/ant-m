@@ -15,14 +15,14 @@ const ServicesSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section id="sluzby" className="py-16 md:py-20 px-6 bg-secondary">
+    <section id="sluzby" className="py-12 md:py-14 px-6 bg-secondary">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12 md:mb-16"
+          className="text-center mb-8 md:mb-10"
         >
           <p className="text-gold font-body text-xs tracking-[0.3em] uppercase mb-4">
             {t(lang, "services_label")}
@@ -44,7 +44,7 @@ const ServicesSection = () => {
               viewport={{ once: false, amount: 0.45 }}
               transition={{ duration: 0.7, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
               whileHover={{ x: 6, transition: { duration: 0.25 } }}
-              className={`group grid grid-cols-[auto_1fr] gap-5 md:gap-8 py-7 md:py-9 cursor-default ${
+              className={`group grid grid-cols-[auto_1fr] gap-5 md:gap-8 py-5 md:py-6 cursor-default ${
                 index !== items.length - 1 ? "border-b border-border/60" : ""
               }`}
             >
