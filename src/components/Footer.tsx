@@ -1,4 +1,4 @@
-import { Mail, MapPin } from "lucide-react";
+import { Mail, MapPin, Download } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
@@ -67,6 +67,20 @@ const Footer = () => {
               </li>
             </ul>
           </div>
+        </div>
+
+        {/* GDPR download */}
+        <div className="pt-6 flex justify-center md:justify-start">
+          <a
+            href="/gdpr-informacni-memorandum.pdf"
+            download
+            className="inline-flex items-center gap-2 text-xs text-primary-foreground/65 hover:text-gold transition-colors font-body tracking-wide"
+          >
+            <Download className="w-3.5 h-3.5" />
+            {lang === "cs"
+              ? "Informační memorandum o zpracování osobních údajů (GDPR)"
+              : "Bản ghi nhớ thông tin về xử lý dữ liệu cá nhân (GDPR)"}
+          </a>
         </div>
 
       </div>
