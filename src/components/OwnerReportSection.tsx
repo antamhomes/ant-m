@@ -35,7 +35,7 @@ const OwnerReportSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-14"
         >
-          <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
+          <p className="eyebrow eyebrow-center mb-5">
             {t(lang, "report_label")}
           </p>
           <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground mb-6">
