@@ -55,7 +55,7 @@ const GallerySection = () => {
           <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">
             {t(lang, "gallery_desc")}
           </p>
-          <p className="font-body text-[11px] text-muted-foreground/70 tracking-[0.2em] uppercase mt-5">
+          <p className="font-body text-[11px] text-muted-foreground/70 tracking-[0.2em] uppercase mt-5 lg:hidden">
             ← {lang === "cs" ? "přejeďte prstem" : "vuốt để xem"} →
           </p>
         </motion.div>
