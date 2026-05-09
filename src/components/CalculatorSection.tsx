@@ -10,24 +10,24 @@ type LocationKey =
   | "praha6" | "praha7" | "praha8" | "praha9" | "praha10";
 
 const locations: { value: LocationKey; label: string; multiplier: number; occupancy: number }[] = [
-  { value: "praha1",  label: "Praha 1",  multiplier: 1.45, occupancy: 0.85 },
-  { value: "praha2",  label: "Praha 2",  multiplier: 1.25, occupancy: 0.83 },
-  { value: "praha3",  label: "Praha 3",  multiplier: 1.05, occupancy: 0.80 },
-  { value: "praha4",  label: "Praha 4",  multiplier: 0.80, occupancy: 0.72 },
-  { value: "praha5",  label: "Praha 5",  multiplier: 1.00, occupancy: 0.78 },
-  { value: "praha6",  label: "Praha 6",  multiplier: 0.95, occupancy: 0.76 },
-  { value: "praha7",  label: "Praha 7",  multiplier: 1.15, occupancy: 0.83 },
-  { value: "praha8",  label: "Praha 8",  multiplier: 0.85, occupancy: 0.74 },
-  { value: "praha9",  label: "Praha 9",  multiplier: 0.70, occupancy: 0.68 },
-  { value: "praha10", label: "Praha 10", multiplier: 0.80, occupancy: 0.73 },
+  { value: "praha1",  label: "Praha 1",  multiplier: 1.30, occupancy: 0.78 },
+  { value: "praha2",  label: "Praha 2",  multiplier: 1.12, occupancy: 0.76 },
+  { value: "praha3",  label: "Praha 3",  multiplier: 0.95, occupancy: 0.73 },
+  { value: "praha4",  label: "Praha 4",  multiplier: 0.72, occupancy: 0.66 },
+  { value: "praha5",  label: "Praha 5",  multiplier: 0.90, occupancy: 0.71 },
+  { value: "praha6",  label: "Praha 6",  multiplier: 0.85, occupancy: 0.69 },
+  { value: "praha7",  label: "Praha 7",  multiplier: 1.02, occupancy: 0.75 },
+  { value: "praha8",  label: "Praha 8",  multiplier: 0.78, occupancy: 0.68 },
+  { value: "praha9",  label: "Praha 9",  multiplier: 0.65, occupancy: 0.62 },
+  { value: "praha10", label: "Praha 10", multiplier: 0.74, occupancy: 0.67 },
 ];
 
 // Base ADR (Kč/noc), supplies (internet+drogerie/měs), cena 1 úklidu
 const sizes: { value: SizeKey; label: string; baseADR: number; supplies: number; cleaningPrice: number; avgStayNights: number; energy: number }[] = [
-  { value: "1kk", label: "1+kk", baseADR: 1850, supplies: 1200, cleaningPrice: 600,  avgStayNights: 3,   energy: 3500 },
-  { value: "2kk", label: "2+kk", baseADR: 2500, supplies: 1400, cleaningPrice: 700,  avgStayNights: 3,   energy: 5000 },
-  { value: "3kk", label: "3+kk", baseADR: 3400, supplies: 1700, cleaningPrice: 900,  avgStayNights: 3.5, energy: 6500 },
-  { value: "4kk", label: "4+kk", baseADR: 4600, supplies: 2000, cleaningPrice: 1100, avgStayNights: 4,   energy: 8500 },
+  { value: "1kk", label: "1+kk", baseADR: 1500, supplies: 1200, cleaningPrice: 600,  avgStayNights: 3,   energy: 3500 },
+  { value: "2kk", label: "2+kk", baseADR: 2050, supplies: 1400, cleaningPrice: 700,  avgStayNights: 3,   energy: 5000 },
+  { value: "3kk", label: "3+kk", baseADR: 2750, supplies: 1700, cleaningPrice: 900,  avgStayNights: 3.5, energy: 6500 },
+  { value: "4kk", label: "4+kk", baseADR: 3700, supplies: 2000, cleaningPrice: 1100, avgStayNights: 4,   energy: 8500 },
 ];
 
 // Extras jako % bonus na ADR
