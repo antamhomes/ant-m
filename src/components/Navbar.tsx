@@ -66,11 +66,11 @@ const Navbar = () => {
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-        <a href="#" className="font-display text-lg md:text-xl font-semibold tracking-tight">
+        <a href="#" className="font-display text-lg md:text-xl font-semibold tracking-tight lowercase">
           <span className={scrolled ? "text-foreground" : "text-primary-foreground"}>
-            Antam{" "}
+            antam{" "}
           </span>
-          <span className="text-gold">Homes</span>
+          <span className="text-gold">homes</span>
         </a>
 
         <div className="hidden md:flex items-center gap-7">

@@ -6,7 +6,7 @@ const translations = {
     footer_brochure: "Vytvořit přehled",
 
     // Hero
-    hero_subtitle: "Antam Homes — péče o byt a krátkodobý pronájem",
+    hero_subtitle: "antam homes — péče o byt a krátkodobý pronájem",
     hero_title1: "Váš byt. Naše péče. ",
     hero_title2: "Váš zisk.",
     hero_desc: "Správa krátkodobých pronájmů v Praze pro majitele, kteří chtějí víc výnosu a méně starostí.",
@@ -90,7 +90,7 @@ const translations = {
     comp4_long: "Platby a případné zpoždění řešíte přímo s nájemníkem.",
     comp4_short: "Rezervace, platby a výnosy jsou přehledně dohledatelné přes platformy a reporty.",
     longTerm_label: "Dlouhodobý pronájem",
-    shortTerm_label: "S Antam Homes",
+    shortTerm_label: "S antam homes",
 
     // Potential CTA
     potential_title1: "Jaký potenciál může mít ",
@@ -163,7 +163,7 @@ const translations = {
     calc_extra_vybaveni: "Premium vybavení",
     calc_extra_wellness: "Vlastní wellness / sauna",
     calc_result: "Odhadovaný výnos",
-    calc_monthly: "Měsíční příjem s Antam Homes",
+    calc_monthly: "Měsíční příjem s antam homes",
     calc_yearly: "Roční příjem",
     calc_classic: "Klasický dlouhodobý pronájem",
     calc_compare: "Orientačně až",
@@ -262,7 +262,7 @@ const translations = {
     mobile_cta: "Probrat byt",
 
     // For you if…
-    foryou_label: "Pro koho je Antam Homes",
+    foryou_label: "Pro koho je antam homes",
     foryou_title1: "Tohle je pro vás, ",
     foryou_title2: "pokud…",
     foryou_desc: "Většina majitelů, se kterými pracujeme, řeší stejné věci. Možná některou z nich poznáváte.",
@@ -283,9 +283,9 @@ const translations = {
     footer_brochure: "Tạo bản tổng quan",
 
     // Hero
-    hero_subtitle: "Antam Homes — chăm sóc căn hộ và cho thuê ngắn hạn",
+    hero_subtitle: "antam homes — chăm sóc căn hộ và cho thuê ngắn hạn",
     hero_title1: "Có căn hộ đang để trống? ",
-    hero_title2: "Antam Homes giúp chăm sóc và cho thuê hiệu quả hơn.",
+    hero_title2: "antam homes giúp chăm sóc và cho thuê hiệu quả hơn.",
     hero_desc: "Căn hộ được chăm sóc chu đáo. Mọi việc rõ ràng. Chủ nhà an tâm.",
     hero_extra: "Dành cho chủ nhà tại Praha và khu vực lân cận. Trao đổi nhẹ nhàng, không ràng buộc.",
     hero_cta: "Trao đổi về căn hộ",
