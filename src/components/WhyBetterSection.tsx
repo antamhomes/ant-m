@@ -104,20 +104,26 @@ const WhyBetterSection = () => {
                   </h3>
                 </div>
 
-                <div className="grid md:grid-cols-2 md:divide-x divide-border">
+                <div className="divide-y divide-border">
                   <div className="p-6 bg-gold/5">
-                    <span className="inline-block font-body text-xs font-semibold uppercase tracking-wider text-gold mb-3">
-                      {t(lang, "shortTerm_label")}
-                    </span>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gold/20 text-gold text-sm font-bold leading-none">+</span>
+                      <span className="font-body text-xs font-semibold uppercase tracking-wider text-gold">
+                        {t(lang, "shortTerm_label")}
+                      </span>
+                    </div>
                     <p className="font-body text-base text-foreground leading-relaxed">
                       {t(lang, compShortKeys[index])}
                     </p>
                   </div>
 
                   <div className="p-6">
-                    <span className="inline-block font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                      {t(lang, "longTerm_label")}
-                    </span>
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-muted text-muted-foreground text-sm font-bold leading-none">−</span>
+                      <span className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                        {t(lang, "longTerm_label")}
+                      </span>
+                    </div>
                     <p className="font-body text-base text-muted-foreground leading-relaxed">
                       {t(lang, compLongKeys[index])}
                     </p>
