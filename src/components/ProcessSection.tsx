@@ -19,7 +19,7 @@ const ProcessSection = () => {
   const lineHeight = useTransform(scrollYProgress, [0, 1], reduce ? ["100%", "100%"] : ["0%", "100%"]);
 
   return (
-    <section id="jak-zacina" style={{ scrollMarginTop: "-40px" }} className="py-10 md:py-14 px-6 bg-gradient-dark">
+    <section id="jak-zacina" style={{ scrollMarginTop: "-40px" }} className="py-16 md:py-20 px-6 bg-gradient-dark">
       <div className="max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
