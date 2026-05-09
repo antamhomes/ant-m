@@ -225,10 +225,11 @@ const CalculatorSection = () => {
             </div>
 
             <div>
+              {/* Mobile: collapsible toggle */}
               <button
                 type="button"
                 onClick={() => setExtrasOpen((o) => !o)}
-                className="w-full flex items-center justify-between gap-2 font-body text-sm font-semibold text-foreground mb-3 hover:text-gold transition-colors"
+                className="sm:hidden w-full flex items-center justify-between gap-2 font-body text-sm font-semibold text-foreground mb-3 hover:text-gold transition-colors"
               >
                 <span className="flex items-center gap-2">
                   <Plus className="w-4 h-4 text-gold" />
@@ -241,36 +242,65 @@ const CalculatorSection = () => {
                 </span>
                 <ChevronDown className={`w-4 h-4 transition-transform ${extrasOpen ? "rotate-180" : ""}`} />
               </button>
-              <AnimatePresence initial={false}>
-                {extrasOpen && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.25 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
-                      {extraKeys.map((extra) => {
-                        const active = selectedExtras.includes(extra.id);
-                        return (
-                          <button key={extra.id} type="button" onClick={() => toggleExtra(extra.id)}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-sm text-sm font-body transition-all border text-left ${
-                              active
-                                ? "bg-gold/10 border-gold text-foreground"
-                                : "bg-card border-border text-foreground hover:border-gold/50"
-                            }`}
-                          >
-                            <span className="text-lg">{extra.icon}</span>
-                            <span className="flex-1">{t(lang, extra.labelKey)}</span>
-                            {active && <Check className="w-4 h-4 text-gold" />}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {/* Tablet/Desktop: static label */}
+              <label className="hidden sm:flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
+                <Plus className="w-4 h-4 text-gold" />
+                {t(lang, "calc_extras")}
+              </label>
+
+              {/* Mobile collapsible */}
+              <div className="sm:hidden">
+                <AnimatePresence initial={false}>
+                  {extrasOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="grid grid-cols-1 gap-2 pt-1">
+                        {extraKeys.map((extra) => {
+                          const active = selectedExtras.includes(extra.id);
+                          return (
+                            <button key={extra.id} type="button" onClick={() => toggleExtra(extra.id)}
+                              className={`flex items-center gap-3 px-4 py-3 rounded-sm text-sm font-body transition-all border text-left ${
+                                active
+                                  ? "bg-gold/10 border-gold text-foreground"
+                                  : "bg-card border-border text-foreground hover:border-gold/50"
+                              }`}
+                            >
+                              <span className="text-lg">{extra.icon}</span>
+                              <span className="flex-1">{t(lang, extra.labelKey)}</span>
+                              {active && <Check className="w-4 h-4 text-gold" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {/* Tablet/Desktop: always visible */}
+              <div className="hidden sm:grid sm:grid-cols-2 gap-2">
+                {extraKeys.map((extra) => {
+                  const active = selectedExtras.includes(extra.id);
+                  return (
+                    <button key={extra.id} type="button" onClick={() => toggleExtra(extra.id)}
+                      className={`flex items-center gap-3 px-4 py-3 rounded-sm text-sm font-body transition-all border text-left ${
+                        active
+                          ? "bg-gold/10 border-gold text-foreground"
+                          : "bg-card border-border text-foreground hover:border-gold/50"
+                      }`}
+                    >
+                      <span className="text-lg">{extra.icon}</span>
+                      <span className="flex-1">{t(lang, extra.labelKey)}</span>
+                      {active && <Check className="w-4 h-4 text-gold" />}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </motion.div>
 
