@@ -196,16 +196,23 @@ html {
     color: hsl(var(--charcoal));
     border: none;
     border-radius: 2px;
-    padding: 20px 44px 22px;
+    padding: 16px 28px 17px;
     font-weight: 700;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    font-size: 15px;
+    font-size: 13px;
     box-shadow: 0 18px 50px -10px rgba(0, 0, 0, 0.55);
     transition:
       transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
       background 0.4s ease,
       box-shadow 0.4s ease;
+  }
+  @media (min-width: 640px) {
+    .btn-hero-primary {
+      padding: 20px 44px 22px;
+      letter-spacing: 0.22em;
+      font-size: 15px;
+    }
   }
   .btn-hero-primary:hover {
     transform: translateY(-1px);
@@ -216,15 +223,22 @@ html {
   .btn-hero-primary::before {
     content: "";
     position: absolute;
-    left: 36px;
-    right: 36px;
-    bottom: 11px;
+    left: 24px;
+    right: 24px;
+    bottom: 9px;
     height: 1px;
     background: hsl(var(--gold));
     transform: scaleX(0.18);
     transform-origin: left center;
     transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
     pointer-events: none;
+  }
+  @media (min-width: 640px) {
+    .btn-hero-primary::before {
+      left: 36px;
+      right: 36px;
+      bottom: 11px;
+    }
   }
   .btn-hero-primary:hover::before,
   .btn-hero-primary:focus-visible::before {
@@ -251,14 +265,21 @@ html {
     color: #FFF8EE;
     border: 1px solid rgba(255, 248, 238, 0.3);
     border-radius: 2px;
-    padding: 16px 36px 18px;
+    padding: 14px 28px 15px;
     font-weight: 500;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.16em;
     text-transform: uppercase;
-    font-size: 14px;
+    font-size: 12.5px;
     transition:
       transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
       border-color 0.35s ease;
+  }
+  @media (min-width: 640px) {
+    .btn-hero-secondary {
+      padding: 16px 36px 18px;
+      letter-spacing: 0.22em;
+      font-size: 14px;
+    }
   }
   .btn-hero-secondary:hover {
     background: transparent;
