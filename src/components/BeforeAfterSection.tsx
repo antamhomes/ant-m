@@ -36,7 +36,7 @@ const BeforeAfterSection = () => {
         </motion.div>
 
         <p className="lg:hidden font-body text-[11px] text-muted-foreground/70 tracking-[0.2em] uppercase text-center mb-5">
-          ← {lang === "cs" ? "přejeďte prstem" : "vuốt để xem"} →
+          ← {lang === "cs" ? "přejeďte" : "vuốt để xem"} →
         </p>
         <div
           className="
