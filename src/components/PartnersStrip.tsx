@@ -26,7 +26,7 @@ const PartnersStrip = () => {
           {t(lang, "partners_label")}
         </motion.p>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-14 gap-y-6 md:gap-x-20 md:gap-y-8">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-3 sm:gap-x-10 sm:gap-y-4 md:gap-x-16 md:gap-y-6">
           {partners.map((name, i) => (
             <motion.span
               key={name}
