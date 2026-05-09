@@ -27,12 +27,12 @@ const BenefitsSection = () => {
             <span className="block text-foreground">{t(lang, "benefits_title1")}</span>
             <span className="block text-gradient-gold mt-2 md:mt-3">{t(lang, "benefits_title2")}</span>
           </h2>
-          <p className="font-body text-muted-foreground text-base md:text-lg max-w-xl mx-auto leading-relaxed">
+          <p className="font-body text-muted-foreground text-base md:text-lg max-w-2xl mx-auto leading-relaxed text-balance">
             {t(lang, "benefits_desc")}
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6 lg:gap-7">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr gap-5 md:gap-6 lg:gap-7">
           {icons.map((Icon, index) => (
             <motion.div
               key={index}
@@ -40,16 +40,16 @@ const BenefitsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group p-5 md:p-8 rounded-sm bg-card border border-border hover:border-gold/30 transition-all duration-500 hover:shadow-lg flex md:block items-start gap-4"
+              className="group h-full p-5 md:p-8 rounded-sm bg-card border border-border hover:border-gold/40 hover:-translate-y-0.5 transition-all duration-500 hover:shadow-lg flex md:block items-start gap-4"
             >
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm bg-gold/10 flex items-center justify-center shrink-0 md:mb-6 group-hover:bg-gold/20 transition-colors duration-300">
+              <div className="w-10 h-10 md:w-12 md:h-12 rounded-sm bg-gold/10 flex items-center justify-center shrink-0 md:mb-5 group-hover:bg-gold/20 transition-colors duration-300">
                 <Icon className="w-5 h-5 md:w-6 md:h-6 text-gold" />
               </div>
               <div className="flex-1">
-                <h3 className="font-display text-lg md:text-xl font-semibold text-foreground mb-1.5 md:mb-3">
+                <h3 className="font-display text-lg md:text-xl font-semibold text-foreground mb-1.5 md:mb-2.5 leading-snug">
                   {t(lang, titleKeys[index])}
                 </h3>
-                <p className="font-body text-sm md:text-base text-muted-foreground leading-relaxed">
+                <p className="font-body text-[15px] md:text-[15.5px] text-muted-foreground leading-[1.65] text-pretty">
                   {t(lang, descKeys[index])}
                 </p>
               </div>
