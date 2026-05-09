@@ -87,49 +87,54 @@ const WhyBetterSection = () => {
             </Accordion>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-2 gap-x-12 gap-y-14">
+          <div className="grid grid-cols-2 gap-x-16 gap-y-16">
             {compIcons.map((Icon, index) => (
-              <motion.div
+              <motion.article
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="group"
+                transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="group relative"
               >
-                <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gold/30">
-                  <Icon className="w-5 h-5 text-gold shrink-0" />
-                  <h3 className="font-display text-xl font-semibold text-foreground">
-                    {t(lang, compTitleKeys[index])}
-                  </h3>
-                </div>
+                {/* Number marker */}
+                <span className="absolute -top-2 -left-1 font-display text-[5rem] leading-none text-gold/10 select-none pointer-events-none">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
 
-                <div className="space-y-6">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gold/15 text-gold text-sm font-bold leading-none">+</span>
-                      <span className="font-body text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-                        {t(lang, "shortTerm_label")}
-                      </span>
-                    </div>
-                    <p className="font-body text-base text-foreground leading-relaxed">
+                <div className="relative">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Icon className="w-5 h-5 text-gold shrink-0" strokeWidth={1.5} />
+                    <h3 className="font-display text-2xl font-medium tracking-tight text-foreground">
+                      {t(lang, compTitleKeys[index])}
+                    </h3>
+                  </div>
+
+                  {/* Antam answer — hero */}
+                  <div className="relative pl-5 mb-7">
+                    <span
+                      aria-hidden
+                      className="absolute left-0 top-1.5 bottom-1.5 w-px bg-gradient-to-b from-gold via-gold/60 to-transparent"
+                    />
+                    <span className="font-body text-[10px] font-semibold uppercase tracking-[0.28em] text-gold">
+                      {t(lang, "shortTerm_label")}
+                    </span>
+                    <p className="mt-2 font-body text-[17px] text-foreground leading-[1.55]">
                       {t(lang, compShortKeys[index])}
                     </p>
                   </div>
 
-                  <div className="opacity-50">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-muted-foreground/40 text-muted-foreground text-sm font-bold leading-none">−</span>
-                      <span className="font-body text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-                        {t(lang, "longTerm_label")}
-                      </span>
-                    </div>
-                    <p className="font-body text-sm text-muted-foreground leading-relaxed italic">
+                  {/* Long-term — footnote, fading */}
+                  <div className="pl-5 [mask-image:linear-gradient(180deg,#000_0%,#000_55%,transparent_100%)]">
+                    <span className="font-body text-[10px] font-medium uppercase tracking-[0.28em] text-muted-foreground/70">
+                      {t(lang, "longTerm_label")}
+                    </span>
+                    <p className="mt-1.5 font-body text-[13px] text-muted-foreground/80 leading-[1.55] italic">
                       {t(lang, compLongKeys[index])}
                     </p>
                   </div>
                 </div>
-              </motion.div>
+              </motion.article>
             ))}
           </div>
         )}
