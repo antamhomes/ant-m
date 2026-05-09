@@ -1,6 +1,5 @@
 import { motion } from "framer-motion";
-import { MapPin, ChevronLeft, ChevronRight } from "lucide-react";
-import { useRef } from "react";
+import { MapPin } from "lucide-react";
 import portfolioLivingDining from "@/assets/portfolio-living-dining.jpg";
 import portfolioBedroomMaster from "@/assets/portfolio-bedroom-master.jpg";
 import realLivingRoom from "@/assets/real-living-room.jpg";
@@ -36,15 +35,6 @@ const portfolio: { src: string; titleKey: TranslationKey; descKey: TranslationKe
 
 const GallerySection = () => {
   const { lang } = useLanguage();
-  const scrollerRef = useRef<HTMLDivElement>(null);
-
-  const scrollByCards = (dir: 1 | -1) => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    const card = el.querySelector("article");
-    const step = card ? (card as HTMLElement).offsetWidth + 32 : el.clientWidth * 0.8;
-    el.scrollBy({ left: dir * step, behavior: "smooth" });
-  };
 
   return (
     <section id="portfolio" className="py-16 md:py-24 px-6 bg-background">
@@ -65,45 +55,9 @@ const GallerySection = () => {
           <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">
             {t(lang, "gallery_desc")}
           </p>
-          <p className="md:hidden font-body text-[11px] text-muted-foreground/70 tracking-[0.2em] uppercase mt-5">
-            ← {lang === "cs" ? "přejeďte prstem" : "vuốt để xem"} →
-          </p>
         </motion.div>
 
-        <div className="relative">
-          {/* Desktop scroll controls */}
-          <button
-            type="button"
-            aria-label={lang === "cs" ? "Předchozí" : "Trước"}
-            onClick={() => scrollByCards(-1)}
-            className="hidden md:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 w-12 h-12 items-center justify-center rounded-full bg-background border border-border shadow-lg text-foreground hover:border-gold hover:text-gold transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <button
-            type="button"
-            aria-label={lang === "cs" ? "Další" : "Tiếp"}
-            onClick={() => scrollByCards(1)}
-            className="hidden md:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 w-12 h-12 items-center justify-center rounded-full bg-background border border-border shadow-lg text-foreground hover:border-gold hover:text-gold transition-colors"
-          >
-            <ChevronRight className="w-5 h-5" />
-          </button>
-
-          {/* Edge fade hints */}
-          <div className="hidden md:block pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-background to-transparent z-[5]" />
-          <div className="hidden md:block pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-background to-transparent z-[5]" />
-
-          <div
-            ref={scrollerRef}
-            className="
-              flex gap-6 lg:gap-8
-              overflow-x-auto scroll-smooth
-              snap-x snap-mandatory
-              -mx-6 px-6 pb-4
-              scrollbar-none
-              [&::-webkit-scrollbar]:hidden
-            "
-          >
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
           {portfolio.map((item, index) => {
             const tags = t(lang, item.tagsKey) as unknown as string[];
             const visibleTags = tags.slice(0, 2);
@@ -114,7 +68,7 @@ const GallerySection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.7, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                className="group bg-card border border-border rounded-sm overflow-hidden hover:border-gold/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500 shrink-0 w-[82%] sm:w-[46%] md:w-[44%] lg:w-[31%] snap-center lg:snap-start"
+                className="group bg-card border border-border rounded-sm overflow-hidden hover:border-gold/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500"
               >
                 <div className="relative aspect-square overflow-hidden">
                   <img
@@ -155,7 +109,6 @@ const GallerySection = () => {
               </motion.article>
             );
           })}
-          </div>
         </div>
       </div>
     </section>
