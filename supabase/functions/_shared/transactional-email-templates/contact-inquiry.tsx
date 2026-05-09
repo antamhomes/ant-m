@@ -20,6 +20,7 @@ interface ContactInquiryProps {
   email?: string
   phone?: string
   address?: string
+  size?: string
   message?: string
 }
 
@@ -28,6 +29,7 @@ const ContactInquiryEmail = ({
   email,
   phone,
   address,
+  size,
   message,
 }: ContactInquiryProps) => (
   <Html lang="cs" dir="ltr">
@@ -53,6 +55,9 @@ const ContactInquiryEmail = ({
           <Text style={label}>Adresa nemovitosti</Text>
           <Text style={value}>{address || '—'}</Text>
           <Hr style={divider} />
+          <Text style={label}>Velikost bytu</Text>
+          <Text style={value}>{size || '—'}</Text>
+          <Hr style={divider} />
           <Text style={label}>Zpráva</Text>
           <Text style={messageStyle}>{message || '—'}</Text>
         </Section>
@@ -76,6 +81,7 @@ export const template = {
     email: 'jan.novak@example.com',
     phone: '+420 777 123 456',
     address: 'Praha 2, Vinohrady',
+    size: '2+kk',
     message: 'Mám 2+kk byt v centru, zajímá mě správa Airbnb.',
   },
 } satisfies TemplateEntry
