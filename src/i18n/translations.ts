@@ -28,7 +28,7 @@ const translations = {
     benefits_label: "Proč to dává smysl",
     benefits_title1: "Váš byt může vydělávat lépe.",
     benefits_title2: "Když se o něj někdo stará správně.",
-    benefits_desc: "Špatné fotky, nevyužitý pricing, pomalé reakce, slabý úklid a nejasná komunikace dokážou snížit výnos víc, než si majitelé myslí.",
+    benefits_desc: "Slabé fotky, špatně nastavená cena, pomalé reakce, nedůsledný úklid a nejasná komunikace dokážou snížit výnos víc, než si majitelé myslí.",
     benefit1_title: "Pečlivá péče",
     benefit1_desc: "Byt připravíme, kontrolujeme a držíme v dobrém stavu.",
     benefit2_title: "Kompletní příprava",
