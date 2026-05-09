@@ -97,11 +97,6 @@ const WhyBetterSection = () => {
                 transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
                 className="group relative"
               >
-                {/* Number marker */}
-                <span className="absolute -top-2 -left-1 font-display text-[5rem] leading-none text-gold/10 select-none pointer-events-none">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-
                 <div className="relative">
                   <div className="flex items-center gap-3 mb-6">
                     <Icon className="w-5 h-5 text-gold shrink-0" strokeWidth={1.5} />
