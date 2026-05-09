@@ -47,9 +47,9 @@ html {
 
     --radius: 0.5rem;
 
-    --gold: 36 50% 48%;
-    --gold-deep: 36 55% 38%;
-    --gold-light: 36 55% 72%;
+    --gold: 40 70% 55%;
+    --gold-deep: 36 65% 42%;
+    --gold-light: 44 90% 78%;
     --warm-cream: 0 0% 100%;
     --warm-sand: 36 18% 94%;
     /* Deep green #0B241F */
@@ -113,7 +113,14 @@ html {
 
 @layer utilities {
   .text-gradient-gold {
-    background: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--gold-light)) 100%);
+    background: linear-gradient(
+      135deg,
+      hsl(var(--gold-deep)) 0%,
+      hsl(var(--gold)) 35%,
+      hsl(var(--gold-light)) 55%,
+      hsl(var(--gold)) 75%,
+      hsl(var(--gold-deep)) 100%
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
