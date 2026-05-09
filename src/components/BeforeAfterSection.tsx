@@ -65,12 +65,12 @@ const BeforeAfterSection = () => {
                   width={1200}
                   height={1500}
                 />
-                <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-charcoal/85 via-charcoal/30 to-transparent" />
-                <div className="absolute left-5 right-5 bottom-5 text-primary-foreground">
-                  <h3 className="font-display text-lg md:text-xl font-semibold mb-1.5">
+                <div className="absolute inset-x-0 bottom-0 h-3/5 bg-gradient-to-t from-charcoal via-charcoal/80 via-40% to-transparent" />
+                <div className="absolute left-5 right-5 bottom-5 text-primary-foreground [text-shadow:0_1px_10px_hsl(var(--charcoal)/0.6)]">
+                  <h3 className="font-display text-lg md:text-xl font-semibold mb-2 leading-snug">
                     {t(lang, card.titleKey)}
                   </h3>
-                  <p className="font-body text-[13px] md:text-sm text-primary-foreground/80 leading-relaxed">
+                  <p className="font-body text-[13px] md:text-sm text-primary-foreground/90 leading-relaxed">
                     {t(lang, card.descKey)}
                   </p>
                 </div>
