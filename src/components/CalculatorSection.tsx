@@ -62,8 +62,8 @@ const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   xmas:   { adr: 1.75, occDelta: 0.12 },
 };
 
-const PLATFORM_FEE = 0.155;
-const MGMT_FEE = 0.22; // 22 % z net po platformě/úklidu/supplies — střed pásma 20–25 %
+// ADR/gross je už uváděn po provizi platformy (Airbnb/Booking), proto ji v breakdownu nepočítáme znovu.
+const MGMT_FEE = 0.22; // 22 % z net po úklidu/provozu — střed pásma 20–25 %
 const DAYS = 30;
 
 const CalculatorSection = () => {
@@ -94,11 +94,10 @@ const CalculatorSection = () => {
     const adr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * seasonAdj.adr);
     const occupancy = Math.max(0.88, Math.min(0.98, locationData.occupancy + seasonAdj.occDelta));
     const gross = Math.round(adr * occupancy * DAYS);
-    const platformFee = Math.round(gross * PLATFORM_FEE);
     const cleanings = Math.max(1, Math.round((occupancy * DAYS) / sizeData.avgStayNights));
     const cleaning = sizeData.cleaningPrice * cleanings;
     const supplies = sizeData.supplies;
-    const netBeforeMgmt = gross - platformFee - cleaning - supplies;
+    const netBeforeMgmt = gross - cleaning - supplies;
     const mgmt = Math.round(netBeforeMgmt * MGMT_FEE);
     const net = netBeforeMgmt - mgmt;
     const energy = sizeData.energy;
@@ -108,16 +107,15 @@ const CalculatorSection = () => {
     const yAdr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * yAdj.adr);
     const yOcc = Math.max(0.88, Math.min(0.98, locationData.occupancy + yAdj.occDelta));
     const yGross = Math.round(yAdr * yOcc * DAYS);
-    const yPlatform = Math.round(yGross * PLATFORM_FEE);
     const yCleanings = Math.max(1, Math.round((yOcc * DAYS) / sizeData.avgStayNights));
     const yCleaning = sizeData.cleaningPrice * yCleanings;
-    const yNetBeforeMgmt = yGross - yPlatform - yCleaning - sizeData.supplies;
+    const yNetBeforeMgmt = yGross - yCleaning - sizeData.supplies;
     const yNetMonth = yNetBeforeMgmt - Math.round(yNetBeforeMgmt * MGMT_FEE);
     const netYearAvg = yNetMonth * 12;
 
     const ltr = ltrTable[location][size];
     const ratio = ltr > 0 ? net / ltr : 0;
-    return { adr, occupancy, gross, platformFee, cleaning, cleanings, supplies, mgmt, energy, net, netYearAvg, ltr, ratio };
+    return { adr, occupancy, gross, cleaning, cleanings, supplies, mgmt, energy, net, netYearAvg, ltr, ratio };
   }, [location, size, selectedExtras, season]);
 
   return (
@@ -318,10 +316,6 @@ const CalculatorSection = () => {
                       className="overflow-hidden"
                     >
                       <ul className="mt-4 space-y-2 font-body text-sm text-primary-foreground/80">
-                        <li className="flex justify-between">
-                          <span>{t(lang, "calc_platforms")} ({(PLATFORM_FEE * 100).toLocaleString("cs-CZ")} %)</span>
-                          <span>− {result.platformFee.toLocaleString("cs-CZ")}&nbsp;Kč</span>
-                        </li>
                         <li className="flex justify-between">
                           <span>{t(lang, "calc_cleaning")} ({result.cleanings}× {lang === "cs" ? "měs." : "/tháng"})</span>
                           <span>− {result.cleaning.toLocaleString("cs-CZ")}&nbsp;Kč</span>
