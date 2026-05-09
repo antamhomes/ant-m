@@ -73,6 +73,7 @@ const CalculatorSection = () => {
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
   const [season, setSeason] = useState<Season>("year");
   const [breakdownOpen, setBreakdownOpen] = useState(false);
+  const [extrasOpen, setExtrasOpen] = useState(false);
 
   const toggleExtra = (id: string) => {
     setSelectedExtras((prev) =>
@@ -152,7 +153,18 @@ const CalculatorSection = () => {
                 <MapPin className="w-4 h-4 text-gold" />
                 {t(lang, "calc_location")}
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {/* Mobile: native select (úspora místa) */}
+              <select
+                value={location}
+                onChange={(e) => setLocation(e.target.value as LocationKey)}
+                className="sm:hidden w-full px-4 py-3 bg-card border border-border rounded-sm font-body text-sm font-medium text-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors"
+              >
+                {locations.map((loc) => (
+                  <option key={loc.value} value={loc.value}>{loc.label}</option>
+                ))}
+              </select>
+              {/* Desktop: tlačítka */}
+              <div className="hidden sm:grid sm:grid-cols-3 gap-2">
                 {locations.map((loc) => (
                   <button key={loc.value} type="button" onClick={() => setLocation(loc.value)}
                     className={`px-3 py-2.5 rounded-sm text-sm font-body font-medium transition-all border ${
@@ -213,28 +225,52 @@ const CalculatorSection = () => {
             </div>
 
             <div>
-              <label className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
-                <Plus className="w-4 h-4 text-gold" />
-                {t(lang, "calc_extras")}
-              </label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {extraKeys.map((extra) => {
-                  const active = selectedExtras.includes(extra.id);
-                  return (
-                    <button key={extra.id} type="button" onClick={() => toggleExtra(extra.id)}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-sm text-sm font-body transition-all border text-left ${
-                        active
-                          ? "bg-gold/10 border-gold text-foreground"
-                          : "bg-card border-border text-foreground hover:border-gold/50"
-                      }`}
-                    >
-                      <span className="text-lg">{extra.icon}</span>
-                      <span className="flex-1">{t(lang, extra.labelKey)}</span>
-                      {active && <Check className="w-4 h-4 text-gold" />}
-                    </button>
-                  );
-                })}
-              </div>
+              <button
+                type="button"
+                onClick={() => setExtrasOpen((o) => !o)}
+                className="w-full flex items-center justify-between gap-2 font-body text-sm font-semibold text-foreground mb-3 hover:text-gold transition-colors"
+              >
+                <span className="flex items-center gap-2">
+                  <Plus className="w-4 h-4 text-gold" />
+                  {t(lang, "calc_extras")}
+                  {selectedExtras.length > 0 && (
+                    <span className="ml-1 inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-gold/15 text-gold text-[11px] font-semibold">
+                      {selectedExtras.length}
+                    </span>
+                  )}
+                </span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${extrasOpen ? "rotate-180" : ""}`} />
+              </button>
+              <AnimatePresence initial={false}>
+                {extrasOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1">
+                      {extraKeys.map((extra) => {
+                        const active = selectedExtras.includes(extra.id);
+                        return (
+                          <button key={extra.id} type="button" onClick={() => toggleExtra(extra.id)}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-sm text-sm font-body transition-all border text-left ${
+                              active
+                                ? "bg-gold/10 border-gold text-foreground"
+                                : "bg-card border-border text-foreground hover:border-gold/50"
+                            }`}
+                          >
+                            <span className="text-lg">{extra.icon}</span>
+                            <span className="flex-1">{t(lang, extra.labelKey)}</span>
+                            {active && <Check className="w-4 h-4 text-gold" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </motion.div>
 
