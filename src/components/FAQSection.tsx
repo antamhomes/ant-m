@@ -31,7 +31,7 @@ const FAQSection = () => {
           <p className="text-gold font-body text-xs tracking-[0.3em] uppercase mb-4">
             {t(lang, "faq_label")}
           </p>
-          <h2 className="font-display text-3xl md:text-4xl font-semibold text-foreground">
+          <h2 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
             {t(lang, "faq_title")}
           </h2>
         </motion.div>

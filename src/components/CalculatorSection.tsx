@@ -129,10 +129,10 @@ const CalculatorSection = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
+          <p className="eyebrow eyebrow-center mb-5">
             {t(lang, "calc_label")}
           </p>
-          <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground">
             {t(lang, "calc_title1")}
             <span className="text-gradient-gold">{t(lang, "calc_title2")}</span>
           </h2>

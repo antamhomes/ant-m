@@ -27,7 +27,7 @@ const BeforeAfterSection = () => {
           <p className="text-gold/80 font-body text-xs tracking-[0.3em] uppercase mb-3">
             {t(lang, "beforeAfter_label")}
           </p>
-          <h2 className="font-display text-3xl md:text-5xl font-semibold text-foreground mb-5">
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground mb-5">
             {t(lang, "beforeAfter_title")}
           </h2>
           <p className="font-body text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
