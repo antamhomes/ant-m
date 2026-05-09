@@ -57,7 +57,7 @@ const translations = {
     // Services — Co za vás řešíme (bento)
     services_label: "Co za vás řešíme",
     services_title: "Co za vás řešíme",
-    services_desc: "Od přípravy nabídky až po hosty, úklid, cenu a přehled pro majitele.",
+    services_desc: "Od přípravy nabídky po hosty, úklid, cenu a přehled pro majitele.",
     svc1_title: "Listing & profesionální prezentace",
     svc1_desc: "Fotky, popis, pravidla a nastavení bytu na platformách tak, aby přitáhl pozornost.",
     svc2_title: "Dynamické ceny",
