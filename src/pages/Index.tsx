@@ -1,9 +1,6 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
-import TrustStrip from "@/components/TrustStrip";
-import BenefitsSection from "@/components/BenefitsSection";
 import ForYouSection from "@/components/ForYouSection";
-import StatsSection from "@/components/StatsSection";
 import PartnersStrip from "@/components/PartnersStrip";
 import PotentialCTA from "@/components/PotentialCTA";
 import GallerySection from "@/components/GallerySection";
@@ -17,22 +14,20 @@ import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
 import StickyMobileCTA from "@/components/StickyMobileCTA";
 import FAQSection from "@/components/FAQSection";
-import SectionDivider from "@/components/SectionDivider";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
       <Navbar />
       <HeroSection />
-      <BenefitsSection />
       <ForYouSection />
       <PartnersStrip />
       <CalculatorSection />
       <ServicesSection />
       <BeforeAfterSection />
-      <GallerySection />
       <ProcessSection />
       <OwnerReportSection />
+      <GallerySection />
       <AboutSection />
       <PotentialCTA />
       <FAQSection />
