@@ -28,7 +28,7 @@ const HeroSection = () => {
         />
         <motion.div
           style={{ opacity: overlayOpacity }}
-          className="absolute inset-0 bg-gradient-to-b from-charcoal/55 via-charcoal/55 to-charcoal/90"
+          className="absolute inset-0 bg-gradient-to-b from-charcoal/35 via-charcoal/40 to-charcoal/75"
         />
       </motion.div>
 
