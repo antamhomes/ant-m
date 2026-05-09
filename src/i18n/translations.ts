@@ -26,8 +26,8 @@ const translations = {
 
     // Benefits
     benefits_label: "Proč to dává smysl",
-    benefits_title1: "Většina bytů nevydělává málo kvůli lokalitě.",
-    benefits_title2: "Vydělává málo kvůli slabé správě.",
+    benefits_title1: "Většina bytů nevydělává méně proto, že jsou špatné.",
+    benefits_title2: "Vydělává méně kvůli slabé správě.",
     benefits_desc: "Špatné fotky, nevyužitý pricing, pomalé reakce, slabý úklid a nejasná komunikace dokážou snížit výnos víc, než si majitelé myslí.",
     benefit1_title: "Pečlivá péče",
     benefit1_desc: "Byt připravíme, kontrolujeme a držíme v dobrém stavu.",
