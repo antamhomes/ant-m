@@ -87,7 +87,7 @@ const WhyBetterSection = () => {
             </Accordion>
           </motion.div>
         ) : (
-          <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-6">
             {compIcons.map((Icon, index) => (
               <motion.div
                 key={index}
