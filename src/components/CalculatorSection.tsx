@@ -62,7 +62,8 @@ const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   xmas:   { adr: 1.75, occDelta: 0.12 },
 };
 
-// ADR/gross je už uváděn po provizi platformy (Airbnb/Booking), proto ji v breakdownu nepočítáme znovu.
+// Provize platformy je započtená uvnitř výpočtu, ale v breakdownu ji nezobrazujeme (uživatel vnímá ADR jako už zúčtovanou cenu).
+const PLATFORM_FEE = 0.155;
 const MGMT_FEE = 0.22; // 22 % z net po úklidu/provozu — střed pásma 20–25 %
 const DAYS = 30;
 
@@ -94,10 +95,11 @@ const CalculatorSection = () => {
     const adr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * seasonAdj.adr);
     const occupancy = Math.max(0.88, Math.min(0.98, locationData.occupancy + seasonAdj.occDelta));
     const gross = Math.round(adr * occupancy * DAYS);
+    const platformFee = Math.round(gross * PLATFORM_FEE);
     const cleanings = Math.max(1, Math.round((occupancy * DAYS) / sizeData.avgStayNights));
     const cleaning = sizeData.cleaningPrice * cleanings;
     const supplies = sizeData.supplies;
-    const netBeforeMgmt = gross - cleaning - supplies;
+    const netBeforeMgmt = gross - platformFee - cleaning - supplies;
     const mgmt = Math.round(netBeforeMgmt * MGMT_FEE);
     const net = netBeforeMgmt - mgmt;
     const energy = sizeData.energy;
@@ -107,9 +109,10 @@ const CalculatorSection = () => {
     const yAdr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * yAdj.adr);
     const yOcc = Math.max(0.88, Math.min(0.98, locationData.occupancy + yAdj.occDelta));
     const yGross = Math.round(yAdr * yOcc * DAYS);
+    const yPlatform = Math.round(yGross * PLATFORM_FEE);
     const yCleanings = Math.max(1, Math.round((yOcc * DAYS) / sizeData.avgStayNights));
     const yCleaning = sizeData.cleaningPrice * yCleanings;
-    const yNetBeforeMgmt = yGross - yCleaning - sizeData.supplies;
+    const yNetBeforeMgmt = yGross - yPlatform - yCleaning - sizeData.supplies;
     const yNetMonth = yNetBeforeMgmt - Math.round(yNetBeforeMgmt * MGMT_FEE);
     const netYearAvg = yNetMonth * 12;
 
