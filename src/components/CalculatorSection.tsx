@@ -262,6 +262,19 @@ const CalculatorSection = () => {
                 </p>
               </div>
 
+              {/* Obsazenost */}
+              <div className="flex items-baseline justify-between -mt-3">
+                <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em]">
+                  {t(lang, "calc_occupancy")}
+                </p>
+                <p className="font-body text-sm font-semibold text-primary-foreground/85">
+                  {Math.round(result.occupancy * 100)} %
+                  <span className="text-primary-foreground/50 font-normal ml-1.5">
+                    ({Math.round(result.occupancy * DAYS)}/{DAYS} {lang === "cs" ? "nocí" : "đêm"})
+                  </span>
+                </p>
+              </div>
+
               {/* Rozpad */}
               <div className="border-t border-primary-foreground/10 pt-4">
                 <button
