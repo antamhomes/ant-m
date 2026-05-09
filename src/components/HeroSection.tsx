@@ -28,8 +28,10 @@ const HeroSection = () => {
         />
         <motion.div
           style={{ opacity: overlayOpacity }}
-          className="absolute inset-0 bg-gradient-to-b from-charcoal/35 via-charcoal/40 to-charcoal/75"
+          className="absolute inset-0 bg-gradient-to-b from-charcoal/55 via-charcoal/55 to-charcoal/85"
         />
+        {/* Extra readability gradient behind headline */}
+        <div className="absolute inset-x-0 top-0 h-[70%] bg-[radial-gradient(ellipse_at_center,_hsl(var(--charcoal)/0.55)_0%,_transparent_70%)] pointer-events-none" />
       </motion.div>
 
       <div className="relative z-10 text-primary-foreground text-center px-6 max-w-4xl mx-auto">
@@ -37,7 +39,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-display text-[2.25rem] sm:text-5xl md:text-6xl lg:text-7xl font-semibold text-primary-foreground leading-[1.1] mb-6"
+          className="font-display text-[2.25rem] sm:text-5xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-[1.1] mb-6 [text-shadow:0_2px_24px_hsl(var(--charcoal)/0.55)]"
         >
           {t(lang, "hero_title1")}
           <br />
@@ -48,7 +50,7 @@ const HeroSection = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="font-body text-lg md:text-xl text-primary-foreground/85 mb-3 max-w-2xl mx-auto"
+          className="font-body text-lg md:text-xl text-primary-foreground/95 mb-3 max-w-2xl mx-auto [text-shadow:0_1px_12px_hsl(var(--charcoal)/0.6)]"
         >
           {t(lang, "hero_desc")}
         </motion.p>
