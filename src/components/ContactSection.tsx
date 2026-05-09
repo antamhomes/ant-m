@@ -85,7 +85,7 @@ const ContactSection = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block font-body text-sm font-medium text-foreground mb-2">
-                {t(lang, "contact_name")}
+                {t(lang, "contact_name")} <span className="text-gold">*</span>
               </label>
               <input
                 type="text"
@@ -98,7 +98,7 @@ const ContactSection = () => {
             </div>
             <div>
               <label className="block font-body text-sm font-medium text-foreground mb-2">
-                {t(lang, "contact_email")}
+                {t(lang, "contact_email")} <span className="text-gold">*</span>
               </label>
               <input
                 type="email"
