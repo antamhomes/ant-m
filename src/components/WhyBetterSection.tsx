@@ -102,12 +102,6 @@ const WhyBetterSection = () => {
                 className="group relative"
               >
                 <div className="relative">
-                  <div className="flex items-baseline gap-3 mb-2">
-                    <span className="font-body text-[11px] font-semibold uppercase tracking-[0.32em] text-gold">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <span className="h-px flex-1 bg-gradient-to-r from-gold/50 to-transparent" />
-                  </div>
                   <div className="flex items-center gap-3 mb-6">
                     <Icon className="w-6 h-6 text-gold shrink-0" strokeWidth={1.5} />
                     <h3 className="font-display text-[28px] md:text-[32px] font-semibold tracking-[-0.02em] text-foreground leading-[1.1]">
