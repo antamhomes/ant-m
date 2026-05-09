@@ -33,7 +33,7 @@ const ServicesSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-8 md:mb-10"
         >
-          <p className="text-gold font-body text-xs tracking-[0.3em] uppercase mb-4">
+          <p className="eyebrow eyebrow-center mb-4">
             {t(lang, "services_label")}
           </p>
           <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-primary-foreground mb-5">
