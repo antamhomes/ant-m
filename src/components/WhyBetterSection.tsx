@@ -87,7 +87,7 @@ const WhyBetterSection = () => {
             </Accordion>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-x-12 gap-y-14">
             {compIcons.map((Icon, index) => (
               <motion.div
                 key={index}
@@ -95,20 +95,20 @@ const WhyBetterSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="rounded-sm border border-border bg-card overflow-hidden"
+                className="group"
               >
-                <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-muted/40">
+                <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gold/30">
                   <Icon className="w-5 h-5 text-gold shrink-0" />
-                  <h3 className="font-display text-lg font-semibold text-foreground">
+                  <h3 className="font-display text-xl font-semibold text-foreground">
                     {t(lang, compTitleKeys[index])}
                   </h3>
                 </div>
 
-                <div className="divide-y divide-border">
-                  <div className="p-6 bg-gold/5">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gold/20 text-gold text-sm font-bold leading-none">+</span>
-                      <span className="font-body text-xs font-semibold uppercase tracking-wider text-gold">
+                <div className="space-y-6">
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-gold/15 text-gold text-sm font-bold leading-none">+</span>
+                      <span className="font-body text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
                         {t(lang, "shortTerm_label")}
                       </span>
                     </div>
@@ -117,14 +117,14 @@ const WhyBetterSection = () => {
                     </p>
                   </div>
 
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-muted text-muted-foreground text-sm font-bold leading-none">−</span>
-                      <span className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  <div className="opacity-50">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full border border-muted-foreground/40 text-muted-foreground text-sm font-bold leading-none">−</span>
+                      <span className="font-body text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
                         {t(lang, "longTerm_label")}
                       </span>
                     </div>
-                    <p className="font-body text-base text-muted-foreground leading-relaxed">
+                    <p className="font-body text-sm text-muted-foreground leading-relaxed italic">
                       {t(lang, compLongKeys[index])}
                     </p>
                   </div>
