@@ -19,7 +19,7 @@ const FAQSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section id="faq" className="py-14 md:py-20 px-6 bg-background">
+    <section id="faq" className="py-12 md:py-16 px-6 bg-background">
       <div className="max-w-3xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
