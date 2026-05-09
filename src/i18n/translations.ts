@@ -326,8 +326,10 @@ const translations = {
     svc3_desc: "Sau mỗi lượt khách, căn hộ được kiểm tra và các chi tiết nhỏ được chú ý để giữ căn hộ trong tình trạng tốt.",
     svc4_title: "Giá và tỷ lệ lấp đầy",
     svc4_desc: "Giá thuê, mùa vụ và lịch trống được theo dõi để căn hộ không bị trống không cần thiết.",
-    svc5_title: "Báo cáo cho chủ nhà",
-    svc5_desc: "Chủ nhà có cái nhìn rõ ràng về đặt phòng, doanh thu, chi phí và thông tin quan trọng.",
+    svc5_title: "Bảo trì và xử lý sự cố",
+    svc5_desc: "Sửa chữa nhỏ, can thiệp nhanh và phối hợp với thợ khi cần.",
+    svc6_title: "Báo cáo hàng tháng",
+    svc6_desc: "Chủ nhà có cái nhìn rõ ràng về đặt phòng, doanh thu, chi phí và thông tin quan trọng.",
 
     // WhyBetter
     whyBetter_label: "Ngắn hạn vs. dài hạn",
