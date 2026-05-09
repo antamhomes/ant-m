@@ -1,14 +1,15 @@
 import { motion } from "framer-motion";
-import { FileText, MessageSquare, Sparkles, LineChart, FileBarChart } from "lucide-react";
+import { FileText, MessageSquare, Sparkles, LineChart, FileBarChart, Wrench } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t, type TranslationKey } from "@/i18n/translations";
 
 const items: { icon: typeof FileText; titleKey: TranslationKey; descKey: TranslationKey }[] = [
   { icon: FileText,     titleKey: "svc1_title", descKey: "svc1_desc" },
-  { icon: MessageSquare,titleKey: "svc2_title", descKey: "svc2_desc" },
-  { icon: Sparkles,     titleKey: "svc3_title", descKey: "svc3_desc" },
-  { icon: LineChart,    titleKey: "svc4_title", descKey: "svc4_desc" },
-  { icon: FileBarChart, titleKey: "svc5_title", descKey: "svc5_desc" },
+  { icon: LineChart,    titleKey: "svc2_title", descKey: "svc2_desc" },
+  { icon: MessageSquare,titleKey: "svc3_title", descKey: "svc3_desc" },
+  { icon: Sparkles,     titleKey: "svc4_title", descKey: "svc4_desc" },
+  { icon: Wrench,       titleKey: "svc5_title", descKey: "svc5_desc" },
+  { icon: FileBarChart, titleKey: "svc6_title", descKey: "svc6_desc" },
 ];
 
 const ServicesSection = () => {
