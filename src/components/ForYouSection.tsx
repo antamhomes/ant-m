@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ShieldCheck, TrendingUp, CalendarHeart, Wallet } from "lucide-react";
+import { ShieldCheck, TrendingUp, CalendarHeart, Wallet, Check, Minus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t, type TranslationKey } from "@/i18n/translations";
 
@@ -50,31 +50,37 @@ const ForYouSection = () => {
               transition={{ duration: 0.5, delay: i * 0.08 }}
               className="p-5 md:p-6 rounded-sm bg-card border border-border hover:border-gold/40 transition-colors duration-300"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-sm bg-gold/10 flex items-center justify-center shrink-0">
-                  <Icon className="w-5 h-5 text-gold" strokeWidth={1.5} />
+              <div className="flex items-center gap-3 mb-4 pb-4 border-b border-border">
+                <div className="w-9 h-9 rounded-sm bg-gold/10 flex items-center justify-center shrink-0">
+                  <Icon className="w-4 h-4 text-gold" strokeWidth={1.5} />
                 </div>
-                <h3 className="font-display text-lg md:text-xl font-semibold text-foreground">
+                <h3 className="font-display text-base md:text-lg font-semibold text-foreground">
                   {t(lang, titleKey)}
                 </h3>
               </div>
 
-              <div className="space-y-3">
-                <div className="rounded-sm bg-gold/5 border-l-2 border-gold px-3 py-2.5">
-                  <span className="block font-body text-[10px] font-semibold uppercase tracking-wider text-gold mb-1">
-                    {t(lang, "foryou_antam_label")}
-                  </span>
-                  <p className="font-body text-sm text-foreground leading-relaxed">
-                    {t(lang, antamKey)}
-                  </p>
+              <div className="space-y-2.5">
+                <div className="flex items-start gap-2.5">
+                  <Check className="w-4 h-4 text-gold mt-0.5 shrink-0" strokeWidth={2.5} />
+                  <div className="flex-1 min-w-0">
+                    <span className="block font-body text-[10px] font-semibold uppercase tracking-wider text-gold mb-0.5">
+                      {t(lang, "foryou_antam_label")}
+                    </span>
+                    <p className="font-body text-sm text-foreground leading-snug">
+                      {t(lang, antamKey)}
+                    </p>
+                  </div>
                 </div>
-                <div className="px-3 py-2.5">
-                  <span className="block font-body text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                    {t(lang, "foryou_long_label")}
-                  </span>
-                  <p className="font-body text-sm text-muted-foreground leading-relaxed">
-                    {t(lang, longKey)}
-                  </p>
+                <div className="flex items-start gap-2.5 opacity-70">
+                  <Minus className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" strokeWidth={2.5} />
+                  <div className="flex-1 min-w-0">
+                    <span className="block font-body text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-0.5">
+                      {t(lang, "foryou_long_label")}
+                    </span>
+                    <p className="font-body text-sm text-muted-foreground leading-snug">
+                      {t(lang, longKey)}
+                    </p>
+                  </div>
                 </div>
               </div>
             </motion.div>
