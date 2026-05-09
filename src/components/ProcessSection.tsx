@@ -36,35 +36,7 @@ const ProcessSection = () => {
           </h2>
         </motion.div>
 
-        {/* Mobile: 2x2 grid without connectors */}
-        <ul className="md:hidden grid grid-cols-2 gap-4">
-          {numberLabels.map((num, index) => (
-            <motion.li
-              key={`m-${index}`}
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.4 }}
-              transition={{ duration: 0.5, delay: index * 0.05 }}
-              className="bg-card/5 border border-primary-foreground/10 rounded-sm p-4"
-            >
-              <div className="font-display text-3xl font-light text-gradient-gold leading-none mb-2 tabular-nums">
-                {num}
-              </div>
-              <span className="font-body text-[10px] tracking-[0.25em] uppercase text-gold/70 mb-1.5 block">
-                {lang === "cs" ? "Krok" : "Bước"}
-              </span>
-              <h3 className="font-display text-base font-semibold text-primary-foreground mb-1.5 leading-snug">
-                {t(lang, titleKeys[index])}
-              </h3>
-              <p className="font-body text-primary-foreground/65 text-[13px] leading-relaxed">
-                {t(lang, descKeys[index])}
-              </p>
-            </motion.li>
-          ))}
-        </ul>
-
-        {/* Desktop: timeline */}
-        <div ref={ref} className="relative max-w-4xl mx-auto hidden md:block">
+        <div ref={ref} className="relative max-w-4xl mx-auto">
           {/* Track line — left on mobile, center on desktop */}
           <div className="absolute left-8 md:left-1/2 md:-translate-x-1/2 top-2 bottom-2 w-px bg-primary-foreground/15" />
           {/* Filling gold line */}
