@@ -14,6 +14,7 @@ const ContactSection = () => {
     email: "",
     phone: "",
     address: "",
+    size: "",
     message: "",
   });
 
@@ -32,13 +33,14 @@ const ContactSection = () => {
             email: formData.email,
             phone: formData.phone,
             address: formData.address,
+            size: formData.size,
             message: formData.message,
           },
         },
       });
       if (error) throw error;
       toast({ title: t(lang, "contact_success") as string });
-      setFormData({ name: "", email: "", phone: "", address: "", message: "" });
+      setFormData({ name: "", email: "", phone: "", address: "", size: "", message: "" });
     } catch (err) {
       console.error("Failed to send inquiry", err);
       toast({
@@ -121,16 +123,38 @@ const ContactSection = () => {
             </div>
             <div>
               <label className="block font-body text-sm font-medium text-foreground mb-2">
-                {t(lang, "contact_address")}
+                {t(lang, "contact_address")} <span className="text-gold">*</span>
               </label>
               <input
                 type="text"
+                required
                 value={formData.address}
                 onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 className="w-full px-4 py-3 text-base md:text-[15px] bg-background border border-border rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors"
                 placeholder={t(lang, "contact_address_placeholder") as string}
               />
             </div>
+          </div>
+          <div>
+            <label className="block font-body text-sm font-medium text-foreground mb-2">
+              {t(lang, "contact_size")}
+            </label>
+            <select
+              value={formData.size}
+              onChange={(e) => setFormData({ ...formData, size: e.target.value })}
+              className="w-full px-4 py-3 text-base md:text-[15px] bg-background border border-border rounded-sm font-body text-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors"
+            >
+              <option value="">{t(lang, "contact_size_placeholder") as string}</option>
+              <option value="1+kk">1+kk</option>
+              <option value="1+1">1+1</option>
+              <option value="2+kk">2+kk</option>
+              <option value="2+1">2+1</option>
+              <option value="3+kk">3+kk</option>
+              <option value="3+1">3+1</option>
+              <option value="4+kk">4+kk</option>
+              <option value="4+1">4+1</option>
+              <option value="5+kk a větší">5+kk a větší</option>
+            </select>
           </div>
           <div>
             <label className="block font-body text-sm font-medium text-foreground mb-2">
