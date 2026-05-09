@@ -26,8 +26,8 @@ const translations = {
 
     // Benefits
     benefits_label: "Proč to dává smysl",
-    benefits_title1: "Většina bytů nevydělává málo kvůli lokalitě. Vydělává málo kvůli špatné správě.",
-    benefits_title2: "",
+    benefits_title1: "Většina bytů nevydělává málo kvůli lokalitě.",
+    benefits_title2: "Vydělává málo kvůli špatné správě.",
     benefits_desc: "Krátkodobý pronájem není jen o tom byt vystavit online. Důležitá je příprava, péče, hosté, úklid, cena i průběžná práce s nabídkou.",
     benefit1_title: "Pečlivá péče",
     benefit1_desc: "Byt připravíme, kontrolujeme a držíme v dobrém stavu.",
