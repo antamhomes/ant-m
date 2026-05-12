@@ -284,9 +284,9 @@ const translations = {
 
     // Hero
     hero_subtitle: "antam homes — chăm sóc căn hộ và cho thuê ngắn hạn",
-    hero_title1: "Có căn hộ đang để trống? ",
-    hero_title2: "antam homes giúp chăm sóc và cho thuê hiệu quả hơn.",
-    hero_desc: "Căn hộ được chăm sóc chu đáo. Mọi việc rõ ràng. Chủ nhà an tâm.",
+    hero_title1: "Căn hộ của chủ nhà.",
+    hero_title2: "Chúng tôi chăm sóc đúng cách để cho thuê hiệu quả hơn.",
+    hero_desc: "\n",
     hero_extra: "Dành cho chủ nhà tại Praha và khu vực lân cận. Trao đổi nhẹ nhàng, không ràng buộc.",
     hero_cta: "Trao đổi về căn hộ",
     hero_cta2: "Quy trình làm việc",
@@ -303,8 +303,8 @@ const translations = {
 
     // Benefits
     benefits_label: "Vì sao điều này quan trọng",
-    benefits_title1: "Căn hộ có thể cho thuê hiệu quả hơn khi được chăm sóc ",
-    benefits_title2: "đúng cách.",
+    benefits_title1: "\n",
+    benefits_title2: "",
     benefits_desc: "Cho thuê ngắn hạn không chỉ là đăng căn hộ lên mạng. Điều quan trọng là chuẩn bị căn hộ, chăm sóc khách, dọn dẹp, giá thuê và theo dõi thường xuyên.",
     benefit1_title: "Chăm sóc chỉn chu",
     benefit1_desc: "Căn hộ được chuẩn bị, kiểm tra và giữ gìn trong quá trình cho thuê.",
