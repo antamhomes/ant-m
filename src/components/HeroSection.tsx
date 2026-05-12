@@ -43,7 +43,7 @@ const HeroSection = () => {
         >
           {lang === "vi" ? (
             <>
-              Khai thác đúng cách:
+              <span className="text-gradient-gold">Khai thác đúng cách</span>:
               <br />
               {"doanh thu tốt hơn, chủ nhà "}
               <span className="text-gradient-gold">nhẹ đầu hơn</span>
