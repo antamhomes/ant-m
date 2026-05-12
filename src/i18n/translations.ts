@@ -283,7 +283,7 @@ const translations = {
     footer_brochure: "Tạo bản tổng quan",
 
     // Hero
-    hero_subtitle: "Khai thác đúng cách",
+    hero_subtitle: "ANTAM HOMES — CHĂM SÓC CĂN HỘ & QUẢN LÝ CHO THUÊ NGẮN HẠN",
     hero_title1: "Doanh thu tốt hơn.",
     hero_title2: "Chủ nhà nhẹ đầu hơn.",
     hero_desc: "Chúng tôi lo hình ảnh, đăng bài, giá phòng, khách thuê, tin nhắn, dọn dẹp và kiểm tra căn hộ sau mỗi lượt thuê.",
