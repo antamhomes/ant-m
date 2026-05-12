@@ -284,9 +284,9 @@ const translations = {
 
     // Hero
     hero_subtitle: "antam homes — chăm sóc căn hộ và cho thuê ngắn hạn",
-    hero_title1: "Khai thác đúng cách.",
-    hero_title2: "Doanh thu cao, ít lo âu.",
-    hero_desc: "Dành cho chủ nhà tại Praha và khu vực lân cận — cho thuê hiệu quả hơn, không phiền hà.",
+    hero_title1: "Căn hộ của chủ nhà.",
+    hero_title2: "Chúng tôi chăm sóc đúng cách để cho thuê hiệu quả hơn.",
+    hero_desc: "\n",
     hero_extra: "Dành cho chủ nhà tại Praha và khu vực lân cận. Trao đổi nhẹ nhàng, không ràng buộc.",
     hero_cta: "Trao đổi về căn hộ",
     hero_cta2: "Quy trình làm việc",
