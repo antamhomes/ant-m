@@ -41,9 +41,22 @@ const HeroSection = () => {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="font-display sm:text-5xl md:text-7xl lg:text-[5.5rem] font-bold text-primary-foreground leading-[1.2] sm:leading-[1.05] tracking-[-0.015em] sm:tracking-[-0.025em] mb-5 sm:mb-6 [text-shadow:0_2px_24px_hsl(var(--charcoal)/0.55)] text-balance text-7xl"
         >
-          {t(lang, "hero_title1")}
-          <br />
-          <span className="text-gradient-gold">{t(lang, "hero_title2")}</span>
+          {lang === "vi" ? (
+            <>
+              Khai thác đúng cách:
+              <br />
+              <span className="text-gradient-gold">doanh thu tốt hơn</span>
+              {", chủ nhà "}
+              <span className="text-gradient-gold">nhẹ đầu hơn</span>
+              {"."}
+            </>
+          ) : (
+            <>
+              {t(lang, "hero_title1")}
+              <br />
+              <span className="text-gradient-gold">{t(lang, "hero_title2")}</span>
+            </>
+          )}
         </motion.h1>
 
         <motion.p
