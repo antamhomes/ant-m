@@ -6,10 +6,10 @@ const translations = {
     footer_brochure: "Vytvořit přehled",
 
     // Hero
-    hero_subtitle: "antam homes — péče o byt a krátkodobý pronájem",
-    hero_title1: "Váš byt. Naše péče. ",
-    hero_title2: "Váš zisk.",
-    hero_desc: "Správa krátkodobých pronájmů v Praze pro majitele, kteří chtějí víc výnosu a méně starostí.",
+    hero_subtitle: "Pečujeme o váš byt",
+    hero_title1: "Vyšší výnos.",
+    hero_title2: "Méně starostí.",
+    hero_desc: "Postaráme se o fotky, inzerát, ceny, hosty, komunikaci, úklid i kontrolu bytu po každém pobytu.",
     hero_extra: "Pro majitele bytů v Praze a okolí. Bez tlaku, bez přehnaných slibů.",
     hero_cta: "Spočítat výnos bytu",
     hero_cta2: "Nezávazně probrat byt",
@@ -283,10 +283,10 @@ const translations = {
     footer_brochure: "Tạo bản tổng quan",
 
     // Hero
-    hero_subtitle: "antam homes — chăm sóc căn hộ và cho thuê ngắn hạn",
-    hero_title1: "Khai thác đúng cách:",
-    hero_title2: "doanh thu tốt hơn, chủ nhà nhẹ đầu hơn.",
-    hero_desc: "Căn hộ của chủ nhà.\ndoanh thu tốt hơn, chủ nhà nhẹ đầu hơn.",
+    hero_subtitle: "Khai thác đúng cách",
+    hero_title1: "Doanh thu tốt hơn.",
+    hero_title2: "Chủ nhà nhẹ đầu hơn.",
+    hero_desc: "Chúng tôi lo hình ảnh, đăng bài, giá phòng, khách thuê, tin nhắn, dọn dẹp và kiểm tra căn hộ sau mỗi lượt thuê.",
     hero_extra: "Dành cho chủ nhà tại Praha và khu vực lân cận. Trao đổi nhẹ nhàng, không ràng buộc.",
     hero_cta: "Trao đổi về căn hộ",
     hero_cta2: "Quy trình làm việc",
