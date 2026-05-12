@@ -288,7 +288,7 @@ const translations = {
     hero_title2: "Chủ nhà an tâm hơn.",
     hero_desc: "Từ tin nhắn khách, giá phòng, check-in đến dọn dẹp. \nChủ nhà không cần tự theo sát mỗi ngày.",
     hero_extra: "Dành cho chủ nhà tại Praha và khu vực lân cận. Trao đổi nhẹ nhàng, không ràng buộc.",
-    hero_cta: "Trao đổi về căn hộ",
+    hero_cta: "    Tính thử doanh thu ",
     hero_cta2: "Quy trình làm việc",
     hero_card1_label: "Cho khách",
     hero_card1_text: "Căn hộ sẵn sàng đón khách",
