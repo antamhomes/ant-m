@@ -1,29 +1,42 @@
 ## Cíl
-V `BenefitsSection.tsx` zkompaktnit benefit boxy na mobilu — zmenšit padding, písmo a mezery, popis ponechat. Desktop zůstane beze změny.
+V hero sekci na vietnamské verzi (`/vn`) je momentálně celý druhý řádek nadpisu obarvený zlatým gradientem. Chceme zlatě zvýraznit pouze dvě klíčové fráze: **"doanh thu tốt hơn"** a **"nhẹ đầu hơn"**. Zbytek textu zůstane bílý.
 
-## Změny v `src/components/BenefitsSection.tsx`
+Výsledný hero nadpis ve VN:
+> Khai thác đúng cách:
+> **doanh thu tốt hơn**, chủ nhà **nhẹ đầu hơn**.
 
-### Karta (každý box)
-- Padding: `p-5 md:p-8` → `p-4 md:p-8`
-- Mezera mezi ikonou a textem (mobile flex layout): `gap-4` → `gap-3`
+Česká verze zůstává beze změny ("Váš byt. Naše péče." + zlatě "Váš zisk.").
 
-### Ikona
-- Velikost wrapperu: `w-10 h-10 md:w-12 md:h-12` → `w-9 h-9 md:w-12 md:h-12`
-- Ikona uvnitř: `w-5 h-5 md:w-6 md:h-6` → `w-4 h-4 md:w-6 md:h-6`
+## Změny
 
-### Title
-- `text-lg md:text-xl` → `text-base md:text-xl`
-- `mb-1.5 md:mb-2.5` → `mb-1 md:mb-2.5`
+### 1. `src/i18n/translations.ts`
+Rozdělit VN hero titulek na více částí, aby šly obarvit zvlášť. Nahradit dosavadní `hero_title2` (celý druhý řádek zlatě) za sekvenci textových kousků s vyznačením, co je zlaté.
 
-### Description
-- `text-[15px] md:text-[15.5px]` → `text-[13.5px] md:text-[15.5px]`
-- `leading-[1.65]` → `leading-[1.55] md:leading-[1.65]`
+Konkrétně přidat nové klíče pro VN:
+- `hero_title1` = `"Khai thác đúng cách:"` (bílé)
+- `hero_v_gold1` = `"doanh thu tốt hơn"` (zlaté)
+- `hero_v_mid` = `", chủ nhà "` (bílé)
+- `hero_v_gold2` = `"nhẹ đầu hơn"` (zlaté)
+- `hero_v_end` = `"."` (bílé)
 
-### Mezery v gridu
-- `gap-5 md:gap-6 lg:gap-7` → `gap-3 md:gap-6 lg:gap-7`
+Pro CZ verzi přidat tytéž klíče tak, aby se chovala jako dnes (jen `hero_v_gold1` ponese stávající `hero_title2` "Váš zisk." a ostatní VN-specifické budou prázdné), takže layout zůstane funkční.
 
-### Section padding
-- `py-20 md:py-32` → `py-14 md:py-32` (víc dechu pro celou sekci na mobilu)
+### 2. `src/components/HeroSection.tsx`
+Upravit JSX nadpisu (řádky 44–46), aby skládal text z více kousků se správnou barvou:
 
-## Soubor
-- `src/components/BenefitsSection.tsx` (jediný)
+```tsx
+{t(lang, "hero_title1")}
+<br />
+<span className="text-gradient-gold">{t(lang, "hero_v_gold1")}</span>
+{t(lang, "hero_v_mid")}
+<span className="text-gradient-gold">{t(lang, "hero_v_gold2")}</span>
+{t(lang, "hero_v_end")}
+```
+
+V CZ to bude renderovat: "Váš byt. Naše péče." + nový řádek + zlatě "Váš zisk." (prázdné CZ klíče se neobjeví). Ve VN to bude renderovat požadovaný stav s dvěma zlatými frázemi.
+
+## Co se nemění
+- Velikost, font ani spacing nadpisu
+- Gradient styl `text-gradient-gold`
+- Česká verze nadpisu vizuálně beze změny
+- Hero podtitulek, CTA tlačítka a zbytek sekce
