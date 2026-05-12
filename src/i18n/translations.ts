@@ -286,7 +286,7 @@ const translations = {
     hero_subtitle: "ANTAM HOMES — CHĂM SÓC CĂN HỘ & QUẢN LÝ CHO THUÊ NGẮN HẠN",
     hero_title1: "Doanh thu tốt hơn.",
     hero_title2: "Chủ nhà nhẹ đầu hơn.",
-    hero_desc: "Chúng tôi lo hình ảnh, đăng bài, giá phòng, khách thuê, tin nhắn, dọn dẹp và kiểm tra căn hộ sau mỗi lượt thuê.",
+    hero_desc: "Từ tin nhắn khách, giá phòng, check-in đến dọn dẹp — chủ nhà không cần tự xử lý từng việc nhỏ.",
     hero_extra: "Dành cho chủ nhà tại Praha và khu vực lân cận. Trao đổi nhẹ nhàng, không ràng buộc.",
     hero_cta: "Trao đổi về căn hộ",
     hero_cta2: "Quy trình làm việc",
