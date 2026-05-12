@@ -34,59 +34,83 @@ const HeroSection = () => {
         <div className="absolute inset-x-0 top-0 h-[70%] bg-[radial-gradient(ellipse_at_center,_hsl(var(--charcoal)/0.55)_0%,_transparent_70%)] pointer-events-none" />
       </motion.div>
 
-      <div className="relative z-10 text-primary-foreground text-center px-6 max-w-4xl mx-auto">
+      <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="font-body text-[0.78rem] sm:text-sm tracking-[0.22em] uppercase mb-5 sm:mb-6"
+          style={{ color: "#C2A46D" }}
+        >
+          {t(lang, "hero_subtitle")}
+        </motion.div>
+
         <motion.h1
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-display sm:text-5xl md:text-7xl lg:text-[5.5rem] font-bold text-primary-foreground leading-[1.2] sm:leading-[1.05] tracking-[-0.015em] sm:tracking-[-0.025em] mb-5 sm:mb-6 [text-shadow:0_2px_24px_hsl(var(--charcoal)/0.55)] text-balance text-7xl"
+          className="font-display text-4xl sm:text-5xl md:text-6xl font-medium leading-[1.1] tracking-[-0.02em] mb-5 sm:mb-6 text-balance"
+          style={{ color: "#F7F1E8" }}
         >
-          {lang === "vi" ? (
-            <>
-              <span className="text-gradient-gold">Khai thác đúng cách</span>:
-              <br />
-              {"doanh thu tốt hơn, chủ nhà "}
-              <span className="text-gradient-gold">nhẹ đầu hơn</span>
-              {"."}
-            </>
-          ) : (
-            <>
-              {t(lang, "hero_title1")}
-              <br />
-              <span className="text-gradient-gold">{t(lang, "hero_title2")}</span>
-            </>
-          )}
+          {t(lang, "hero_title1")}
+          <br />
+          {t(lang, "hero_title2")}
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="font-body text-base sm:text-lg md:text-xl leading-relaxed text-primary-foreground/95 mb-6 sm:mb-4 max-w-2xl mx-auto [text-shadow:0_1px_12px_hsl(var(--charcoal)/0.6)]"
+          className="font-body text-base sm:text-lg leading-relaxed mb-8 sm:mb-10 max-w-xl mx-auto"
+          style={{ color: "#E8DED0" }}
         >
           {t(lang, "hero_desc")}
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-stretch sm:items-center max-w-md sm:max-w-none mx-auto"
+          transition={{ duration: 0.6, delay: 0.55 }}
+          className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center items-center"
         >
           <a
-            href="#kalkulacka"
-            className="btn-hero-primary inline-flex items-center justify-center font-body"
+            href="#kontakt"
+            className="font-body inline-flex items-center justify-center px-7 py-3.5 text-sm sm:text-[0.95rem] font-medium tracking-[0.02em] rounded-full border transition-colors duration-300"
+            style={{
+              backgroundColor: "#F4EBDD",
+              color: "#1E1A15",
+              borderColor: "#F4EBDD",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "#FFFFFF";
+              e.currentTarget.style.borderColor = "#FFFFFF";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "#F4EBDD";
+              e.currentTarget.style.borderColor = "#F4EBDD";
+            }}
           >
-            <span className="relative z-10 inline-flex items-center">
-              {t(lang, "hero_cta")}
-              <span className="arrow" aria-hidden="true">→</span>
-            </span>
+            {t(lang, "hero_cta")}
           </a>
           <a
-            href="#kontakt"
-            className="btn-hero-secondary inline-flex items-center justify-center font-body"
+            href="#jak-to-funguje"
+            className="font-body inline-flex items-center justify-center px-6 py-3.5 text-sm sm:text-[0.95rem] font-medium tracking-[0.02em] rounded-full border transition-colors duration-300"
+            style={{
+              color: "#F7F1E8",
+              borderColor: "rgba(247, 241, 232, 0.35)",
+              backgroundColor: "transparent",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = "rgba(247, 241, 232, 0.10)";
+              e.currentTarget.style.borderColor = "rgba(247, 241, 232, 0.65)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = "transparent";
+              e.currentTarget.style.borderColor = "rgba(247, 241, 232, 0.35)";
+            }}
           >
             {t(lang, "hero_cta2")}
+            <span className="ml-2" style={{ color: "#C2A46D" }} aria-hidden="true">→</span>
           </a>
         </motion.div>
       </div>
