@@ -6,10 +6,10 @@ const translations = {
     footer_brochure: "Vytvořit přehled",
 
     // Hero
-    hero_subtitle: "Pečujeme o váš byt",
-    hero_title1: "Vyšší výnos.",
-    hero_title2: "Méně starostí.",
-    hero_desc: "Postaráme se o fotky, inzerát, ceny, hosty, komunikaci, úklid i kontrolu bytu po každém pobytu.",
+    hero_subtitle: "antam homes — péče o byt a krátkodobý pronájem",
+    hero_title1: "Váš byt. Naše péče. ",
+    hero_title2: "Váš zisk.",
+    hero_desc: "Správa krátkodobých pronájmů v Praze pro majitele, kteří chtějí víc výnosu a méně starostí.",
     hero_extra: "Pro majitele bytů v Praze a okolí. Bez tlaku, bez přehnaných slibů.",
     hero_cta: "Spočítat výnos bytu",
     hero_cta2: "Nezávazně probrat byt",
