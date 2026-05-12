@@ -45,8 +45,7 @@ const HeroSection = () => {
             <>
               Khai thác đúng cách:
               <br />
-              <span className="text-gradient-gold">doanh thu tốt hơn</span>
-              {", chủ nhà "}
+              {"doanh thu tốt hơn, chủ nhà "}
               <span className="text-gradient-gold">nhẹ đầu hơn</span>
               {"."}
             </>
