@@ -79,7 +79,7 @@ const Footer = () => {
             <Download className="w-3.5 h-3.5" />
             {lang === "cs"
               ? "Informační memorandum o zpracování osobních údajů (GDPR)"
-              : "Bản ghi nhớ thông tin về xử lý dữ liệu cá nhân (GDPR)"}
+              : "Thông tin về xử lý dữ liệu cá nhân (GDPR)"}
           </a>
           <a
             href="/vop-majitele-nemovitosti.pdf"
@@ -89,7 +89,7 @@ const Footer = () => {
             <Download className="w-3.5 h-3.5" />
             {lang === "cs"
               ? "Všeobecné obchodní podmínky pro majitele nemovitostí"
-              : "Điều khoản và điều kiện chung cho chủ sở hữu bất động sản"}
+              : "Điều khoản chung dành cho chủ nhà"}
           </a>
           <a
             href="/formular-odstoupeni-od-smlouvy.pdf"
@@ -99,7 +99,7 @@ const Footer = () => {
             <Download className="w-3.5 h-3.5" />
             {lang === "cs"
               ? "Formulář pro odstoupení od smlouvy"
-              : "Mẫu đơn rút khỏi hợp đồng"}
+              : "Mẫu đơn hủy hợp đồng"}
           </a>
         </div>
 
