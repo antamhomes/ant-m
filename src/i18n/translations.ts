@@ -288,7 +288,7 @@ const translations = {
     hero_title2: "Chủ nhà yên tâm hơn.",
     hero_desc: "Từ việc nhắn tin với khách, tính giá, nhận khách cho đến dọn dẹp — chủ nhà không phải tự lo mỗi ngày.",
     hero_extra: "Dành cho chủ nhà tại Praha và khu vực lân cận. Trao đổi nhẹ nhàng, không ràng buộc.",
-    hero_cta: "    Tính thử doanh thu ",
+    hero_cta: "    Tính thử thu nhập ",
     hero_cta2: "Quy trình làm việc",
     hero_card1_label: "Cho khách",
     hero_card1_text: "Căn hộ sẵn sàng đón khách",
@@ -315,7 +315,7 @@ const translations = {
     benefit4_title: "Đỡ lo hơn",
     benefit4_desc: "Khách, dọn dẹp và những việc hằng ngày đều có người lo.",
     benefit5_title: "Giá hợp lý theo thời điểm",
-    benefit5_desc: "Giá được điều chỉnh theo mùa vụ, tỷ lệ lấp đầy và khu vực xung quanh.",
+    benefit5_desc: "Giá được điều chỉnh theo mùa, lượng khách thuê và khu vực xung quanh.",
     benefit6_title: "Trải nghiệm khách tốt hơn",
     benefit6_desc: "Hướng dẫn rõ ràng, căn hộ sạch sẽ và phản hồi nhanh giúp khách hài lòng hơn.",
 
