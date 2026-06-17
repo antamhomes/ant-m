@@ -241,6 +241,29 @@ const translations = {
     contact_small: "Ozveme se a nezávazně probereme, co by pro váš byt dávalo smysl.",
     contact_success: "Děkujeme! Ozveme se vám co nejdříve.",
 
+    // Calculator lead dialog
+    calc_lead_title: "Chci přesnější odhad",
+    calc_lead_desc: "Necháme se inspirovat tím, co jste si nastavili v kalkulačce, a ozveme se s odhadem pro váš konkrétní byt.",
+    calc_lead_name: "Jméno",
+    calc_lead_email: "E-mail",
+    calc_lead_phone: "Telefon",
+    calc_lead_phone_optional: "(nepovinné)",
+    calc_lead_consent_prefix: "Souhlasím se ",
+    calc_lead_consent_link: "zpracováním osobních údajů",
+    calc_lead_consent_suffix: ".",
+    calc_lead_submit: "Chci přesnější odhad",
+    calc_lead_success: "Děkujeme — ozveme se s odhadem pro váš konkrétní byt.",
+    calc_lead_prefill_note: "Vycházíme z toho, co jste vybrali v kalkulačce:",
+
+    // Contact (fallback)
+    contact_fallback_title: "Nepočítali jste výnos? Napište nám.",
+    contact_fallback_desc: "Pošlete nám pár informací o bytě a my se nezávazně ozveme.",
+    contact_fallback_message: "Krátká zpráva o bytu (nepovinné)",
+    contact_fallback_message_placeholder: "Pár vět o bytě nebo odkaz na inzerát…",
+    contact_consent_prefix: "Souhlasím se ",
+    contact_consent_link: "zpracováním osobních údajů",
+    contact_consent_suffix: ".",
+
     // Footer
     footer_desc: "Péče o byt a krátkodobý pronájem.",
     footer_company: "antam homes",
@@ -517,6 +540,29 @@ const translations = {
     contact_submit: "Gửi thông tin",
     contact_small: "antam homes sẽ liên hệ lại để trao đổi nhẹ nhàng và không ràng buộc.",
     contact_success: "Cảm ơn cô chú! Chúng tôi sẽ liên hệ sớm.",
+
+    // Calculator lead dialog
+    calc_lead_title: "Tôi muốn ước tính chính xác hơn",
+    calc_lead_desc: "Dựa trên những gì cô chú đã chọn trong bảng tính, chúng tôi sẽ liên hệ với ước tính cho căn hộ cụ thể.",
+    calc_lead_name: "Họ tên",
+    calc_lead_email: "E-mail",
+    calc_lead_phone: "Số điện thoại",
+    calc_lead_phone_optional: "(không bắt buộc)",
+    calc_lead_consent_prefix: "Tôi đồng ý cho ",
+    calc_lead_consent_link: "xử lý dữ liệu cá nhân",
+    calc_lead_consent_suffix: ".",
+    calc_lead_submit: "Tôi muốn ước tính chính xác hơn",
+    calc_lead_success: "Cảm ơn cô chú — chúng tôi sẽ liên hệ với ước tính cho căn hộ của cô chú.",
+    calc_lead_prefill_note: "Dựa trên lựa chọn trong bảng tính:",
+
+    // Contact (fallback)
+    contact_fallback_title: "Chưa tính thu nhập? Cứ nhắn cho chúng tôi.",
+    contact_fallback_desc: "Gửi vài thông tin về căn hộ, chúng tôi sẽ liên hệ lại, không ràng buộc.",
+    contact_fallback_message: "Tin nhắn ngắn về căn hộ (không bắt buộc)",
+    contact_fallback_message_placeholder: "Vài dòng về căn hộ hoặc link tin đăng…",
+    contact_consent_prefix: "Tôi đồng ý cho ",
+    contact_consent_link: "xử lý dữ liệu cá nhân",
+    contact_consent_suffix: ".",
 
     // Footer
     footer_desc: "Chăm sóc căn hộ và cho thuê ngắn hạn.",
