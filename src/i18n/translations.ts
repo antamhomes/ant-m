@@ -120,12 +120,15 @@ const translations = {
     portfolio1_title: "Praha 1 — byt s výhledem na Muzeum",
     portfolio1_desc: "Silná lokalita, výhled a turistická poptávka. Důležitý je první dojem, prezentace a hladký průběh pobytu.",
     portfolio1_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
+    portfolio1_alt: "Byt s výhledem na Národní muzeum, Praha 1 — obývací pokoj s jídelnou",
     portfolio2_title: "Mladá Boleslav — byt pro pracovní pobyty",
     portfolio2_desc: "Byt vhodný pro hosty, kteří přijíždějí za prací a potřebují pohodlný delší pobyt.",
     portfolio2_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
+    portfolio2_alt: "Byt pro pracovní pobyty, Mladá Boleslav — hlavní ložnice s manželskou postelí",
     portfolio3_title: "Praha 3 — moderní byt s garáží",
     portfolio3_desc: "Novější byt, kde dává smysl pracovat s klidem, garáží a dobrou dostupností do centra.",
     portfolio3_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
+    portfolio3_alt: "Moderní byt s garáží, Praha 3 — světlý obývací pokoj se sedačkou",
 
     // Process
     process_label: "Jak to funguje",
@@ -329,8 +332,8 @@ const translations = {
 
     // Benefits
     benefits_label: "Vì sao điều này quan trọng",
-    benefits_title1: "\n",
-    benefits_title2: "",
+    benefits_title1: "Căn hộ có thể tạo thu nhập tốt hơn.",
+    benefits_title2: "Khi được chăm sóc đúng cách.",
     benefits_desc: "Cho thuê ngắn hạn không chỉ là đăng căn hộ lên mạng. Còn phải chuẩn bị nhà, lo cho khách, dọn dẹp, tính giá thuê và theo dõi thường xuyên.",
     benefit1_title: "Chăm sóc kỹ lưỡng",
     benefit1_desc: "Căn hộ được chuẩn bị, kiểm tra và giữ gìn trong quá trình cho thuê.",
@@ -423,12 +426,15 @@ const translations = {
     portfolio1_title: "Praha 1 — căn hộ nhìn ra Bảo tàng Quốc gia",
     portfolio1_desc: "Vị trí mạnh, tầm nhìn đẹp và nhu cầu du lịch cao. Ấn tượng đầu tiên, cách trình bày và trải nghiệm khách rất quan trọng.",
     portfolio1_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
+    portfolio1_alt: "Căn hộ nhìn ra Bảo tàng Quốc gia, Praha 1 — phòng khách và khu vực ăn uống",
     portfolio2_title: "Mladá Boleslav — căn hộ cho khách đi công tác",
     portfolio2_desc: "Phù hợp với khách đến làm việc và cần một nơi ở thoải mái cho thời gian dài hơn.",
     portfolio2_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
+    portfolio2_alt: "Căn hộ cho khách công tác, Mladá Boleslav — phòng ngủ chính với giường đôi",
     portfolio3_title: "Praha 3 — căn hộ hiện đại có gara",
     portfolio3_desc: "Căn hộ mới hơn, có lợi thế về sự yên tĩnh, gara và kết nối thuận tiện vào trung tâm.",
     portfolio3_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
+    portfolio3_alt: "Căn hộ hiện đại có gara, Praha 3 — phòng khách sáng sủa với ghế sofa",
 
     // Process
     process_label: "Quy trình hợp tác",

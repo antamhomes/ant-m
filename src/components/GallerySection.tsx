@@ -6,13 +6,13 @@ import realLivingRoom from "@/assets/real-living-room.jpg";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t, type TranslationKey } from "@/i18n/translations";
 
-const portfolio: { src: string; titleKey: TranslationKey; descKey: TranslationKey; tagsKey: TranslationKey; alt: string; location: string }[] = [
+const portfolio: { src: string; titleKey: TranslationKey; descKey: TranslationKey; tagsKey: TranslationKey; altKey: TranslationKey; location: string }[] = [
   {
     src: portfolioLivingDining,
     titleKey: "portfolio1_title",
     descKey: "portfolio1_desc",
     tagsKey: "portfolio1_tags",
-    alt: "Byt v centru Prahy",
+    altKey: "portfolio1_alt",
     location: "Praha 1",
   },
   {
@@ -20,7 +20,7 @@ const portfolio: { src: string; titleKey: TranslationKey; descKey: TranslationKe
     titleKey: "portfolio2_title",
     descKey: "portfolio2_desc",
     tagsKey: "portfolio2_tags",
-    alt: "Byt pro pracovní pobyty",
+    altKey: "portfolio2_alt",
     location: "Mladá Boleslav",
   },
   {
@@ -28,7 +28,7 @@ const portfolio: { src: string; titleKey: TranslationKey; descKey: TranslationKe
     titleKey: "portfolio3_title",
     descKey: "portfolio3_desc",
     tagsKey: "portfolio3_tags",
-    alt: "Moderní byt s garáží",
+    altKey: "portfolio3_alt",
     location: "Praha 3",
   },
 ];
@@ -85,7 +85,7 @@ const GallerySection = () => {
                 <div className="relative aspect-[4/5] md:aspect-[5/6] overflow-hidden">
                   <img
                     src={item.src}
-                    alt={item.alt}
+                    alt={t(lang, item.altKey) as string}
                     className="w-full h-full object-cover group-hover:scale-[1.025] transition-transform duration-[1400ms] ease-out"
                     loading="lazy"
                     width={1600}
