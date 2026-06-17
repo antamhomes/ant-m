@@ -153,7 +153,7 @@ const ContactSection = () => {
               <option value="3+1">3+1</option>
               <option value="4+kk">4+kk</option>
               <option value="4+1">4+1</option>
-              <option value="5+kk a větší">5+kk a větší</option>
+              <option value="5+kk a větší">{lang === "cs" ? "5+kk a větší" : "5+kk trở lên"}</option>
             </select>
           </div>
           <div>
