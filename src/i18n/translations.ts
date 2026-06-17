@@ -194,6 +194,7 @@ const translations = {
     calc_cta: "Chci přesný odhad pro svůj byt",
     calc_month_suffix: "/ měsíc",
     calc_approx_prefix: "přibližně",
+    calc_trust_line: "Bez závazku · nezávazná konzultace",
     calc_disclaimer: "Orientační kalkulace, nikoli nabídka ani garance výnosu. Vychází z veřejných benchmarků pro Prahu (AirDNA, Airbtics, sreality, 2025) a typického nastavení správy Antam. Skutečný výnos kolísá podle stavu bytu, sezóny, recenzí, regulace krátkodobých pronájmů a dalších faktorů, které nemůžeme předem zaručit. Konkrétní podmínky vždy upravuje smlouva o správě.",
     calc_excluded_note: "​",
 
@@ -496,6 +497,7 @@ const translations = {
     calc_cta: "Tôi muốn ước tính chính xác cho căn hộ",
     calc_month_suffix: "/ tháng",
     calc_approx_prefix: "khoảng",
+    calc_trust_line: "Không ràng buộc · tư vấn miễn phí",
     calc_disclaimer: "Chỉ là ước tính tham khảo, không phải lời chào hàng hay cam kết lợi nhuận. Dựa trên dữ liệu công khai cho Praha (AirDNA, Airbtics, sreality, 2025) và mô hình quản lý thông thường của Antám. Kết quả thực tế thay đổi theo tình trạng căn hộ, mùa, đánh giá, quy định cho thuê ngắn hạn và nhiều yếu tố khác mà chúng tôi không thể bảo đảm trước. Điều kiện cụ thể luôn được quy định trong hợp đồng quản lý.",
     calc_excluded_note: "​",
 
