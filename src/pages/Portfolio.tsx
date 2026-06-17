@@ -14,17 +14,17 @@ import realStudioGold from "@/assets/real-studio-gold.jpg";
 import realBedroomBeige from "@/assets/real-bedroom-beige.jpg";
 import realStudioGreen from "@/assets/real-studio-green.jpg";
 
-const photos: { src: string; alt: string; span: string }[] = [
-  { src: realBedroomLuxury, alt: "Luxusní ložnice", span: "md:col-span-2 md:row-span-2" },
-  { src: realLivingCozy, alt: "Útulný obývací pokoj", span: "md:col-span-1 md:row-span-1" },
-  { src: realBedroomModern, alt: "Moderní ložnice", span: "md:col-span-1 md:row-span-2" },
-  { src: realLivingRoom, alt: "Obývací pokoj", span: "md:col-span-2 md:row-span-1" },
-  { src: realLivingTv, alt: "Obývací pokoj s TV stěnou", span: "md:col-span-2 md:row-span-2" },
-  { src: realTerrace, alt: "Terasa s posezením", span: "md:col-span-2 md:row-span-1" },
-  { src: realCoffeeDetail, alt: "Detail kávy s výhledem", span: "md:col-span-1 md:row-span-1" },
-  { src: realStudioGold, alt: "Studio s hořčicovými závěsy", span: "md:col-span-2 md:row-span-2" },
-  { src: realBedroomBeige, alt: "Béžová ložnice", span: "md:col-span-2 md:row-span-1" },
-  { src: realStudioGreen, alt: "Studio s kuchyňským koutem", span: "md:col-span-2 md:row-span-2" },
+const photos: { src: string; altCs: string; altVi: string; span: string }[] = [
+  { src: realBedroomLuxury, altCs: "Luxusní ložnice s manželskou postelí v bytě v Praze", altVi: "Phòng ngủ sang trọng với giường đôi trong căn hộ tại Praha", span: "md:col-span-2 md:row-span-2" },
+  { src: realLivingCozy, altCs: "Útulný obývací pokoj s pohovkou a měkkým osvětlením", altVi: "Phòng khách ấm cúng với ghế sofa và ánh sáng dịu", span: "md:col-span-1 md:row-span-1" },
+  { src: realBedroomModern, altCs: "Moderní ložnice v neutrálních tónech", altVi: "Phòng ngủ hiện đại với tông màu trung tính", span: "md:col-span-1 md:row-span-2" },
+  { src: realLivingRoom, altCs: "Světlý obývací pokoj se sedačkou v bytě k pronájmu", altVi: "Phòng khách sáng sủa với ghế sofa trong căn hộ cho thuê", span: "md:col-span-2 md:row-span-1" },
+  { src: realLivingTv, altCs: "Obývací pokoj s designovou TV stěnou a sedací soupravou", altVi: "Phòng khách với tường tivi thiết kế và bộ ghế sofa", span: "md:col-span-2 md:row-span-2" },
+  { src: realTerrace, altCs: "Terasa bytu s venkovním posezením a výhledem", altVi: "Ban công căn hộ với khu vực ngồi ngoài trời và tầm nhìn đẹp", span: "md:col-span-2 md:row-span-1" },
+  { src: realCoffeeDetail, altCs: "Detail šálku kávy na stole s výhledem z okna", altVi: "Cận cảnh tách cà phê trên bàn cạnh cửa sổ có tầm nhìn", span: "md:col-span-1 md:row-span-1" },
+  { src: realStudioGold, altCs: "Studio s hořčicovými závěsy a designovým interiérem", altVi: "Căn studio với rèm màu vàng mù tạt và nội thất thiết kế", span: "md:col-span-2 md:row-span-2" },
+  { src: realBedroomBeige, altCs: "Béžová ložnice s elegantním osvětlením", altVi: "Phòng ngủ tông màu be với ánh sáng trang nhã", span: "md:col-span-2 md:row-span-1" },
+  { src: realStudioGreen, altCs: "Studio se zeleným akcentem a kuchyňským koutem", altVi: "Căn studio với điểm nhấn màu xanh và góc bếp", span: "md:col-span-2 md:row-span-2" },
 ];
 
 const Portfolio = () => {
@@ -66,7 +66,7 @@ const Portfolio = () => {
             >
               <img
                 src={p.src}
-                alt={p.alt}
+                alt={lang === "cs" ? p.altCs : p.altVi}
                 loading="lazy"
                 className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 ease-out"
               />
