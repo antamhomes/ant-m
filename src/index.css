@@ -112,12 +112,23 @@ html {
     line-height: 1.3;
   }
 
-  /* Mobile: bump body/paragraph text one step for easier reading
-     by older audiences. Headings and elements with explicit text-*
-     utilities are not affected. */
+  /* Mobile: bump paragraph/list text one step for easier reading
+     by older audiences. Override Tailwind text-sm utilities on
+     paragraphs only; keep very small (xs / 11–12px) labels intact. */
   @media (max-width: 640px) {
     p, li {
       font-size: 1.0625rem; /* 17px */
+      line-height: 1.65;
+    }
+    p.text-sm, li.text-sm,
+    p.text-\[14px\], p.text-\[15px\] {
+      font-size: 1rem !important; /* 16px */
+      line-height: 1.6 !important;
+    }
+    p.text-base { font-size: 1.0625rem !important; }
+    p.text-xs, li.text-xs,
+    p.text-\[10px\], p.text-\[11px\], p.text-\[12px\], p.text-\[13px\] {
+      /* keep eyebrow/legend-style micro labels untouched */
     }
   }
 }
