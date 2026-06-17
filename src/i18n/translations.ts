@@ -329,8 +329,8 @@ const translations = {
 
     // Benefits
     benefits_label: "Vì sao điều này quan trọng",
-    benefits_title1: "\n",
-    benefits_title2: "",
+    benefits_title1: "Căn hộ có thể tạo thu nhập tốt hơn.",
+    benefits_title2: "Khi được chăm sóc đúng cách.",
     benefits_desc: "Cho thuê ngắn hạn không chỉ là đăng căn hộ lên mạng. Còn phải chuẩn bị nhà, lo cho khách, dọn dẹp, tính giá thuê và theo dõi thường xuyên.",
     benefit1_title: "Chăm sóc kỹ lưỡng",
     benefit1_desc: "Căn hộ được chuẩn bị, kiểm tra và giữ gìn trong quá trình cho thuê.",
