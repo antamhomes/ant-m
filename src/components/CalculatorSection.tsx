@@ -318,59 +318,8 @@ const CalculatorSection = () => {
                 </h3>
               </div>
 
-              {/* ADR */}
-              <div className="flex items-baseline justify-between">
-                <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em]">
-                  {t(lang, "calc_adr")}
-                </p>
-                <p className="font-display text-xl font-semibold text-primary-foreground">
-                  {result.adr.toLocaleString("cs-CZ")}&nbsp;Kč
-                </p>
-              </div>
-
-              {/* Rozpad */}
-              <div className="border-t border-primary-foreground/10 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setBreakdownOpen((o) => !o)}
-                  className="w-full flex items-center justify-between font-body text-xs text-primary-foreground/75 uppercase tracking-[0.15em] hover:text-gold transition-colors"
-                >
-                  <span>{t(lang, "calc_breakdown")}</span>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${breakdownOpen ? "rotate-180" : ""}`} />
-                </button>
-                <AnimatePresence initial={false}>
-                  {breakdownOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25 }}
-                      className="overflow-hidden"
-                    >
-                      <ul className="mt-4 space-y-2 font-body text-sm text-primary-foreground/80">
-                        <li className="flex justify-between">
-                          <span>{t(lang, "calc_cleaning")} ({result.cleanings}× {lang === "cs" ? "měs." : "/tháng"})</span>
-                          <span>− {result.cleaning.toLocaleString("cs-CZ")}&nbsp;Kč</span>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>{t(lang, "calc_operations")}</span>
-                          <span>− {result.supplies.toLocaleString("cs-CZ")}&nbsp;Kč</span>
-                        </li>
-                        <li className="flex justify-between">
-                          <span>{t(lang, "calc_our_fee")} ({Math.round(MGMT_FEE * 100)} %)</span>
-                          <span>− {result.mgmt.toLocaleString("cs-CZ")}&nbsp;Kč</span>
-                        </li>
-                      </ul>
-                      <p className="mt-3 font-body text-[11px] text-primary-foreground/55 leading-relaxed">
-                        {t(lang, "calc_excluded_note")}
-                      </p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-
               {/* Net */}
-              <div className="border-t border-primary-foreground/10 pt-5">
+              <div>
                 <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
                   {t(lang, "calc_net")}
                 </p>
@@ -378,23 +327,11 @@ const CalculatorSection = () => {
                   {t(lang, "calc_net_sub")}
                 </p>
                 <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold leading-tight">
-                  {result.net.toLocaleString("cs-CZ")}&nbsp;Kč
+                  ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
+                  <span className="font-body text-sm font-normal text-primary-foreground/65 ml-2">
+                    {t(lang, "calc_month_suffix")}
+                  </span>
                 </p>
-                <p className="font-body text-[11px] text-primary-foreground/50 mt-2 leading-relaxed">
-                  {String(t(lang, "calc_excluded_note")).replace("{energy}", result.energy.toLocaleString("cs-CZ"))}
-                </p>
-              </div>
-
-              {/* Roční průměr (vždy ze sezóny year) */}
-              <div className="border-t border-primary-foreground/10 pt-5">
-                <div className="flex items-baseline justify-between">
-                  <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em]">
-                    {t(lang, "calc_net_year")}
-                  </p>
-                  <p className="font-display text-xl font-semibold text-primary-foreground">
-                    {result.netYearAvg.toLocaleString("cs-CZ")}&nbsp;Kč
-                  </p>
-                </div>
               </div>
 
               {/* LTR srovnání */}
@@ -404,12 +341,12 @@ const CalculatorSection = () => {
                     {t(lang, "calc_ltr")}
                   </p>
                   <p className="font-display text-xl font-semibold text-primary-foreground/60">
-                    {result.ltr.toLocaleString("cs-CZ")}&nbsp;Kč
+                    ~{(Math.round(result.ltr / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
                   </p>
                 </div>
                 {result.ratio > 0 && (
                   <p className="font-body text-xs text-primary-foreground/85 mt-2">
-                    →{" "}
+                    → {t(lang, "calc_approx_prefix")}{" "}
                     <strong className="text-gold">
                       {(Math.round(result.ratio * 10) / 10).toLocaleString("cs-CZ")}×{" "}
                     </strong>
