@@ -426,12 +426,15 @@ const translations = {
     portfolio1_title: "Praha 1 — căn hộ nhìn ra Bảo tàng Quốc gia",
     portfolio1_desc: "Vị trí mạnh, tầm nhìn đẹp và nhu cầu du lịch cao. Ấn tượng đầu tiên, cách trình bày và trải nghiệm khách rất quan trọng.",
     portfolio1_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
+    portfolio1_alt: "Căn hộ nhìn ra Bảo tàng Quốc gia, Praha 1 — phòng khách và khu vực ăn uống",
     portfolio2_title: "Mladá Boleslav — căn hộ cho khách đi công tác",
     portfolio2_desc: "Phù hợp với khách đến làm việc và cần một nơi ở thoải mái cho thời gian dài hơn.",
     portfolio2_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
+    portfolio2_alt: "Căn hộ cho khách công tác, Mladá Boleslav — phòng ngủ chính với giường đôi",
     portfolio3_title: "Praha 3 — căn hộ hiện đại có gara",
     portfolio3_desc: "Căn hộ mới hơn, có lợi thế về sự yên tĩnh, gara và kết nối thuận tiện vào trung tâm.",
     portfolio3_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
+    portfolio3_alt: "Căn hộ hiện đại có gara, Praha 3 — phòng khách sáng sủa với ghế sofa",
 
     // Process
     process_label: "Quy trình hợp tác",
