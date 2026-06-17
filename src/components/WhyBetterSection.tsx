@@ -70,7 +70,7 @@ const WhyBetterSection = () => {
                         aria-hidden
                         className="absolute left-0 top-1.5 bottom-1.5 w-px bg-gradient-to-b from-gold via-gold/60 to-transparent"
                       />
-                      <span className="font-body text-[10px] font-semibold uppercase tracking-[0.28em] text-gold">
+                      <span className="font-body text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
                         {t(lang, "shortTerm_label")}
                       </span>
                       <p className="mt-2 font-body text-[15px] text-foreground leading-[1.55]">
@@ -115,7 +115,7 @@ const WhyBetterSection = () => {
                       aria-hidden
                       className="absolute left-0 top-1.5 bottom-1.5 w-px bg-gradient-to-b from-gold via-gold/60 to-transparent"
                     />
-                    <span className="font-body text-[10px] font-semibold uppercase tracking-[0.28em] text-gold">
+                    <span className="font-body text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
                       {t(lang, "shortTerm_label")}
                     </span>
                     <p className="mt-2 font-body text-[17px] text-foreground leading-[1.55]">

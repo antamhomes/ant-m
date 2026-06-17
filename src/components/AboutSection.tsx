@@ -29,7 +29,7 @@ const AboutSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
+          <p className="text-gold-deep font-body text-sm tracking-[0.3em] uppercase font-semibold mb-4">
             {t(lang, "about_label")}
           </p>
           <div className="flex items-center justify-center gap-3 mb-6">

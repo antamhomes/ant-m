@@ -68,7 +68,7 @@ const ProcessSection = () => {
                     >
                       {num}
                     </div>
-                    <span className="font-body text-[11px] tracking-[0.3em] uppercase text-gold/70 mb-2 block">
+                    <span className="font-body text-[11px] tracking-[0.3em] uppercase text-gold-deep font-semibold mb-2 block">
                       {lang === "cs" ? "Krok" : "Bước"}
                     </span>
                     <h3 className="font-display text-xl md:text-2xl font-semibold text-primary-foreground mb-2">

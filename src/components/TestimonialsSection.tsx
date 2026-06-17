@@ -33,7 +33,7 @@ const TestimonialsSection = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
+          <p className="text-gold-deep font-body text-sm tracking-[0.3em] uppercase font-semibold mb-4">
             Reference
           </p>
           <h2 className="font-display text-3xl md:text-5xl font-semibold text-foreground mb-6">
