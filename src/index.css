@@ -31,7 +31,8 @@ html {
     --secondary-foreground: 168 49% 14%;
 
     --muted: 36 14% 96%;
-    --muted-foreground: 150 6% 38%;
+    /* Darkened for stronger contrast on cream background (WCAG AA) */
+    --muted-foreground: 160 14% 24%;
 
     /* Gold accent #B8893E — slightly deeper for premium feel on light bg */
     --accent: 36 50% 48%;
@@ -48,7 +49,8 @@ html {
     --radius: 0.5rem;
 
     --gold: 36 50% 48%;
-    --gold-deep: 36 55% 38%;
+    /* Deeper gold used for small uppercase labels — accessible on cream */
+    --gold-deep: 34 70% 28%;
     --gold-light: 36 55% 72%;
     --warm-cream: 0 0% 100%;
     --warm-sand: 36 18% 94%;
@@ -124,10 +126,10 @@ html {
     display: inline-flex;
     align-items: center;
     gap: 0.75rem;
-    color: hsl(var(--gold));
+    color: hsl(var(--gold-deep));
     font-family: var(--font-body);
     font-size: 0.75rem;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.3em;
     text-transform: uppercase;
   }
@@ -135,8 +137,8 @@ html {
     content: "";
     width: 28px;
     height: 1px;
-    background: hsl(var(--gold));
-    opacity: 0.7;
+    background: hsl(var(--gold-deep));
+    opacity: 0.8;
   }
   .eyebrow.eyebrow-center {
     justify-content: center;
@@ -145,8 +147,8 @@ html {
     content: "";
     width: 28px;
     height: 1px;
-    background: hsl(var(--gold));
-    opacity: 0.7;
+    background: hsl(var(--gold-deep));
+    opacity: 0.8;
   }
 
   .shadow-soft { box-shadow: var(--shadow-soft); }
