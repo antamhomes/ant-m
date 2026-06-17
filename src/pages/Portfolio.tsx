@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import SEO from "@/components/SEO";
 
 import realBedroomLuxury from "@/assets/real-bedroom-luxury.jpg";
 import realBedroomModern from "@/assets/real-bedroom-modern.jpg";
@@ -39,6 +40,7 @@ const Portfolio = () => {
 
   return (
     <main className="min-h-screen bg-background">
+      <SEO page="portfolio" />
       <header className="max-w-7xl mx-auto px-6 pt-10 pb-8 md:pt-14 md:pb-12">
         <Link
           to="/"
