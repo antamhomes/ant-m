@@ -43,7 +43,7 @@ const copy = {
     ctaText: "Pošlete nám základní informace. Ozveme se a řekneme, jaký směr může dávat smysl.",
     contactLine: "+420 776 123 456  ·  info@an-tam.com  ·  antamhomes.com",
     disclaimer: "Výsledky se liší podle lokality, stavu bytu, sezóny a nastavení ceny.",
-    footer: "Antám s.r.o. (dříve DAU AN s.r.o.) — IČO: 03328511 — Praha, Česká republika",
+    footer: "Antam s.r.o. (dříve DAU AN s.r.o.) — IČO: 03328511 — Praha, Česká republika",
   },
   vi: {
     eyebrow: "CHĂM SÓC CĂN HỘ VÀ CHO THUÊ NGẮN HẠN",
@@ -55,7 +55,7 @@ const copy = {
     stats: [
       { v: "15+", l: "căn hộ vận hành" },
       { v: "4.9★", l: "đánh giá của khách" },
-      { v: "đến 95 %", l: "tỷ lệ lấp đầy" },
+      { v: "đến 95 %", l: "lượng khách thuê" },
       { v: "đến 2.8×", l: "doanh thu cao hơn" },
     ],
     servicesTitle: "antam homes hỗ trợ những gì",
@@ -63,13 +63,13 @@ const copy = {
       ["Chuẩn bị listing", "Hình ảnh, mô tả, quy định và thiết lập trên nền tảng."],
       ["Khách và giao tiếp", "Trả lời, hướng dẫn nhận phòng, hỗ trợ khi cần."],
       ["Dọn dẹp và kiểm tra", "Sau mỗi lượt khách, căn hộ được kiểm tra kỹ."],
-      ["Giá và tỷ lệ lấp đầy", "Theo dõi giá, mùa vụ và lịch trống."],
+      ["Giá và lượng khách thuê", "Theo dõi giá, mùa và lịch trống."],
       ["Báo cáo cho chủ nhà", "Đặt phòng, doanh thu, chi phí và ghi chú quan trọng."],
     ],
     whyTitle: "Ngắn hạn vs. dài hạn",
     whyRows: [
       ["Tình trạng căn hộ", "Sau thời gian dài", "Sau mỗi lượt khách"],
-      ["Doanh thu", "Cố định theo hợp đồng", "Điều chỉnh theo mùa vụ"],
+      ["Doanh thu", "Cố định theo hợp đồng", "Điều chỉnh theo mùa"],
       ["Linh hoạt", "Bị ràng buộc bởi hợp đồng", "Có thể chặn lịch trước"],
       ["Theo dõi thanh toán", "Chủ nhà tự xử lý", "Báo cáo từ nền tảng"],
     ],
@@ -83,8 +83,8 @@ const copy = {
     ctaTitle: "Trao đổi nhẹ nhàng về căn hộ của cô chú.",
     ctaText: "Gửi vài thông tin cơ bản. Chúng tôi sẽ liên hệ và trao đổi hướng phù hợp.",
     contactLine: "+420 776 123 456  ·  info@antamhomes.com  ·  antamhomes.com",
-    disclaimer: "Kết quả khác nhau tùy vị trí, tình trạng căn hộ, mùa vụ và giá.",
-    footer: "Antám s.r.o. (trước đây DAU AN s.r.o.) — IČO: 03328511 — Praha, Cộng hòa Séc",
+    disclaimer: "Kết quả khác nhau tùy vị trí, tình trạng căn hộ, mùa và giá.",
+    footer: "Antam s.r.o. (trước đây DAU AN s.r.o.) — IČO: 03328511 — Praha, Cộng hòa Séc",
   },
 };
 

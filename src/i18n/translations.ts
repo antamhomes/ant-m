@@ -270,7 +270,7 @@ const translations = {
     // Footer
     footer_desc: "Péče o byt a krátkodobý pronájem.",
     footer_company: "antam homes",
-    footer_legal: "Antám s.r.o. (dříve DAU AN s.r.o.)",
+    footer_legal: "Antam s.r.o. (dříve DAU AN s.r.o.)",
     footer_ico: "IČO: 03328511",
     footer_location: "Praha a okolí",
     footer_phone: "+420 776 123 456",
@@ -282,7 +282,7 @@ const translations = {
     footer_link_privacy: "Ochrana osobních údajů",
     footer_link_cookies: "Cookies",
     footer_cta: "Nezávazně probrat byt",
-    footer_rights: "© 2026 Antám s.r.o. Všechna práva vyhrazena.",
+    footer_rights: "© 2026 Antam s.r.o. Všechna práva vyhrazena.",
 
     // Sticky mobile
     mobile_cta: "Probrat byt",
@@ -367,8 +367,8 @@ const translations = {
     svc2_desc: "Trả lời câu hỏi, hướng dẫn nhận phòng và hỗ trợ khách trong thời gian lưu trú.",
     svc3_title: "Dọn dẹp và kiểm tra",
     svc3_desc: "Sau mỗi lượt khách, căn hộ được kiểm tra và các chi tiết nhỏ được chú ý để giữ căn hộ trong tình trạng tốt.",
-    svc4_title: "Giá và tỷ lệ lấp đầy",
-    svc4_desc: "Giá thuê, mùa vụ và lịch trống được theo dõi để căn hộ không bị trống không cần thiết.",
+    svc4_title: "Giá và lượng khách thuê",
+    svc4_desc: "Giá thuê, mùa và lịch trống được theo dõi để căn hộ không bị trống không cần thiết.",
     svc5_title: "Bảo trì và xử lý sự cố",
     svc5_desc: "Sửa chữa nhỏ, can thiệp nhanh và phối hợp với thợ khi cần.",
     svc6_title: "Báo cáo hàng tháng",
@@ -441,7 +441,7 @@ const translations = {
     step3_title: "Đề xuất cách làm",
     step3_desc: "Chúng tôi nói rõ những gì nên chuẩn bị, điều chỉnh hoặc thiết lập.",
     step4_title: "Bắt đầu vận hành",
-    step4_desc: "antam homes hỗ trợ khách, dọn dẹp, giá thuê, tỷ lệ lấp đầy và các việc vận hành.",
+    step4_desc: "antam homes hỗ trợ khách, dọn dẹp, giá thuê, lượng khách thuê và các việc vận hành.",
     process_cta: "Trao đổi về căn hộ",
 
     // About
@@ -498,7 +498,7 @@ const translations = {
     calc_month_suffix: "/ tháng",
     calc_approx_prefix: "khoảng",
     calc_trust_line: "Không ràng buộc · tư vấn miễn phí",
-    calc_disclaimer: "Chỉ là ước tính tham khảo, không phải lời chào hàng hay cam kết lợi nhuận. Dựa trên dữ liệu công khai cho Praha (AirDNA, Airbtics, sreality, 2025) và mô hình quản lý thông thường của Antám. Kết quả thực tế thay đổi theo tình trạng căn hộ, mùa, đánh giá, quy định cho thuê ngắn hạn và nhiều yếu tố khác mà chúng tôi không thể bảo đảm trước. Điều kiện cụ thể luôn được quy định trong hợp đồng quản lý.",
+    calc_disclaimer: "Chỉ là ước tính tham khảo, không phải lời chào hàng hay cam kết lợi nhuận. Dựa trên dữ liệu công khai cho Praha (AirDNA, Airbtics, sreality, 2025) và mô hình quản lý thông thường của Antam. Kết quả thực tế thay đổi theo tình trạng căn hộ, mùa, đánh giá, quy định cho thuê ngắn hạn và nhiều yếu tố khác mà chúng tôi không thể bảo đảm trước. Điều kiện cụ thể luôn được quy định trong hợp đồng quản lý.",
     calc_excluded_note: "​",
 
     // Owner report
@@ -573,19 +573,19 @@ const translations = {
     // Footer
     footer_desc: "Chăm sóc căn hộ và cho thuê ngắn hạn.",
     footer_company: "antam homes",
-    footer_legal: "Antám s.r.o. (trước đây DAU AN s.r.o.)",
+    footer_legal: "Antam s.r.o. (trước đây DAU AN s.r.o.)",
     footer_ico: "Mã số doanh nghiệp: 03328511",
     footer_location: "Praha và khu vực lân cận",
     footer_phone: "+420 776 123 456",
     footer_email: "info@an-tam.com",
-    footer_link_how: "Quy trình",
+    footer_link_how: "Quy trình làm việc",
     footer_link_portfolio: "Portfolio",
     footer_link_services: "Dịch vụ",
     footer_link_contact: "Liên hệ",
     footer_link_privacy: "Bảo mật thông tin",
     footer_link_cookies: "Cookies",
     footer_cta: "Trao đổi về căn hộ",
-    footer_rights: "© 2026 Antám s.r.o. Mọi quyền được bảo lưu.",
+    footer_rights: "© 2026 Antam s.r.o. Mọi quyền được bảo lưu.",
 
     // Sticky mobile
     mobile_cta: "Trao đổi",
