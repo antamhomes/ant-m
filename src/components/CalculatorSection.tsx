@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calculator, MapPin, Home, Plus, Check, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
+import CalculatorLeadDialog from "./CalculatorLeadDialog";
 
 type SizeKey = "1kk" | "2kk" | "3kk" | "4kk";
 type LocationKey =
@@ -74,6 +75,7 @@ const CalculatorSection = () => {
   const [season, setSeason] = useState<Season>("year");
   const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [extrasOpen, setExtrasOpen] = useState(false);
+  const [leadOpen, setLeadOpen] = useState(false);
 
   const toggleExtra = (id: string) => {
     setSelectedExtras((prev) =>
@@ -419,12 +421,13 @@ const CalculatorSection = () => {
               </div>
 
               <div className="space-y-3">
-                <a
-                  href="#kontakt"
+                <button
+                  type="button"
+                  onClick={() => setLeadOpen(true)}
                   className="block w-full text-center px-6 py-3.5 bg-primary text-primary-foreground font-body font-semibold text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-gold/60 ring-1 ring-gold/30 hover:ring-gold/60 transition-all"
                 >
                   {t(lang, "calc_cta")}
-                </a>
+                </button>
                 <a
                   href="#kontakt"
                   className="block w-full text-center font-body text-xs text-primary-foreground/65 hover:text-gold tracking-[0.15em] uppercase transition-colors"
@@ -442,6 +445,12 @@ const CalculatorSection = () => {
           </p>
         </div>
       </div>
+      <CalculatorLeadDialog
+        open={leadOpen}
+        onOpenChange={setLeadOpen}
+        locationLabel={locations.find((l) => l.value === location)?.label ?? ""}
+        sizeLabel={sizes.find((s) => s.value === size)?.label ?? ""}
+      />
     </section>
   );
 };
