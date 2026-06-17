@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { useEffect } from "react";
 
 const SITE = "https://www.antamhomes.com";
 
@@ -34,6 +35,37 @@ const META: Record<PageKey, { cs: { title: string; desc: string }; vi: { title: 
 
 export const SEO = ({ page }: { page: PageKey }) => {
   const { lang } = useLanguage();
+
+  // react-helmet-async appends its tags but does not remove pre-existing
+  // static ones from index.html, which leaves duplicates (the static Czech
+  // tags appear first and win for crawlers/queries). Strip any meta tags in
+  // the static head that Helmet now manages so Helmet's values are the only
+  // ones present.
+  useEffect(() => {
+    const selectors = [
+      'meta[name="description"]',
+      'meta[name="twitter:card"]',
+      'meta[name="twitter:title"]',
+      'meta[name="twitter:description"]',
+      'meta[name="twitter:image"]',
+      'meta[property="og:type"]',
+      'meta[property="og:site_name"]',
+      'meta[property="og:title"]',
+      'meta[property="og:description"]',
+      'meta[property="og:url"]',
+      'meta[property="og:locale"]',
+      'meta[property="og:locale:alternate"]',
+      'meta[property="og:image"]',
+    ];
+    selectors.forEach((sel) => {
+      document.head
+        .querySelectorAll(sel)
+        .forEach((el) => {
+          if (!el.hasAttribute("data-rh")) el.remove();
+        });
+    });
+  }, [lang]);
+
   const meta = META[page];
   const current = meta[lang];
   const canonicalPath = lang === "cs" ? meta.pathCs : meta.pathVi;
