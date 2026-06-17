@@ -8,12 +8,14 @@ const VI_DESC =
   "Dịch vụ quản lý căn hộ cho thuê ngắn hạn tại Praha — chuẩn bị listing, lo cho khách, dọn dẹp, định giá và báo cáo rõ ràng cho chủ nhà. Thu nhập tốt hơn, ít lo hơn.";
 const SITE = "https://www.antamhomes.com";
 
-function prerenderVnPlugin() {
+import type { Plugin } from "vite";
+
+function prerenderVnPlugin(): Plugin {
   return {
     name: "prerender-vn",
-    apply: "build" as const,
-    enforce: "post" as const,
-    generateBundle(_options: unknown, bundle: Record<string, { type: string; fileName: string; source?: string | Uint8Array }>) {
+    apply: "build",
+    enforce: "post",
+    generateBundle(_options, bundle) {
       const indexAsset = bundle["index.html"];
       if (!indexAsset || indexAsset.type !== "asset") return;
       let html = typeof indexAsset.source === "string"
