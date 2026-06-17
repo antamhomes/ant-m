@@ -111,6 +111,15 @@ html {
   :lang(vi) h1, :lang(vi) h2, :lang(vi) h3, :lang(vi) h4 {
     line-height: 1.3;
   }
+
+  /* Mobile: bump body/paragraph text one step for easier reading
+     by older audiences. Headings and elements with explicit text-*
+     utilities are not affected. */
+  @media (max-width: 640px) {
+    p, li {
+      font-size: 1.0625rem; /* 17px */
+    }
+  }
 }
 
 @layer utilities {
