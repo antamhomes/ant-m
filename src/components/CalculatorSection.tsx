@@ -121,13 +121,13 @@ const CalculatorSection = () => {
   }, [location, size, selectedExtras, season]);
 
   return (
-    <section id="kalkulacka" className="pt-6 md:pt-10 pb-16 md:pb-20 bg-muted/30">
+    <section id="kalkulacka" className="pt-6 md:pt-8 pb-10 md:pb-14 bg-muted/30">
       <div className="max-w-5xl mx-auto px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-16"
+          viewport={{ once: true, amount: 0.15 }}
+          className="text-center mb-10 md:mb-12"
         >
           <p className="eyebrow eyebrow-center mb-5">
             {t(lang, "calc_label")}
@@ -141,11 +141,11 @@ const CalculatorSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-10">
+        <div className="grid md:grid-cols-2 gap-8 md:items-start">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.15 }}
             className="space-y-8 order-2 md:order-1"
           >
             <div>
@@ -307,8 +307,8 @@ const CalculatorSection = () => {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center order-1 md:order-2"
+            viewport={{ once: true, amount: 0.15 }}
+            className="flex items-start order-1 md:order-2 md:sticky md:top-24"
           >
             <div className="w-full bg-gradient-dark rounded-md p-7 md:p-9 space-y-6">
               <div className="flex items-center gap-3">
@@ -436,8 +436,8 @@ const CalculatorSection = () => {
           </motion.div>
         </div>
 
-        <div className="mt-10 max-w-2xl mx-auto border-t border-border/60 pt-6">
-          <p className="font-body text-xs md:text-[13px] text-muted-foreground text-center leading-relaxed">
+        <div className="mt-8 max-w-2xl mx-auto border-t border-border/60 pt-5">
+          <p className="font-body text-xs md:text-[13px] text-foreground/75 text-center leading-relaxed">
             {t(lang, "calc_disclaimer")}
           </p>
         </div>

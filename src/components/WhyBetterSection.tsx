@@ -25,7 +25,7 @@ const WhyBetterSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-10 md:mb-16"
         >
@@ -46,7 +46,7 @@ const WhyBetterSection = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.5 }}
           >
             <Accordion type="single" collapsible defaultValue="item-0" className="divide-y divide-border/70 border-y border-border/70">
@@ -70,7 +70,7 @@ const WhyBetterSection = () => {
                         aria-hidden
                         className="absolute left-0 top-1.5 bottom-1.5 w-px bg-gradient-to-b from-gold via-gold/60 to-transparent"
                       />
-                      <span className="font-body text-[10px] font-semibold uppercase tracking-[0.28em] text-gold">
+                      <span className="font-body text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
                         {t(lang, "shortTerm_label")}
                       </span>
                       <p className="mt-2 font-body text-[15px] text-foreground leading-[1.55]">
@@ -97,7 +97,7 @@ const WhyBetterSection = () => {
                 key={index}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
                 className="group relative"
               >
@@ -115,7 +115,7 @@ const WhyBetterSection = () => {
                       aria-hidden
                       className="absolute left-0 top-1.5 bottom-1.5 w-px bg-gradient-to-b from-gold via-gold/60 to-transparent"
                     />
-                    <span className="font-body text-[10px] font-semibold uppercase tracking-[0.28em] text-gold">
+                    <span className="font-body text-[10px] font-semibold uppercase tracking-[0.28em] text-gold-deep">
                       {t(lang, "shortTerm_label")}
                     </span>
                     <p className="mt-2 font-body text-[17px] text-foreground leading-[1.55]">

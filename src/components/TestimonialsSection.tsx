@@ -29,11 +29,11 @@ const TestimonialsSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <p className="text-gold font-body text-sm tracking-[0.3em] uppercase mb-4">
+          <p className="text-gold-deep font-body text-sm tracking-[0.3em] uppercase font-semibold mb-4">
             Reference
           </p>
           <h2 className="font-display text-3xl md:text-5xl font-semibold text-foreground mb-6">
@@ -47,7 +47,7 @@ const TestimonialsSection = () => {
               key={testimonial.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.5, delay: index * 0.15 }}
               className="bg-card border border-border p-8 rounded-sm"
             >

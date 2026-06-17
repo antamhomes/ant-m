@@ -24,11 +24,11 @@ const FAQSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-10 md:mb-14"
         >
-          <p className="text-gold font-body text-xs tracking-[0.3em] uppercase mb-4">
+          <p className="text-gold-deep font-body text-xs tracking-[0.3em] uppercase font-semibold mb-4">
             {t(lang, "faq_label")}
           </p>
           <h2 className="font-display text-4xl md:text-5xl font-semibold tracking-tight text-foreground">
@@ -39,7 +39,7 @@ const FAQSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6, delay: 0.1 }}
         >
           <Accordion type="single" collapsible className="w-full">

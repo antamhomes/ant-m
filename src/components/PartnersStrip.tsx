@@ -19,7 +19,7 @@ const PartnersStrip = () => {
         <motion.p
           initial={{ opacity: 0, y: 8 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.5 }}
           className="text-center font-body text-[11px] md:text-xs text-muted-foreground tracking-[0.25em] uppercase mb-6 md:mb-7"
         >
@@ -32,7 +32,7 @@ const PartnersStrip = () => {
               key={name}
               initial={{ opacity: 0, y: 6 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.4, delay: i * 0.06 }}
               className="font-display text-xl md:text-2xl tracking-tight text-foreground/55 hover:text-foreground transition-colors duration-300 select-none"
             >

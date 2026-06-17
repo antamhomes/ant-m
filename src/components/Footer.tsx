@@ -22,7 +22,7 @@ const Footer = () => {
 
           {/* Nav links */}
           <div className="md:col-span-3">
-            <p className="font-body text-[11px] text-gold tracking-[0.25em] uppercase mb-4">
+            <p className="font-body text-[11px] text-gold-deep tracking-[0.25em] uppercase font-semibold mb-4">
               {lang === "cs" ? "Web" : "Trang web"}
             </p>
             <ul className="space-y-2.5">
@@ -51,7 +51,7 @@ const Footer = () => {
 
           {/* Contact */}
           <div className="md:col-span-4">
-            <p className="font-body text-[11px] text-gold tracking-[0.25em] uppercase mb-4">
+            <p className="font-body text-[11px] text-gold-deep tracking-[0.25em] uppercase font-semibold mb-4">
               {lang === "cs" ? "Kontakt" : "Liên hệ"}
             </p>
             <ul className="space-y-3">
