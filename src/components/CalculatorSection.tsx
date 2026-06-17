@@ -73,7 +73,6 @@ const CalculatorSection = () => {
   const [size, setSize] = useState<SizeKey>("2kk");
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
   const [season, setSeason] = useState<Season>("year");
-  const [breakdownOpen, setBreakdownOpen] = useState(false);
   const [extrasOpen, setExtrasOpen] = useState(false);
   const [leadOpen, setLeadOpen] = useState(false);
 
@@ -100,9 +99,10 @@ const CalculatorSection = () => {
     const cleanings = Math.max(1, Math.round((occupancy * DAYS) / sizeData.avgStayNights));
     const cleaning = sizeData.cleaningPrice * cleanings;
     const supplies = sizeData.supplies;
-    const netBeforeMgmt = gross - platformFee - cleaning - supplies;
-    const mgmt = Math.round(netBeforeMgmt * MGMT_FEE);
-    const net = netBeforeMgmt - mgmt;
+    // Net = gross − cleaning − commission, where commission = 22% × (gross − cleaning).
+    // Platform fees and supplies are absorbed in the management margin and not shown.
+    const mgmt = Math.round((gross - cleaning) * MGMT_FEE);
+    const net = gross - cleaning - mgmt;
     const energy = sizeData.energy;
 
     // Roční průměr — vždy počítaný ze sezóny "year", nezávisle na výběru
@@ -110,11 +110,9 @@ const CalculatorSection = () => {
     const yAdr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * yAdj.adr);
     const yOcc = Math.max(0.88, Math.min(0.98, locationData.occupancy + yAdj.occDelta));
     const yGross = Math.round(yAdr * yOcc * DAYS);
-    const yPlatform = Math.round(yGross * PLATFORM_FEE);
     const yCleanings = Math.max(1, Math.round((yOcc * DAYS) / sizeData.avgStayNights));
     const yCleaning = sizeData.cleaningPrice * yCleanings;
-    const yNetBeforeMgmt = yGross - yPlatform - yCleaning - sizeData.supplies;
-    const yNetMonth = yNetBeforeMgmt - Math.round(yNetBeforeMgmt * MGMT_FEE);
+    const yNetMonth = yGross - yCleaning - Math.round((yGross - yCleaning) * MGMT_FEE);
     const netYearAvg = yNetMonth * 12;
 
     const ltr = ltrTable[location][size];
