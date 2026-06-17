@@ -310,14 +310,7 @@ const CalculatorSection = () => {
             viewport={{ once: true, amount: 0.15 }}
             className="flex items-start order-1 md:order-2 md:sticky md:top-24"
           >
-            <div className="w-full bg-gradient-dark rounded-md p-7 md:p-9 space-y-6">
-              <div className="flex items-center gap-3">
-                <Calculator className="w-5 h-5 text-gold" />
-                <h3 className="font-display text-lg font-semibold text-primary-foreground">
-                  {t(lang, "calc_result")}
-                </h3>
-              </div>
-
+            <div className="w-full bg-gradient-dark rounded-md p-7 md:p-9 space-y-5">
               {/* Net */}
               <div>
                 <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
@@ -327,23 +320,23 @@ const CalculatorSection = () => {
                   {t(lang, "calc_net_sub")}
                 </p>
                 <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold leading-tight">
-                  ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
-                  <span className="font-body text-sm font-normal text-primary-foreground/65 ml-2">
-                    {t(lang, "calc_month_suffix")}
+                  <span className="whitespace-nowrap">
+                    ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
+                    <span className="font-body text-sm font-normal text-primary-foreground/65">
+                      {t(lang, "calc_month_suffix")}
+                    </span>
                   </span>
                 </p>
               </div>
 
               {/* LTR srovnání */}
-              <div className="border-t border-primary-foreground/10 pt-5">
-                <div className="flex items-baseline justify-between">
-                  <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em]">
-                    {t(lang, "calc_ltr")}
-                  </p>
-                  <p className="font-display text-xl font-semibold text-primary-foreground/60">
-                    ~{(Math.round(result.ltr / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
-                  </p>
-                </div>
+              <div className="border-t border-primary-foreground/10 pt-4">
+                <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
+                  {t(lang, "calc_ltr")}
+                </p>
+                <p className="font-display text-xl font-semibold text-primary-foreground/60">
+                  ~{(Math.round(result.ltr / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
+                </p>
                 {result.ratio > 0 && (
                   <p className="font-body text-xs text-primary-foreground/85 mt-2">
                     → {t(lang, "calc_approx_prefix")}{" "}
@@ -356,6 +349,9 @@ const CalculatorSection = () => {
               </div>
 
               <div className="space-y-3">
+                <p className="font-body text-xs text-primary-foreground/60 text-center tracking-wide">
+                  {t(lang, "calc_trust_line")}
+                </p>
                 <button
                   type="button"
                   onClick={() => setLeadOpen(true)}
