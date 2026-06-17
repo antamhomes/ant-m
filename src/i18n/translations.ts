@@ -120,12 +120,15 @@ const translations = {
     portfolio1_title: "Praha 1 — byt s výhledem na Muzeum",
     portfolio1_desc: "Silná lokalita, výhled a turistická poptávka. Důležitý je první dojem, prezentace a hladký průběh pobytu.",
     portfolio1_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
+    portfolio1_alt: "Byt s výhledem na Národní muzeum, Praha 1 — obývací pokoj s jídelnou",
     portfolio2_title: "Mladá Boleslav — byt pro pracovní pobyty",
     portfolio2_desc: "Byt vhodný pro hosty, kteří přijíždějí za prací a potřebují pohodlný delší pobyt.",
     portfolio2_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
+    portfolio2_alt: "Byt pro pracovní pobyty, Mladá Boleslav — hlavní ložnice s manželskou postelí",
     portfolio3_title: "Praha 3 — moderní byt s garáží",
     portfolio3_desc: "Novější byt, kde dává smysl pracovat s klidem, garáží a dobrou dostupností do centra.",
     portfolio3_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
+    portfolio3_alt: "Moderní byt s garáží, Praha 3 — světlý obývací pokoj se sedačkou",
 
     // Process
     process_label: "Jak to funguje",
