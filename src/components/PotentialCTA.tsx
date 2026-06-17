@@ -11,7 +11,7 @@ const PotentialCTA = () => {
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6 }}
           className="font-display text-3xl md:text-5xl font-semibold text-primary-foreground mb-5"
         >

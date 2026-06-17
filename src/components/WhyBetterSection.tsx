@@ -25,7 +25,7 @@ const WhyBetterSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-10 md:mb-16"
         >
@@ -46,7 +46,7 @@ const WhyBetterSection = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.5 }}
           >
             <Accordion type="single" collapsible defaultValue="item-0" className="divide-y divide-border/70 border-y border-border/70">
@@ -97,7 +97,7 @@ const WhyBetterSection = () => {
                 key={index}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.6, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
                 className="group relative"
               >

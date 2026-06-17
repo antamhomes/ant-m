@@ -20,7 +20,7 @@ const BeforeAfterSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-14"
         >
@@ -41,7 +41,7 @@ const BeforeAfterSection = () => {
               key={card.titleKey}
               initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.7, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
               className="group rounded-sm overflow-hidden bg-card border border-border hover:border-gold/40 hover:shadow-2xl hover:-translate-y-1 transition-all duration-500"
             >

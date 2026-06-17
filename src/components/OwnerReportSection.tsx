@@ -31,7 +31,7 @@ const OwnerReportSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-14"
         >
@@ -85,7 +85,7 @@ const OwnerReportSection = () => {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.6 }}
           >
             <p className="font-body text-foreground text-lg leading-relaxed mb-8">

@@ -42,7 +42,7 @@ const GallerySection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="text-center mb-16"
         >
@@ -78,7 +78,7 @@ const GallerySection = () => {
                 key={item.titleKey}
                 initial={{ opacity: 0, y: 24 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: true, amount: 0.15 }}
                 transition={{ duration: 0.7, delay: index * 0.12, ease: [0.22, 1, 0.36, 1] }}
                 className="group bg-card border border-border rounded-sm overflow-hidden hover:border-gold/40 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-500 shrink-0 w-[82%] sm:w-[46%] md:w-[44%] lg:w-[31%] snap-center lg:snap-start"
               >

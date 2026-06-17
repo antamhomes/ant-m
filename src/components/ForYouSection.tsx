@@ -19,7 +19,7 @@ const ForYouSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-10 md:mb-14"
         >
@@ -41,7 +41,7 @@ const ForYouSection = () => {
               key={titleKey}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.5, delay: i * 0.08 }}
               className="flex items-start gap-4 p-5 md:p-6 rounded-sm bg-card border border-border hover:border-gold/40 transition-colors duration-300"
             >

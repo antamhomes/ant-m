@@ -126,7 +126,7 @@ const CalculatorSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           className="text-center mb-16"
         >
           <p className="eyebrow eyebrow-center mb-5">
@@ -145,7 +145,7 @@ const CalculatorSection = () => {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.15 }}
             className="space-y-8 order-2 md:order-1"
           >
             <div>
@@ -307,7 +307,7 @@ const CalculatorSection = () => {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.15 }}
             className="flex items-center order-1 md:order-2"
           >
             <div className="w-full bg-gradient-dark rounded-md p-7 md:p-9 space-y-6">

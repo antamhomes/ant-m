@@ -20,7 +20,7 @@ const TrustStrip = () => {
             key={key}
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.4, delay: i * 0.08 }}
             className="inline-flex shrink-0 items-center justify-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 rounded-full border border-border bg-card"
           >

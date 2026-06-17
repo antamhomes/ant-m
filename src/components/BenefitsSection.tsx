@@ -16,7 +16,7 @@ const BenefitsSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-14 md:mb-20"
         >
@@ -38,7 +38,7 @@ const BenefitsSection = () => {
               key={index}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group h-full p-4 md:p-8 rounded-sm bg-card border border-border hover:border-gold/40 hover:-translate-y-0.5 transition-all duration-500 hover:shadow-lg flex md:block items-start gap-3"
             >

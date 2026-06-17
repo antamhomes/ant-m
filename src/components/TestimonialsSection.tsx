@@ -29,7 +29,7 @@ const TestimonialsSection = () => {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
@@ -47,7 +47,7 @@ const TestimonialsSection = () => {
               key={testimonial.name}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.15 }}
               transition={{ duration: 0.5, delay: index * 0.15 }}
               className="bg-card border border-border p-8 rounded-sm"
             >
