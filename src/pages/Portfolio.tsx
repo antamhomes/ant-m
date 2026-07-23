@@ -13,6 +13,8 @@ import realTerrace from "@/assets/real-terrace.jpg";
 import realStudioGold from "@/assets/real-studio-gold.jpg";
 import realBedroomBeige from "@/assets/real-bedroom-beige.jpg";
 import realStudioGreen from "@/assets/real-studio-green.jpg";
+import praha4Studio1 from "@/assets/praha4-studio-1.jpg.asset.json";
+import praha4Studio2 from "@/assets/praha4-studio-2.jpg.asset.json";
 
 const photos: { src: string; altCs: string; altVi: string; span: string }[] = [
   { src: realBedroomLuxury, altCs: "Luxusní ložnice s manželskou postelí v bytě v Praze", altVi: "Phòng ngủ sang trọng với giường đôi trong căn hộ tại Praha", span: "md:col-span-2 md:row-span-2" },
@@ -25,6 +27,8 @@ const photos: { src: string; altCs: string; altVi: string; span: string }[] = [
   { src: realStudioGold, altCs: "Studio s hořčicovými závěsy a designovým interiérem", altVi: "Căn studio với rèm màu vàng mù tạt và nội thất thiết kế", span: "md:col-span-2 md:row-span-2" },
   { src: realBedroomBeige, altCs: "Béžová ložnice s elegantním osvětlením", altVi: "Phòng ngủ tông màu be với ánh sáng trang nhã", span: "md:col-span-2 md:row-span-1" },
   { src: realStudioGreen, altCs: "Studio se zeleným akcentem a kuchyňským koutem", altVi: "Căn studio với điểm nhấn màu xanh và góc bếp", span: "md:col-span-2 md:row-span-2" },
+  { src: praha4Studio1.url, altCs: "Studio apartmán Praha 4 s béžovou pohovkou, manželskou postelí a jídelním koutem", altVi: "Căn studio Praha 4 với ghế sofa be, giường đôi và góc ăn", span: "md:col-span-2 md:row-span-2" },
+  { src: praha4Studio2.url, altCs: "Útulná ložnice apartmánu Praha 4 s dřevěným čelem postele a šedou pohovkou", altVi: "Phòng ngủ ấm cúng căn hộ Praha 4 với đầu giường gỗ và ghế sofa xám", span: "md:col-span-2 md:row-span-1" },
 ];
 
 const Portfolio = () => {
