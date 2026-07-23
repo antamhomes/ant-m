@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
+import logoAsset from "@/assets/antam-logo.png.asset.json";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -66,11 +67,21 @@ const Navbar = () => {
       }`}
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-        <a href="#" className="font-display text-lg md:text-xl font-semibold tracking-tight lowercase">
-          <span className={scrolled ? "text-foreground" : "text-primary-foreground"}>
-            antam{" "}
+        <a href="#" className="flex items-center gap-2.5 font-display text-lg md:text-xl font-semibold tracking-tight lowercase" aria-label="antam homes">
+          <img
+            src={logoAsset.url}
+            alt=""
+            aria-hidden="true"
+            className={`h-9 w-9 md:h-10 md:w-10 rounded-full object-cover transition-shadow ${
+              scrolled ? "shadow-sm ring-1 ring-border" : "ring-1 ring-primary-foreground/15"
+            }`}
+            width={80}
+            height={80}
+          />
+          <span className="flex items-baseline gap-1">
+            <span className={scrolled ? "text-foreground" : "text-primary-foreground"}>antam</span>
+            <span className="text-gold">homes</span>
           </span>
-          <span className="text-gold">homes</span>
         </a>
 
         <div className="hidden md:flex items-center gap-7">

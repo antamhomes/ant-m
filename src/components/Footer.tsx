@@ -1,6 +1,7 @@
 import { Mail, MapPin, Download } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
+import logoAsset from "@/assets/antam-logo.png.asset.json";
 
 const Footer = () => {
   const { lang } = useLanguage();
@@ -12,9 +13,18 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-10 border-b border-primary-foreground/10">
           {/* Brand */}
           <div className="md:col-span-5">
-            <p className="font-display text-2xl font-semibold text-primary-foreground lowercase tracking-tight">
-              antam <span className="text-gold">homes</span>
-            </p>
+            <div className="flex items-center gap-3">
+              <img
+                src={logoAsset.url}
+                alt="antam homes"
+                className="h-14 w-14 rounded-full object-cover ring-1 ring-gold/30"
+                width={112}
+                height={112}
+              />
+              <p className="font-display text-2xl font-semibold text-primary-foreground lowercase tracking-tight">
+                antam <span className="text-gold">homes</span>
+              </p>
+            </div>
             <p className="font-body text-sm text-primary-foreground/55 mt-3 max-w-sm leading-relaxed">
               {t(lang, "footer_desc")}
             </p>
