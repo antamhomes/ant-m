@@ -79,39 +79,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Legal documents */}
-        <div className="pt-6 flex flex-col md:flex-row gap-3 md:gap-6 items-center md:items-start justify-center md:justify-start">
-          <a
-            href="/gdpr-informacni-memorandum.pdf"
-            download
-            className="inline-flex items-center gap-2 text-xs text-primary-foreground/65 hover:text-gold transition-colors font-body tracking-wide"
-          >
-            <Download className="w-3.5 h-3.5" />
-            {lang === "cs"
-              ? "Informační memorandum o zpracování osobních údajů (GDPR)"
-              : "Thông tin về xử lý dữ liệu cá nhân (GDPR)"}
-          </a>
-          <a
-            href="/vop-majitele-nemovitosti.pdf"
-            download
-            className="inline-flex items-center gap-2 text-xs text-primary-foreground/65 hover:text-gold transition-colors font-body tracking-wide"
-          >
-            <Download className="w-3.5 h-3.5" />
-            {lang === "cs"
-              ? "Všeobecné obchodní podmínky pro majitele nemovitostí"
-              : "Điều khoản chung dành cho chủ nhà"}
-          </a>
-          <a
-            href="/formular-odstoupeni-od-smlouvy.pdf"
-            download
-            className="inline-flex items-center gap-2 text-xs text-primary-foreground/65 hover:text-gold transition-colors font-body tracking-wide"
-          >
-            <Download className="w-3.5 h-3.5" />
-            {lang === "cs"
-              ? "Formulář pro odstoupení od smlouvy"
-              : "Mẫu đơn hủy hợp đồng"}
-          </a>
-        </div>
 
       </div>
     </footer>
