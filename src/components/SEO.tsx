@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 const SITE = "https://www.antamhomes.com";
 
-type PageKey = "home" | "portfolio";
+type PageKey = "home";
 
 const META: Record<PageKey, { cs: { title: string; desc: string }; vi: { title: string; desc: string }; pathCs: string; pathVi: string }> = {
   home: {
@@ -17,18 +17,6 @@ const META: Record<PageKey, { cs: { title: string; desc: string }; vi: { title: 
     vi: {
       title: "Quản lý cho thuê ngắn hạn & Airbnb tại Praha | antam homes",
       desc: "Dịch vụ quản lý căn hộ cho thuê ngắn hạn tại Praha — chuẩn bị listing, lo cho khách, dọn dẹp, định giá và báo cáo rõ ràng cho chủ nhà. Thu nhập tốt hơn, ít lo hơn.",
-    },
-  },
-  portfolio: {
-    pathCs: "/portfolio",
-    pathVi: "/portfolio",
-    cs: {
-      title: "Portfolio realizací — byty a krátkodobé pronájmy v Praze | antam homes",
-      desc: "Vybrané byty, o které pečujeme — interiéry, fotky a lokality. Inspirace pro majitele, kteří přemýšlí o krátkodobém pronájmu s antam homes.",
-    },
-    vi: {
-      title: "Portfolio các căn hộ chúng tôi quản lý tại Praha | antam homes",
-      desc: "Một số căn hộ chúng tôi đang chăm sóc — nội thất, hình ảnh và vị trí. Tham khảo cho chủ nhà đang cân nhắc cho thuê ngắn hạn cùng antam homes.",
     },
   },
 };
