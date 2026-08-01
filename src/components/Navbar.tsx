@@ -94,15 +94,6 @@ const Navbar = () => {
             {t(lang, "nav_howItWorks")}
           </a>
 
-          <a
-            href="/portfolio"
-            className={`font-body text-sm transition-colors ${
-              scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/75 hover:text-primary-foreground"
-            }`}
-          >
-            Portfolio
-          </a>
-
           <LangSwitch />
 
           <a

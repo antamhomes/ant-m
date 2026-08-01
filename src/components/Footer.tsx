@@ -42,11 +42,6 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#portfolio" className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
-                  {t(lang, "footer_link_portfolio")}
-                </a>
-              </li>
-              <li>
                 <a href="#sluzby" className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
                   {t(lang, "footer_link_services")}
                 </a>
