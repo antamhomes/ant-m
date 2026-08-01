@@ -113,23 +113,6 @@ const translations = {
     detail3_title: "Koupelna, která působí čistě a prémiově",
     detail3_desc: "Detail, na kterém se rozhoduje, jestli si host byt zarezervuje nebo zavře tab.",
 
-    // Gallery / Portfolio
-    gallery_label: "Portfolio",
-    gallery_title: "V naší péči",
-    gallery_desc: "Každý byt má jinou lokalitu, jiný typ hostů a jiný potenciál. Proto u každého hledáme směr, který dává největší smysl.",
-    portfolio1_title: "Praha 1 — byt s výhledem na Muzeum",
-    portfolio1_desc: "Silná lokalita, výhled a turistická poptávka. Důležitý je první dojem, prezentace a hladký průběh pobytu.",
-    portfolio1_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
-    portfolio1_alt: "Byt s výhledem na Národní muzeum, Praha 1 — obývací pokoj s jídelnou",
-    portfolio2_title: "Mladá Boleslav — byt pro pracovní pobyty",
-    portfolio2_desc: "Byt vhodný pro hosty, kteří přijíždějí za prací a potřebují pohodlný delší pobyt.",
-    portfolio2_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
-    portfolio2_alt: "Byt pro pracovní pobyty, Mladá Boleslav — hlavní ložnice s manželskou postelí",
-    portfolio3_title: "Praha 3 — moderní byt s garáží",
-    portfolio3_desc: "Novější byt, kde dává smysl pracovat s klidem, garáží a dobrou dostupností do centra.",
-    portfolio3_tags: ["Péče", "Prezentace", "Hosté", "Provoz"],
-    portfolio3_alt: "Moderní byt s garáží, Praha 3 — světlý obývací pokoj se sedačkou",
-
     // Process
     process_label: "Jak to funguje",
     process_title: "Jak začíná spolupráce",
@@ -279,7 +262,6 @@ const translations = {
     footer_phone: "+420 776 123 456",
     footer_email: "info@an-tam.com",
     footer_link_how: "Jak to funguje",
-    footer_link_portfolio: "Portfolio",
     footer_link_services: "Co za vás řešíme",
     footer_link_contact: "Kontakt",
     footer_link_privacy: "Ochrana osobních údajů",
@@ -418,23 +400,6 @@ const translations = {
     detail2_desc: "Ánh sáng, chi tiết và sự gọn gàng giúp căn hộ nổi bật hơn khi khách xem listing.",
     detail3_title: "Không gian tạo sự tin tưởng",
     detail3_desc: "Khách dễ chọn hơn khi căn hộ nhìn sạch sẽ, rõ ràng và được chăm sóc tốt.",
-
-    // Gallery
-    gallery_label: "Danh mục căn hộ",
-    gallery_title: "Những căn hộ antam homes đang vận hành",
-    gallery_desc: "Mỗi căn hộ có vị trí, nhóm khách và tiềm năng khác nhau. Vì vậy, mỗi căn hộ cần một hướng vận hành phù hợp.",
-    portfolio1_title: "Praha 1 — căn hộ nhìn ra Bảo tàng Quốc gia",
-    portfolio1_desc: "Vị trí mạnh, tầm nhìn đẹp và nhu cầu du lịch cao. Ấn tượng đầu tiên, cách trình bày và trải nghiệm khách rất quan trọng.",
-    portfolio1_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
-    portfolio1_alt: "Căn hộ nhìn ra Bảo tàng Quốc gia, Praha 1 — phòng khách và khu vực ăn uống",
-    portfolio2_title: "Mladá Boleslav — căn hộ cho khách đi công tác",
-    portfolio2_desc: "Phù hợp với khách đến làm việc và cần một nơi ở thoải mái cho thời gian dài hơn.",
-    portfolio2_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
-    portfolio2_alt: "Căn hộ cho khách công tác, Mladá Boleslav — phòng ngủ chính với giường đôi",
-    portfolio3_title: "Praha 3 — căn hộ hiện đại có gara",
-    portfolio3_desc: "Căn hộ mới hơn, có lợi thế về sự yên tĩnh, gara và kết nối thuận tiện vào trung tâm.",
-    portfolio3_tags: ["Chăm sóc", "Trình bày", "Khách", "Vận hành"],
-    portfolio3_alt: "Căn hộ hiện đại có gara, Praha 3 — phòng khách sáng sủa với ghế sofa",
 
     // Process
     process_label: "Quy trình hợp tác",
@@ -585,7 +550,6 @@ const translations = {
     footer_phone: "+420 776 123 456",
     footer_email: "info@an-tam.com",
     footer_link_how: "Quy trình làm việc",
-    footer_link_portfolio: "Portfolio",
     footer_link_services: "Dịch vụ",
     footer_link_contact: "Liên hệ",
     footer_link_privacy: "Bảo mật thông tin",
