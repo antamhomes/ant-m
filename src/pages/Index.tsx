@@ -3,7 +3,6 @@ import SEO from "@/components/SEO";
 import HeroSection from "@/components/HeroSection";
 import BenefitsSection from "@/components/BenefitsSection";
 import WhyBetterSection from "@/components/WhyBetterSection";
-import GallerySection from "@/components/GallerySection";
 import ProcessSection from "@/components/ProcessSection";
 import ServicesSection from "@/components/ServicesSection";
 import CalculatorSection from "@/components/CalculatorSection";
