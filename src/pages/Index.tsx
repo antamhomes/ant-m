@@ -22,7 +22,6 @@ const Index = () => {
       <CalculatorSection />
       <ServicesSection />
       <WhyBetterSection />
-      <BeforeAfterSection />
       <ProcessSection />
       <OwnerReportSection />
       <FAQSection />
