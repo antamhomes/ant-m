@@ -25,7 +25,7 @@ const ContactSection = () => {
       const { error } = await supabase.functions.invoke("send-transactional-email", {
         body: {
           templateName: "contact-inquiry",
-          recipientEmail: "info@an-tam.com",
+          recipientEmail: "antamhomes@gmail.com",
           idempotencyKey: `contact-${Date.now()}-${formData.email}`,
           templateData: {
             name: formData.name,
@@ -46,8 +46,8 @@ const ContactSection = () => {
         title: lang === "cs" ? "Něco se nepovedlo" : "Có lỗi xảy ra",
         description:
           lang === "cs"
-            ? "Zkuste to prosím znovu nebo nám napište přímo na info@an-tam.com."
-            : "Vui lòng thử lại hoặc viết trực tiếp cho chúng tôi qua info@an-tam.com.",
+            ? "Zkuste to prosím znovu nebo nám napište přímo na antamhomes@gmail.com."
+            : "Vui lòng thử lại hoặc viết trực tiếp cho chúng tôi qua antamhomes@gmail.com.",
         variant: "destructive",
       });
     } finally {
