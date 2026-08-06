@@ -41,7 +41,7 @@ const copy = {
     ],
     ctaTitle: "Nezávazně probereme váš byt.",
     ctaText: "Pošlete nám základní informace. Ozveme se a řekneme, jaký směr může dávat smysl.",
-    contactLine: "+420 776 123 456  ·  info@an-tam.com  ·  antamhomes.com",
+    contactLine: "+420 727 952 459  ·  antamhomes@gmail.com  ·  antamhomes.com",
     disclaimer: "Výsledky se liší podle lokality, stavu bytu, sezóny a nastavení ceny.",
     footer: "Antam s.r.o. (dříve DAU AN s.r.o.) — IČO: 03328511 — Praha, Česká republika",
   },
