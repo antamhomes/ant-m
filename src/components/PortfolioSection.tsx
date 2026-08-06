@@ -13,9 +13,9 @@ const items = [
   { src: byt1.url, name: "Secret garden studio", loc: { cs: "Praha 4", vi: "Praha 4" } },
   { src: byt2.url, name: "Secret garden studio", loc: { cs: "Praha 4", vi: "Praha 4" } },
   { src: byt3.url, name: "Secret garden loft", loc: { cs: "Praha 4", vi: "Praha 4" } },
-  { src: byt4.url, name: "Modern apartmán", loc: { cs: "Praha 4", vi: "Praha 4" } },
-  { src: byt5.url, name: "Clement apartment", loc: { cs: "Mladá Boleslav", vi: "Mladá Boleslav" } },
-  { src: byt6.url, name: "Clement apartment", loc: { cs: "Mladá Boleslav", vi: "Mladá Boleslav" } },
+  { src: byt4.url, name: "Moderní apartmán se zahradou\u00A0", loc: { cs: "Praha 4", vi: "Praha 4" } },
+  { src: byt5.url, name: "Klement apartment s terasou", loc: { cs: "Mladá Boleslav", vi: "Mladá Boleslav" } },
+  { src: byt6.url, name: "Klement apartment", loc: { cs: "Mladá Boleslav", vi: "Mladá Boleslav" } },
   { src: byt7.url, name: "My Mozart studio", loc: { cs: "Praha 3", vi: "Praha 3" } },
 ];
 
