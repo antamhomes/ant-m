@@ -38,7 +38,7 @@ const CalculatorLeadDialog = ({ open, onOpenChange, locationLabel, sizeLabel }: 
       const { error } = await supabase.functions.invoke("send-transactional-email", {
         body: {
           templateName: "contact-inquiry",
-          recipientEmail: "info@an-tam.com",
+          recipientEmail: "antamhomes@gmail.com",
           idempotencyKey: `calc-lead-${Date.now()}-${form.email}`,
           templateData: {
             name: form.name,
