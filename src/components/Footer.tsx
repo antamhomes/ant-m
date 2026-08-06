@@ -60,12 +60,14 @@ const Footer = () => {
               {lang === "cs" ? "Kontakt" : "Liên hệ"}
             </p>
             <ul className="space-y-3">
-              <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
-                <Mail className="w-4 h-4 text-gold mt-0.5 shrink-0" />
-                <a href={`mailto:${t(lang, "footer_email")}`} className="hover:text-gold transition-colors font-body">
-                  {t(lang, "footer_email")}
-                </a>
-              </li>
+              {t(lang, "footer_email") !== "\n" && (
+                <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
+                  <Mail className="w-4 h-4 text-gold mt-0.5 shrink-0" />
+                  <a href={`mailto:${t(lang, "footer_email")}`} className="hover:text-gold transition-colors font-body">
+                    {t(lang, "footer_email")}
+                  </a>
+                </li>
+              )}
               <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
                 <MapPin className="w-4 h-4 text-gold mt-0.5 shrink-0" />
                 <span className="font-body">{t(lang, "footer_location")}</span>
