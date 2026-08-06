@@ -25,7 +25,7 @@ const ContactSection = () => {
       const { error } = await supabase.functions.invoke("send-transactional-email", {
         body: {
           templateName: "contact-inquiry",
-          recipientEmail: "info@an-tam.com",
+          recipientEmail: "antamhomes@gmail.com",
           idempotencyKey: `contact-${Date.now()}-${formData.email}`,
           templateData: {
             name: formData.name,
