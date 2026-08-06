@@ -60,14 +60,29 @@ const Footer = () => {
               {lang === "cs" ? "Kontakt" : "Liên hệ"}
             </p>
             <ul className="space-y-3">
-              {t(lang, "footer_email") !== "\n" && (
-                <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
-                  <Mail className="w-4 h-4 text-gold mt-0.5 shrink-0" />
-                  <a href={`mailto:${t(lang, "footer_email")}`} className="hover:text-gold transition-colors font-body">
-                    {t(lang, "footer_email")}
+              <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
+                <Mail className="w-4 h-4 text-gold mt-0.5 shrink-0" />
+                <a href={`mailto:${t(lang, "footer_email")}`} className="hover:text-gold transition-colors font-body">
+                  {t(lang, "footer_email")}
+                </a>
+              </li>
+              <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
+                <Phone className="w-4 h-4 text-gold mt-0.5 shrink-0" />
+                <a href={`tel:${t(lang, "footer_phone").replace(/\s/g, "")}`} className="hover:text-gold transition-colors font-body">
+                  {t(lang, "footer_phone")}
+                </a>
+              </li>
+              <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
+                <Phone className="w-4 h-4 text-gold mt-0.5 shrink-0" />
+                <div>
+                  <span className="font-body text-primary-foreground/50 text-xs block leading-none mb-0.5">
+                    {lang === "cs" ? "Kancelář" : "Văn phòng"}
+                  </span>
+                  <a href={`tel:${t(lang, "footer_office_phone").replace(/\s/g, "")}`} className="hover:text-gold transition-colors font-body">
+                    {t(lang, "footer_office_phone")}
                   </a>
-                </li>
-              )}
+                </div>
+              </li>
               <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
                 <MapPin className="w-4 h-4 text-gold mt-0.5 shrink-0" />
                 <span className="font-body">{t(lang, "footer_location")}</span>
