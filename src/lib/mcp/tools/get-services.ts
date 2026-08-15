@@ -18,6 +18,11 @@ const faq = [
   { question: "Kdo platí úklid a energie?", answer: "Úklid a praní prádla hradí host v ceně rezervace a zajišťuje je Antam Homes — výnos majitele nesnižují. Energie (elektřina, voda, plyn) hradí majitel." },
   { question: "Jak dlouho spolupráce trvá a jak ji ukončím?", answer: "Smlouva je na dobu neurčitou s výpovědní lhůtou 4 měsíce. Potvrzené rezervace se během výpovědní lhůty ještě dokončí." },
   { question: "Kdy a jak dostanu vyúčtování?", answer: "Měsíčně zpětně: přehled rezervací a výnosů z platforem (Airbnb, Booking.com) spolu s fakturou na provizi." },
+  { question: "Je částka v kalkulačce před, nebo po provizi?", answer: "Po. Vše označené jako výnos pro majitele je už po odečtení provize 25 %. Částky bez DPH; energie hradí majitel zvlášť." },
+  { question: "Jaké povinnosti krátkodobý pronájem přináší a kdo je řeší?", answer: "Evidence hostů, hlášení zahraničních hostů cizinecké policii, místní poplatek z pobytu a registrace v e-Turista — provozní povinnosti kolem hostů řeší Antam Homes. Zdanění příjmu z pronájmu zůstává na majiteli; podklady dostane." },
+  { question: "Co když host něco poničí?", answer: "Byt se kontroluje po každém pobytu. Drobnosti se opraví hned (do 5 000 Kč z výnosu). Větší škoda se zdokumentuje a řeší s hostem a přes platformu (Airbnb AirCover, u ostatních podle platebních údajů hosta). Majitel se dozví hned, včetně fotek." },
+  { question: "Co na to sousedé a SVJ?", answer: "Hosté dostávají pravidla domu předem, byt má danou kapacitu (žádné party) a sousedé mají kontakt. Pokud stanovy SVJ krátkodobé ubytování výslovně zakazují, Antam Homes to majiteli řekne před podpisem." },
+  { question: "Pro koho krátkodobý pronájem nedává smysl?", answer: "Když SVJ ubytování zakazuje nebo to sousedé nechtějí; když majitel potřebuje každý měsíc stejnou částku; když chce byt většinu roku používat sám; když je byt ve stavu, do kterého nechce nic dát. Lokalita mimo centrum ani starší dům problém nejsou." },
 ];
 
 export default defineTool({

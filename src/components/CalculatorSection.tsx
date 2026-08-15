@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calculator, MapPin, Home, Plus, Check, ChevronDown } from "lucide-react";
+import { Calculator, MapPin, Home, Plus, Check, ChevronDown, Share2, Pencil } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
@@ -76,11 +76,49 @@ const clampOccupancy = (v: number) => Math.max(MIN_OCCUPANCY, Math.min(MAX_OCCUP
 
 const CalculatorSection = () => {
   const { lang } = useLanguage();
-  const [location, setLocation] = useState<LocationKey>("praha2");
-  const [size, setSize] = useState<SizeKey>("2kk");
+  // A shared link (?byt=praha2-2kk-year) opens the calculator with the same setting.
+  const initial = useMemo(() => {
+    if (typeof window === "undefined") return null;
+    const raw = new URLSearchParams(window.location.search).get("byt");
+    if (!raw) return null;
+    const [loc, sz, se] = raw.split("-");
+    return {
+      location: locations.some((l) => l.value === loc) ? (loc as LocationKey) : null,
+      size: sizes.some((x) => x.value === sz) ? (sz as SizeKey) : null,
+      season: se && se in seasonAdjust ? (se as Season) : null,
+    };
+  }, []);
+  const [location, setLocation] = useState<LocationKey>(initial?.location ?? "praha2");
+  const [size, setSize] = useState<SizeKey>(initial?.size ?? "2kk");
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
-  const [season, setSeason] = useState<Season>("year");
+  const [season, setSeason] = useState<Season>(initial?.season ?? "year");
   const [extrasOpen, setExtrasOpen] = useState(false);
+  const [shared, setShared] = useState(false);
+
+  useEffect(() => {
+    if (initial) document.getElementById("kalkulacka")?.scrollIntoView({ block: "start" });
+  }, [initial]);
+
+  const shareResult = async () => {
+    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${size}-${season}#kalkulacka`;
+    trackEvent("calc_share", { district: location, size, season });
+    const title = "Antam Homes";
+    try {
+      if (navigator.share) {
+        await navigator.share({ title, url });
+        return;
+      }
+    } catch {
+      /* user cancelled — fall through to copy */
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setShared(true);
+      window.setTimeout(() => setShared(false), 2500);
+    } catch {
+      window.prompt(t(lang, "calc_share_copy"), url);
+    }
+  };
 
   const toggleExtra = (id: string) => {
     setSelectedExtras((prev) =>
@@ -132,7 +170,7 @@ const CalculatorSection = () => {
         </motion.div>
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 md:items-start">
-          <motion.div {...revealDelayed(0.05)} className="space-y-8 order-2 md:order-1">
+          <motion.div id="kalkulacka-zadani" {...revealDelayed(0.05)} className="space-y-8 order-2 md:order-1 scroll-mt-20">
             <div>
               <label className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
                 <MapPin className="w-4 h-4 text-gold" />
@@ -317,6 +355,42 @@ const CalculatorSection = () => {
                     {lang === "cs" ? sizes.find((s) => s.value === size)?.guestsCs : sizes.find((s) => s.value === size)?.guestsVi}
                   </span>
                 </p>
+                {/* Mobile only: the inputs sit below the result, so recap them here with a way back. */}
+                <p className="md:hidden mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[12px] text-primary-foreground/70">
+                  <span>{locations.find((l) => l.value === location)?.label}</span>
+                  <span aria-hidden="true">·</span>
+                  <span>{t(lang, `calc_season_${season}` as const)}</span>
+                  <a
+                    href="#kalkulacka-zadani"
+                    className="ml-1 inline-flex items-center gap-1 underline underline-offset-4 decoration-primary-foreground/30 hover:text-primary-foreground"
+                  >
+                    <Pencil className="w-3 h-3" aria-hidden="true" />
+                    {t(lang, "calc_edit")}
+                  </a>
+                </p>
+              </div>
+
+              {/* 75 / 25 split — the honest version of "kolik vám zůstane". */}
+              <div className="border-t border-primary-foreground/10 pt-4">
+                <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-2">
+                  {t(lang, "calc_split_label")}
+                </p>
+                <div className="flex h-2 w-full overflow-hidden rounded-full bg-primary-foreground/10" role="img" aria-label={t(lang, "calc_split_aria")}>
+                  <span className="block h-full w-3/4 bg-gold" />
+                  <span className="block h-full w-1/4 bg-primary-foreground/25" />
+                </div>
+                <div className="mt-2 flex items-baseline justify-between gap-3 font-body text-[12px] tnum">
+                  <span className="text-primary-foreground/85 whitespace-nowrap">
+                    <strong className="text-gold font-semibold">75 %</strong> {t(lang, "calc_split_owner")}{" "}
+                    <span className="text-gold/90">= ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč</span>
+                  </span>
+                  <span className="text-primary-foreground/65 text-right">
+                    <strong className="font-semibold text-primary-foreground/80">25 %</strong> {t(lang, "calc_split_fee")}
+                  </span>
+                </div>
+                <p className="mt-1.5 font-body text-[11px] text-primary-foreground/55 leading-relaxed">
+                  {t(lang, "calc_split_note")}
+                </p>
               </div>
 
               {/* LTR srovnání */}
@@ -361,6 +435,14 @@ const CalculatorSection = () => {
                 >
                   {t(lang, "calc_cta")}
                 </a>
+                <button
+                  type="button"
+                  onClick={shareResult}
+                  className="mx-auto flex items-center gap-1.5 font-body text-xs text-primary-foreground/60 hover:text-primary-foreground transition-colors underline underline-offset-4 decoration-primary-foreground/25"
+                >
+                  <Share2 className="w-3.5 h-3.5" aria-hidden="true" />
+                  {shared ? t(lang, "calc_share_done") : t(lang, "calc_share")}
+                </button>
               </div>
             </div>
           </motion.div>

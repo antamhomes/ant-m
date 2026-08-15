@@ -18,6 +18,11 @@ const items: { q: TranslationKey; a: TranslationKey }[] = [
   { q: "faq6_q", a: "faq6_a" },
   { q: "faq7_q", a: "faq7_a" },
   { q: "faq8_q", a: "faq8_a" },
+  { q: "faq9_q", a: "faq9_a" },
+  { q: "faq10_q", a: "faq10_a" },
+  { q: "faq11_q", a: "faq11_a" },
+  { q: "faq12_q", a: "faq12_a" },
+  { q: "faq13_q", a: "faq13_a" },
 ];
 
 const FAQSection = () => {
