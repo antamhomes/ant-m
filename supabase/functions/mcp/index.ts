@@ -131,14 +131,14 @@ var list_portfolio_default = defineTool2({
     content: [
       {
         type: "text",
-        text: apartments.map((a, i) => `${i + 1}. ${a.name}, ${a.location} (up to ${a.maxGuests} guests)`).join("\n") + "\n\nComing soon: the portfolio is expanding to a total of 10 apartments across Prague. Guests have left over 500 reviews across Airbnb and Booking.com."
+        text: apartments.map((a, i) => `${i + 1}. ${a.name}, ${a.location} (up to ${a.maxGuests} guests)`).join("\n") + "\n\nComing soon: the portfolio is expanding to a total of 10 apartments across Prague. Guests have left over 520 reviews across Airbnb and Booking.com."
       }
     ],
     structuredContent: {
       apartments,
       total: apartments.length,
       plannedTotalInPrague: 10,
-      guestReviewsTotal: "500+"
+      guestReviewsTotal: "520+"
     }
   })
 });

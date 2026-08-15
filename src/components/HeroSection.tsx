@@ -103,6 +103,15 @@ const HeroSection = () => {
             <span className="text-gold" aria-hidden="true">→</span>
           </a>
         </motion.div>
+
+        {/* Trust line under the CTAs: three facts, no adjectives. */}
+        <motion.p
+          {...enter(10, 1.0, 0.6)}
+          className="mt-5 sm:mt-6 font-body text-[13px] sm:text-sm tracking-wide"
+          style={{ color: "rgba(232, 222, 208, 0.75)" }}
+        >
+          {t(lang, "hero_extra")}
+        </motion.p>
       </div>
 
       <motion.div

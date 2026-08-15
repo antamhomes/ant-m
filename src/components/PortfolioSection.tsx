@@ -30,7 +30,7 @@ const reviews = {
   ],
   vi: [
     { text: "Vị trí hoàn hảo, đi lại thuận tiện, và chủ nhà rất dễ mến, trả lời mọi tin nhắn nhanh như chớp.", meta: "Airbnb · 5 ★ · 8/2026 · bản dịch" },
-    { text: "Chúng tôi góp ý nên có khay nướng. Ngày hôm sau đã có trên bàn, kèm cả cốc đong.", meta: "Booking.com · 9/10 · 7/2026 · bản dịch" },
+    { text: "Bọn mình góp ý nên có khay nướng. Hôm sau đã thấy trên bàn, kèm cả cốc đong.", meta: "Booking.com · 9/10 · 7/2026 · bản dịch" },
     { text: "Liên lạc với chủ nhà rất thuận lợi, mọi việc đều thỏa thuận được.", meta: "Booking.com · 10/10 · 6/2026 · bản dịch" },
   ],
 };
@@ -44,17 +44,17 @@ const copy = {
     soonTitle: "Připravujeme",
     soonDesc: "Do konce sezóny rozšiřujeme portfolio na celkem 10 apartmánů po Praze.",
     reviewsLabel: "Co říkají hosté",
-    reviewsLine: "Přes 500 recenzí na Airbnb a Booking.com.",
+    reviewsLine: "Přes 520 recenzí na Airbnb a Booking.com.",
   },
   vi: {
     eyebrow: "Căn hộ",
     title: "Những căn hộ chúng tôi đang lo",
-    desc: "Nhà thật. Chúng tôi chuẩn bị, chụp ảnh và trông nom mỗi ngày cho chủ nhà.",
+    desc: "Nhà thật. Antam chuẩn bị, chụp ảnh và trông nom mỗi ngày cho chủ nhà.",
     guests: (n: number) => `tối đa ${n} khách`,
     soonTitle: "Sắp có thêm",
     soonDesc: "Đến cuối mùa sẽ mở rộng lên 10 căn ở Praha.",
     reviewsLabel: "Khách nói gì",
-    reviewsLine: "Hơn 500 đánh giá trên Airbnb và Booking.com.",
+    reviewsLine: "Hơn 520 đánh giá trên Airbnb và Booking.com.",
   },
 };
 
