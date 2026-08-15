@@ -40,8 +40,6 @@ const extraKeys = [
   { id: "balkon",   labelKey: "calc_extra_balkon"   as const, pct: 0.04, icon: "🌿" },
   { id: "parking",  labelKey: "calc_extra_parking"  as const, pct: 0.05, icon: "🅿️" },
   { id: "klima",    labelKey: "calc_extra_klima"    as const, pct: 0.03, icon: "❄️" },
-  { id: "vyhled",   labelKey: "calc_extra_vyhled"   as const, pct: 0.08, icon: "🏰" },
-  { id: "vybaveni", labelKey: "calc_extra_vybaveni" as const, pct: 0.06, icon: "✨" },
   { id: "vyuziti",  labelKey: "calc_extra_wellness" as const, pct: 0.05, icon: "🧖" },
 ];
 
@@ -388,9 +386,6 @@ const CalculatorSection = () => {
                     <strong className="font-semibold text-primary-foreground/80">25 %</strong> {t(lang, "calc_split_fee")}
                   </span>
                 </div>
-                <p className="mt-1.5 font-body text-[11px] text-primary-foreground/55 leading-relaxed">
-                  {t(lang, "calc_split_note")}
-                </p>
               </div>
 
               {/* LTR srovnání */}
@@ -417,9 +412,6 @@ const CalculatorSection = () => {
               </p>
 
               <div className="space-y-3">
-                <p className="font-body text-xs text-primary-foreground/60 text-center tracking-wide">
-                  {t(lang, "calc_trust_line")}
-                </p>
                 <a
                   href="#kontakt"
                   onClick={() => {

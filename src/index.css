@@ -144,10 +144,10 @@ html {
      Type: .h-section (H2), .lead (intro paragraph), .tnum (tabular numbers)
      Buttons: .btn + .btn-primary | .btn-primary-inverse | .btn-secondary | .btn-secondary-inverse
      ===================================================================== */
-  .section { padding-top: 5rem; padding-bottom: 5rem; }
+  .section { padding-top: 4rem; padding-bottom: 4rem; }
   .section-tight { padding-top: 3.5rem; padding-bottom: 3.5rem; }
   @media (min-width: 768px) {
-    .section { padding-top: 7rem; padding-bottom: 7rem; }
+    .section { padding-top: 6rem; padding-bottom: 6rem; }
     .section-tight { padding-top: 5rem; padding-bottom: 5rem; }
   }
   .container-wide, .container-narrow, .container-prose {
@@ -161,8 +161,8 @@ html {
   .container-narrow { max-width: calc(56rem + 3rem); }
   .container-prose { max-width: calc(42rem + 3rem); }
 
-  .section-head { text-align: center; margin-bottom: 3rem; }
-  @media (min-width: 768px) { .section-head { margin-bottom: 4rem; } }
+  .section-head { text-align: center; margin-bottom: 2.5rem; }
+  @media (min-width: 768px) { .section-head { margin-bottom: 3rem; } }
   .section-head .eyebrow { margin-bottom: 1.25rem; }
   .section-head .lead { margin-top: 1.25rem; }
 

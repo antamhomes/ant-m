@@ -50,7 +50,7 @@ const PortfolioSection = () => {
           <p className="lead">{c.desc}</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-6">
           {items.map((item, i) => (
             <motion.figure
               key={i}
@@ -65,11 +65,11 @@ const PortfolioSection = () => {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                 />
               </div>
-              <figcaption className="px-5 py-4">
-                <h3 className="font-display text-lg font-semibold text-foreground leading-snug">
+              <figcaption className="px-3 py-3 sm:px-5 sm:py-4">
+                <h3 className="font-display text-[15px] sm:text-lg font-semibold text-foreground leading-snug">
                   {item.name}
                 </h3>
-                <p className="mt-1 flex items-center gap-1.5 font-body text-sm text-muted-foreground">
+                <p className="mt-1 flex items-center gap-1.5 font-body text-xs sm:text-sm text-muted-foreground">
                   <MapPin className="w-3.5 h-3.5 text-gold" />
                   {item.loc[lang]}
                 </p>

@@ -27,8 +27,6 @@ const extras = {
   balkon: 0.04,
   parking: 0.05,
   klima: 0.03,
-  vyhled: 0.08,
-  vybaveni: 0.06,
   wellness: 0.05,
 } as const;
 
@@ -71,7 +69,7 @@ export default defineTool({
       .optional()
       .describe("Season to price for. Defaults to 'year' (yearly average)."),
     extras: z
-      .array(z.enum(["balkon", "parking", "klima", "vyhled", "vybaveni", "wellness"]))
+      .array(z.enum(["balkon", "parking", "klima", "wellness"]))
       .optional()
       .describe("Extra features that raise the nightly rate."),
   },
@@ -113,7 +111,7 @@ export default defineTool({
       netYearlyAverage: yearly.net * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round((r.net / longTermRent) * 10) / 10,
-      note: "Indicative estimate based on Prague market benchmarks; amounts exclude VAT. Cleaning and laundry are paid by guests as part of each booking and handled by Antam Homes, so they do not reduce the owner's income. Utilities (electricity, water, gas) are paid by the owner and are not included.",
+      note: "Indicative estimate based on Prague market benchmarks; the 25 % commission is final and VAT-inclusive. Guests pay a separate cleaning fee, which covers cleaning and laundry and is retained by Antam Homes, so the owner's share of accommodation revenue is not reduced. Utilities (electricity, water, gas) are paid by the owner and are not included.",
     };
 
     return {

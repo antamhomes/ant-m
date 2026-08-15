@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { ChevronDown } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -9,51 +11,103 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { t, type TranslationKey } from "@/i18n/translations";
 import { reveal, revealDelayed } from "@/lib/motion";
 
-const items: { q: TranslationKey; a: TranslationKey }[] = [
-  { q: "faq1_q", a: "faq1_a" },
-  { q: "faq2_q", a: "faq2_a" },
-  { q: "faq3_q", a: "faq3_a" },
-  { q: "faq4_q", a: "faq4_a" },
-  { q: "faq5_q", a: "faq5_a" },
-  { q: "faq6_q", a: "faq6_a" },
-  { q: "faq7_q", a: "faq7_a" },
-  { q: "faq8_q", a: "faq8_a" },
-  { q: "faq9_q", a: "faq9_a" },
-  { q: "faq10_q", a: "faq10_a" },
-  { q: "faq11_q", a: "faq11_a" },
-  { q: "faq12_q", a: "faq12_a" },
-  { q: "faq13_q", a: "faq13_a" },
+type Item = { q: TranslationKey; a: TranslationKey };
+type Group = { title: TranslationKey; items: Item[] };
+
+// Grouped by what the owner is actually asking about. Order inside a group =
+// how often the question comes up.
+const groups: Group[] = [
+  {
+    title: "faq_group_money",
+    items: [
+      { q: "faq5_q", a: "faq5_a" },   // kolik to stojí
+      { q: "faq9_q", a: "faq9_a" },   // před / po provizi
+      { q: "faq4_q", a: "faq4_a" },   // přehled + vyúčtování
+      { q: "faq6_q", a: "faq6_a" },   // úklid a energie
+    ],
+  },
+  {
+    title: "faq_group_flat",
+    items: [
+      { q: "faq1_q", a: "faq1_a" },   // musí být připravený
+      { q: "faq11_q", a: "faq11_a" }, // škody
+      { q: "faq12_q", a: "faq12_a" }, // sousedé / SVJ
+      { q: "faq10_q", a: "faq10_a" }, // povinnosti
+    ],
+  },
+  {
+    title: "faq_group_coop",
+    items: [
+      { q: "faq14_q", a: "faq14_a" }, // proč ne sám
+      { q: "faq3_q", a: "faq3_a" },   // pro sebe
+      { q: "faq7_q", a: "faq7_a" },   // doba / výpověď
+      { q: "faq13_q", a: "faq13_a" }, // pro koho ne
+    ],
+  },
 ];
+
+const MOBILE_VISIBLE = 5; // questions shown on mobile before "show more"
 
 const FAQSection = () => {
   const { lang } = useLanguage();
+  const [expanded, setExpanded] = useState(false);
+  let flatIndex = 0;
+  const total = groups.reduce((n, g) => n + g.items.length, 0);
 
   return (
     <section id="faq" className="section bg-background scroll-mt-16">
-      <div className="container-prose">
+      <div className="container-wide">
         <motion.div {...reveal} className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "faq_label")}</p>
           <h2 className="h-section text-foreground">{t(lang, "faq_title")}</h2>
         </motion.div>
 
-        <motion.div {...revealDelayed(0.1)}>
-          <Accordion type="single" collapsible className="w-full">
-            {items.map(({ q, a }, i) => (
-              <AccordionItem
-                key={q}
-                value={`item-${i}`}
-                className="border-b border-border last:border-b-0"
+        <motion.div {...revealDelayed(0.1)} className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-6 md:gap-y-0">
+          {groups.map((g) => (
+            <div key={g.title}>
+              <h3
+                className={`font-body text-[11px] font-semibold uppercase tracking-[0.28em] text-gold-deep mb-2 ${
+                  flatIndex >= MOBILE_VISIBLE && !expanded ? "hidden md:block" : ""
+                }`}
               >
-                <AccordionTrigger className="font-display text-lg md:text-xl font-semibold text-foreground text-left py-5 hover:no-underline">
-                  {t(lang, q)}
-                </AccordionTrigger>
-                <AccordionContent className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed pb-6 pr-8 text-pretty">
-                  {t(lang, a)}
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+                {t(lang, g.title)}
+              </h3>
+              <Accordion type="single" collapsible className="w-full">
+                {g.items.map(({ q, a }) => {
+                  const idx = flatIndex++;
+                  const hiddenOnMobile = idx >= MOBILE_VISIBLE && !expanded;
+                  return (
+                    <AccordionItem
+                      key={q}
+                      value={q}
+                      className={`border-b border-border ${hiddenOnMobile ? "hidden md:block" : ""}`}
+                    >
+                      <AccordionTrigger className="font-display text-base md:text-[17px] font-semibold text-foreground text-left py-3.5 md:py-4 hover:no-underline leading-snug">
+                        {t(lang, q)}
+                      </AccordionTrigger>
+                      <AccordionContent className="font-body text-[15px] text-muted-foreground leading-relaxed pb-5 pr-6 text-pretty">
+                        {t(lang, a)}
+                      </AccordionContent>
+                    </AccordionItem>
+                  );
+                })}
+              </Accordion>
+            </div>
+          ))}
         </motion.div>
+
+        {/* Mobile only: the rest of the questions on demand */}
+        <div className="md:hidden mt-5 text-center">
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="inline-flex items-center gap-1.5 font-body text-sm font-medium text-gold-deep underline underline-offset-4 decoration-gold/40"
+            aria-expanded={expanded}
+          >
+            {expanded ? t(lang, "faq_less") : `${t(lang, "faq_more")} (${total - MOBILE_VISIBLE})`}
+            <ChevronDown className={`w-4 h-4 transition-transform ${expanded ? "rotate-180" : ""}`} />
+          </button>
+        </div>
       </div>
     </section>
   );

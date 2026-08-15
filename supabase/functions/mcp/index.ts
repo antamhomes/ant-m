@@ -30,8 +30,6 @@ var extras = {
   balkon: 0.04,
   parking: 0.05,
   klima: 0.03,
-  vyhled: 0.08,
-  vybaveni: 0.06,
   wellness: 0.05
 };
 var seasons = {
@@ -62,7 +60,7 @@ var estimate_yield_default = defineTool({
     location: z.enum(["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9", "praha10"]).describe("Prague district of the apartment."),
     size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout size (each is priced for its usual guest capacity: 1+kk 2\u20134, 2+kk 6\u20138, 3+kk 8\u201310, 4+kk 10\u201312 guests)."),
     season: z.enum(["year", "summer", "winter", "xmas"]).optional().describe("Season to price for. Defaults to 'year' (yearly average)."),
-    extras: z.array(z.enum(["balkon", "parking", "klima", "vyhled", "vybaveni", "wellness"])).optional().describe("Extra features that raise the nightly rate.")
+    extras: z.array(z.enum(["balkon", "parking", "klima", "wellness"])).optional().describe("Extra features that raise the nightly rate.")
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: ({ location, size, season, extras: chosen }) => {
@@ -98,7 +96,7 @@ var estimate_yield_default = defineTool({
       netYearlyAverage: yearly.net * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round(r.net / longTermRent * 10) / 10,
-      note: "Indicative estimate based on Prague market benchmarks; amounts exclude VAT. Cleaning and laundry are paid by guests as part of each booking and handled by Antam Homes, so they do not reduce the owner's income. Utilities (electricity, water, gas) are paid by the owner and are not included."
+      note: "Indicative estimate based on Prague market benchmarks; the 25 % commission is final and VAT-inclusive. Guests pay a separate cleaning fee, which covers cleaning and laundry and is retained by Antam Homes, so the owner's share of accommodation revenue is not reduced. Utilities (electricity, water, gas) are paid by the owner and are not included."
     };
     return {
       content: [
@@ -147,26 +145,25 @@ var list_portfolio_default = defineTool2({
 // src/lib/mcp/tools/get-services.ts
 import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var services = [
-  { title: "Listing & profesion\xE1ln\xED prezentace", description: "Fotky, popis, pravidla a nastaven\xED bytu na platform\xE1ch tak, aby p\u0159it\xE1hl pozornost." },
-  { title: "Dynamick\xE9 ceny", description: "Cenu lad\xEDme podle sez\xF3ny, obsazenosti a aktu\xE1ln\xED popt\xE1vky, aby byt vyd\u011Bl\xE1val naplno." },
-  { title: "Komunikace s hosty", description: "Dotazy, informace k p\u0159\xEDjezdu, pr\u016Fb\u011B\u017En\xE1 podpora a rychl\xE9 \u0159e\u0161en\xED situac\xED." },
-  { title: "\xDAklid a kontrola kvality", description: "Po ka\u017Ed\xE9m pobytu byt kontrolujeme a hl\xEDd\xE1me detaily, aby z\u016Fstal v dobr\xE9m stavu." },
-  { title: "\xDAdr\u017Eba a \u0159e\u0161en\xED probl\xE9m\u016F", description: "Drobn\xE9 opravy, pohotov\xE9 z\xE1sahy a koordinace \u0159emesln\xEDk\u016F, kdy\u017E je pot\u0159eba." },
-  { title: "M\u011Bs\xED\u010Dn\xED reporting", description: "Jasn\xFD p\u0159ehled rezervac\xED, v\xFDnos\u016F, n\xE1klad\u016F a d\u016Fle\u017Eit\xFDch informac\xED o bytu." }
+  { title: "P\u0159\xEDprava bytu a interi\xE9r", description: "Porad\xEDme, co host\xE9 v dan\xE9 lokalit\u011B hledaj\xED: uspo\u0159\xE1d\xE1n\xED, vybaven\xED, drobnosti, kter\xE9 rozhoduj\xED o hodnocen\xED. Bez zbyte\u010Dn\xFDch investic." },
+  { title: "Fotky a prezentace", description: "Profesion\xE1ln\xED fotky, popis a nastaven\xED nab\xEDdky tak, aby byt vynikl mezi stovkami dal\u0161\xEDch." },
+  { title: "Cenotvorba", description: "Cenu lad\xEDme denn\u011B podle sez\xF3ny, popt\xE1vky, obsazenosti a okol\xED \u2014 ne jedna cena na cel\xFD rok." },
+  { title: "Host\xE9 a komunikace", description: "Odpov\u011Bdi do minut, informace k p\u0159\xEDjezdu, podpora b\u011Bhem pobytu a rychl\xE9 \u0159e\u0161en\xED situac\xED." },
+  { title: "\xDAklid, kontrola a \xFAdr\u017Eba", description: "Po ka\u017Ed\xE9m pobytu \xFAklid a kontrola stavu, drobn\xE9 opravy hned, \u0159emesln\xEDci, kdy\u017E je pot\u0159eba." },
+  { title: "M\u011Bs\xED\u010Dn\xED p\u0159ehled", description: "Jasn\xFD p\u0159ehled rezervac\xED, v\xFDnos\u016F, n\xE1klad\u016F a toho, co se v byt\u011B \u0159e\u0161ilo \u2014 na jednu stranu." }
 ];
 var faq = [
   { question: "Mus\xED b\xFDt byt u\u017E p\u0159ipraven\xFD?", answer: "Ne. Um\xEDme se pod\xEDvat i na byt p\u0159ed spu\u0161t\u011Bn\xEDm a \u0159\xEDct, co d\xE1v\xE1 smysl p\u0159ipravit." },
-  { question: "\u0158e\u0161\xEDte Airbnb i Booking.com?", answer: "Ano. Platformy vol\xEDme podle bytu, lokality a typu host\u016F." },
   { question: "M\u016F\u017Eu byt n\u011Bkdy vyu\u017E\xEDt pro sebe?", answer: "Ano. Vybran\xE9 term\xEDny lze v kalend\xE1\u0159i dop\u0159edu zablokovat." },
-  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc dostanete p\u0159ehled: kolik noc\xED bylo obsazeno, jak\xFD byl v\xFDnos, kolik \u010Dinila na\u0161e provize 25 % a co jsme v byt\u011B \u0159e\u0161ili. V\u0161e na jednu stranu, bez slo\u017Eit\xFDch tabulek." },
-  { question: "Kolik spr\xE1va stoj\xED?", answer: "Provize je 25 % z v\xFDnosu z ubytov\xE1n\xED a je kone\u010Dn\xE1 \u2014 bez fixn\xEDch ani m\u011Bs\xED\u010Dn\xEDch poplatk\u016F. Pokr\xFDv\xE1 i internet, hygienick\xE9 pot\u0159eby pro hosty a \u010Distic\xED prost\u0159edky. Drobn\xE9 opravy do 5 000 K\u010D vy\u0159\xEDd\xEDme sami a n\xE1klady strhneme z v\xFDnosu; v\u011Bt\u0161\xED opravy nejd\u0159\xEDv nahl\xE1s\xEDme majiteli. \u010C\xE1stky uv\xE1d\xEDme bez DPH." },
-  { question: "Kdo plat\xED \xFAklid a energie?", answer: "\xDAklid a pran\xED pr\xE1dla hrad\xED host v cen\u011B rezervace a zaji\u0161\u0165uje je Antam Homes \u2014 v\xFDnos majitele nesni\u017Euj\xED. Energie (elekt\u0159ina, voda, plyn) hrad\xED majitel." },
+  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc zp\u011Btn\u011B p\u0159ehled na jednu stranu: obsazen\xE9 noci, v\xFDnos z jednotliv\xFDch platforem, provize 25 % a co se v byt\u011B \u0159e\u0161ilo \u2014 spolu s fakturou na provizi." },
+  { question: "Kolik spr\xE1va stoj\xED?", answer: "Provize je 25 % z v\xFDnosu z ubytov\xE1n\xED a je kone\u010Dn\xE1 \u2014 bez fixn\xEDch ani m\u011Bs\xED\u010Dn\xEDch poplatk\u016F. Pokr\xFDv\xE1 i internet, hygienick\xE9 pot\u0159eby pro hosty a \u010Distic\xED prost\u0159edky. Drobn\xE9 opravy do 5 000 K\u010D vy\u0159\xEDd\xEDme sami a n\xE1klady strhneme z v\xFDnosu; v\u011Bt\u0161\xED opravy nejd\u0159\xEDv nahl\xE1s\xEDme majiteli. Provize je v\u010Detn\u011B DPH \u2014 nic dal\u0161\xEDho se nep\u0159i\u010D\xEDt\xE1." },
+  { question: "Kdo plat\xED \xFAklid a energie?", answer: "Host plat\xED vedle ceny za ubytov\xE1n\xED i \xFAklidov\xFD poplatek; ten pokr\xFDv\xE1 \xFAklid a pr\xE1dlo a z\u016Fst\xE1v\xE1 cel\xFD Antam Homes, tak\u017Ee se z v\xFDnosu majitele na \xFAklid nic nestrh\xE1v\xE1 (ve vy\xFA\u010Dtov\xE1n\xED je samostatnou polo\u017Ekou). V\xFDnos, kter\xFD se d\u011Bl\xED 75/25, je \u010D\xE1stka za ubytov\xE1n\xED bez \xFAklidov\xE9ho poplatku. Energie (elekt\u0159ina, voda, plyn) hrad\xED majitel." },
   { question: "Jak dlouho spolupr\xE1ce trv\xE1 a jak ji ukon\u010D\xEDm?", answer: "Smlouva je na dobu neur\u010Ditou s v\xFDpov\u011Bdn\xED lh\u016Ftou 4 m\u011Bs\xEDce. Potvrzen\xE9 rezervace se b\u011Bhem v\xFDpov\u011Bdn\xED lh\u016Fty je\u0161t\u011B dokon\u010D\xED." },
-  { question: "Kdy a jak dostanu vy\xFA\u010Dtov\xE1n\xED?", answer: "M\u011Bs\xED\u010Dn\u011B zp\u011Btn\u011B: p\u0159ehled rezervac\xED a v\xFDnos\u016F z platforem (Airbnb, Booking.com) spolu s fakturou na provizi." },
-  { question: "Je \u010D\xE1stka v kalkula\u010Dce p\u0159ed, nebo po provizi?", answer: "Po. V\u0161e ozna\u010Den\xE9 jako v\xFDnos pro majitele je u\u017E po ode\u010Dten\xED provize 25 %. \u010C\xE1stky bez DPH; energie hrad\xED majitel zvl\xE1\u0161\u0165." },
+  { question: "Je \u010D\xE1stka v kalkula\u010Dce p\u0159ed, nebo po provizi?", answer: "Po. V\u0161e ozna\u010Den\xE9 jako v\xFDnos pro majitele je u\u017E po ode\u010Dten\xED provize 25 %. Provize je v\u010Detn\u011B DPH; energie hrad\xED majitel zvl\xE1\u0161\u0165." },
   { question: "Jak\xE9 povinnosti kr\xE1tkodob\xFD pron\xE1jem p\u0159in\xE1\u0161\xED a kdo je \u0159e\u0161\xED?", answer: "Evidence host\u016F, hl\xE1\u0161en\xED zahrani\u010Dn\xEDch host\u016F cizineck\xE9 policii, m\xEDstn\xED poplatek z pobytu a registrace v e-Turista \u2014 provozn\xED povinnosti kolem host\u016F \u0159e\u0161\xED Antam Homes. Zdan\u011Bn\xED p\u0159\xEDjmu z pron\xE1jmu z\u016Fst\xE1v\xE1 na majiteli; podklady dostane." },
   { question: "Co kdy\u017E host n\u011Bco poni\u010D\xED?", answer: "Byt se kontroluje po ka\u017Ed\xE9m pobytu. Drobnosti se oprav\xED hned (do 5 000 K\u010D z v\xFDnosu). V\u011Bt\u0161\xED \u0161koda se zdokumentuje a \u0159e\u0161\xED s hostem a p\u0159es platformu (Airbnb AirCover, u ostatn\xEDch podle platebn\xEDch \xFAdaj\u016F hosta). Majitel se dozv\xED hned, v\u010Detn\u011B fotek." },
   { question: "Co na to soused\xE9 a SVJ?", answer: "Host\xE9 dost\xE1vaj\xED pravidla domu p\u0159edem, byt m\xE1 danou kapacitu (\u017E\xE1dn\xE9 party) a soused\xE9 maj\xED kontakt. Pokud stanovy SVJ kr\xE1tkodob\xE9 ubytov\xE1n\xED v\xFDslovn\u011B zakazuj\xED, Antam Homes to majiteli \u0159ekne p\u0159ed podpisem." },
+  { question: "Pro\u010D to ned\u011Blat s\xE1m p\u0159es Airbnb?", answer: "M\u016F\u017Eete \u2014 n\u011Bkte\u0159\xED majitel\xE9 to zvl\xE1daj\xED. Je to ale pr\xE1ce na ka\u017Ed\xFD den: odpov\xEDdat host\u016Fm do minut, hl\xEDdat ceny podle popt\xE1vky, \u0159e\u0161it \xFAklid a kl\xED\u010De a dr\u017Eet krok s t\xEDm, co Airbnb a Booking m\u011Bn\xED (algoritmy, pravidla, poplatky, povinnosti). Antam Homes to d\u011Bl\xE1 denn\u011B pro v\xEDc byt\u016F najednou." },
   { question: "Pro koho kr\xE1tkodob\xFD pron\xE1jem ned\xE1v\xE1 smysl?", answer: "Kdy\u017E SVJ ubytov\xE1n\xED zakazuje nebo to soused\xE9 necht\u011Bj\xED; kdy\u017E majitel pot\u0159ebuje ka\u017Ed\xFD m\u011Bs\xEDc stejnou \u010D\xE1stku; kdy\u017E chce byt v\u011Bt\u0161inu roku pou\u017E\xEDvat s\xE1m; kdy\u017E je byt ve stavu, do kter\xE9ho nechce nic d\xE1t. Lokalita mimo centrum ani star\u0161\xED d\u016Fm probl\xE9m nejsou." }
 ];
 var get_services_default = defineTool3({

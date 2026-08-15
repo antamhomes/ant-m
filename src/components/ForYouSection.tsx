@@ -34,16 +34,16 @@ const ForYouSection = () => {
             <motion.div
               key={titleKey}
               {...revealDelayed(stagger(i, 0.07))}
-              className="flex items-start gap-4 p-5 md:p-6 rounded-sm bg-card border border-border hover:border-gold/40 transition-colors duration-300 h-full"
+              className="flex items-start gap-3.5 md:gap-4 p-4 md:p-6 rounded-sm bg-card border border-border hover:border-gold/40 transition-colors duration-300 h-full"
             >
               <div className="w-10 h-10 rounded-sm bg-gold/10 flex items-center justify-center shrink-0">
                 <Icon className="w-5 h-5 text-gold" strokeWidth={1.6} />
               </div>
               <div>
-                <h3 className="font-display text-lg md:text-[1.2rem] font-semibold text-foreground mb-1.5 leading-snug text-balance">
+                <h3 className="font-display text-[17px] md:text-[1.2rem] font-semibold text-foreground mb-1 md:mb-1.5 leading-snug text-balance">
                   {t(lang, titleKey)}
                 </h3>
-                <p className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed text-pretty">
+                <p className="font-body text-sm md:text-base text-muted-foreground leading-relaxed text-pretty">
                   {t(lang, descKey)}
                 </p>
               </div>
