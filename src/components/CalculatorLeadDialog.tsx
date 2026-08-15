@@ -84,7 +84,7 @@ const CalculatorLeadDialog = ({ open, onOpenChange, locationLabel, sizeLabel }: 
         <DialogHeader>
           <DialogTitle className="font-display text-2xl font-semibold text-foreground tracking-tight">
             {success
-              ? lang === "cs" ? "Děkujeme." : "Cảm ơn cô chú."
+              ? lang === "cs" ? "Děkujeme." : "Cảm ơn quý vị."
               : (t(lang, "calc_lead_title") as string)}
           </DialogTitle>
           {!success && (

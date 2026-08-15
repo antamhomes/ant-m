@@ -369,7 +369,7 @@ const CalculatorSection = () => {
                   href="#kontakt"
                   className="block w-full text-center font-body text-xs text-primary-foreground/65 hover:text-gold tracking-[0.15em] uppercase transition-colors"
                 >
-                  {lang === "cs" ? "nebo nezávazně probrat byt →" : "hoặc trao đổi nhẹ nhàng →"}
+                  {lang === "cs" ? "nebo nezávazně probrat byt →" : "hoặc trao đổi trực tiếp, không ràng buộc →"}
                 </a>
               </div>
             </div>

@@ -8,9 +8,11 @@ initAnalytics();
 
 // Brand splash (see index.html): stays at least SPLASH_MIN_MS, hides as soon as
 // the hero image has rendered, and never later than SPLASH_MAX_MS.
-const SPLASH_MIN_MS = 750;
+const SPLASH_MIN_MS = 1000;
 const SPLASH_MAX_MS = 2500;
+const SPLASH_FADE_MS = 750;
 const HERO_READY_EVENT = "antam:hero-ready";
+const SPLASH_DONE_EVENT = "antam:splash-done";
 
 const splashShownAt = performance.now();
 let splashDismissed = false;
@@ -19,11 +21,16 @@ const dismissSplash = () => {
   if (splashDismissed) return;
   splashDismissed = true;
   const splash = document.getElementById("brand-splash");
-  if (!splash) return;
+  if (!splash) {
+    window.dispatchEvent(new Event(SPLASH_DONE_EVENT));
+    return;
+  }
   const wait = Math.max(0, SPLASH_MIN_MS - (performance.now() - splashShownAt));
   window.setTimeout(() => {
     splash.classList.add("is-leaving");
-    window.setTimeout(() => splash.remove(), 500);
+    // Let the page's own entrance animations start as the curtain lifts.
+    window.dispatchEvent(new Event(SPLASH_DONE_EVENT));
+    window.setTimeout(() => splash.remove(), SPLASH_FADE_MS);
   }, wait);
 };
 

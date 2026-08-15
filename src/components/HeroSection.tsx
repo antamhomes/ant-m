@@ -5,11 +5,19 @@ import heroImgSm from "@/assets/hero-bedroom-1280.webp";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
+import { useSplashDone } from "@/hooks/use-splash-done";
 
 const HeroSection = () => {
   const { lang } = useLanguage();
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
+  const ready = useSplashDone();
+  // Entrance animations wait for the splash to lift so they are actually seen.
+  const enter = (y: number, delay: number, duration = 0.7) => ({
+    initial: { opacity: 0, y },
+    animate: ready ? { opacity: 1, y: 0 } : { opacity: 0, y },
+    transition: { duration, delay: ready ? delay : 0, ease: [0.22, 1, 0.36, 1] as const },
+  });
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ["start start", "end start"],
@@ -20,7 +28,13 @@ const HeroSection = () => {
 
   return (
     <section ref={ref} className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <motion.div className="absolute inset-0 will-change-transform" style={{ y: imageY }}>
+      <motion.div
+        className="absolute inset-0 will-change-transform"
+        style={{ y: imageY }}
+        initial={{ scale: 1.06 }}
+        animate={{ scale: ready ? 1 : 1.06 }}
+        transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+      >
         <img
           src={heroImg}
           srcSet={`${heroImgSm} 1280w, ${heroImg} 1920w`}
@@ -44,9 +58,7 @@ const HeroSection = () => {
 
       <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
+          {...enter(12, 0.35, 0.6)}
           className="font-body text-[0.78rem] sm:text-sm tracking-[0.22em] uppercase mb-5 sm:mb-6"
           style={{ color: "#C2A46D" }}
         >
@@ -54,9 +66,7 @@ const HeroSection = () => {
         </motion.div>
 
         <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          {...enter(20, 0.45, 0.8)}
           className="font-display text-4xl sm:text-5xl md:text-6xl font-medium leading-[1.1] tracking-[-0.02em] mb-5 sm:mb-6 text-balance"
           style={{ color: "#F7F1E8" }}
         >
@@ -66,9 +76,7 @@ const HeroSection = () => {
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          {...enter(16, 0.65, 0.6)}
           className="font-body text-base sm:text-lg leading-relaxed mb-8 sm:mb-10 max-w-xl mx-auto"
           style={{ color: "#E8DED0" }}
         >
@@ -76,9 +84,7 @@ const HeroSection = () => {
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.55 }}
+          {...enter(16, 0.8, 0.6)}
           className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center items-center"
         >
           <a
@@ -127,8 +133,8 @@ const HeroSection = () => {
 
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1, duration: 1 }}
+        animate={{ opacity: ready ? 1 : 0 }}
+        transition={{ delay: ready ? 1.4 : 0, duration: 1 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
       >
         <div className="w-6 h-10 border-2 border-primary-foreground/40 rounded-full flex justify-center pt-2">
