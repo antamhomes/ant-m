@@ -155,7 +155,7 @@ const ContactSection = () => {
             { icon: KeyRound, key: "assure3" as const },
             { icon: Receipt, key: "assure4" as const },
           ].map(({ icon: Icon, key }) => (
-            <li key={key} className="flex items-center gap-2.5 px-3 py-2.5 rounded-sm bg-card/70 border border-border/70 font-body text-[13px] md:text-sm text-foreground/85">
+            <li key={key} className="flex items-center justify-center gap-2 px-2.5 py-2.5 rounded-sm bg-card/70 border border-border/70 font-body text-[13px] md:text-sm text-foreground/85 whitespace-nowrap">
               <Icon className="w-4 h-4 text-gold shrink-0" strokeWidth={1.8} />
               <span>{t(lang, key)}</span>
             </li>
@@ -274,7 +274,7 @@ const ContactSection = () => {
                 </span>
               </label>
 
-              <button type="submit" disabled={submitting || !formData.consent} className="btn btn-primary w-full py-4">
+              <button type="submit" disabled={submitting} className="btn btn-primary w-full py-4">
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 {t(lang, "contact_submit")}
               </button>

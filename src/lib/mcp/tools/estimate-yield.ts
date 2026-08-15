@@ -37,7 +37,7 @@ const seasons = {
   xmas: { adr: 1.75, occDelta: 0.12 },
 } as const;
 
-// Long-term rent benchmark (CZK/month) — Bohemian Estates rent map, Nov 2025; 4+kk ≈ 1.3 × 3+kk
+// Long-term rent benchmark (CZK/month), Bohemian Estates rent map, Nov 2025; 4+kk ≈ 1.3 × 3+kk
 const ltrTable: Record<string, Record<string, number>> = {
   praha1: { "1kk": 23000, "2kk": 28000, "3kk": 32000, "4kk": 41500 },
   praha2: { "1kk": 21500, "2kk": 28000, "3kk": 32500, "4kk": 42500 },
@@ -118,7 +118,7 @@ export default defineTool({
       content: [
         {
           type: "text" as const,
-          text: `${loc.label}, ${sz.label} (${sz.guests} guests): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK — roughly ${result.multipleVsLongTermRent}x.`,
+          text: `${loc.label}, ${sz.label} (${sz.guests} guests): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`,
         },
       ],
       structuredContent: result,

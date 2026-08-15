@@ -335,12 +335,12 @@ const CalculatorSection = () => {
                 <p className="font-body text-[12px] text-primary-foreground/60 -mt-0.5 mb-1">
                   {t(lang, "calc_net_sub")}
                 </p>
-                <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold-on-dark leading-tight tnum">
-                  <span className="whitespace-nowrap">
-                    ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
-                    <span className="font-body text-sm font-normal text-primary-foreground/65">
-                      {t(lang, "calc_month_suffix")}
-                    </span>
+                <p className="flex flex-wrap items-baseline gap-x-2 leading-tight tnum">
+                  <span className="font-display text-[2.75rem] sm:text-5xl md:text-[3.25rem] font-bold text-gradient-gold-on-dark whitespace-nowrap">
+                    ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
+                  </span>
+                  <span className="font-body text-sm font-normal text-primary-foreground/65 whitespace-nowrap">
+                    {t(lang, "calc_month_suffix")}
                   </span>
                 </p>
                 {/* Assumption line: layout + its usual capacity (fixed, no extra choice for the owner). */}

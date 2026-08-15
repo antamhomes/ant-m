@@ -14,10 +14,10 @@ const translations = {
     footer_brochure: "Vytvořit přehled",
 
     // Hero
-    hero_subtitle: "Antam Homes — péče o byt a krátkodobý pronájem",
+    hero_subtitle: "Antam Homes · péče o byt a krátkodobý pronájem",
     hero_title1: "Váš byt. Naše péče. ",
     hero_title2: "Váš zisk.",
-    hero_desc: "Správa krátkodobých pronájmů v Praze pro majitele, kteří chtějí víc výnosu a méně starostí.",
+    hero_desc: "Správa krátkodobých pronájmů v Praze pro majitele bytů. Víc výnosu, méně starostí.",
     hero_extra: "Pro majitele bytů v Praze a okolí. Bez tlaku, bez přehnaných slibů.",
     hero_cta: "Spočítat výnos bytu",
     hero_cta2: "Nezávazně probrat byt",
@@ -65,7 +65,7 @@ const translations = {
     // Services — Co za vás řešíme (bento)
     services_label: "Co za vás řešíme",
     services_title: "Už to dávno není jen „pronajmout byt“.",
-    services_desc: "Interiér, který hosté hledají. Fotky, které prodávají. Cena, která sleduje poptávku. Servis, který přinese recenze. Každý článek děláme jako řemeslo — a všechny najednou.",
+    services_desc: "Interiér, který hosté hledají. Fotky, které prodávají. Cena, která sleduje poptávku. Servis, který přinese recenze. Každý článek děláme jako řemeslo, a všechny najednou.",
     svc1_title: "Příprava bytu a interiér",
     svc1_desc: "Poradíme uspořádání, vybavení a detaily, které rozhodují o hodnocení. Bez zbytečných investic.",
     svc2_title: "Fotky a prezentace",
@@ -77,23 +77,23 @@ const translations = {
     svc5_title: "Úklid, kontrola a údržba",
     svc5_desc: "Po každém pobytu úklid a kontrola. Drobné opravy hned, řemeslníci, když je třeba.",
     svc6_title: "Měsíční přehled",
-    svc6_desc: "Rezervace, výnosy, náklady a co jsme řešili — přehledně na jednu stranu.",
+    svc6_desc: "Rezervace, výnosy, náklady a co jsme řešili. Přehledně na jednu stranu.",
 
     // WhyBetter — porovnání
     whyBetter_label: "Krátkodobý vs. dlouhodobý pronájem",
     whyBetter_title1: "Váš byt si zaslouží ",
     whyBetter_title2: "lepší péči",
     whyBetter_title3: " i výnos.",
-    whyBetter_desc: "Dlouhodobý nájem je jednoduchý. Krátkodobý pronájem — když ho někdo dělá pořádně — dává víc kontroly, víc flexibility a vyšší výnos.",
+    whyBetter_desc: "Dlouhodobý nájem je jednoduchý. Krátkodobý pronájem, když ho někdo dělá pořádně, dává víc kontroly, víc flexibility a vyšší výnos.",
     comp1_title: "Kontrola stavu bytu",
-    comp1_long: "Byt vidíte jednou za rok — nebo až když se něco stane.",
+    comp1_long: "Byt vidíte jednou za rok, když vůbec.",
     comp1_short: "Kontrola po každém pobytu, drobnosti hned.",
     comp2_title: "Výnos",
     comp2_long: "Nájem je pevný. Sezónu ani poptávku nevyužije.",
     comp2_short: "Cena se ladí podle sezóny a poptávky.",
     comp3_title: "Flexibilita",
     comp3_long: "Byt je na roky vázaný jednou smlouvou.",
-    comp3_short: "Termíny pro sebe si zablokujete v kalendáři.",
+    comp3_short: "Termíny pro sebe zablokujete v kalendáři.",
     comp4_title: "Přehled plateb",
     comp4_long: "Platby a zpoždění řešíte s nájemníkem sami.",
     comp4_short: "Platby jdou přes platformu, vše vidíte ve vyúčtování.",
@@ -128,7 +128,7 @@ const translations = {
     step1_title: "Pošlete nám byt",
     step1_desc: "Stačí adresa, fotky nebo odkaz a pár základních informací.",
     step2_title: "Zhodnotíme směr",
-    step2_desc: "Podíváme se na lokalitu, stav bytu, okolní nabídku a možný způsob pronájmu.",
+    step2_desc: "Podíváme se na lokalitu, stav bytu a okolní nabídku.",
     step3_title: "Navrhneme postup",
     step3_desc: "Řekneme, co dává smysl připravit, upravit nebo nastavit.",
     step4_title: "Spustíme správu",
@@ -138,7 +138,7 @@ const translations = {
     // About — Kdo za tím stojí (REVIEW: nahradit vlastními slovy + fotkou)
     about_label: "Kdo za tím stojí",
     about_title: "Malý tým z Prahy, který dělá byty pořádně.",
-    about_p1: "Antam Homes jsme založili v Praze — česko-vietnamský tým, který krátkodobý pronájem nezná z prezentací, ale z vlastních bytů. Začali jsme u rodiny a známých a dnes se staráme o desítku apartmánů v Praze a okolí.",
+    about_p1: "Antam Homes jsme založili v Praze. Jsme česko-vietnamský tým, který krátkodobý pronájem nezná z prezentací, ale z vlastních bytů. Začali jsme u rodiny a známých a dnes se staráme o desítku apartmánů v Praze a okolí.",
     about_p2: "Domluvíte se s námi česky i vietnamsky, telefonem, přes WhatsApp nebo Zalo. Každý byt známe osobně, o hosty se staráme sami a majitel od nás každý měsíc dostane přehled, ze kterého je vidět každá koruna.",
     about_p3: "Chceme, aby majitel na svůj byt myslel jen tehdy, když si chce přijet užít víkend.",
 
@@ -150,9 +150,9 @@ const translations = {
 
     // Assurance (contact)
     assure1: "Bez závazku",
-    assure2: "Výpovědní lhůta 4 měsíce",
-    assure3: "Byt kdykoliv pro sebe",
-    assure4: "Vyúčtování každý měsíc",
+    assure2: "Výpověď 4 měsíce",
+    assure3: "Byt kdykoli pro sebe",
+    assure4: "Vyúčtování měsíčně",
 
     // Calculator
     calc_label: "Kalkulačka výnosu",
@@ -209,12 +209,12 @@ const translations = {
     calc_share_copy: "Zkopírujte si odkaz:",
     calc_approx_prefix: "přibližně",
     calc_disclaimer: "Orientační kalkulace, nikoli nabídka ani garance výnosu. Vychází z tržních dat pro Prahu (PriceLabs, Airbtics, 2025/26) a typického nastavení správy Antam Homes; dlouhodobý nájem podle cenové mapy nájemného Bohemian Estates (11/2025). Skutečný výnos kolísá podle stavu bytu, sezóny, recenzí, regulace krátkodobých pronájmů a dalších faktorů, které nemůžeme předem zaručit. Konkrétní podmínky vždy upravuje smlouva o správě.",
-    calc_excluded_note: "Provize 25 % je konečná, včetně DPH, a počítá se z ceny za ubytování bez úklidového poplatku — ten platí host zvlášť a zůstává nám (úklid a prádlo). Energie hradí majitel.",
+    calc_excluded_note: "Provize 25 % je konečná, včetně DPH, a počítá se z ceny za ubytování bez úklidového poplatku. Ten platí host zvlášť a zůstává nám (úklid a prádlo). Energie hradí majitel.",
 
     // Owner report
     report_label: "Přehled pro majitele",
     report_title: "Majitel má vědět, co se v bytě děje.",
-    report_desc: "Rezervace, výnosy, náklady a co jsme v bytě řešili — každý měsíc na jednu stranu.",
+    report_desc: "Rezervace, výnosy, náklady a co jsme v bytě řešili. Každý měsíc na jednu stranu.",
     report_text: "Bez složitých tabulek. Vidíte, kolik byt vydělal, co stálo a co jsme v něm řešili.",
     report_row_reservations: "Rezervace",
     report_row_occupancy: "Obsazenost",
@@ -238,25 +238,25 @@ const translations = {
     faq3_q: "Můžu byt někdy využít pro sebe?",
     faq3_a: "Ano. Vybrané termíny lze v kalendáři dopředu zablokovat.",
     faq4_q: "Jak budu vědět, co byt vydělává?",
-    faq4_a: "Každý měsíc zpětně dostanete přehled na jednu stranu: kolik nocí bylo obsazeno, výnos z jednotlivých platforem, naše provize 25 % a co jsme v bytě řešili — spolu s fakturou na provizi, takže vždy vidíte, z čeho se částka počítá.",
+    faq4_a: "Každý měsíc zpětně dostanete přehled na jednu stranu: kolik nocí bylo obsazeno, výnos z jednotlivých platforem, naše provize 25 % a co jsme v bytě řešili. K tomu fakturu na provizi, takže vždy vidíte, z čeho se částka počítá.",
     faq5_q: "Kolik správa stojí?",
-    faq5_a: "Provize je 25 % z výnosu z ubytování a je konečná — bez fixních ani měsíčních poplatků. Pokrývá i internet, hygienické potřeby pro hosty a čisticí prostředky. Drobné opravy do 5 000 Kč vyřídíme sami a náklady strhneme z výnosu; větší opravy vám nejdřív nahlásíme a uděláme až po vašem souhlasu. Provize je včetně DPH — nic dalšího se k ní nepřičítá.",
+    faq5_a: "Provize je 25 % z výnosu z ubytování a je konečná, bez fixních ani měsíčních poplatků. Pokrývá i internet, hygienické potřeby pro hosty a čisticí prostředky. Drobné opravy do 5 000 Kč vyřídíme sami a náklady strhneme z výnosu; větší opravy vám nejdřív nahlásíme a uděláme až po vašem souhlasu. Provize je včetně DPH, nic dalšího se k ní nepřičítá.",
     faq6_q: "Kdo platí úklid a energie?",
-    faq6_a: "Host platí vedle ceny za ubytování i úklidový poplatek. Ten pokrývá úklid a praní prádla a zůstává celý nám — proto se vám z výnosu za ubytování na úklid nic nestrhává a ve vyúčtování ho vidíte jako samostatnou položku. Výnos, který se dělí 75/25, je tedy částka za ubytování bez úklidového poplatku. Energie (elektřina, voda, plyn) hradí majitel jako doposud.",
+    faq6_a: "Host platí vedle ceny za ubytování i úklidový poplatek. Ten pokrývá úklid a praní prádla a zůstává celý nám, proto se vám z výnosu za ubytování na úklid nic nestrhává a ve vyúčtování ho vidíte jako samostatnou položku. Výnos, který se dělí 75/25, je tedy částka za ubytování bez úklidového poplatku. Energie (elektřina, voda, plyn) hradí majitel jako doposud.",
     faq7_q: "Jak dlouho spolupráce trvá a jak ji ukončím?",
     faq7_a: "Smlouva je na dobu neurčitou s výpovědní lhůtou 4 měsíce. Hosté si často rezervují s velkým předstihem, proto se během výpovědní lhůty potvrzené rezervace ještě dokončí.",
     faq9_q: "Je částka v kalkulačce před, nebo po vaší provizi?",
     faq9_a: "Po. Vše, co na webu označujeme jako výnos pro majitele, je už po odečtení provize 25 %. Provize je včetně DPH; energie hradí majitel zvlášť.",
     faq10_q: "Jaké povinnosti krátkodobý pronájem přináší a kdo je řeší?",
-    faq10_a: "Ubytování hostů je podnikání a má svá pravidla: evidence ubytovaných hostů, hlášení zahraničních hostů cizinecké policii, místní poplatek z pobytu a nově registrace v systému e-Turista. Provozní povinnosti kolem hostů řešíme my, abyste na ně nemuseli myslet. Zdanění vašeho příjmu z pronájmu zůstává na vás — podklady k tomu od nás dostanete a rádi je předáme vašemu účetnímu.",
+    faq10_a: "Ubytování hostů je podnikání a má svá pravidla: evidence ubytovaných hostů, hlášení zahraničních hostů cizinecké policii, místní poplatek z pobytu a nově registrace v systému e-Turista. Provozní povinnosti kolem hostů řešíme my, abyste na ně nemuseli myslet. Zdanění vašeho příjmu z pronájmu zůstává na vás; podklady k tomu od nás dostanete a rádi je předáme vašemu účetnímu.",
     faq11_q: "Co když host něco poničí?",
-    faq11_a: "Byt kontrolujeme po každém pobytu, takže se na nic nepřijde až za měsíc. Drobnosti opravíme hned (do 5 000 Kč z výnosu, viz výše). Větší škodu zdokumentujeme a řešíme s hostem a přes platformu — Airbnb má pro hostitele program AirCover, u ostatních rezervací postupujeme podle platebních údajů hosta. O všem se dozvíte hned, včetně fotek.",
+    faq11_a: "Byt kontrolujeme po každém pobytu, takže se na nic nepřijde až za měsíc. Drobnosti opravíme hned (do 5 000 Kč z výnosu, viz výše). Větší škodu zdokumentujeme a řešíme s hostem a přes platformu: Airbnb má pro hostitele program AirCover, u ostatních rezervací postupujeme podle platebních údajů hosta. O všem se dozvíte hned, včetně fotek.",
     faq12_q: "Co na to sousedé a SVJ?",
     faq12_a: "Dobré vztahy v domě jsou podmínka, aby byt fungoval dlouhodobě. Hosté dostávají pravidla domu předem, byt má jasně danou kapacitu (žádné party) a sousedé mají kontakt, na který se dovolají. Pokud stanovy vašeho SVJ krátkodobé ubytování výslovně zakazují, řekneme vám to na rovinu ještě před podpisem.",
     faq13_q: "Pro koho krátkodobý pronájem nedává smysl?",
-    faq13_a: "Když SVJ ubytování zakazuje nebo to sousedé v domě nechtějí. Když potřebujete každý měsíc přesně stejnou částku — výnos kolísá se sezónou. Když chcete byt většinu roku používat sami. A když je byt ve stavu, do kterého už nechcete nic dát. Ve všech ostatních případech se na to rádi podíváme — lokalita mimo centrum ani starší dům problém nejsou.",
+    faq13_a: "Když SVJ ubytování zakazuje nebo to sousedé v domě nechtějí. Když potřebujete každý měsíc přesně stejnou částku, protože výnos kolísá se sezónou. Když chcete byt většinu roku používat sami. A když je byt ve stavu, do kterého už nechcete nic dát. Ve všech ostatních případech se na to rádi podíváme; lokalita mimo centrum ani starší dům problém nejsou.",
     faq14_q: "Proč to nedělat sám přes Airbnb?",
-    faq14_a: "Můžete — někteří majitelé to zvládají. Jen počítejte s tím, že to je práce na každý den: odpovídat hostům do minut, hlídat ceny podle poptávky, řešit úklid a klíče, a hlavně držet krok s tím, co Airbnb a Booking mění — algoritmy, pravidla, poplatky, nové povinnosti. Kdo to dělá jednou za týden, mizí z výsledků a prodává pod cenou. My to děláme denně pro víc bytů najednou, a to je celý rozdíl.",
+    faq14_a: "Můžete, někteří majitelé to zvládají. Jen počítejte s tím, že to je práce na každý den: odpovídat hostům do minut, hlídat ceny podle poptávky, řešit úklid a klíče, a hlavně držet krok s tím, co Airbnb a Booking mění: algoritmy, pravidla, poplatky, nové povinnosti. Kdo to dělá jednou za týden, mizí z výsledků a prodává pod cenou. My to děláme denně pro víc bytů najednou, a to je celý rozdíl.",
 
     // Contact
     contact_label: "Kontakt",
@@ -287,7 +287,7 @@ const translations = {
     contact_message: "Zpráva / odkaz na byt",
     contact_message_placeholder: "Odkaz na inzerát, fotky nebo pár vět o bytě…",
     contact_submit: "Odeslat poptávku",
-    contact_small: "Ozveme se do 24 hodin — česky nebo vietnamsky — a nezávazně probereme, co by pro váš byt dávalo smysl.",
+    contact_small: "Ozveme se do 24 hodin, česky nebo vietnamsky, a nezávazně probereme, co by pro váš byt dávalo smysl.",
     contact_success: "Děkujeme. Ozveme se do 24 hodin.",
 
     // Calculator lead dialog
@@ -301,12 +301,12 @@ const translations = {
     calc_lead_consent_link: "zpracováním osobních údajů",
     calc_lead_consent_suffix: ".",
     calc_lead_submit: "Chci přesnější odhad",
-    calc_lead_success: "Děkujeme — ozveme se s odhadem pro váš konkrétní byt.",
+    calc_lead_success: "Děkujeme. Ozveme se s odhadem pro váš konkrétní byt.",
     calc_lead_prefill_note: "Vycházíme z toho, co jste vybrali v kalkulačce:",
 
     // Contact (fallback)
     contact_fallback_title: "Pojďme si o vašem bytě popovídat.",
-    contact_fallback_desc: "Pár vět o bytě stačí — zbytek probereme po telefonu.",
+    contact_fallback_desc: "Pár vět o bytě stačí, zbytek probereme po telefonu.",
     contact_fallback_message: "Krátká zpráva o bytu (nepovinné)",
     contact_fallback_message_placeholder: "Pár vět o bytě nebo odkaz na inzerát…",
     contact_consent_prefix: "Souhlasím se ",
@@ -343,15 +343,15 @@ const translations = {
     foryou1_title: "Zklamal vás nájemník",
     foryou1_desc: "Neplatič, škody, měsíce vystěhovávání. Hosté platí předem a bydlí pár nocí, ne roky.",
     foryou2_title: "Nemáte čas řešit hosty",
-    foryou2_desc: "Dotazy, check-iny, klíče, problémy v noci — po práci ani o víkendu. Bereme to my.",
-    foryou3_title: "Nechcete sledovat změny Airbnb",
-    foryou3_desc: "Algoritmy, pravidla, ceny — mění se každý měsíc. My v tom žijeme, vy nemusíte.",
+    foryou2_desc: "Dotazy, check-iny, klíče, problémy v noci. Po práci ani o víkendu to řešit nechcete. Bereme to my.",
+    foryou3_title: "Nechcete řešit změny Airbnb",
+    foryou3_desc: "Algoritmy, pravidla, ceny se mění každý měsíc. My v tom žijeme, vy nemusíte.",
     foryou4_title: "Bojíte se o stav bytu",
     foryou4_desc: "Byt vidíme po každém pobytu: úklid, kontrola, drobnosti hned. Ne jednou za rok jako u nájmu.",
     foryou5_title: "Chcete si byt nechat i pro sebe",
-    foryou5_desc: "Rodina, návštěvy, vlastní pobyty — v kalendáři si termíny zablokujete, kdy potřebujete.",
+    foryou5_desc: "Rodina, návštěvy, vlastní pobyty. V kalendáři si termíny zablokujete, kdy potřebujete.",
     foryou6_title: "Bydlíte daleko nebo cestujete",
-    foryou6_desc: "Byt běží bez vás a každý měsíc vidíte, kolik vydělal — ať jste kdekoli.",
+    foryou6_desc: "Byt běží bez vás a každý měsíc vidíte, kolik vydělal, ať jste kdekoli.",
   },
 
   vi: {
@@ -369,10 +369,10 @@ const translations = {
     footer_brochure: "Tạo bản tổng quan",
 
     // Hero
-    hero_subtitle: "ANTAM HOMES — CHĂM SÓC CĂN HỘ & QUẢN LÝ CHO THUÊ NGẮN HẠN",
+    hero_subtitle: "ANTAM HOMES · CHĂM SÓC CĂN HỘ & QUẢN LÝ CHO THUÊ NGẮN HẠN",
     hero_title1: "Thu nhập tốt hơn.",
     hero_title2: "Chủ nhà an tâm hơn.",
-    hero_desc: "Từ nhắn tin với khách, định giá, đón khách đến dọn dẹp — chủ nhà không phải tự lo mỗi ngày.",
+    hero_desc: "Quản lý cho thuê ngắn hạn tại Praha cho chủ căn hộ. Thu nhập nhiều hơn, lo lắng ít hơn.",
     hero_extra: "Dành cho chủ nhà tại Praha và khu vực lân cận. Trao đổi nhẹ nhàng, không ràng buộc.",
     hero_cta: "Tính thử thu nhập",
     hero_cta2: "Trao đổi về căn hộ",
@@ -399,7 +399,7 @@ const translations = {
     benefit3_title: "Cho thuê an toàn hơn",
     benefit3_desc: "Khách đặt qua nền tảng (Airbnb, Booking.com), có quy định rõ ràng và căn hộ được kiểm tra sau mỗi lượt khách.",
     benefit4_title: "Đỡ lo hơn",
-    benefit4_desc: "Khách, dọn dẹp và các việc vận hành hằng ngày — Antam Homes lo thay chủ nhà.",
+    benefit4_desc: "Khách, dọn dẹp và các việc vận hành hằng ngày, Antam Homes lo thay chủ nhà.",
     benefit5_title: "Giá hợp lý theo thời điểm",
     benefit5_desc: "Giá được điều chỉnh theo mùa, lượng khách thuê và khu vực xung quanh.",
     benefit6_title: "Trải nghiệm khách tốt hơn",
@@ -420,7 +420,7 @@ const translations = {
     // Services
     services_label: "Antam Homes lo những việc gì",
     services_title: "Từ lâu không còn là „chỉ cho thuê căn hộ“.",
-    services_desc: "Nội thất khách đang tìm. Những bức ảnh biết bán. Mức giá bám theo nhu cầu. Dịch vụ mang lại đánh giá tốt. Mỗi khâu chúng tôi làm như một nghề — và làm tất cả cùng lúc.",
+    services_desc: "Nội thất khách đang tìm. Những bức ảnh biết bán. Mức giá bám theo nhu cầu. Dịch vụ mang lại đánh giá tốt. Mỗi khâu chúng tôi làm như một nghề, và làm tất cả cùng lúc.",
     svc1_title: "Chuẩn bị căn hộ và nội thất",
     svc1_desc: "Tư vấn bố trí, trang bị và những chi tiết quyết định đánh giá. Không đầu tư thừa.",
     svc2_title: "Ảnh và cách trình bày",
@@ -432,16 +432,16 @@ const translations = {
     svc5_title: "Dọn dẹp, kiểm tra và bảo trì",
     svc5_desc: "Sau mỗi lượt khách: dọn dẹp và kiểm tra. Việc nhỏ sửa ngay, gọi thợ khi cần.",
     svc6_title: "Báo cáo hàng tháng",
-    svc6_desc: "Đặt phòng, doanh thu, chi phí và những gì đã xử lý — gọn trong một trang.",
+    svc6_desc: "Đặt phòng, doanh thu, chi phí và những gì đã xử lý. Gọn trong một trang.",
 
     // WhyBetter
     whyBetter_label: "Ngắn hạn vs. dài hạn",
     whyBetter_title1: "Căn hộ xứng đáng được ",
     whyBetter_title2: "chăm sóc tốt hơn",
     whyBetter_title3: " và thu nhập tốt hơn.",
-    whyBetter_desc: "Cho thuê dài hạn đơn giản. Cho thuê ngắn hạn — khi được làm bài bản — cho quý vị nhiều kiểm soát hơn, linh hoạt hơn và thu nhập cao hơn.",
+    whyBetter_desc: "Cho thuê dài hạn đơn giản. Cho thuê ngắn hạn, khi được làm bài bản, cho quý vị nhiều kiểm soát hơn, linh hoạt hơn và thu nhập cao hơn.",
     comp1_title: "Tình trạng căn hộ",
-    comp1_long: "Mỗi năm thấy căn hộ một lần — hoặc khi đã có chuyện.",
+    comp1_long: "Mỗi năm thấy căn hộ một lần, nếu có.",
     comp1_short: "Kiểm tra sau mỗi lượt khách, việc nhỏ sửa ngay.",
     comp2_title: "Doanh thu",
     comp2_long: "Tiền thuê cố định. Không tận dụng được mùa cao điểm.",
@@ -493,7 +493,7 @@ const translations = {
     // About — Ai đứng sau (REVIEW: thay bằng lời của Vương + ảnh)
     about_label: "Ai đứng sau Antam Homes",
     about_title: "Một nhóm nhỏ ở Praha, làm căn hộ một cách tử tế.",
-    about_p1: "Antam Homes do người Việt và người Séc ở Praha lập nên — chúng tôi biết cho thuê ngắn hạn không phải qua sách vở mà qua chính những căn hộ của mình. Bắt đầu từ gia đình và người quen, hôm nay chúng tôi chăm sóc khoảng mười căn hộ ở Praha và vùng lân cận.",
+    about_p1: "Antam Homes do người Việt và người Séc ở Praha lập nên. Chúng tôi biết cho thuê ngắn hạn không phải qua sách vở mà qua chính những căn hộ của mình. Bắt đầu từ gia đình và người quen, hôm nay chúng tôi chăm sóc khoảng mười căn hộ ở Praha và vùng lân cận.",
     about_p2: "Chủ nhà có thể trao đổi với chúng tôi bằng tiếng Việt hoặc tiếng Séc, qua điện thoại, WhatsApp hay Zalo. Chúng tôi biết từng căn hộ, tự lo cho khách, và mỗi tháng chủ nhà nhận một bản báo cáo rõ từng đồng.",
     about_p3: "Chúng tôi muốn chủ nhà chỉ phải nghĩ đến căn hộ khi muốn về nghỉ cuối tuần.",
 
@@ -564,12 +564,12 @@ const translations = {
     calc_share_copy: "Sao chép liên kết:",
     calc_approx_prefix: "khoảng",
     calc_disclaimer: "Chỉ là ước tính tham khảo, không phải báo giá hay cam kết lợi nhuận. Dựa trên dữ liệu thị trường Praha (PriceLabs, Airbtics, 2025/26) và mô hình quản lý của Antam Homes; giá thuê dài hạn theo bản đồ giá thuê Bohemian Estates (11/2025). Kết quả thực tế thay đổi theo tình trạng căn hộ, mùa, đánh giá, quy định cho thuê ngắn hạn và nhiều yếu tố khác mà chúng tôi không thể bảo đảm trước. Điều kiện cụ thể luôn được quy định trong hợp đồng quản lý.",
-    calc_excluded_note: "Phí dịch vụ 25% là mức cuối cùng, đã bao gồm VAT, và tính trên tiền phòng chưa gồm phí dọn dẹp — khoản này khách trả riêng và thuộc về chúng tôi (dọn dẹp, giặt giũ). Điện nước do chủ nhà trả.",
+    calc_excluded_note: "Phí dịch vụ 25% là mức cuối cùng, đã bao gồm VAT, và tính trên tiền phòng chưa gồm phí dọn dẹp. Khoản này khách trả riêng và thuộc về chúng tôi (dọn dẹp, giặt giũ). Điện nước do chủ nhà trả.",
 
     // Owner report
     report_label: "Báo cáo cho chủ nhà",
     report_title: "Chủ nhà cần biết căn hộ đang hoạt động như thế nào.",
-    report_desc: "Đặt phòng, doanh thu, chi phí và những gì chúng tôi đã xử lý — mỗi tháng gọn trong một trang.",
+    report_desc: "Đặt phòng, doanh thu, chi phí và những gì chúng tôi đã xử lý. Mỗi tháng gọn trong một trang.",
     report_text: "Không bảng biểu phức tạp. Quý vị thấy căn hộ thu được bao nhiêu, chi gì và chúng tôi đã xử lý gì.",
     report_row_reservations: "Đặt phòng",
     report_row_occupancy: "Tỷ lệ lấp đầy",
@@ -593,29 +593,29 @@ const translations = {
     faq3_q: "Chủ nhà có thể sử dụng căn hộ khi cần không?",
     faq3_a: "Có. Một số ngày có thể được chặn trước trong lịch để chủ nhà, gia đình hoặc người quen sử dụng.",
     faq4_q: "Làm sao để biết căn hộ tạo doanh thu như thế nào?",
-    faq4_a: "Mỗi tháng, cho tháng trước, chủ nhà nhận một bản báo cáo gọn trong một trang: bao nhiêu đêm có khách, doanh thu từ từng nền tảng, phí dịch vụ 25% và những gì chúng tôi đã xử lý trong căn hộ — kèm hóa đơn phí dịch vụ, nên luôn thấy rõ số tiền được tính từ đâu.",
+    faq4_a: "Mỗi tháng, cho tháng trước, chủ nhà nhận một bản báo cáo gọn trong một trang: bao nhiêu đêm có khách, doanh thu từ từng nền tảng, phí dịch vụ 25% và những gì chúng tôi đã xử lý trong căn hộ. Kèm hóa đơn phí dịch vụ, nên luôn thấy rõ số tiền được tính từ đâu.",
     faq5_q: "Phí dịch vụ là bao nhiêu?",
-    faq5_a: "Phí dịch vụ là 25% doanh thu từ lưu trú và là mức cuối cùng — không có phí cố định hay phí hàng tháng nào khác. Phí này đã bao gồm internet, đồ dùng vệ sinh cho khách và hóa chất dọn dẹp. Sửa chữa nhỏ đến 5 000 Kč chúng tôi tự xử lý và trừ vào doanh thu; sửa chữa lớn hơn sẽ báo trước và chỉ làm khi chủ nhà đồng ý. Phí dịch vụ đã bao gồm VAT — không cộng thêm gì.",
+    faq5_a: "Phí dịch vụ là 25% doanh thu từ lưu trú và là mức cuối cùng, không có phí cố định hay phí hàng tháng nào khác. Phí này đã bao gồm internet, đồ dùng vệ sinh cho khách và hóa chất dọn dẹp. Sửa chữa nhỏ đến 5 000 Kč chúng tôi tự xử lý và trừ vào doanh thu; sửa chữa lớn hơn sẽ báo trước và chỉ làm khi chủ nhà đồng ý. Phí dịch vụ đã bao gồm VAT, không cộng thêm gì.",
     faq6_q: "Ai trả tiền dọn dẹp và điện nước?",
-    faq6_a: "Ngoài tiền phòng, khách trả thêm phí dọn dẹp. Khoản này dùng cho dọn dẹp và giặt giũ và thuộc về chúng tôi toàn bộ — vì vậy không trừ gì vào doanh thu lưu trú của quý vị, và trong bảng quyết toán quý vị thấy nó là một mục riêng. Doanh thu được chia 75/25 vì vậy là tiền phòng chưa gồm phí dọn dẹp. Điện, nước, gas do chủ nhà chi trả như trước.",
+    faq6_a: "Ngoài tiền phòng, khách trả thêm phí dọn dẹp. Khoản này dùng cho dọn dẹp và giặt giũ và thuộc về chúng tôi toàn bộ, vì vậy không trừ gì vào doanh thu lưu trú của quý vị, và trong bảng quyết toán quý vị thấy nó là một mục riêng. Doanh thu được chia 75/25 vì vậy là tiền phòng chưa gồm phí dọn dẹp. Điện, nước, gas do chủ nhà chi trả như trước.",
     faq7_q: "Hợp tác kéo dài bao lâu và kết thúc thế nào?",
     faq7_a: "Hợp đồng không thời hạn, thời gian báo trước khi chấm dứt là 4 tháng. Khách thường đặt phòng trước rất lâu, nên trong thời gian báo trước, các đặt phòng đã xác nhận vẫn được thực hiện.",
     faq9_q: "Số tiền trong máy tính là trước hay sau phí dịch vụ?",
     faq9_a: "Sau. Mọi con số trên trang được gọi là thu nhập cho chủ nhà đều đã trừ phí dịch vụ 25%. Phí dịch vụ đã bao gồm VAT; điện nước do chủ nhà trả riêng.",
     faq10_q: "Cho thuê ngắn hạn kéo theo những nghĩa vụ gì và ai lo?",
-    faq10_a: "Cho khách lưu trú là hoạt động kinh doanh và có quy định riêng: sổ lưu trú, khai báo khách nước ngoài với cảnh sát ngoại kiều, phí lưu trú địa phương và mới đây là đăng ký trong hệ thống e-Turista. Các nghĩa vụ vận hành liên quan đến khách do chúng tôi lo, quý vị không phải nghĩ đến. Việc kê khai thuế thu nhập từ cho thuê vẫn thuộc về quý vị — chúng tôi cung cấp đầy đủ chứng từ và sẵn sàng chuyển cho kế toán của quý vị.",
+    faq10_a: "Cho khách lưu trú là hoạt động kinh doanh và có quy định riêng: sổ lưu trú, khai báo khách nước ngoài với cảnh sát ngoại kiều, phí lưu trú địa phương và mới đây là đăng ký trong hệ thống e-Turista. Các nghĩa vụ vận hành liên quan đến khách do chúng tôi lo, quý vị không phải nghĩ đến. Việc kê khai thuế thu nhập từ cho thuê vẫn thuộc về quý vị; chúng tôi cung cấp đầy đủ chứng từ và sẵn sàng chuyển cho kế toán của quý vị.",
     faq11_q: "Nếu khách làm hỏng đồ thì sao?",
-    faq11_a: "Chúng tôi kiểm tra căn hộ sau mỗi lượt khách, nên không có chuyện một tháng sau mới phát hiện. Việc nhỏ sửa ngay (đến 5 000 Kč trừ vào doanh thu, xem ở trên). Hư hỏng lớn được chụp ảnh, lập biên bản và xử lý với khách và qua nền tảng — Airbnb có chương trình AirCover cho chủ nhà, với các đặt phòng khác chúng tôi xử lý theo thông tin thanh toán của khách. Quý vị được báo ngay, kèm hình ảnh.",
+    faq11_a: "Chúng tôi kiểm tra căn hộ sau mỗi lượt khách, nên không có chuyện một tháng sau mới phát hiện. Việc nhỏ sửa ngay (đến 5 000 Kč trừ vào doanh thu, xem ở trên). Hư hỏng lớn được chụp ảnh, lập biên bản và xử lý với khách và qua nền tảng: Airbnb có chương trình AirCover cho chủ nhà, với các đặt phòng khác chúng tôi xử lý theo thông tin thanh toán của khách. Quý vị được báo ngay, kèm hình ảnh.",
     faq12_q: "Hàng xóm và ban quản trị tòa nhà (SVJ) thì sao?",
     faq12_a: "Quan hệ tốt trong tòa nhà là điều kiện để căn hộ hoạt động lâu dài. Khách nhận nội quy trước khi đến, căn hộ có số khách tối đa rõ ràng (không tiệc tùng) và hàng xóm có số điện thoại liên hệ được. Nếu điều lệ SVJ của quý vị cấm rõ ràng việc cho thuê ngắn hạn, chúng tôi sẽ nói thẳng trước khi ký.",
     faq13_q: "Khi nào cho thuê ngắn hạn không phù hợp?",
-    faq13_a: "Khi SVJ cấm hoặc hàng xóm trong nhà không muốn. Khi quý vị cần mỗi tháng đúng một số tiền cố định — thu nhập thay đổi theo mùa. Khi quý vị muốn tự ở phần lớn thời gian trong năm. Và khi căn hộ ở tình trạng mà quý vị không muốn đầu tư thêm gì. Các trường hợp còn lại chúng tôi đều sẵn sàng xem — vị trí ngoài trung tâm hay nhà cũ không phải là vấn đề.",
+    faq13_a: "Khi SVJ cấm hoặc hàng xóm trong nhà không muốn. Khi quý vị cần mỗi tháng đúng một số tiền cố định, vì thu nhập thay đổi theo mùa. Khi quý vị muốn tự ở phần lớn thời gian trong năm. Và khi căn hộ ở tình trạng mà quý vị không muốn đầu tư thêm gì. Các trường hợp còn lại chúng tôi đều sẵn sàng xem; vị trí ngoài trung tâm hay nhà cũ không phải là vấn đề.",
     faq14_q: "Sao không tự làm qua Airbnb?",
-    faq14_a: "Quý vị có thể — một số chủ nhà tự làm được. Nhưng đó là công việc mỗi ngày: trả lời khách trong vài phút, điều chỉnh giá theo nhu cầu, lo dọn dẹp và chìa khóa, và nhất là theo kịp những gì Airbnb và Booking thay đổi — thuật toán, quy định, phí, nghĩa vụ mới. Ai chỉ làm mỗi tuần một lần sẽ dần biến mất khỏi kết quả tìm kiếm và bán dưới giá. Chúng tôi làm việc này hằng ngày cho nhiều căn hộ cùng lúc — đó là toàn bộ sự khác biệt.",
+    faq14_a: "Quý vị có thể, một số chủ nhà tự làm được. Nhưng đó là công việc mỗi ngày: trả lời khách trong vài phút, điều chỉnh giá theo nhu cầu, lo dọn dẹp và chìa khóa, và nhất là theo kịp những gì Airbnb và Booking thay đổi: thuật toán, quy định, phí, nghĩa vụ mới. Ai chỉ làm mỗi tuần một lần sẽ dần biến mất khỏi kết quả tìm kiếm và bán dưới giá. Chúng tôi làm việc này hằng ngày cho nhiều căn hộ cùng lúc, đó là toàn bộ sự khác biệt.",
 
     // Contact
     contact_label: "Liên hệ",
-    contact_title: "Trao đổi về căn hộ của quý vị — không ràng buộc.",
+    contact_title: "Trao đổi về căn hộ của quý vị, không ràng buộc.",
     contact_desc: "Gửi cho Antam Homes vài thông tin cơ bản. Chúng tôi sẽ xem vị trí, tình trạng căn hộ và trao đổi hướng phù hợp.",
     contact_name: "Họ tên",
     contact_name_placeholder: "Nguyễn Văn A",
@@ -642,7 +642,7 @@ const translations = {
     contact_message: "Lời nhắn / link căn hộ",
     contact_message_placeholder: "Link tin đăng, hình ảnh hoặc vài dòng về căn hộ…",
     contact_submit: "Gửi thông tin",
-    contact_small: "Antam Homes sẽ liên hệ lại trong vòng 24 giờ — bằng tiếng Việt hoặc tiếng Séc — để trao đổi, hoàn toàn không ràng buộc.",
+    contact_small: "Antam Homes sẽ liên hệ lại trong vòng 24 giờ, bằng tiếng Việt hoặc tiếng Séc, để trao đổi, hoàn toàn không ràng buộc.",
     contact_success: "Cảm ơn quý vị. Chúng tôi sẽ liên hệ trong vòng 24 giờ.",
 
     // Calculator lead dialog
@@ -656,12 +656,12 @@ const translations = {
     calc_lead_consent_link: "xử lý dữ liệu cá nhân",
     calc_lead_consent_suffix: ".",
     calc_lead_submit: "Tôi muốn ước tính chính xác hơn",
-    calc_lead_success: "Cảm ơn quý vị — chúng tôi sẽ liên hệ với ước tính cho căn hộ của quý vị.",
+    calc_lead_success: "Cảm ơn quý vị. Chúng tôi sẽ liên hệ với ước tính cho căn hộ của quý vị.",
     calc_lead_prefill_note: "Dựa trên lựa chọn trong bảng tính:",
 
     // Contact (fallback)
     contact_fallback_title: "Cùng trao đổi về căn hộ của quý vị.",
-    contact_fallback_desc: "Chỉ cần vài dòng về căn hộ — phần còn lại trao đổi qua điện thoại.",
+    contact_fallback_desc: "Chỉ cần vài dòng về căn hộ, phần còn lại trao đổi qua điện thoại.",
     contact_fallback_message: "Tin nhắn ngắn về căn hộ (không bắt buộc)",
     contact_fallback_message_placeholder: "Vài dòng về căn hộ hoặc link tin đăng…",
     contact_consent_prefix: "Tôi đồng ý cho ",
@@ -698,15 +698,15 @@ const translations = {
     foryou1_title: "Từng gặp người thuê không trả tiền",
     foryou1_desc: "Nợ tiền, làm hỏng nhà, mất nhiều tháng mới đòi lại. Khách ngắn hạn trả trước và ở vài đêm, không phải vài năm.",
     foryou2_title: "Không có thời gian lo cho khách",
-    foryou2_desc: "Câu hỏi, nhận phòng, chìa khóa, sự cố ban đêm — sau giờ làm hay cuối tuần. Chúng tôi lo tất cả.",
-    foryou3_title: "Không muốn theo dõi Airbnb thay đổi gì",
-    foryou3_desc: "Thuật toán, quy định, giá — thay đổi mỗi tháng. Chúng tôi sống trong đó, quý vị không cần.",
+    foryou2_desc: "Câu hỏi, nhận phòng, chìa khóa, sự cố ban đêm. Sau giờ làm hay cuối tuần quý vị không muốn lo. Chúng tôi lo tất cả.",
+    foryou3_title: "Không muốn lo Airbnb thay đổi",
+    foryou3_desc: "Thuật toán, quy định, giá thay đổi mỗi tháng. Chúng tôi sống trong đó, quý vị không cần.",
     foryou4_title: "Lo về tình trạng căn hộ",
     foryou4_desc: "Chúng tôi xem căn hộ sau mỗi lượt khách: dọn dẹp, kiểm tra, sửa ngay việc nhỏ. Không phải mỗi năm một lần.",
     foryou5_title: "Muốn giữ căn hộ cho gia đình khi cần",
-    foryou5_desc: "Người thân sang thăm, khách quý, tự ở — chỉ cần khóa lịch những ngày cần.",
+    foryou5_desc: "Người thân sang thăm, khách quý, tự ở. Chỉ cần khóa lịch những ngày cần.",
     foryou6_title: "Ở xa hoặc hay đi vắng",
-    foryou6_desc: "Căn hộ vẫn vận hành và mỗi tháng quý vị thấy rõ thu nhập — dù đang ở đâu.",
+    foryou6_desc: "Căn hộ vẫn vận hành và mỗi tháng quý vị thấy rõ thu nhập, dù đang ở đâu.",
   },
 } as const;
 
@@ -714,10 +714,11 @@ export type TranslationKey = keyof typeof translations.cs;
 
 // Czech typography: a line must not end with a one-letter preposition or
 // conjunction (a, i, k, o, s, u, v, z) — bind it to the next word with NBSP.
-// We also glue the most common two-letter ones (ať, až, že, se, si, na, do,
-// od, po, za, ke, ve, ze, to, je) — a dangling "ať" reads just as badly.
+// Two-letter prepositions and "ať/až" get the same treatment (a dangling "ať"
+// reads just as badly). Pronouns/verbs (se, si, to, je) are left alone: gluing
+// them created odd short lines more often than it helped.
 const CS_SHORT_WORD =
-  /(^|[\s(„"])([aikosuvzAIKOSUVZ]|[Aa][ťž]|[Žž]e|[Ss][ei]|[Nn]a|[Dd]o|[Oo]d|[Pp]o|[Zz]a|[Kk]e|[Vv]e|[Zz]e|[Tt]o|[Jj]e) (?=\S)/g;
+  /(^|[\s(„"])([aikosuvzAIKOSUVZ]|[Aa][ťž]|[Nn]a|[Dd]o|[Oo]d|[Pp]o|[Zz]a|[Kk]e|[Vv]e|[Zz]e|[Kk]u) (?=\S)/g;
 export const czTypo = (text: string) => text.replace(CS_SHORT_WORD, "$1$2\u00a0");
 
 // Widow protection (both languages): glue the last two words of any longer
@@ -725,7 +726,7 @@ export const czTypo = (text: string) => text.replace(CS_SHORT_WORD, "$1$2\u00a0"
 export const noWidow = (text: string) => {
   if (text.length < 40) return text;
   const i = text.lastIndexOf(" ");
-  if (i < 0 || text.length - i > 24) return text; // last word too long to matter
+  if (i < 0 || text.length - i > 9) return text; // only short last words look orphaned
   return text.slice(0, i) + "\u00a0" + text.slice(i + 1);
 };
 

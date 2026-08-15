@@ -13,11 +13,11 @@ const META: Record<PageKey, { cs: { title: string; desc: string }; vi: { title: 
     pathVi: "/vn",
     cs: {
       title: "Správa krátkodobých pronájmů a Airbnb v Praze | Antam Homes",
-      desc: "Kompletní správa krátkodobého pronájmu v Praze — příprava nabídky, hosté, úklid, dynamické ceny a přehledné reporty pro majitele. Více výnosu, méně starostí.",
+      desc: "Kompletní správa krátkodobého pronájmu v Praze: příprava nabídky, hosté, úklid, dynamické ceny a přehledné reporty pro majitele. Více výnosu, méně starostí.",
     },
     vi: {
       title: "Quản lý cho thuê ngắn hạn & Airbnb tại Praha | Antam Homes",
-      desc: "Dịch vụ quản lý căn hộ cho thuê ngắn hạn tại Praha — chuẩn bị listing, lo cho khách, dọn dẹp, định giá và báo cáo rõ ràng cho chủ nhà. Thu nhập tốt hơn, ít lo hơn.",
+      desc: "Dịch vụ quản lý căn hộ cho thuê ngắn hạn tại Praha: chuẩn bị tin đăng, lo cho khách, dọn dẹp, định giá và báo cáo rõ ràng cho chủ nhà. Thu nhập tốt hơn, ít lo hơn.",
     },
   },
 };
