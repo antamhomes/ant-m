@@ -20,7 +20,7 @@ const ProcessSection = () => {
       <div className="container-wide">
         <motion.div {...reveal} className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "process_label")}</p>
-          <h2 className="h-section text-primary-foreground">{t(lang, "process_title")}</h2>
+          <h2 className="h-section-sm text-primary-foreground">{t(lang, "process_title")}</h2>
           <p className="lead lead-on-dark">{t(lang, "process_desc")}</p>
         </motion.div>
 

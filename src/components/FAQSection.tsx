@@ -59,7 +59,7 @@ const FAQSection = () => {
       <div className="container-wide">
         <motion.div {...reveal} className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "faq_label")}</p>
-          <h2 className="h-section text-foreground">{t(lang, "faq_title")}</h2>
+          <h2 className="h-section-sm text-foreground">{t(lang, "faq_title")}</h2>
         </motion.div>
 
         <motion.div {...revealDelayed(0.1)} className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-6 md:gap-y-0">

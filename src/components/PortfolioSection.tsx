@@ -46,7 +46,7 @@ const PortfolioSection = () => {
       <div className="container-wide">
         <motion.div {...reveal} className="section-head">
           <p className="eyebrow eyebrow-center">{c.eyebrow}</p>
-          <h2 className="h-section text-foreground">{c.title}</h2>
+          <h2 className="h-section-sm text-foreground">{c.title}</h2>
           <p className="lead">{c.desc}</p>
         </motion.div>
 

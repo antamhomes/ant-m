@@ -278,7 +278,7 @@ const ContactSection = () => {
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 {t(lang, "contact_submit")}
               </button>
-              <p className="font-body text-xs text-muted-foreground text-center">{t(lang, "contact_small")}</p>
+              <p className="font-body text-[13px] md:text-sm text-muted-foreground text-center">{t(lang, "contact_small")}</p>
             </>
           )}
         </motion.form>

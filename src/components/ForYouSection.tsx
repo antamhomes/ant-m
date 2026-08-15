@@ -40,7 +40,7 @@ const ForYouSection = () => {
                 <Icon className="w-5 h-5 text-gold" strokeWidth={1.6} />
               </div>
               <div>
-                <h3 className="font-display text-[17px] md:text-[1.2rem] font-semibold text-foreground mb-1 md:mb-1.5 leading-snug text-balance">
+                <h3 className="font-display text-[17px] md:text-[1.2rem] font-semibold text-foreground mb-1 md:mb-1.5 leading-snug">
                   {t(lang, titleKey)}
                 </h3>
                 <p className="font-body text-sm md:text-base text-muted-foreground leading-relaxed text-pretty">

@@ -332,7 +332,7 @@ const CalculatorSection = () => {
                 <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
                   {t(lang, "calc_net")}
                 </p>
-                <p className="font-body text-[11px] text-primary-foreground/55 -mt-0.5 mb-1">
+                <p className="font-body text-[12px] text-primary-foreground/60 -mt-0.5 mb-1">
                   {t(lang, "calc_net_sub")}
                 </p>
                 <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold-on-dark leading-tight tnum">
@@ -344,7 +344,7 @@ const CalculatorSection = () => {
                   </span>
                 </p>
                 {/* Assumption line: layout + its usual capacity (fixed, no extra choice for the owner). */}
-                <p className="mt-2 font-body text-[12px] text-primary-foreground/65 tnum">
+                <p className="mt-2 font-body text-[13px] text-primary-foreground/70 tnum">
                   {t(lang, "calc_assume_prefix")}{" "}
                   <span className="text-primary-foreground/85">{sizes.find((s) => s.value === size)?.label}</span>
                   {" · "}
@@ -354,7 +354,7 @@ const CalculatorSection = () => {
                   </span>
                 </p>
                 {/* Mobile only: the inputs sit below the result, so recap them here with a way back. */}
-                <p className="md:hidden mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[12px] text-primary-foreground/70">
+                <p className="md:hidden mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
                   <span>{locations.find((l) => l.value === location)?.label}</span>
                   <span aria-hidden="true">·</span>
                   <span>{t(lang, `calc_season_${season}` as const)}</span>
@@ -377,7 +377,7 @@ const CalculatorSection = () => {
                   <span className="block h-full w-3/4 bg-gold" />
                   <span className="block h-full w-1/4 bg-primary-foreground/25" />
                 </div>
-                <div className="mt-2 flex items-baseline justify-between gap-3 font-body text-[12px] tnum">
+                <div className="mt-2 flex items-baseline justify-between gap-3 font-body text-[13px] tnum">
                   <span className="text-primary-foreground/85 whitespace-nowrap">
                     <strong className="text-gold font-semibold">75 %</strong> {t(lang, "calc_split_owner")}{" "}
                     <span className="text-gold/90">= ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč</span>
@@ -397,7 +397,7 @@ const CalculatorSection = () => {
                   ~{(Math.round(result.ltr / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
                 </p>
                 {result.ratio > 0 && (
-                  <p className="font-body text-xs text-primary-foreground/85 mt-2">
+                  <p className="font-body text-[13px] text-primary-foreground/85 mt-2">
                     → {t(lang, "calc_approx_prefix")}{" "}
                     <strong className="text-gold">
                       {(Math.round(result.ratio * 10) / 10).toLocaleString("cs-CZ")}×{" "}
@@ -407,7 +407,7 @@ const CalculatorSection = () => {
                 )}
               </div>
 
-              <p className="font-body text-[11px] text-primary-foreground/60 leading-relaxed border-t border-primary-foreground/10 pt-4">
+              <p className="font-body text-[12px] text-primary-foreground/60 leading-relaxed border-t border-primary-foreground/10 pt-4">
                 {t(lang, "calc_excluded_note")}
               </p>
 

@@ -32,7 +32,7 @@ const OwnerReportSection = () => {
       <div className="container-wide">
         <motion.div {...reveal} className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "report_label")}</p>
-          <h2 className="h-section text-foreground">{t(lang, "report_title")}</h2>
+          <h2 className="h-section-sm text-foreground">{t(lang, "report_title")}</h2>
           <p className="lead">{t(lang, "report_desc")}</p>
         </motion.div>
 
@@ -71,7 +71,7 @@ const OwnerReportSection = () => {
           </motion.div>
 
           <motion.div {...revealDelayed(0.1)}>
-            <p className="font-body text-foreground text-lg md:text-xl leading-relaxed mb-8 text-pretty">
+            <p className="font-body text-foreground text-[17px] md:text-lg leading-relaxed mb-8 text-pretty">
               {t(lang, "report_text")}
             </p>
             <a href="#kontakt" className="btn btn-primary">

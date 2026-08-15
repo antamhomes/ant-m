@@ -83,20 +83,20 @@ const translations = {
     whyBetter_label: "Krátkodobý vs. dlouhodobý pronájem",
     whyBetter_title1: "Váš byt si zaslouží ",
     whyBetter_title2: "lepší péči",
-    whyBetter_title3: " i\u00a0výnos.",
-    whyBetter_desc: "Dlouhodobý pronájem může být jednoduchý. Krátkodobý pronájem ale při správné správě nabízí větší kontrolu, flexibilitu a potenciál výnosu.",
+    whyBetter_title3: " i výnos.",
+    whyBetter_desc: "Dlouhodobý nájem je jednoduchý. Krátkodobý pronájem — když ho někdo dělá pořádně — dává víc kontroly, víc flexibility a vyšší výnos.",
     comp1_title: "Kontrola stavu bytu",
-    comp1_long: "Stav bytu často zjistíte až po delší době.",
-    comp1_short: "Po každém pobytu byt kontrolujeme a hlídáme detaily, aby zůstal v dobrém stavu.",
+    comp1_long: "Byt vidíte jednou za rok — nebo až když se něco stane.",
+    comp1_short: "Kontrola po každém pobytu, drobnosti hned.",
     comp2_title: "Výnos",
-    comp2_long: "Nájem bývá stabilní, ale většinou nereaguje na sezónu a poptávku.",
-    comp2_short: "Cena se může upravovat podle sezóny, obsazenosti a aktuálního zájmu o termíny.",
+    comp2_long: "Nájem je pevný. Sezónu ani poptávku nevyužije.",
+    comp2_short: "Cena se ladí podle sezóny a poptávky.",
     comp3_title: "Flexibilita",
-    comp3_long: "Byt je dlouhodobě vázaný jednou smlouvou.",
-    comp3_short: "Kalendář lze plánovat dopředu, takže si vybrané termíny můžete nechat pro sebe, rodinu nebo známé.",
+    comp3_long: "Byt je na roky vázaný jednou smlouvou.",
+    comp3_short: "Termíny pro sebe si zablokujete v kalendáři.",
     comp4_title: "Přehled plateb",
-    comp4_long: "Platby a případné zpoždění řešíte přímo s nájemníkem.",
-    comp4_short: "Rezervace, platby a výnosy jsou přehledně dohledatelné přes platformy a reporty.",
+    comp4_long: "Platby a zpoždění řešíte s nájemníkem sami.",
+    comp4_short: "Platby jdou přes platformu, vše vidíte ve vyúčtování.",
     longTerm_label: "Dlouhodobý pronájem",
     shortTerm_label: "S Antam Homes",
 
@@ -133,7 +133,7 @@ const translations = {
     step3_desc: "Řekneme, co dává smysl připravit, upravit nebo nastavit.",
     step4_title: "Spustíme správu",
     step4_desc: "Řešíme hosty, úklid, cenu, obsazenost i další provoz.",
-    process_cta: "Začít nezávazně",
+    process_cta: "Poslat nám byt",
 
     // About — Kdo za tím stojí (REVIEW: nahradit vlastními slovy + fotkou)
     about_label: "Kdo za tím stojí",
@@ -144,8 +144,9 @@ const translations = {
 
     // Price strip
     price_label: "Cena",
-    price_line: "25 % z výnosu z ubytování. Žádné fixní poplatky, žádné překvapení.",
-    price_sub: "Provize pokrývá vše od inzerátu po hosty, úklid a měsíční vyúčtování. Úklidový poplatek platí host zvlášť a zůstává nám, energie hradí majitel. Provize je konečná, včetně DPH.",
+    price_line: "z výnosu za ubytování",
+    price_figure: "25 %",
+    price_sub: "Konečná provize včetně DPH. Žádné fixní ani měsíční poplatky. Úklidový poplatek platí host, energie majitel.",
 
     // Assurance (contact)
     assure1: "Bez závazku",
@@ -213,8 +214,8 @@ const translations = {
     // Owner report
     report_label: "Přehled pro majitele",
     report_title: "Majitel má vědět, co se v bytě děje.",
-    report_desc: "Přehled rezervací, výnosů, nákladů a důležitých informací o bytě — jasně a bez zbytečných nejasností.",
-    report_text: "Bez složitých tabulek a nejasností. Majitel má mít jasný přehled o tom, kolik byt vydělává a co se v něm řeší.",
+    report_desc: "Rezervace, výnosy, náklady a co jsme v bytě řešili — každý měsíc na jednu stranu.",
+    report_text: "Bez složitých tabulek. Vidíte, kolik byt vydělal, co stálo a co jsme v něm řešili.",
     report_row_reservations: "Rezervace",
     report_row_occupancy: "Obsazenost",
     report_row_revenue: "Výnos",
@@ -287,7 +288,7 @@ const translations = {
     contact_message_placeholder: "Odkaz na inzerát, fotky nebo pár vět o bytě…",
     contact_submit: "Odeslat poptávku",
     contact_small: "Ozveme se do 24 hodin — česky nebo vietnamsky — a nezávazně probereme, co by pro váš byt dávalo smysl.",
-    contact_success: "Děkujeme! Ozveme se vám co nejdříve.",
+    contact_success: "Děkujeme. Ozveme se do 24 hodin.",
 
     // Calculator lead dialog
     calc_lead_title: "Chci přesnější odhad",
@@ -305,7 +306,7 @@ const translations = {
 
     // Contact (fallback)
     contact_fallback_title: "Pojďme si o vašem bytě popovídat.",
-    contact_fallback_desc: "Pár vět o bytě stačí. Ozveme se co nejdříve — nezávazně a bez tlaku.",
+    contact_fallback_desc: "Pár vět o bytě stačí — zbytek probereme po telefonu.",
     contact_fallback_message: "Krátká zpráva o bytu (nepovinné)",
     contact_fallback_message_placeholder: "Pár vět o bytě nebo odkaz na inzerát…",
     contact_consent_prefix: "Souhlasím se ",
@@ -328,7 +329,7 @@ const translations = {
     footer_link_contact: "Kontakt",
     footer_link_privacy: "Ochrana osobních údajů",
     footer_link_cookies: "Cookies",
-    footer_cta: "Nezávazně probrat byt",
+    footer_cta: "Probrat můj byt",
     footer_rights: "© 2026 Donut Point, s.r.o. Všechna práva vyhrazena.",
 
     // Sticky mobile
@@ -338,19 +339,19 @@ const translations = {
     foryou_label: "Pro koho je Antam Homes",
     foryou_title1: "Tohle je pro vás, ",
     foryou_title2: "pokud…",
-    foryou_desc: "Většina majitelů, se kterými pracujeme, řeší stejné věci. Možná některou z nich poznáváte.",
+    foryou_desc: "Nejčastější důvody, proč se nám majitelé ozývají.",
     foryou1_title: "Zklamal vás nájemník",
-    foryou1_desc: "Neplatič, poničený byt, měsíce vystěhovávání. Hosté platí předem a bydlí pár nocí, ne roky — žádné vymáhání ani soudy.",
+    foryou1_desc: "Neplatič, škody, měsíce vystěhovávání. Hosté platí předem a bydlí pár nocí, ne roky.",
     foryou2_title: "Nemáte čas řešit hosty",
-    foryou2_desc: "Dotazy, check-iny, klíče a problémy v noci nechcete řešit po práci ani o víkendu. To všechno bereme my.",
-    foryou3_title: "Nechcete hlídat, co Airbnb a Booking zase změnily",
-    foryou3_desc: "Algoritmy, pravidla, ceny, nové povinnosti — mění se to každý měsíc. Kdo to nesleduje denně, ztrácí viditelnost i peníze. My v tom žijeme, vy nemusíte.",
-    foryou4_title: "Bojíte se, co s bytem hosté udělají",
-    foryou4_desc: "Byt vidíme po každém pobytu: úklid, kontrola, drobnosti hned. U dlouhodobého nájmu byt vidíte jednou za rok.",
+    foryou2_desc: "Dotazy, check-iny, klíče, problémy v noci — po práci ani o víkendu. Bereme to my.",
+    foryou3_title: "Nechcete sledovat změny Airbnb",
+    foryou3_desc: "Algoritmy, pravidla, ceny — mění se každý měsíc. My v tom žijeme, vy nemusíte.",
+    foryou4_title: "Bojíte se o stav bytu",
+    foryou4_desc: "Byt vidíme po každém pobytu: úklid, kontrola, drobnosti hned. Ne jednou za rok jako u nájmu.",
     foryou5_title: "Chcete si byt nechat i pro sebe",
-    foryou5_desc: "Rodina, návštěvy, vlastní pobyty — v kalendáři si byt zablokujete, kdy potřebujete.",
-    foryou6_title: "Bydlíte daleko nebo jste často pryč",
-    foryou6_desc: "Mimo Prahu, v zahraničí, půl roku na cestách — byt běží bez vás a každý měsíc vidíte, kolik vydělal.",
+    foryou5_desc: "Rodina, návštěvy, vlastní pobyty — v kalendáři si termíny zablokujete, kdy potřebujete.",
+    foryou6_title: "Bydlíte daleko nebo cestujete",
+    foryou6_desc: "Byt běží bez vás a každý měsíc vidíte, kolik vydělal — ať jste kdekoli.",
   },
 
   vi: {
@@ -438,19 +439,19 @@ const translations = {
     whyBetter_title1: "Căn hộ xứng đáng được ",
     whyBetter_title2: "chăm sóc tốt hơn",
     whyBetter_title3: " và thu nhập tốt hơn.",
-    whyBetter_desc: "Cho thuê dài hạn có thể đơn giản. Nhưng khi được vận hành đúng cách, cho thuê ngắn hạn có thể mang lại sự linh hoạt, kiểm soát và hiệu quả doanh thu tốt hơn.",
+    whyBetter_desc: "Cho thuê dài hạn đơn giản. Cho thuê ngắn hạn — khi được làm bài bản — cho quý vị nhiều kiểm soát hơn, linh hoạt hơn và thu nhập cao hơn.",
     comp1_title: "Tình trạng căn hộ",
-    comp1_long: "Tình trạng căn hộ thường chỉ được biết sau một thời gian dài.",
-    comp1_short: "Sau mỗi lượt khách, căn hộ được kiểm tra và các chi tiết được chú ý để giữ căn hộ trong tình trạng tốt.",
+    comp1_long: "Mỗi năm thấy căn hộ một lần — hoặc khi đã có chuyện.",
+    comp1_short: "Kiểm tra sau mỗi lượt khách, việc nhỏ sửa ngay.",
     comp2_title: "Doanh thu",
-    comp2_long: "Tiền thuê đều đặn, nhưng không tăng được khi đông khách.",
-    comp2_short: "Giá thuê thay đổi được theo mùa và theo lượng khách đặt.",
+    comp2_long: "Tiền thuê cố định. Không tận dụng được mùa cao điểm.",
+    comp2_short: "Giá điều chỉnh theo mùa và nhu cầu.",
     comp3_title: "Linh hoạt",
-    comp3_long: "Căn hộ bị buộc lâu dài vào một hợp đồng.",
-    comp3_short: "Có thể sắp lịch trước, để chủ nhà giữ vài ngày cho gia đình, người thân hoặc việc riêng.",
+    comp3_long: "Căn hộ bị ràng buộc nhiều năm bởi một hợp đồng.",
+    comp3_short: "Muốn dùng riêng, chỉ cần khóa lịch.",
     comp4_title: "Theo dõi thanh toán",
-    comp4_long: "Chủ nhà thường tự đòi tiền thuê và xử lý khi khách trả chậm.",
-    comp4_short: "Việc đặt phòng, trả tiền và thu nhập đều được ghi lại rõ ràng và có báo cáo.",
+    comp4_long: "Tiền thuê chậm trễ quý vị tự xử lý với người thuê.",
+    comp4_short: "Thanh toán qua nền tảng, mọi thứ có trong quyết toán.",
     longTerm_label: "Cho thuê dài hạn",
     shortTerm_label: "Với Antam Homes",
 
@@ -487,7 +488,7 @@ const translations = {
     step3_desc: "Chúng tôi nói rõ những gì nên chuẩn bị, điều chỉnh hoặc thiết lập.",
     step4_title: "Bắt đầu vận hành",
     step4_desc: "Antam Homes lo khách, dọn dẹp, giá thuê, tỷ lệ lấp đầy và mọi việc vận hành.",
-    process_cta: "Bắt đầu, không ràng buộc",
+    process_cta: "Gửi thông tin căn hộ",
 
     // About — Ai đứng sau (REVIEW: thay bằng lời của Vương + ảnh)
     about_label: "Ai đứng sau Antam Homes",
@@ -498,8 +499,9 @@ const translations = {
 
     // Price strip
     price_label: "Phí dịch vụ",
-    price_line: "25% doanh thu từ lưu trú. Không phí cố định, không bất ngờ.",
-    price_sub: "Phí dịch vụ bao gồm mọi việc từ tin đăng, khách, dọn dẹp đến quyết toán hàng tháng. Phí dọn dẹp do khách trả riêng và thuộc về chúng tôi, điện nước do chủ nhà chi trả. Phí dịch vụ là mức cuối cùng, đã bao gồm VAT.",
+    price_line: "doanh thu từ lưu trú",
+    price_figure: "25%",
+    price_sub: "Phí dịch vụ cuối cùng, đã gồm VAT. Không phí cố định hay phí hàng tháng. Phí dọn dẹp do khách trả, điện nước do chủ nhà.",
 
     // Assurance (contact)
     assure1: "Không ràng buộc",
@@ -567,8 +569,8 @@ const translations = {
     // Owner report
     report_label: "Báo cáo cho chủ nhà",
     report_title: "Chủ nhà cần biết căn hộ đang hoạt động như thế nào.",
-    report_desc: "Thông tin về đặt phòng, doanh thu, chi phí và những ghi chú quan trọng về căn hộ — rõ ràng và dễ theo dõi.",
-    report_text: "Không bảng phức tạp, không mơ hồ. Chủ nhà có cái nhìn rõ ràng về căn hộ và mọi việc đang diễn ra.",
+    report_desc: "Đặt phòng, doanh thu, chi phí và những gì chúng tôi đã xử lý — mỗi tháng gọn trong một trang.",
+    report_text: "Không bảng biểu phức tạp. Quý vị thấy căn hộ thu được bao nhiêu, chi gì và chúng tôi đã xử lý gì.",
     report_row_reservations: "Đặt phòng",
     report_row_occupancy: "Tỷ lệ lấp đầy",
     report_row_revenue: "Doanh thu",
@@ -641,7 +643,7 @@ const translations = {
     contact_message_placeholder: "Link tin đăng, hình ảnh hoặc vài dòng về căn hộ…",
     contact_submit: "Gửi thông tin",
     contact_small: "Antam Homes sẽ liên hệ lại trong vòng 24 giờ — bằng tiếng Việt hoặc tiếng Séc — để trao đổi, hoàn toàn không ràng buộc.",
-    contact_success: "Cảm ơn quý vị! Chúng tôi sẽ liên hệ sớm.",
+    contact_success: "Cảm ơn quý vị. Chúng tôi sẽ liên hệ trong vòng 24 giờ.",
 
     // Calculator lead dialog
     calc_lead_title: "Tôi muốn ước tính chính xác hơn",
@@ -659,7 +661,7 @@ const translations = {
 
     // Contact (fallback)
     contact_fallback_title: "Cùng trao đổi về căn hộ của quý vị.",
-    contact_fallback_desc: "Chỉ cần vài dòng về căn hộ. Chúng tôi sẽ liên hệ lại sớm — không ràng buộc, không áp lực.",
+    contact_fallback_desc: "Chỉ cần vài dòng về căn hộ — phần còn lại trao đổi qua điện thoại.",
     contact_fallback_message: "Tin nhắn ngắn về căn hộ (không bắt buộc)",
     contact_fallback_message_placeholder: "Vài dòng về căn hộ hoặc link tin đăng…",
     contact_consent_prefix: "Tôi đồng ý cho ",
@@ -692,26 +694,45 @@ const translations = {
     foryou_label: "Antam Homes phù hợp với ai",
     foryou_title1: "Phù hợp với quý vị ",
     foryou_title2: "nếu…",
-    foryou_desc: "Hầu hết chủ nhà chúng tôi làm cùng đều gặp những điều giống nhau. Có thể quý vị cũng vậy.",
+    foryou_desc: "Những lý do phổ biến nhất khiến chủ nhà liên hệ với chúng tôi.",
     foryou1_title: "Từng gặp người thuê không trả tiền",
-    foryou1_desc: "Nợ tiền nhà, làm hỏng căn hộ, mất nhiều tháng mới đòi lại được. Khách ngắn hạn trả tiền trước và ở vài đêm, không phải vài năm — không phải đòi nợ hay ra tòa.",
+    foryou1_desc: "Nợ tiền, làm hỏng nhà, mất nhiều tháng mới đòi lại. Khách ngắn hạn trả trước và ở vài đêm, không phải vài năm.",
     foryou2_title: "Không có thời gian lo cho khách",
-    foryou2_desc: "Câu hỏi, nhận phòng, chìa khóa và sự cố ban đêm — quý vị không muốn xử lý sau giờ làm hay cuối tuần. Chúng tôi lo tất cả.",
-    foryou3_title: "Không muốn theo dõi Airbnb và Booking lại thay đổi gì",
-    foryou3_desc: "Thuật toán, quy định, giá, nghĩa vụ mới — thay đổi mỗi tháng. Ai không theo sát hằng ngày sẽ mất thứ hạng hiển thị và mất tiền. Chúng tôi sống trong đó, quý vị không cần.",
-    foryou4_title: "Lo khách làm hỏng căn hộ",
-    foryou4_desc: "Chúng tôi xem căn hộ sau mỗi lượt khách: dọn dẹp, kiểm tra, sửa ngay việc nhỏ. Cho thuê dài hạn thì mỗi năm quý vị chỉ thấy căn hộ một lần.",
+    foryou2_desc: "Câu hỏi, nhận phòng, chìa khóa, sự cố ban đêm — sau giờ làm hay cuối tuần. Chúng tôi lo tất cả.",
+    foryou3_title: "Không muốn theo dõi Airbnb thay đổi gì",
+    foryou3_desc: "Thuật toán, quy định, giá — thay đổi mỗi tháng. Chúng tôi sống trong đó, quý vị không cần.",
+    foryou4_title: "Lo về tình trạng căn hộ",
+    foryou4_desc: "Chúng tôi xem căn hộ sau mỗi lượt khách: dọn dẹp, kiểm tra, sửa ngay việc nhỏ. Không phải mỗi năm một lần.",
     foryou5_title: "Muốn giữ căn hộ cho gia đình khi cần",
-    foryou5_desc: "Người thân sang thăm, khách quý, hoặc quý vị tự ở — chỉ cần khóa lịch những ngày cần.",
-    foryou6_title: "Ở xa hoặc thường xuyên đi vắng",
-    foryou6_desc: "Ngoài Praha, ở nước ngoài, về Việt Nam nửa năm — căn hộ vẫn vận hành và mỗi tháng quý vị thấy rõ thu nhập.",
+    foryou5_desc: "Người thân sang thăm, khách quý, tự ở — chỉ cần khóa lịch những ngày cần.",
+    foryou6_title: "Ở xa hoặc hay đi vắng",
+    foryou6_desc: "Căn hộ vẫn vận hành và mỗi tháng quý vị thấy rõ thu nhập — dù đang ở đâu.",
   },
 } as const;
 
 export type TranslationKey = keyof typeof translations.cs;
 
+// Czech typography: a line must not end with a one-letter preposition or
+// conjunction (a, i, k, o, s, u, v, z) — bind it to the next word with NBSP.
+// We also glue the most common two-letter ones (ať, až, že, se, si, na, do,
+// od, po, za, ke, ve, ze, to, je) — a dangling "ať" reads just as badly.
+const CS_SHORT_WORD =
+  /(^|[\s(„"])([aikosuvzAIKOSUVZ]|[Aa][ťž]|[Žž]e|[Ss][ei]|[Nn]a|[Dd]o|[Oo]d|[Pp]o|[Zz]a|[Kk]e|[Vv]e|[Zz]e|[Tt]o|[Jj]e) (?=\S)/g;
+export const czTypo = (text: string) => text.replace(CS_SHORT_WORD, "$1$2\u00a0");
+
+// Widow protection (both languages): glue the last two words of any longer
+// string so a paragraph never ends with a single short word on its own line.
+export const noWidow = (text: string) => {
+  if (text.length < 40) return text;
+  const i = text.lastIndexOf(" ");
+  if (i < 0 || text.length - i > 24) return text; // last word too long to matter
+  return text.slice(0, i) + "\u00a0" + text.slice(i + 1);
+};
+
 export const t = (lang: "cs" | "vi", key: TranslationKey) => {
-  return translations[lang][key as keyof typeof translations.cs];
+  const value = translations[lang][key as keyof typeof translations.cs];
+  if (typeof value !== "string") return value;
+  return noWidow(lang === "cs" ? czTypo(value) : value);
 };
 
 export default translations;

@@ -17,7 +17,7 @@ const AboutSection = () => {
       <div className="container-narrow">
         <motion.div {...reveal} className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "about_label")}</p>
-          <h2 className="h-section text-foreground">{t(lang, "about_title")}</h2>
+          <h2 className="h-section-sm text-foreground">{t(lang, "about_title")}</h2>
         </motion.div>
 
         <div className="grid md:grid-cols-[minmax(0,320px)_1fr] gap-8 md:gap-12 items-center max-w-4xl mx-auto">
@@ -31,7 +31,7 @@ const AboutSection = () => {
           </motion.div>
 
           <motion.div {...revealDelayed(0.1)}>
-            <p className="font-body text-lg md:text-xl text-foreground leading-relaxed mb-5 text-pretty">
+            <p className="font-body text-[17px] md:text-lg text-foreground leading-relaxed mb-5 text-pretty">
               {t(lang, "about_p1")}
             </p>
             <p className="font-body text-base md:text-lg text-muted-foreground leading-relaxed mb-5 text-pretty">

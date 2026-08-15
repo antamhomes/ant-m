@@ -166,12 +166,23 @@ html {
   .section-head .eyebrow { margin-bottom: 1.25rem; }
   .section-head .lead { margin-top: 1.25rem; }
 
+  /* Two heading tiers: .h-section for the sections that carry the argument
+     (Pro koho, Kalkulačka, Služby, srovnání, Kontakt), .h-section-sm for the
+     supporting ones (Portfolio, Přehled, Jak začíná, Kdo jsme, FAQ). */
   .h-section {
     font-family: var(--font-display);
     font-weight: 600;
-    font-size: clamp(2.25rem, 1.4rem + 2.8vw, 3.5rem);
+    font-size: clamp(2rem, 1.3rem + 2.8vw, 3.5rem);
     line-height: 1.08;
     letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+  .h-section-sm {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.5rem);
+    line-height: 1.12;
+    letter-spacing: -0.015em;
     text-wrap: balance;
   }
   .lead {
@@ -182,7 +193,8 @@ html {
     max-width: 40rem;
     margin-left: auto;
     margin-right: auto;
-    text-wrap: pretty;
+    /* Centered 2–3 line intros read best with equal line lengths (no lonely last word). */
+    text-wrap: balance;
   }
   @media (min-width: 768px) { .lead { font-size: 1.1875rem; line-height: 1.55; } }
   .lead-on-dark { color: hsl(var(--primary-foreground) / 0.72); }
