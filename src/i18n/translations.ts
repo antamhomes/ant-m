@@ -372,7 +372,7 @@ const translations = {
     hero_subtitle: "ANTAM HOMES · QUẢN LÝ CĂN HỘ CHO THUÊ NGẮN HẠN",
     hero_title1: "Thu nhập tốt hơn. ",
     hero_title2: "Chủ nhà an tâm hơn.",
-    hero_desc: "Antam quản lý cho thuê ngắn hạn tại Praha, để chủ nhà thu nhiều hơn mà đỡ phải lo.",
+    hero_desc: "Quản lý cho thuê ngắn hạn tại Praha. Tối ưu lợi nhuận, trọn vẹn an tâm.",
     hero_extra: "Không ràng buộc · báo trước 4 tháng · nói tiếng Việt",
     hero_cta: "Tính thử thu nhập",
     hero_cta2: "Nói chuyện với Antam",
@@ -426,7 +426,7 @@ const translations = {
     svc2_title: "Ảnh và tin đăng",
     svc2_desc: "Ảnh sáng sủa, tin đăng nổi giữa hàng trăm căn khác. Khách quyết định theo ảnh.",
     svc3_title: "Đặt giá",
-    svc3_desc: "Giá đặt theo mùa và địa điểm, chỉnh mỗi ngày. Không để một giá cả năm.",
+    svc3_desc: "Giá đặt theo mùa và địa điểm, điều chỉnh mỗi ngày. Không để một giá cả năm.",
     svc4_title: "Khách và liên lạc",
     svc4_desc: "Trả lời nhanh, hướng dẫn rõ ràng, phục vụ chu đáo suốt thời gian khách ở. Có chuyện là được xử lý ngay.",
     svc5_title: "Dọn dẹp, kiểm tra, sửa chữa",
@@ -445,13 +445,13 @@ const translations = {
     comp1_short: "Khách đi là Antam kiểm tra, hỏng nhỏ được sửa ngay.",
     comp2_title: "Tiền thu về",
     comp2_long: "Tiền thuê cố định, mùa đông khách cũng chỉ vậy.",
-    comp2_short: "Giá được chỉnh theo mùa, theo khách. Đông khách thì giá lên.",
+    comp2_short: "Giá điều chỉnh theo mùa, lên theo tỷ lệ lấp phòng.",
     comp3_title: "Linh hoạt",
     comp3_long: "Ký một hợp đồng là kẹt mấy năm.",
     comp3_short: "Muốn về ở, chỉ cần báo trước là được.",
     comp4_title: "Tiền bạc rõ ràng",
     comp4_long: "Người thuê chậm tiền, chủ nhà phải tự đi đòi.",
-    comp4_short: "Khách trả qua Airbnb, Booking. Tháng nào Antam cũng gửi bảng kê.",
+    comp4_short: "Khách trả qua mọi nền tảng trước khi bước vào nhà. Tháng nào Antam cũng gửi bảng kê.",
     longTerm_label: "Cho thuê dài hạn",
     shortTerm_label: "Với Antam Homes",
 
@@ -501,7 +501,7 @@ const translations = {
     price_label: "Phí dịch vụ",
     price_line: "tiền phòng",
     price_figure: "25%",
-    price_sub: "Đã gồm VAT, Antam không thu thêm gì. Không phí cố định, không phí tháng. Phí dọn dẹp khách trả riêng, điện nước chủ nhà lo như trước.",
+    price_sub: "Đã gồm VAT, Antam không thu thêm gì. Không thêm phí cố định, không phí tháng. Phí dọn dẹp khách trả riêng, điện nước chủ nhà lo như trước.",
 
     // Assurance (contact)
     assure1: "Không ràng buộc",
@@ -615,7 +615,7 @@ const translations = {
 
     // Contact
     contact_label: "Liên hệ",
-    contact_title: "Cùng bàn về căn nhà của anh chị.",
+    contact_title: "Hãy cùng bàn về căn nhà.",
     contact_desc: "Gửi cho Antam vài thông tin về nhà. Antam sẽ xem vị trí, tình trạng rồi nói xem hướng nào hợp với nhà mình.",
     contact_name: "Họ tên",
     contact_name_placeholder: "Nguyễn Văn A",
@@ -642,7 +642,7 @@ const translations = {
     contact_message: "Lời nhắn / link nhà",
     contact_message_placeholder: "Link tin đăng, vài tấm ảnh hoặc đôi dòng về nhà…",
     contact_submit: "Gửi thông tin nhà",
-    contact_small: "Antam gọi lại anh chị trong 24 giờ, tiếng Việt hay tiếng Séc tùy anh chị. Không ràng buộc gì.",
+    contact_small: "Antam sẽ gọi lại cho anh chị trong 24 giờ, tiếng Việt hay tiếng Séc tùy anh chị. Không ràng buộc gì.",
     contact_success: "Cảm ơn anh chị. Antam sẽ liên hệ trong 24 giờ.",
 
     // Calculator lead dialog
@@ -660,7 +660,7 @@ const translations = {
     calc_lead_prefill_note: "Dựa trên lựa chọn trong bảng tính:",
 
     // Contact (fallback)
-    contact_fallback_title: "Cùng bàn về căn nhà của anh chị.",
+    contact_fallback_title: "Hãy cùng bàn về căn nhà.",
     contact_fallback_desc: "Viết vài dòng về nhà mình là đủ, còn lại nói chuyện qua điện thoại.",
     contact_fallback_message: "Đôi dòng về nhà (không bắt buộc)",
     contact_fallback_message_placeholder: "Đôi dòng về nhà hoặc link tin đăng…",
@@ -692,9 +692,9 @@ const translations = {
 
     // For you if…
     foryou_label: "Dành cho ai",
-    foryou_title1: "Dành cho anh chị, ",
-    foryou_title2: "nếu…",
-    foryou_desc: "Đây là những lý do chủ nhà hay tìm đến Antam.",
+    foryou_title1: "Thấy nhà mình có thể ",
+    foryou_title2: "thu nhiều hơn?",
+    foryou_desc: "Dù đang cho thuê dài hạn, tự làm Airbnb, hay nhà đang trống. Đây là những lý do chủ nhà hay tìm đến Antam.",
     foryou1_title: "Từng bị người thuê quỵt tiền",
     foryou1_desc: "Nợ tiền nhà, phá nhà, đuổi mãi không chịu đi. Khách ngắn hạn thì trả tiền trước, ở vài đêm rồi đi. Không phải đòi, không phải kiện.",
     foryou2_title: "Không có thời gian lo cho khách",
