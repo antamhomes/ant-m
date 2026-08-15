@@ -26,7 +26,7 @@ const locations: { value: LocationKey; label: string; multiplier: number; occupa
 
 // Base ADR (Kč/noc) podle dispozice; každá dispozice počítá s obvyklou kapacitou bytu
 // (guestsCs/guestsVi je jen popisek — česky se správným skloňováním).
-// Úklid a prádlo hradí host v ceně rezervace a zajišťuje antam homes — do výnosu majitele nevstupují.
+// Úklid a prádlo hradí host v ceně rezervace a zajišťuje Antam Homes — do výnosu majitele nevstupují.
 // Energie (elektřina, voda, plyn) hradí majitel a v odhadu nejsou zahrnuty.
 const sizes: { value: SizeKey; label: string; baseADR: number; guestsCs: string; guestsVi: string }[] = [
   { value: "1kk", label: "1+kk", baseADR: 1665, guestsCs: "2–4 hosté",  guestsVi: "2–4 khách" },
@@ -67,7 +67,7 @@ const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   xmas:   { adr: 1.75, occDelta: 0.12 },
 };
 
-const MGMT_FEE = 0.25; // provize antam homes: 25 % z výnosu z ubytování
+const MGMT_FEE = 0.25; // provize Antam Homes: 25 % z výnosu z ubytování
 const DAYS = 30;
 // Obsazenost = obsazenost lokality + sezónní úprava, omezená na realistické pásmo.
 const MIN_OCCUPANCY = 0.5;

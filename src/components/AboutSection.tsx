@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
 import { reveal, revealDelayed } from "@/lib/motion";
 
@@ -26,9 +27,7 @@ const AboutSection = () => {
             className="aspect-[4/5] rounded-md bg-gradient-dark border border-gold/20 flex items-end p-5 shadow-[0_30px_60px_-30px_hsl(var(--charcoal)/0.45)]"
             aria-hidden="true"
           >
-            <span className="font-display text-primary-foreground/80 text-lg">
-              Antam <span className="text-gold">Homes</span>
-            </span>
+            <Wordmark on="dark" size="sm" className="opacity-90" />
           </motion.div>
 
           <motion.div {...revealDelayed(0.1)}>

@@ -14,7 +14,7 @@ export default defineTool({
   name: "list_portfolio",
   title: "List managed apartments",
   description:
-    "List the apartments antam homes currently prepares, photographs and manages, with their locations.",
+    "List the apartments Antam Homes currently prepares, photographs and manages, with their locations.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: () => ({

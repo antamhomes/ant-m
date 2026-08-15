@@ -12,11 +12,11 @@ const META: Record<PageKey, { cs: { title: string; desc: string }; vi: { title: 
     pathCs: "/",
     pathVi: "/vn",
     cs: {
-      title: "Správa krátkodobých pronájmů a Airbnb v Praze | antam homes",
+      title: "Správa krátkodobých pronájmů a Airbnb v Praze | Antam Homes",
       desc: "Kompletní správa krátkodobého pronájmu v Praze — příprava nabídky, hosté, úklid, dynamické ceny a přehledné reporty pro majitele. Více výnosu, méně starostí.",
     },
     vi: {
-      title: "Quản lý cho thuê ngắn hạn & Airbnb tại Praha | antam homes",
+      title: "Quản lý cho thuê ngắn hạn & Airbnb tại Praha | Antam Homes",
       desc: "Dịch vụ quản lý căn hộ cho thuê ngắn hạn tại Praha — chuẩn bị listing, lo cho khách, dọn dẹp, định giá và báo cáo rõ ràng cho chủ nhà. Thu nhập tốt hơn, ít lo hơn.",
     },
   },
@@ -80,7 +80,7 @@ export const SEO = ({ page }: { page: PageKey }) => {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
     "@id": `${SITE}/#business`,
-    name: "antam homes",
+    name: "Antam Homes",
     legalName: "Donut Point, s.r.o.",
     taxID: "21904022",
     url: canonical,
@@ -115,7 +115,7 @@ export const SEO = ({ page }: { page: PageKey }) => {
       <link rel="alternate" hrefLang="x-default" href={csUrl} />
 
       <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="antam homes" />
+      <meta property="og:site_name" content="Antam Homes" />
       <meta property="og:title" content={current.title} />
       <meta property="og:description" content={current.desc} />
       <meta property="og:url" content={canonical} />

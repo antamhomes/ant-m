@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Wordmark from "@/components/Wordmark";
 import { t, type TranslationKey } from "@/i18n/translations";
 import { useSplashDone } from "@/hooks/use-splash-done";
 
@@ -97,11 +98,10 @@ const Navbar = () => {
         <a
           href="#"
           onClick={() => setMenuOpen(false)}
-          className="flex items-baseline gap-1.5 font-display text-xl md:text-2xl font-semibold tracking-tight"
+          className="flex items-center"
           aria-label="Antam Homes"
         >
-          <span className={solid ? "text-foreground" : "text-primary-foreground"}>Antam</span>
-          <span className="text-gold">Homes</span>
+          <Wordmark on={solid ? "light" : "dark"} size="md" />
         </a>
 
         {/* Desktop */}

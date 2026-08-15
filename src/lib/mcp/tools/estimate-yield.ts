@@ -14,7 +14,7 @@ const locations = {
   praha10: { label: "Praha 10", multiplier: 0.8, occupancy: 0.73 },
 } as const;
 
-// Cleaning/laundry is paid by the guest and handled by antam homes; utilities (energy) are paid by the owner.
+// Cleaning/laundry is paid by the guest and handled by Antam Homes; utilities (energy) are paid by the owner.
 // Each layout is priced for its usual guest capacity (shown as `guests` in the result).
 const sizes = {
   "1kk": { label: "1+kk", baseADR: 1665, guests: "2–4" },
@@ -60,7 +60,7 @@ export default defineTool({
   name: "estimate_rental_yield",
   title: "Estimate short-term rental yield",
   description:
-    "Estimate the monthly net income an apartment owner in Prague could earn with antam homes short-term rental management, and compare it to long-term rent. Same model as the calculator on the website.",
+    "Estimate the monthly net income an apartment owner in Prague could earn with Antam Homes short-term rental management, and compare it to long-term rent. Same model as the calculator on the website.",
   inputSchema: {
     location: z
       .enum(["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9", "praha10"])
@@ -113,7 +113,7 @@ export default defineTool({
       netYearlyAverage: yearly.net * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round((r.net / longTermRent) * 10) / 10,
-      note: "Indicative estimate based on Prague market benchmarks; amounts exclude VAT. Cleaning and laundry are paid by guests as part of each booking and handled by antam homes, so they do not reduce the owner's income. Utilities (electricity, water, gas) are paid by the owner and are not included.",
+      note: "Indicative estimate based on Prague market benchmarks; amounts exclude VAT. Cleaning and laundry are paid by guests as part of each booking and handled by Antam Homes, so they do not reduce the owner's income. Utilities (electricity, water, gas) are paid by the owner and are not included.",
     };
 
     return {

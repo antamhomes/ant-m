@@ -1,6 +1,7 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
 
 const Footer = () => {
@@ -13,8 +14,8 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-8 pb-10 border-b border-primary-foreground/10">
           {/* Brand */}
           <div className="md:col-span-5">
-            <p className="font-display text-2xl md:text-[1.75rem] font-semibold text-primary-foreground tracking-tight">
-              Antam <span className="text-gold">Homes</span>
+            <p>
+              <Wordmark on="dark" size="lg" />
             </p>
             <p className="font-body text-sm text-primary-foreground/55 mt-3 max-w-sm leading-relaxed">
               {t(lang, "footer_desc")}

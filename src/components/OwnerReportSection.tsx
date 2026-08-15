@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion
 import { useRef } from "react";
 import { FileBarChart, ChevronRight, CalendarDays, TrendingUp, Wallet, Receipt, ClipboardList, BedDouble } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
 import { reveal, revealDelayed } from "@/lib/motion";
 
@@ -47,9 +48,7 @@ const OwnerReportSection = () => {
                   {t(lang, "report_period")}
                 </span>
               </div>
-              <span className="font-body text-xs text-muted-foreground tracking-wider lowercase">
-                antam homes
-              </span>
+              <Wordmark on="light" size="sm" className="opacity-80" />
             </div>
 
             <ul className="divide-y divide-border">

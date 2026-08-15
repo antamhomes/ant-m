@@ -12,7 +12,7 @@ const rows = [
 ] as const;
 
 /**
- * Long-term vs. antam homes as a real side-by-side comparison. The antam
+ * Long-term vs. Antam Homes as a real side-by-side comparison. The antam
  * column is tinted so the eye lands on it first; on mobile the two columns
  * stack inside each row so nothing is hidden behind an accordion.
  */

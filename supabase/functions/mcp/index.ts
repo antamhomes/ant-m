@@ -57,7 +57,7 @@ var DAYS = 30;
 var estimate_yield_default = defineTool({
   name: "estimate_rental_yield",
   title: "Estimate short-term rental yield",
-  description: "Estimate the monthly net income an apartment owner in Prague could earn with antam homes short-term rental management, and compare it to long-term rent. Same model as the calculator on the website.",
+  description: "Estimate the monthly net income an apartment owner in Prague could earn with Antam Homes short-term rental management, and compare it to long-term rent. Same model as the calculator on the website.",
   inputSchema: {
     location: z.enum(["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9", "praha10"]).describe("Prague district of the apartment."),
     size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout size (each is priced for its usual guest capacity: 1+kk 2\u20134, 2+kk 6\u20138, 3+kk 8\u201310, 4+kk 10\u201312 guests)."),
@@ -98,7 +98,7 @@ var estimate_yield_default = defineTool({
       netYearlyAverage: yearly.net * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round(r.net / longTermRent * 10) / 10,
-      note: "Indicative estimate based on Prague market benchmarks; amounts exclude VAT. Cleaning and laundry are paid by guests as part of each booking and handled by antam homes, so they do not reduce the owner's income. Utilities (electricity, water, gas) are paid by the owner and are not included."
+      note: "Indicative estimate based on Prague market benchmarks; amounts exclude VAT. Cleaning and laundry are paid by guests as part of each booking and handled by Antam Homes, so they do not reduce the owner's income. Utilities (electricity, water, gas) are paid by the owner and are not included."
     };
     return {
       content: [
@@ -126,7 +126,7 @@ var apartments = [
 var list_portfolio_default = defineTool2({
   name: "list_portfolio",
   title: "List managed apartments",
-  description: "List the apartments antam homes currently prepares, photographs and manages, with their locations.",
+  description: "List the apartments Antam Homes currently prepares, photographs and manages, with their locations.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: () => ({
@@ -160,14 +160,14 @@ var faq = [
   { question: "M\u016F\u017Eu byt n\u011Bkdy vyu\u017E\xEDt pro sebe?", answer: "Ano. Vybran\xE9 term\xEDny lze v kalend\xE1\u0159i dop\u0159edu zablokovat." },
   { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc dostanete p\u0159ehled: kolik noc\xED bylo obsazeno, jak\xFD byl v\xFDnos, kolik \u010Dinila na\u0161e provize 25 % a co jsme v byt\u011B \u0159e\u0161ili. V\u0161e na jednu stranu, bez slo\u017Eit\xFDch tabulek." },
   { question: "Kolik spr\xE1va stoj\xED?", answer: "Provize je 25 % z v\xFDnosu z ubytov\xE1n\xED a je kone\u010Dn\xE1 \u2014 bez fixn\xEDch ani m\u011Bs\xED\u010Dn\xEDch poplatk\u016F. Pokr\xFDv\xE1 i internet, hygienick\xE9 pot\u0159eby pro hosty a \u010Distic\xED prost\u0159edky. Drobn\xE9 opravy do 5 000 K\u010D vy\u0159\xEDd\xEDme sami a n\xE1klady strhneme z v\xFDnosu; v\u011Bt\u0161\xED opravy nejd\u0159\xEDv nahl\xE1s\xEDme majiteli. \u010C\xE1stky uv\xE1d\xEDme bez DPH." },
-  { question: "Kdo plat\xED \xFAklid a energie?", answer: "\xDAklid a pran\xED pr\xE1dla hrad\xED host v cen\u011B rezervace a zaji\u0161\u0165uje je antam homes \u2014 v\xFDnos majitele nesni\u017Euj\xED. Energie (elekt\u0159ina, voda, plyn) hrad\xED majitel." },
+  { question: "Kdo plat\xED \xFAklid a energie?", answer: "\xDAklid a pran\xED pr\xE1dla hrad\xED host v cen\u011B rezervace a zaji\u0161\u0165uje je Antam Homes \u2014 v\xFDnos majitele nesni\u017Euj\xED. Energie (elekt\u0159ina, voda, plyn) hrad\xED majitel." },
   { question: "Jak dlouho spolupr\xE1ce trv\xE1 a jak ji ukon\u010D\xEDm?", answer: "Smlouva je na dobu neur\u010Ditou s v\xFDpov\u011Bdn\xED lh\u016Ftou 4 m\u011Bs\xEDce. Potvrzen\xE9 rezervace se b\u011Bhem v\xFDpov\u011Bdn\xED lh\u016Fty je\u0161t\u011B dokon\u010D\xED." },
   { question: "Kdy a jak dostanu vy\xFA\u010Dtov\xE1n\xED?", answer: "M\u011Bs\xED\u010Dn\u011B zp\u011Btn\u011B: p\u0159ehled rezervac\xED a v\xFDnos\u016F z platforem (Airbnb, Booking.com) spolu s fakturou na provizi." }
 ];
 var get_services_default = defineTool3({
   name: "get_services_and_faq",
   title: "Get services and FAQ",
-  description: "Get what antam homes does for apartment owners (full short-term rental management) plus the frequently asked questions and answers from the website.",
+  description: "Get what Antam Homes does for apartment owners (full short-term rental management) plus the frequently asked questions and answers from the website.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: () => ({
@@ -193,7 +193,7 @@ import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var get_contact_default = defineTool4({
   name: "get_contact_info",
   title: "Get contact information",
-  description: "Get antam homes contact details and how an apartment owner can start a no-obligation conversation about their apartment.",
+  description: "Get Antam Homes contact details and how an apartment owner can start a no-obligation conversation about their apartment.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: () => {
@@ -201,7 +201,7 @@ var get_contact_default = defineTool4({
       company: "Donut Point, s.r.o.",
       companyId: "21904022",
       registeredSeat: "P\u0159\xED\u010Dn\xE1 1892/4, Nov\xE9 M\u011Bsto, 110 00 Praha 1",
-      brand: "antam homes",
+      brand: "Antam Homes",
       email: "antamhomes@gmail.com",
       phone: "727 952 459",
       officePhone: "607 338 126",
@@ -214,7 +214,7 @@ var get_contact_default = defineTool4({
       content: [
         {
           type: "text",
-          text: `antam homes (Donut Point, s.r.o., I\u010CO 21904022)
+          text: `Antam Homes (Donut Point, s.r.o., I\u010CO 21904022)
 Email: ${info.email}
 Telefon: ${info.phone}
 Kancel\xE1\u0159: ${info.officePhone}
@@ -232,7 +232,7 @@ var mcp_default = defineMcp({
   name: "antamhome",
   title: "Antamhome",
   version: "0.1.0",
-  instructions: "Tools for antam homes, a short-term rental (Airbnb/Booking) management company for apartment owners in Prague. Use `estimate_rental_yield` to estimate an owner's monthly net income for a given Prague district and apartment size, `list_portfolio` for the apartments under management, `get_services_and_faq` for what the company does, and `get_contact_info` for contact details. All data is public marketing information.",
+  instructions: "Tools for Antam Homes, a short-term rental (Airbnb/Booking) management company for apartment owners in Prague. Use `estimate_rental_yield` to estimate an owner's monthly net income for a given Prague district and apartment size, `list_portfolio` for the apartments under management, `get_services_and_faq` for what the company does, and `get_contact_info` for contact details. All data is public marketing information.",
   tools: [estimate_yield_default, list_portfolio_default, get_services_default, get_contact_default]
 });
 

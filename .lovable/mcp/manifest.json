@@ -15,7 +15,7 @@
       {
         "name": "estimate_rental_yield",
         "title": "Estimate short-term rental yield",
-        "description": "Estimate the monthly net income an apartment owner in Prague could earn with antam homes short-term rental management, and compare it to long-term rent. Same model as the calculator on the website.",
+        "description": "Estimate the monthly net income an apartment owner in Prague could earn with Antam Homes short-term rental management, and compare it to long-term rent. Same model as the calculator on the website.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -88,7 +88,7 @@
       {
         "name": "list_portfolio",
         "title": "List managed apartments",
-        "description": "List the apartments antam homes currently prepares, photographs and manages, with their locations.",
+        "description": "List the apartments Antam Homes currently prepares, photographs and manages, with their locations.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -104,7 +104,7 @@
       {
         "name": "get_services_and_faq",
         "title": "Get services and FAQ",
-        "description": "Get what antam homes does for apartment owners (full short-term rental management) plus the frequently asked questions and answers from the website.",
+        "description": "Get what Antam Homes does for apartment owners (full short-term rental management) plus the frequently asked questions and answers from the website.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -120,7 +120,7 @@
       {
         "name": "get_contact_info",
         "title": "Get contact information",
-        "description": "Get antam homes contact details and how an apartment owner can start a no-obligation conversation about their apartment.",
+        "description": "Get Antam Homes contact details and how an apartment owner can start a no-obligation conversation about their apartment.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,

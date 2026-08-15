@@ -14,7 +14,7 @@ const translations = {
     footer_brochure: "Vytvořit přehled",
 
     // Hero
-    hero_subtitle: "antam homes — péče o byt a krátkodobý pronájem",
+    hero_subtitle: "Antam Homes — péče o byt a krátkodobý pronájem",
     hero_title1: "Váš byt. Naše péče. ",
     hero_title2: "Váš zisk.",
     hero_desc: "Správa krátkodobých pronájmů v Praze pro majitele, kteří chtějí víc výnosu a méně starostí.",
@@ -98,7 +98,7 @@ const translations = {
     comp4_long: "Platby a případné zpoždění řešíte přímo s nájemníkem.",
     comp4_short: "Rezervace, platby a výnosy jsou přehledně dohledatelné přes platformy a reporty.",
     longTerm_label: "Dlouhodobý pronájem",
-    shortTerm_label: "S antam homes",
+    shortTerm_label: "S Antam Homes",
 
     // Potential CTA
     potential_title1: "Jaký potenciál může mít ",
@@ -170,7 +170,7 @@ const translations = {
     calc_extra_vybaveni: "Nadstandardní vybavení",
     calc_extra_wellness: "Vlastní wellness / sauna",
     calc_result: "Odhadovaný výnos",
-    calc_monthly: "Měsíční příjem s antam homes",
+    calc_monthly: "Měsíční příjem s Antam Homes",
     calc_yearly: "Roční příjem",
     calc_classic: "Klasický dlouhodobý pronájem",
     calc_compare: "Orientačně až",
@@ -202,8 +202,8 @@ const translations = {
     calc_month_suffix: "/ měsíc",
     calc_approx_prefix: "přibližně",
     calc_trust_line: "Bez závazku · nezávazná konzultace",
-    calc_disclaimer: "Orientační kalkulace, nikoli nabídka ani garance výnosu. Vychází z tržních dat pro Prahu (PriceLabs, Airbtics, 2025/26) a typického nastavení správy antam homes; dlouhodobý nájem podle cenové mapy nájemného Bohemian Estates (11/2025). Skutečný výnos kolísá podle stavu bytu, sezóny, recenzí, regulace krátkodobých pronájmů a dalších faktorů, které nemůžeme předem zaručit. Konkrétní podmínky vždy upravuje smlouva o správě.",
-    calc_excluded_note: "Částky jsou uvedeny bez DPH. Úklid a prádlo hradí host v ceně rezervace a zajišťuje je antam homes — výnos majitele nesnižují. Energie (elektřina, voda, plyn) nejsou v odhadu zahrnuty a hradí je majitel.",
+    calc_disclaimer: "Orientační kalkulace, nikoli nabídka ani garance výnosu. Vychází z tržních dat pro Prahu (PriceLabs, Airbtics, 2025/26) a typického nastavení správy Antam Homes; dlouhodobý nájem podle cenové mapy nájemného Bohemian Estates (11/2025). Skutečný výnos kolísá podle stavu bytu, sezóny, recenzí, regulace krátkodobých pronájmů a dalších faktorů, které nemůžeme předem zaručit. Konkrétní podmínky vždy upravuje smlouva o správě.",
+    calc_excluded_note: "Částky jsou uvedeny bez DPH. Úklid a prádlo hradí host v ceně rezervace a zajišťuje je Antam Homes — výnos majitele nesnižují. Energie (elektřina, voda, plyn) nejsou v odhadu zahrnuty a hradí je majitel.",
 
     // Owner report
     report_label: "Přehled pro majitele",
@@ -213,7 +213,7 @@ const translations = {
     report_row_reservations: "Rezervace",
     report_row_occupancy: "Obsazenost",
     report_row_revenue: "Výnos",
-    report_row_costs: "Provize antam homes (25 %)",
+    report_row_costs: "Provize Antam Homes (25 %)",
     report_row_net: "Vyplaceno majiteli",
     report_row_notes: "Poznámky k bytu",
     report_period: "Měsíční přehled pro majitele",
@@ -296,7 +296,7 @@ const translations = {
 
     // Footer
     footer_desc: "Péče o byt a krátkodobý pronájem.",
-    footer_company: "antam homes",
+    footer_company: "Antam Homes",
     footer_legal: "Provozovatel: Donut Point, s.r.o., IČO 21904022, se sídlem Příčná 1892/4, Nové Město, 110 00 Praha 1, zapsaná v obchodním rejstříku vedeném Městským soudem v Praze, sp. zn. C 407424.",
     footer_ico: "IČO: 21904022",
     footer_lang_cs: "Česky",
@@ -317,7 +317,7 @@ const translations = {
     mobile_cta: "Probrat byt",
 
     // For you if…
-    foryou_label: "Pro koho je antam homes",
+    foryou_label: "Pro koho je Antam Homes",
     foryou_title1: "Tohle je pro vás, ",
     foryou_title2: "pokud…",
     foryou_desc: "Většina majitelů, se kterými pracujeme, řeší stejné věci. Možná některou z nich poznáváte.",
@@ -376,7 +376,7 @@ const translations = {
     benefit3_title: "Cho thuê an toàn hơn",
     benefit3_desc: "Khách đặt qua nền tảng (Airbnb, Booking.com), có quy định rõ ràng và căn hộ được kiểm tra sau mỗi lượt khách.",
     benefit4_title: "Đỡ lo hơn",
-    benefit4_desc: "Khách, dọn dẹp và các việc vận hành hằng ngày — antam homes lo thay chủ nhà.",
+    benefit4_desc: "Khách, dọn dẹp và các việc vận hành hằng ngày — Antam Homes lo thay chủ nhà.",
     benefit5_title: "Giá hợp lý theo thời điểm",
     benefit5_desc: "Giá được điều chỉnh theo mùa, lượng khách thuê và khu vực xung quanh.",
     benefit6_title: "Trải nghiệm khách tốt hơn",
@@ -395,8 +395,8 @@ const translations = {
     partners_label: "Chúng tôi sử dụng các công cụ và nền tảng hàng đầu trong ngành",
 
     // Services
-    services_label: "antam homes lo những việc gì",
-    services_title: "antam homes lo những việc gì",
+    services_label: "Antam Homes lo những việc gì",
+    services_title: "Antam Homes lo những việc gì",
     services_desc: "Từ đăng tin, đón khách, dọn dẹp, định giá đến báo cáo cho chủ nhà.",
     svc1_title: "Đăng tin & trình bày chuyên nghiệp",
     svc1_desc: "Ảnh, mô tả, quy định và cách trình bày căn hộ trên Airbnb, Booking.com để thu hút khách.",
@@ -430,12 +430,12 @@ const translations = {
     comp4_long: "Chủ nhà thường tự đòi tiền thuê và xử lý khi khách trả chậm.",
     comp4_short: "Việc đặt phòng, trả tiền và thu nhập đều được ghi lại rõ ràng và có báo cáo.",
     longTerm_label: "Cho thuê dài hạn",
-    shortTerm_label: "Với antam homes",
+    shortTerm_label: "Với Antam Homes",
 
     // Potential
     potential_title1: "Căn hộ của quý vị có thể có ",
     potential_title2: "tiềm năng nào?",
-    potential_desc: "Gửi cho antam homes vài thông tin cơ bản. Chúng tôi sẽ xem vị trí, tình trạng căn hộ và trao đổi hướng phù hợp.",
+    potential_desc: "Gửi cho Antam Homes vài thông tin cơ bản. Chúng tôi sẽ xem vị trí, tình trạng căn hộ và trao đổi hướng phù hợp.",
     potential_cta: "Trao đổi về căn hộ",
     potential_note: "Không ràng buộc. Chỉ cần thông tin cơ bản về căn hộ.",
     potential_bullet1: "Báo cáo hàng tháng minh bạch",
@@ -464,7 +464,7 @@ const translations = {
     step3_title: "Đề xuất cách làm",
     step3_desc: "Chúng tôi nói rõ những gì nên chuẩn bị, điều chỉnh hoặc thiết lập.",
     step4_title: "Bắt đầu vận hành",
-    step4_desc: "antam homes lo khách, dọn dẹp, giá thuê, tỷ lệ lấp đầy và mọi việc vận hành.",
+    step4_desc: "Antam Homes lo khách, dọn dẹp, giá thuê, tỷ lệ lấp đầy và mọi việc vận hành.",
     process_cta: "Bắt đầu, không ràng buộc",
 
     // About — Ai đứng sau (REVIEW: thay bằng lời của Vương + ảnh)
@@ -502,7 +502,7 @@ const translations = {
     calc_extra_vybaveni: "Trang bị cao cấp",
     calc_extra_wellness: "Wellness / sauna riêng",
     calc_result: "Thu nhập ước tính",
-    calc_monthly: "Doanh thu hàng tháng với antam homes",
+    calc_monthly: "Doanh thu hàng tháng với Antam Homes",
     calc_yearly: "Doanh thu hàng năm",
     calc_classic: "Cho thuê dài hạn truyền thống",
     calc_compare: "Tham khảo lên đến",
@@ -534,8 +534,8 @@ const translations = {
     calc_month_suffix: "/ tháng",
     calc_approx_prefix: "khoảng",
     calc_trust_line: "Không ràng buộc · tư vấn miễn phí",
-    calc_disclaimer: "Chỉ là ước tính tham khảo, không phải báo giá hay cam kết lợi nhuận. Dựa trên dữ liệu thị trường Praha (PriceLabs, Airbtics, 2025/26) và mô hình quản lý của antam homes; giá thuê dài hạn theo bản đồ giá thuê Bohemian Estates (11/2025). Kết quả thực tế thay đổi theo tình trạng căn hộ, mùa, đánh giá, quy định cho thuê ngắn hạn và nhiều yếu tố khác mà chúng tôi không thể bảo đảm trước. Điều kiện cụ thể luôn được quy định trong hợp đồng quản lý.",
-    calc_excluded_note: "Số tiền chưa bao gồm VAT. Phí dọn dẹp và giặt giũ do khách trả trong giá đặt phòng và do antam homes đảm nhận — không ảnh hưởng đến thu nhập của chủ nhà. Điện, nước, gas do chủ nhà chi trả và không tính vào ước tính.",
+    calc_disclaimer: "Chỉ là ước tính tham khảo, không phải báo giá hay cam kết lợi nhuận. Dựa trên dữ liệu thị trường Praha (PriceLabs, Airbtics, 2025/26) và mô hình quản lý của Antam Homes; giá thuê dài hạn theo bản đồ giá thuê Bohemian Estates (11/2025). Kết quả thực tế thay đổi theo tình trạng căn hộ, mùa, đánh giá, quy định cho thuê ngắn hạn và nhiều yếu tố khác mà chúng tôi không thể bảo đảm trước. Điều kiện cụ thể luôn được quy định trong hợp đồng quản lý.",
+    calc_excluded_note: "Số tiền chưa bao gồm VAT. Phí dọn dẹp và giặt giũ do khách trả trong giá đặt phòng và do Antam Homes đảm nhận — không ảnh hưởng đến thu nhập của chủ nhà. Điện, nước, gas do chủ nhà chi trả và không tính vào ước tính.",
 
     // Owner report
     report_label: "Báo cáo cho chủ nhà",
@@ -545,7 +545,7 @@ const translations = {
     report_row_reservations: "Đặt phòng",
     report_row_occupancy: "Tỷ lệ lấp đầy",
     report_row_revenue: "Doanh thu",
-    report_row_costs: "Phí dịch vụ antam homes (25%)",
+    report_row_costs: "Phí dịch vụ Antam Homes (25%)",
     report_row_net: "Chủ nhà thực nhận",
     report_row_notes: "Ghi chú về căn hộ",
     report_period: "Báo cáo tháng cho chủ nhà",
@@ -555,8 +555,8 @@ const translations = {
     faq_label: "Câu hỏi thường gặp",
     faq_title: "Câu hỏi thường gặp",
     faq1_q: "Căn hộ có cần chuẩn bị sẵn không?",
-    faq1_a: "Không nhất thiết. antam homes có thể xem căn hộ trước khi bắt đầu và tư vấn những gì nên chuẩn bị.",
-    faq2_q: "antam homes có đăng trên cả Airbnb và Booking.com không?",
+    faq1_a: "Không nhất thiết. Antam Homes có thể xem căn hộ trước khi bắt đầu và tư vấn những gì nên chuẩn bị.",
+    faq2_q: "Antam Homes có đăng trên cả Airbnb và Booking.com không?",
     faq2_a: "Có. Nền tảng được chọn theo căn hộ, vị trí và nhóm khách phù hợp.",
     faq3_q: "Chủ nhà có thể sử dụng căn hộ khi cần không?",
     faq3_a: "Có. Một số ngày có thể được chặn trước trong lịch để chủ nhà, gia đình hoặc người quen sử dụng.",
@@ -565,7 +565,7 @@ const translations = {
     faq5_q: "Phí dịch vụ là bao nhiêu?",
     faq5_a: "Phí dịch vụ là 25% doanh thu từ lưu trú và là mức cuối cùng — không có phí cố định hay phí hàng tháng nào khác. Phí này đã bao gồm internet, đồ dùng vệ sinh cho khách và hóa chất dọn dẹp. Sửa chữa nhỏ đến 5 000 Kč chúng tôi tự xử lý và trừ vào doanh thu; sửa chữa lớn hơn sẽ báo trước và chỉ làm khi chủ nhà đồng ý. Số tiền chưa bao gồm VAT.",
     faq6_q: "Ai trả tiền dọn dẹp và điện nước?",
-    faq6_a: "Dọn dẹp và giặt giũ do khách trả trong giá đặt phòng và do antam homes đảm nhận — không làm giảm thu nhập của chủ nhà. Điện, nước, gas do chủ nhà chi trả như trước.",
+    faq6_a: "Dọn dẹp và giặt giũ do khách trả trong giá đặt phòng và do Antam Homes đảm nhận — không làm giảm thu nhập của chủ nhà. Điện, nước, gas do chủ nhà chi trả như trước.",
     faq7_q: "Hợp tác kéo dài bao lâu và kết thúc thế nào?",
     faq7_a: "Hợp đồng không thời hạn, thời gian báo trước khi chấm dứt là 4 tháng. Khách thường đặt phòng trước rất lâu, nên trong thời gian báo trước, các đặt phòng đã xác nhận vẫn được thực hiện.",
     faq8_q: "Khi nào và bằng cách nào chủ nhà nhận quyết toán?",
@@ -574,7 +574,7 @@ const translations = {
     // Contact
     contact_label: "Liên hệ",
     contact_title: "Trao đổi về căn hộ của quý vị — không ràng buộc.",
-    contact_desc: "Gửi cho antam homes vài thông tin cơ bản. Chúng tôi sẽ xem vị trí, tình trạng căn hộ và trao đổi hướng phù hợp.",
+    contact_desc: "Gửi cho Antam Homes vài thông tin cơ bản. Chúng tôi sẽ xem vị trí, tình trạng căn hộ và trao đổi hướng phù hợp.",
     contact_name: "Họ tên",
     contact_name_placeholder: "Nguyễn Văn A",
     contact_email: "E-mail",
@@ -600,7 +600,7 @@ const translations = {
     contact_message: "Lời nhắn / link căn hộ",
     contact_message_placeholder: "Link tin đăng, hình ảnh hoặc vài dòng về căn hộ…",
     contact_submit: "Gửi thông tin",
-    contact_small: "antam homes sẽ liên hệ lại để trao đổi, hoàn toàn không ràng buộc.",
+    contact_small: "Antam Homes sẽ liên hệ lại để trao đổi, hoàn toàn không ràng buộc.",
     contact_success: "Cảm ơn quý vị! Chúng tôi sẽ liên hệ sớm.",
 
     // Calculator lead dialog
@@ -628,7 +628,7 @@ const translations = {
 
     // Footer
     footer_desc: "Chăm sóc căn hộ và cho thuê ngắn hạn.",
-    footer_company: "antam homes",
+    footer_company: "Antam Homes",
     footer_legal: "Đơn vị vận hành: Donut Point, s.r.o., IČO 21904022, trụ sở Příčná 1892/4, Nové Město, 110 00 Praha 1, đăng ký tại Tòa án thành phố Praha, hồ sơ C 407424.",
     footer_ico: "IČO: 21904022",
     footer_lang_cs: "Česky",

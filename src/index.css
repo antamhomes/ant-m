@@ -235,6 +235,9 @@ html {
   }
   .btn-secondary-inverse:hover { background: rgba(247, 241, 232, 0.1); border-color: rgba(247, 241, 232, 0.65); }
 
+  /* Wordmark gold on dark surfaces — matches the splash and the business card. */
+  .text-gold-on-dark { color: #C2A46D; }
+
   .text-gradient-gold,
   .text-gradient-gold-on-dark {
     -webkit-background-clip: text;

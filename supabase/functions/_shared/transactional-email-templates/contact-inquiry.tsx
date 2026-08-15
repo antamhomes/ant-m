@@ -13,7 +13,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'antam homes'
+const SITE_NAME = 'Antam Homes'
 
 interface ContactInquiryProps {
   name?: string
@@ -40,7 +40,7 @@ const ContactInquiryEmail = ({
 }: ContactInquiryProps) => (
   <Html lang="cs" dir="ltr">
     <Head />
-    <Preview>Nová poptávka z webu antam homes</Preview>
+    <Preview>Nová poptávka z webu Antam Homes</Preview>
     <Body style={main}>
       <Container style={container}>
         <Heading style={h1}>Nová poptávka z webu</Heading>

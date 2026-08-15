@@ -81,7 +81,7 @@ export default function Auth() {
           {mode === "signin" ? "Přihlášení" : "Registrace"}
         </h1>
         <p className="text-sm text-muted-foreground mb-8">
-          Přihlaste se, abyste mohli propojit své nástroje s antam homes.
+          Přihlaste se, abyste mohli propojit své nástroje s Antam Homes.
         </p>
 
         <Button variant="outline" className="w-full mb-6" onClick={google} disabled={busy}>
