@@ -4,7 +4,6 @@ import { Menu, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t, type TranslationKey } from "@/i18n/translations";
 import { useSplashDone } from "@/hooks/use-splash-done";
-import logoAsset from "@/assets/antam-logo.png.asset.json";
 
 const NAV_LINKS: { href: string; key: TranslationKey }[] = [
   { href: "#kalkulacka", key: "nav_calculator" },
@@ -97,23 +96,11 @@ const Navbar = () => {
         <a
           href="#"
           onClick={() => setMenuOpen(false)}
-          className="flex items-center gap-2.5 font-display text-lg md:text-xl font-semibold tracking-tight lowercase"
-          aria-label="antam homes"
+          className="flex items-baseline gap-1.5 font-display text-xl md:text-2xl font-semibold tracking-tight"
+          aria-label="Antam Homes"
         >
-          <img
-            src={logoAsset.url}
-            alt=""
-            aria-hidden="true"
-            className={`h-9 w-9 md:h-10 md:w-10 rounded-full object-cover transition-shadow ${
-              solid ? "shadow-sm ring-1 ring-border" : "ring-1 ring-primary-foreground/15"
-            }`}
-            width={80}
-            height={80}
-          />
-          <span className="flex items-baseline gap-1">
-            <span className={solid ? "text-foreground" : "text-primary-foreground"}>antam</span>
-            <span className="text-gold">homes</span>
-          </span>
+          <span className={solid ? "text-foreground" : "text-primary-foreground"}>Antam</span>
+          <span className="text-gold">Homes</span>
         </a>
 
         {/* Desktop */}

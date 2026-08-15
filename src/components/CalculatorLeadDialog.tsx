@@ -47,6 +47,7 @@ const CalculatorLeadDialog = ({ open, onOpenChange, locationLabel, sizeLabel }: 
             phone: form.phone,
             address: locationLabel,
             size: sizeLabel,
+            language: lang === "cs" ? "čeština" : "Tiếng Việt",
             message:
               lang === "cs"
                 ? `Žádost o přesnější odhad z kalkulačky. Lokalita: ${locationLabel}, dispozice: ${sizeLabel}.`

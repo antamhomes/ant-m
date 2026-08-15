@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,16 +8,77 @@ import { toast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
 import { reveal, revealDelayed } from "@/lib/motion";
 
+const LOCATIONS = [
+  "Praha 1", "Praha 2", "Praha 3", "Praha 4", "Praha 5",
+  "Praha 6", "Praha 7", "Praha 8", "Praha 9", "Praha 10",
+];
+const SIZES = ["1+kk", "2+kk", "3+kk", "4+kk"];
+
+const inputCls =
+  "w-full px-4 py-3 text-base md:text-[15px] bg-background border border-border rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors";
+const labelCls = "block font-body text-sm font-medium text-foreground mb-2";
+
+const emptyForm = {
+  name: "",
+  phone: "",
+  email: "",
+  location: "",
+  size: "",
+  status: "",
+  contactPref: "",
+  message: "",
+  consent: false,
+};
+
+type Option = { value: string; label: string };
+
+const SelectField = ({
+  id, value, onChange, placeholder, options,
+}: { id: string; value: string; onChange: (v: string) => void; placeholder: string; options: Option[] }) => (
+  <div className="relative">
+    <select
+      id={id}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className={`${inputCls} appearance-none pr-10 ${value ? "" : "text-muted-foreground"}`}
+    >
+      <option value="">{placeholder}</option>
+      {options.map((o) => (
+        <option key={o.value} value={o.value}>{o.label}</option>
+      ))}
+    </select>
+    <ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+  </div>
+);
+
 const ContactSection = () => {
   const { lang } = useLanguage();
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-    consent: false,
-  });
+  const [formData, setFormData] = useState(emptyForm);
+  const set = (k: keyof typeof emptyForm, v: string | boolean) => setFormData((f) => ({ ...f, [k]: v }));
+
+  const locationOptions: Option[] = [
+    ...LOCATIONS.map((l) => ({ value: l, label: l })),
+    { value: "other", label: t(lang, "contact_location_other") },
+  ];
+  const sizeOptions: Option[] = [
+    ...SIZES.map((s) => ({ value: s, label: s })),
+    { value: "other", label: t(lang, "contact_size_other") },
+  ];
+  const statusOptions: Option[] = [
+    { value: "long_term", label: t(lang, "contact_status_long") },
+    { value: "short_term", label: t(lang, "contact_status_short") },
+    { value: "empty", label: t(lang, "contact_status_empty") },
+    { value: "buying", label: t(lang, "contact_status_buying") },
+  ];
+  const prefOptions: Option[] = [
+    { value: "phone", label: t(lang, "contact_pref_phone") },
+    { value: "whatsapp", label: "WhatsApp" },
+    { value: "zalo", label: "Zalo" },
+    { value: "email", label: "E-mail" },
+  ];
+  const labelOf = (opts: Option[], v: string) => opts.find((o) => o.value === v)?.label ?? v;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,21 +89,24 @@ const ContactSection = () => {
         body: {
           templateName: "contact-inquiry",
           recipientEmail: "antamhomes@gmail.com",
-          idempotencyKey: `contact-${Date.now()}-${formData.email}`,
+          idempotencyKey: `contact-${Date.now()}-${formData.phone || formData.email}`,
           templateData: {
             name: formData.name,
             email: formData.email,
-            phone: "",
-            address: "",
-            size: "",
+            phone: formData.phone,
+            address: labelOf(locationOptions, formData.location),
+            size: labelOf(sizeOptions, formData.size),
+            status: labelOf(statusOptions, formData.status),
+            contactPref: labelOf(prefOptions, formData.contactPref),
+            language: lang === "cs" ? "čeština" : "Tiếng Việt",
             message: formData.message,
           },
         },
       });
       if (error) throw error;
-      trackEvent("lead_submit", { form: "contact" });
+      trackEvent("lead_submit", { form: "contact", status: formData.status || "n/a" });
       setSuccess(true);
-      setFormData({ name: "", email: "", message: "", consent: false });
+      setFormData(emptyForm);
     } catch (err) {
       console.error("Failed to send inquiry", err);
       toast({
@@ -60,7 +124,7 @@ const ContactSection = () => {
 
   return (
     <section id="kontakt" className="section bg-secondary scroll-mt-16">
-      <div className="container-prose">
+      <div className="container-prose md:max-w-[calc(46rem+3rem)]">
         <motion.div {...reveal} className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "contact_label")}</p>
           <h2 className="h-section text-foreground">{t(lang, "contact_fallback_title")}</h2>
@@ -77,77 +141,110 @@ const ContactSection = () => {
               {t(lang, "contact_success")}
             </p>
           ) : (
-          <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div>
-              <label className="block font-body text-sm font-medium text-foreground mb-2">
-                {t(lang, "contact_name")} <span className="text-gold">*</span>
+            <>
+              {/* Who */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                  <label htmlFor="c-name" className={labelCls}>
+                    {t(lang, "contact_name")} <span className="text-gold">*</span>
+                  </label>
+                  <input
+                    id="c-name" type="text" required autoComplete="name" value={formData.name}
+                    onChange={(e) => set("name", e.target.value)} className={inputCls}
+                    placeholder={t(lang, "contact_name_placeholder") as string}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="c-phone" className={labelCls}>
+                    {t(lang, "contact_phone")} <span className="text-gold">*</span>
+                  </label>
+                  <input
+                    id="c-phone" type="tel" required autoComplete="tel" inputMode="tel" value={formData.phone}
+                    onChange={(e) => set("phone", e.target.value)} className={inputCls}
+                    placeholder={t(lang, "contact_phone_placeholder") as string}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="c-email" className={labelCls}>
+                    {t(lang, "contact_email")}{" "}
+                    <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
+                  </label>
+                  <input
+                    id="c-email" type="email" autoComplete="email" value={formData.email}
+                    onChange={(e) => set("email", e.target.value)} className={inputCls}
+                    placeholder={t(lang, "contact_email_placeholder") as string}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="c-pref" className={labelCls}>{t(lang, "contact_pref")}</label>
+                  <SelectField
+                    id="c-pref" value={formData.contactPref} onChange={(v) => set("contactPref", v)}
+                    placeholder={t(lang, "contact_pref_placeholder") as string} options={prefOptions}
+                  />
+                </div>
+              </div>
+
+              {/* The apartment */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-1">
+                <div>
+                  <label htmlFor="c-loc" className={labelCls}>{t(lang, "contact_address")}</label>
+                  <SelectField
+                    id="c-loc" value={formData.location} onChange={(v) => set("location", v)}
+                    placeholder={t(lang, "contact_address_placeholder") as string} options={locationOptions}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="c-size" className={labelCls}>{t(lang, "contact_size")}</label>
+                  <SelectField
+                    id="c-size" value={formData.size} onChange={(v) => set("size", v)}
+                    placeholder={t(lang, "contact_size_placeholder") as string} options={sizeOptions}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="c-status" className={labelCls}>{t(lang, "contact_status")}</label>
+                  <SelectField
+                    id="c-status" value={formData.status} onChange={(v) => set("status", v)}
+                    placeholder={t(lang, "contact_status_placeholder") as string} options={statusOptions}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="c-msg" className={labelCls}>
+                  {t(lang, "contact_message")}{" "}
+                  <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
+                </label>
+                <textarea
+                  id="c-msg" rows={3} value={formData.message}
+                  onChange={(e) => set("message", e.target.value)} className={`${inputCls} resize-none`}
+                  placeholder={t(lang, "contact_message_placeholder") as string}
+                />
+              </div>
+
+              <label className="flex items-start gap-2.5 cursor-pointer font-body text-sm text-foreground">
+                <input
+                  type="checkbox" required checked={formData.consent}
+                  onChange={(e) => set("consent", e.target.checked)}
+                  className="mt-0.5 w-4 h-4 accent-primary cursor-pointer shrink-0"
+                />
+                <span className="leading-relaxed">
+                  {t(lang, "contact_consent_prefix")}
+                  <a
+                    href="/gdpr-informacni-memorandum.pdf" target="_blank" rel="noopener noreferrer"
+                    className="underline text-gold-deep hover:text-gold transition-colors"
+                  >
+                    {t(lang, "contact_consent_link")}
+                  </a>
+                  {t(lang, "contact_consent_suffix")} <span className="text-gold">*</span>
+                </span>
               </label>
-              <input
-                type="text"
-                required
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 text-base md:text-[15px] bg-background border border-border rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors"
-                placeholder={t(lang, "contact_name_placeholder") as string}
-              />
-            </div>
-            <div>
-              <label className="block font-body text-sm font-medium text-foreground mb-2">
-                {t(lang, "contact_email")} <span className="text-gold">*</span>
-              </label>
-              <input
-                type="email"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 text-base md:text-[15px] bg-background border border-border rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors"
-                placeholder={t(lang, "contact_email_placeholder") as string}
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block font-body text-sm font-medium text-foreground mb-2">
-              {t(lang, "contact_fallback_message")}
-            </label>
-            <textarea
-              rows={3}
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              className="w-full px-4 py-3 text-base md:text-[15px] bg-background border border-border rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors resize-none"
-              placeholder={t(lang, "contact_fallback_message_placeholder") as string}
-            />
-          </div>
-          <label className="flex items-start gap-2.5 cursor-pointer font-body text-sm text-foreground">
-            <input
-              type="checkbox"
-              required
-              checked={formData.consent}
-              onChange={(e) => setFormData({ ...formData, consent: e.target.checked })}
-              className="mt-0.5 w-4 h-4 accent-primary cursor-pointer shrink-0"
-            />
-            <span className="leading-relaxed">
-              {t(lang, "contact_consent_prefix")}
-              <a
-                href="/gdpr-informacni-memorandum.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline text-gold-deep hover:text-gold transition-colors"
-              >
-                {t(lang, "contact_consent_link")}
-              </a>
-              {t(lang, "contact_consent_suffix")} <span className="text-gold">*</span>
-            </span>
-          </label>
-          <button
-            type="submit"
-            disabled={submitting || !formData.consent}
-            className="btn btn-primary w-full py-4"
-          >
-            {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-            {t(lang, "contact_submit")}
-          </button>
-          </>
+
+              <button type="submit" disabled={submitting || !formData.consent} className="btn btn-primary w-full py-4">
+                {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                {t(lang, "contact_submit")}
+              </button>
+              <p className="font-body text-xs text-muted-foreground text-center">{t(lang, "contact_small")}</p>
+            </>
           )}
         </motion.form>
       </div>

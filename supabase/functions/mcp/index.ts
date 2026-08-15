@@ -21,11 +21,12 @@ var locations = {
   praha10: { label: "Praha 10", multiplier: 0.8, occupancy: 0.73 }
 };
 var sizes = {
-  "1kk": { label: "1+kk", baseADR: 1665 },
-  "2kk": { label: "2+kk", baseADR: 2250 },
-  "3kk": { label: "3+kk", baseADR: 3060 },
-  "4kk": { label: "4+kk", baseADR: 4140 }
+  "1kk": { label: "1+kk", defaultGuests: 2 },
+  "2kk": { label: "2+kk", defaultGuests: 4 },
+  "3kk": { label: "3+kk", defaultGuests: 8 },
+  "4kk": { label: "4+kk", defaultGuests: 10 }
 };
+var guestRates = { 2: 1665, 4: 2250, 6: 2620, 8: 3060, 10: 4140 };
 var extras = {
   balkon: 0.04,
   parking: 0.05,
@@ -61,18 +62,21 @@ var estimate_yield_default = defineTool({
   inputSchema: {
     location: z.enum(["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9", "praha10"]).describe("Prague district of the apartment."),
     size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout size."),
+    guests: z.union([z.literal(2), z.literal(4), z.literal(6), z.literal(8), z.literal(10)]).optional().describe("How many guests the apartment sleeps (10 = 10 or more). Defaults to the usual capacity for the layout: 1+kk\u21922, 2+kk\u21924, 3+kk\u21928, 4+kk\u219210."),
     season: z.enum(["year", "summer", "winter", "xmas"]).optional().describe("Season to price for. Defaults to 'year' (yearly average)."),
     extras: z.array(z.enum(["balkon", "parking", "klima", "vyhled", "vybaveni", "wellness"])).optional().describe("Extra features that raise the nightly rate.")
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: ({ location, size, season, extras: chosen }) => {
+  handler: ({ location, size, guests, season, extras: chosen }) => {
     const loc = locations[location];
     const sz = sizes[size];
     if (!loc || !sz) throw new ToolError("Unknown location or size.");
+    const capacity = guests ?? sz.defaultGuests;
+    const baseADR = guestRates[capacity];
     const extrasPct = (chosen ?? []).reduce((sum, e) => sum + (extras[e] ?? 0), 0);
     const compute = (seasonKey2) => {
       const adj = seasons[seasonKey2];
-      const adr = Math.round(sz.baseADR * loc.multiplier * (1 + extrasPct) * adj.adr);
+      const adr = Math.round(baseADR * loc.multiplier * (1 + extrasPct) * adj.adr);
       const occupancy = Math.max(0.5, Math.min(0.98, loc.occupancy + adj.occDelta));
       const gross = Math.round(adr * occupancy * DAYS);
       const commission = Math.round(gross * MGMT_FEE);
@@ -86,6 +90,7 @@ var estimate_yield_default = defineTool({
       currency: "CZK",
       location: loc.label,
       size: sz.label,
+      guests: capacity === 10 ? "10+" : capacity,
       season: seasonKey,
       averageNightlyRate: r.adr,
       occupancyRate: Math.round(r.occupancy * 100) / 100,
@@ -102,7 +107,7 @@ var estimate_yield_default = defineTool({
       content: [
         {
           type: "text",
-          text: `${loc.label}, ${sz.label}: net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK \u2014 roughly ${result.multipleVsLongTermRent}x.`
+          text: `${loc.label}, ${sz.label} for ${capacity === 10 ? "10+" : capacity} guests: net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK \u2014 roughly ${result.multipleVsLongTermRent}x.`
         }
       ],
       structuredContent: result

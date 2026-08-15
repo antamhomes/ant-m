@@ -21,6 +21,9 @@ interface ContactInquiryProps {
   phone?: string
   address?: string
   size?: string
+  status?: string
+  contactPref?: string
+  language?: string
   message?: string
 }
 
@@ -30,6 +33,9 @@ const ContactInquiryEmail = ({
   phone,
   address,
   size,
+  status,
+  contactPref,
+  language,
   message,
 }: ContactInquiryProps) => (
   <Html lang="cs" dir="ltr">
@@ -52,11 +58,20 @@ const ContactInquiryEmail = ({
           <Text style={label}>Telefon</Text>
           <Text style={value}>{phone || '—'}</Text>
           <Hr style={divider} />
-          <Text style={label}>Adresa nemovitosti</Text>
+          <Text style={label}>Lokalita bytu</Text>
           <Text style={value}>{address || '—'}</Text>
           <Hr style={divider} />
-          <Text style={label}>Velikost bytu</Text>
+          <Text style={label}>Dispozice</Text>
           <Text style={value}>{size || '—'}</Text>
+          <Hr style={divider} />
+          <Text style={label}>Byt je teď</Text>
+          <Text style={value}>{status || '—'}</Text>
+          <Hr style={divider} />
+          <Text style={label}>Preferovaný kontakt</Text>
+          <Text style={value}>{contactPref || '—'}</Text>
+          <Hr style={divider} />
+          <Text style={label}>Jazyk webu</Text>
+          <Text style={value}>{language || '—'}</Text>
           <Hr style={divider} />
           <Text style={label}>Zpráva</Text>
           <Text style={messageStyle}>{message || '—'}</Text>

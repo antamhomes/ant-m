@@ -50,6 +50,17 @@
               ],
               "description": "Apartment layout size."
             },
+            "guests": {
+              "type": "number",
+              "enum": [
+                2,
+                4,
+                6,
+                8,
+                10
+              ],
+              "description": "How many guests the apartment sleeps (10 = 10 or more). Defaults to the usual capacity for the layout: 1+kk→2, 2+kk→4, 3+kk→8, 4+kk→10."
+            },
             "season": {
               "type": "string",
               "enum": [

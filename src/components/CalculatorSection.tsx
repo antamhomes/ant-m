@@ -25,14 +25,24 @@ const locations: { value: LocationKey; label: string; multiplier: number; occupa
   { value: "praha10", label: "Praha 10", multiplier: 0.80, occupancy: 0.73 },
 ];
 
-// Base ADR (Kč/noc) podle dispozice.
+// Dispozice určuje výchozí kapacitu; cena za noc se odvíjí od počtu hostů.
 // Úklid a prádlo hradí host v ceně rezervace a zajišťuje antam homes — do výnosu majitele nevstupují.
 // Energie (elektřina, voda, plyn) hradí majitel a v odhadu nejsou zahrnuty.
-const sizes: { value: SizeKey; label: string; baseADR: number }[] = [
-  { value: "1kk", label: "1+kk", baseADR: 1665 },
-  { value: "2kk", label: "2+kk", baseADR: 2250 },
-  { value: "3kk", label: "3+kk", baseADR: 3060 },
-  { value: "4kk", label: "4+kk", baseADR: 4140 },
+const sizes: { value: SizeKey; label: string; defaultGuests: GuestsKey }[] = [
+  { value: "1kk", label: "1+kk", defaultGuests: 2 },
+  { value: "2kk", label: "2+kk", defaultGuests: 4 },
+  { value: "3kk", label: "3+kk", defaultGuests: 8 },
+  { value: "4kk", label: "4+kk", defaultGuests: 10 },
+];
+
+// Base ADR (Kč/noc) podle kapacity — 3+kk pro 6 hostů se cení jinak než 3+kk pro 8.
+type GuestsKey = 2 | 4 | 6 | 8 | 10;
+const guestOptions: { value: GuestsKey; label: string; baseADR: number }[] = [
+  { value: 2,  label: "2",   baseADR: 1665 },
+  { value: 4,  label: "4",   baseADR: 2250 },
+  { value: 6,  label: "6",   baseADR: 2620 },
+  { value: 8,  label: "8",   baseADR: 3060 },
+  { value: 10, label: "10+", baseADR: 4140 },
 ];
 
 // Extras jako % bonus na ADR
@@ -77,7 +87,13 @@ const clampOccupancy = (v: number) => Math.max(MIN_OCCUPANCY, Math.min(MAX_OCCUP
 const CalculatorSection = () => {
   const { lang } = useLanguage();
   const [location, setLocation] = useState<LocationKey>("praha2");
-  const [size, setSize] = useState<SizeKey>("2kk");
+  const [size, setSizeState] = useState<SizeKey>("2kk");
+  const [guests, setGuests] = useState<GuestsKey>(4);
+  // Změna dispozice přednastaví obvyklou kapacitu; hosty pak lze doladit ručně.
+  const setSize = (v: SizeKey) => {
+    setSizeState(v);
+    setGuests(sizes.find((s) => s.value === v)?.defaultGuests ?? 4);
+  };
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
   const [season, setSeason] = useState<Season>("year");
   const [extrasOpen, setExtrasOpen] = useState(false);
@@ -90,7 +106,7 @@ const CalculatorSection = () => {
   };
 
   const result = useMemo(() => {
-    const sizeData = sizes.find((s) => s.value === size);
+    const sizeData = guestOptions.find((g) => g.value === guests);
     const locationData = locations.find((l) => l.value === location);
     if (!sizeData || !locationData) {
       return { adr: 0, occupancy: 0, gross: 0, mgmt: 0, net: 0, netYearAvg: 0, ltr: 0, ratio: 0 };
@@ -118,7 +134,7 @@ const CalculatorSection = () => {
     const ltr = ltrTable[location][size];
     const ratio = ltr > 0 ? net / ltr : 0;
     return { adr, occupancy, gross, mgmt, net, netYearAvg, ltr, ratio };
-  }, [location, size, selectedExtras, season]);
+  }, [location, size, guests, selectedExtras, season]);
 
   return (
     <section id="kalkulacka" className="section bg-muted/30 scroll-mt-16">
@@ -308,6 +324,27 @@ const CalculatorSection = () => {
                     </span>
                   </span>
                 </p>
+                {/* Assumption: layout + capacity. Capacity is adjustable inline — no extra step for the owner. */}
+                <p className="mt-2 font-body text-[12px] text-primary-foreground/65 flex flex-wrap items-center gap-x-1.5">
+                  <span>{t(lang, "calc_assume_prefix")}</span>
+                  <span className="text-primary-foreground/85">{sizes.find((s) => s.value === size)?.label}</span>
+                  <span aria-hidden="true">·</span>
+                  <label className="inline-flex items-center gap-1">
+                    <span className="sr-only">{t(lang, "calc_guests")}</span>
+                    <select
+                      value={guests}
+                      onChange={(e) => setGuests(Number(e.target.value) as GuestsKey)}
+                      className="bg-transparent border-0 border-b border-gold/60 text-primary-foreground/90 font-semibold tnum px-0.5 py-0 text-[12px] focus:outline-none focus:border-gold cursor-pointer appearance-none"
+                      aria-label={t(lang, "calc_guests")}
+                    >
+                      {guestOptions.map((g) => (
+                        <option key={g.value} value={g.value} className="text-foreground">{g.label}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-3 h-3 text-gold/80" aria-hidden="true" />
+                    <span>{t(lang, "calc_guests_unit")}</span>
+                  </label>
+                </p>
               </div>
 
               {/* LTR srovnání */}
@@ -368,7 +405,7 @@ const CalculatorSection = () => {
         open={leadOpen}
         onOpenChange={setLeadOpen}
         locationLabel={locations.find((l) => l.value === location)?.label ?? ""}
-        sizeLabel={sizes.find((s) => s.value === size)?.label ?? ""}
+        sizeLabel={`${sizes.find((s) => s.value === size)?.label ?? ""} · ${guests === 10 ? "10+" : guests} ${t(lang, "calc_guests_unit")}`}
       />
     </section>
   );
