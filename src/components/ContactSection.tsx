@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Send, Loader2, ChevronDown } from "lucide-react";
+import { Send, Loader2, ChevronDown, ShieldCheck, CalendarClock, KeyRound, Receipt } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { supabase } from "@/integrations/supabase/client";
@@ -58,6 +58,20 @@ const ContactSection = () => {
   const [formData, setFormData] = useState(emptyForm);
   const set = (k: keyof typeof emptyForm, v: string | boolean) => setFormData((f) => ({ ...f, [k]: v }));
 
+  // The calculator CTA pre-fills district + layout so the owner doesn't type them twice.
+  useEffect(() => {
+    const onPrefill = (e: Event) => {
+      const d = (e as CustomEvent<{ location?: string; size?: string }>).detail || {};
+      setFormData((f) => ({
+        ...f,
+        location: d.location && LOCATIONS.includes(d.location) ? d.location : f.location,
+        size: d.size && SIZES.includes(d.size) ? d.size : f.size,
+      }));
+    };
+    window.addEventListener("antam:prefill-contact", onPrefill);
+    return () => window.removeEventListener("antam:prefill-contact", onPrefill);
+  }, []);
+
   const locationOptions: Option[] = [
     ...LOCATIONS.map((l) => ({ value: l, label: l })),
     { value: "other", label: t(lang, "contact_location_other") },
@@ -79,6 +93,8 @@ const ContactSection = () => {
     { value: "email", label: "E-mail" },
   ];
   const labelOf = (opts: Option[], v: string) => opts.find((o) => o.value === v)?.label ?? v;
+  // If the owner wants to be contacted by e-mail, the e-mail field becomes mandatory.
+  const emailRequired = formData.contactPref === "email";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,6 +147,21 @@ const ContactSection = () => {
           <p className="lead">{t(lang, "contact_fallback_desc")}</p>
         </motion.div>
 
+        {/* Assurance strip — the four things that take the fear out of saying yes */}
+        <motion.ul {...revealDelayed(0.05)} className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+          {[
+            { icon: ShieldCheck, key: "assure1" as const },
+            { icon: CalendarClock, key: "assure2" as const },
+            { icon: KeyRound, key: "assure3" as const },
+            { icon: Receipt, key: "assure4" as const },
+          ].map(({ icon: Icon, key }) => (
+            <li key={key} className="flex items-center gap-2.5 px-3 py-2.5 rounded-sm bg-card/70 border border-border/70 font-body text-[13px] md:text-sm text-foreground/85">
+              <Icon className="w-4 h-4 text-gold shrink-0" strokeWidth={1.8} />
+              <span>{t(lang, key)}</span>
+            </li>
+          ))}
+        </motion.ul>
+
         <motion.form
           {...revealDelayed(0.1)}
           onSubmit={handleSubmit}
@@ -146,7 +177,7 @@ const ContactSection = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label htmlFor="c-name" className={labelCls}>
-                    {t(lang, "contact_name")} <span className="text-gold">*</span>
+                    {t(lang, "contact_name")} <span className="text-gold-deep">*</span>
                   </label>
                   <input
                     id="c-name" type="text" required autoComplete="name" value={formData.name}
@@ -156,7 +187,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <label htmlFor="c-phone" className={labelCls}>
-                    {t(lang, "contact_phone")} <span className="text-gold">*</span>
+                    {t(lang, "contact_phone")} <span className="text-gold-deep">*</span>
                   </label>
                   <input
                     id="c-phone" type="tel" required autoComplete="tel" inputMode="tel" value={formData.phone}
@@ -167,10 +198,14 @@ const ContactSection = () => {
                 <div>
                   <label htmlFor="c-email" className={labelCls}>
                     {t(lang, "contact_email")}{" "}
-                    <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
+                    {emailRequired ? (
+                      <span className="text-gold-deep">*</span>
+                    ) : (
+                      <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
+                    )}
                   </label>
                   <input
-                    id="c-email" type="email" autoComplete="email" value={formData.email}
+                    id="c-email" type="email" autoComplete="email" value={formData.email} required={emailRequired}
                     onChange={(e) => set("email", e.target.value)} className={inputCls}
                     placeholder={t(lang, "contact_email_placeholder") as string}
                   />
@@ -231,11 +266,11 @@ const ContactSection = () => {
                   {t(lang, "contact_consent_prefix")}
                   <a
                     href="/gdpr-informacni-memorandum.pdf" target="_blank" rel="noopener noreferrer"
-                    className="underline text-gold-deep hover:text-gold transition-colors"
+                    className="underline text-gold-deep hover:text-primary transition-colors"
                   >
                     {t(lang, "contact_consent_link")}
                   </a>
-                  {t(lang, "contact_consent_suffix")} <span className="text-gold">*</span>
+                  {t(lang, "contact_consent_suffix")} <span className="text-gold-deep">*</span>
                 </span>
               </label>
 

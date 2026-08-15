@@ -2,16 +2,18 @@ import { lazy, Suspense, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import SEO from "@/components/SEO";
 import HeroSection from "@/components/HeroSection";
-import BenefitsSection from "@/components/BenefitsSection";
-import PortfolioSection from "@/components/PortfolioSection";
+import ForYouSection from "@/components/ForYouSection";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 // Below-the-fold sections are code-split so the first paint ships less JS.
-const CalculatorSection = lazy(() => import("@/components/CalculatorSection"));
-const ServicesSection = lazy(() => import("@/components/ServicesSection"));
 const WhyBetterSection = lazy(() => import("@/components/WhyBetterSection"));
+const PriceStrip = lazy(() => import("@/components/PriceStrip"));
+const CalculatorSection = lazy(() => import("@/components/CalculatorSection"));
+const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
+const ServicesSection = lazy(() => import("@/components/ServicesSection"));
 const ProcessSection = lazy(() => import("@/components/ProcessSection"));
 const OwnerReportSection = lazy(() => import("@/components/OwnerReportSection"));
+const AboutSection = lazy(() => import("@/components/AboutSection"));
 const FAQSection = lazy(() => import("@/components/FAQSection"));
 const ContactSection = lazy(() => import("@/components/ContactSection"));
 const Footer = lazy(() => import("@/components/Footer"));
@@ -44,14 +46,16 @@ const Index = () => {
       <Navbar />
       <main id="obsah">
         <HeroSection />
-        <BenefitsSection />
-        <PortfolioSection />
+        <ForYouSection />
         <Suspense fallback={null}>
-          <CalculatorSection />
-          <ServicesSection />
           <WhyBetterSection />
-          <ProcessSection />
+          <PriceStrip />
+          <CalculatorSection />
+          <PortfolioSection />
+          <ServicesSection />
           <OwnerReportSection />
+          <ProcessSection />
+          <AboutSection />
           <FAQSection />
           <ContactSection />
           <ScrollToHash />

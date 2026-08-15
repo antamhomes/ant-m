@@ -61,7 +61,7 @@ const OwnerReportSection = () => {
                   </span>
                   <span
                     className={`font-display text-base font-semibold tnum ${
-                      highlight ? "text-gradient-gold" : "text-foreground"
+                      highlight ? "text-gold-deep" : "text-foreground"
                     }`}
                   >
                     {value}

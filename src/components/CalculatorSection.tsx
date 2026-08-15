@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Calculator, MapPin, Home, Plus, Check, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
-import CalculatorLeadDialog from "./CalculatorLeadDialog";
 import { trackEvent } from "@/lib/analytics";
 import { reveal, revealDelayed } from "@/lib/motion";
 
@@ -25,24 +24,15 @@ const locations: { value: LocationKey; label: string; multiplier: number; occupa
   { value: "praha10", label: "Praha 10", multiplier: 0.80, occupancy: 0.73 },
 ];
 
-// Dispozice určuje výchozí kapacitu; cena za noc se odvíjí od počtu hostů.
+// Base ADR (Kč/noc) podle dispozice; každá dispozice počítá s obvyklou kapacitou bytu
+// (guestsCs/guestsVi je jen popisek — česky se správným skloňováním).
 // Úklid a prádlo hradí host v ceně rezervace a zajišťuje antam homes — do výnosu majitele nevstupují.
 // Energie (elektřina, voda, plyn) hradí majitel a v odhadu nejsou zahrnuty.
-const sizes: { value: SizeKey; label: string; defaultGuests: GuestsKey }[] = [
-  { value: "1kk", label: "1+kk", defaultGuests: 2 },
-  { value: "2kk", label: "2+kk", defaultGuests: 4 },
-  { value: "3kk", label: "3+kk", defaultGuests: 8 },
-  { value: "4kk", label: "4+kk", defaultGuests: 10 },
-];
-
-// Base ADR (Kč/noc) podle kapacity — 3+kk pro 6 hostů se cení jinak než 3+kk pro 8.
-type GuestsKey = 2 | 4 | 6 | 8 | 10;
-const guestOptions: { value: GuestsKey; label: string; baseADR: number }[] = [
-  { value: 2,  label: "2",   baseADR: 1665 },
-  { value: 4,  label: "4",   baseADR: 2250 },
-  { value: 6,  label: "6",   baseADR: 2620 },
-  { value: 8,  label: "8",   baseADR: 3060 },
-  { value: 10, label: "10+", baseADR: 4140 },
+const sizes: { value: SizeKey; label: string; baseADR: number; guestsCs: string; guestsVi: string }[] = [
+  { value: "1kk", label: "1+kk", baseADR: 1665, guestsCs: "2–4 hosté",  guestsVi: "2–4 khách" },
+  { value: "2kk", label: "2+kk", baseADR: 2250, guestsCs: "6–8 hostů",  guestsVi: "6–8 khách" },
+  { value: "3kk", label: "3+kk", baseADR: 3060, guestsCs: "8–10 hostů", guestsVi: "8–10 khách" },
+  { value: "4kk", label: "4+kk", baseADR: 4140, guestsCs: "10–12 hostů", guestsVi: "10–12 khách" },
 ];
 
 // Extras jako % bonus na ADR
@@ -55,18 +45,18 @@ const extraKeys = [
   { id: "vyuziti",  labelKey: "calc_extra_wellness" as const, pct: 0.05, icon: "🧖" },
 ];
 
-// Dlouhodobý nájem (Kč/měs) — sreality benchmark 2025
+// Dlouhodobý nájem (Kč/měs) — cenová mapa nájemného Bohemian Estates, 11/2025; 4+kk ≈ 1,3× 3+kk
 const ltrTable: Record<LocationKey, Record<SizeKey, number>> = {
-  praha1:  { "1kk": 22000, "2kk": 32000, "3kk": 45000, "4kk": 62000 },
-  praha2:  { "1kk": 19000, "2kk": 28000, "3kk": 38000, "4kk": 52000 },
-  praha3:  { "1kk": 17000, "2kk": 24000, "3kk": 32000, "4kk": 44000 },
-  praha4:  { "1kk": 15000, "2kk": 21000, "3kk": 28000, "4kk": 38000 },
-  praha5:  { "1kk": 16500, "2kk": 23000, "3kk": 31000, "4kk": 42000 },
-  praha6:  { "1kk": 17500, "2kk": 25000, "3kk": 34000, "4kk": 46000 },
-  praha7:  { "1kk": 17500, "2kk": 25000, "3kk": 34000, "4kk": 46000 },
-  praha8:  { "1kk": 14500, "2kk": 20000, "3kk": 27000, "4kk": 36000 },
-  praha9:  { "1kk": 13000, "2kk": 18000, "3kk": 24000, "4kk": 32000 },
-  praha10: { "1kk": 14000, "2kk": 19500, "3kk": 26000, "4kk": 35000 },
+  praha1:  { "1kk": 23000, "2kk": 28000, "3kk": 32000, "4kk": 41500 },
+  praha2:  { "1kk": 21500, "2kk": 28000, "3kk": 32500, "4kk": 42500 },
+  praha3:  { "1kk": 20500, "2kk": 26500, "3kk": 31000, "4kk": 40500 },
+  praha4:  { "1kk": 18000, "2kk": 23000, "3kk": 26000, "4kk": 33500 },
+  praha5:  { "1kk": 18500, "2kk": 24500, "3kk": 28000, "4kk": 36000 },
+  praha6:  { "1kk": 19000, "2kk": 25500, "3kk": 30000, "4kk": 39000 },
+  praha7:  { "1kk": 20000, "2kk": 25500, "3kk": 30500, "4kk": 40000 },
+  praha8:  { "1kk": 16000, "2kk": 21500, "3kk": 24000, "4kk": 31000 },
+  praha9:  { "1kk": 18500, "2kk": 23500, "3kk": 29000, "4kk": 37500 },
+  praha10: { "1kk": 18000, "2kk": 23000, "3kk": 27500, "4kk": 35500 },
 };
 
 type Season = "year" | "summer" | "winter" | "xmas";
@@ -87,17 +77,10 @@ const clampOccupancy = (v: number) => Math.max(MIN_OCCUPANCY, Math.min(MAX_OCCUP
 const CalculatorSection = () => {
   const { lang } = useLanguage();
   const [location, setLocation] = useState<LocationKey>("praha2");
-  const [size, setSizeState] = useState<SizeKey>("2kk");
-  const [guests, setGuests] = useState<GuestsKey>(4);
-  // Změna dispozice přednastaví obvyklou kapacitu; hosty pak lze doladit ručně.
-  const setSize = (v: SizeKey) => {
-    setSizeState(v);
-    setGuests(sizes.find((s) => s.value === v)?.defaultGuests ?? 4);
-  };
+  const [size, setSize] = useState<SizeKey>("2kk");
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
   const [season, setSeason] = useState<Season>("year");
   const [extrasOpen, setExtrasOpen] = useState(false);
-  const [leadOpen, setLeadOpen] = useState(false);
 
   const toggleExtra = (id: string) => {
     setSelectedExtras((prev) =>
@@ -106,7 +89,7 @@ const CalculatorSection = () => {
   };
 
   const result = useMemo(() => {
-    const sizeData = guestOptions.find((g) => g.value === guests);
+    const sizeData = sizes.find((s) => s.value === size);
     const locationData = locations.find((l) => l.value === location);
     if (!sizeData || !locationData) {
       return { adr: 0, occupancy: 0, gross: 0, mgmt: 0, net: 0, netYearAvg: 0, ltr: 0, ratio: 0 };
@@ -134,7 +117,7 @@ const CalculatorSection = () => {
     const ltr = ltrTable[location][size];
     const ratio = ltr > 0 ? net / ltr : 0;
     return { adr, occupancy, gross, mgmt, net, netYearAvg, ltr, ratio };
-  }, [location, size, guests, selectedExtras, season]);
+  }, [location, size, selectedExtras, season]);
 
   return (
     <section id="kalkulacka" className="section bg-muted/30 scroll-mt-16">
@@ -237,7 +220,7 @@ const CalculatorSection = () => {
                   <Plus className="w-4 h-4 text-gold" />
                   {t(lang, "calc_extras")}
                   {selectedExtras.length > 0 && (
-                    <span className="ml-1 inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-gold/15 text-gold text-[11px] font-semibold">
+                    <span className="ml-1 inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-gold/15 text-gold-deep text-[11px] font-semibold">
                       {selectedExtras.length}
                     </span>
                   )}
@@ -316,7 +299,7 @@ const CalculatorSection = () => {
                 <p className="font-body text-[11px] text-primary-foreground/55 -mt-0.5 mb-1">
                   {t(lang, "calc_net_sub")}
                 </p>
-                <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold leading-tight tnum">
+                <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold-on-dark leading-tight tnum">
                   <span className="whitespace-nowrap">
                     ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
                     <span className="font-body text-sm font-normal text-primary-foreground/65">
@@ -324,26 +307,15 @@ const CalculatorSection = () => {
                     </span>
                   </span>
                 </p>
-                {/* Assumption: layout + capacity. Capacity is adjustable inline — no extra step for the owner. */}
-                <p className="mt-2 font-body text-[12px] text-primary-foreground/65 flex flex-wrap items-center gap-x-1.5">
-                  <span>{t(lang, "calc_assume_prefix")}</span>
+                {/* Assumption line: layout + its usual capacity (fixed, no extra choice for the owner). */}
+                <p className="mt-2 font-body text-[12px] text-primary-foreground/65 tnum">
+                  {t(lang, "calc_assume_prefix")}{" "}
                   <span className="text-primary-foreground/85">{sizes.find((s) => s.value === size)?.label}</span>
-                  <span aria-hidden="true">·</span>
-                  <label className="inline-flex items-center gap-1">
-                    <span className="sr-only">{t(lang, "calc_guests")}</span>
-                    <select
-                      value={guests}
-                      onChange={(e) => setGuests(Number(e.target.value) as GuestsKey)}
-                      className="bg-transparent border-0 border-b border-gold/60 text-primary-foreground/90 font-semibold tnum px-0.5 py-0 text-[12px] focus:outline-none focus:border-gold cursor-pointer appearance-none"
-                      aria-label={t(lang, "calc_guests")}
-                    >
-                      {guestOptions.map((g) => (
-                        <option key={g.value} value={g.value} className="text-foreground">{g.label}</option>
-                      ))}
-                    </select>
-                    <ChevronDown className="w-3 h-3 text-gold/80" aria-hidden="true" />
-                    <span>{t(lang, "calc_guests_unit")}</span>
-                  </label>
+                  {" · "}
+                  {t(lang, "calc_capacity_label")}{" "}
+                  <span className="text-primary-foreground/85">
+                    {lang === "cs" ? sizes.find((s) => s.value === size)?.guestsCs : sizes.find((s) => s.value === size)?.guestsVi}
+                  </span>
                 </p>
               </div>
 
@@ -374,21 +346,20 @@ const CalculatorSection = () => {
                 <p className="font-body text-xs text-primary-foreground/60 text-center tracking-wide">
                   {t(lang, "calc_trust_line")}
                 </p>
-                <button
-                  type="button"
+                <a
+                  href="#kontakt"
                   onClick={() => {
-                    trackEvent("cta_click", { location: "calculator", target: "lead_dialog", district: location, size });
-                    setLeadOpen(true);
+                    trackEvent("cta_click", { location: "calculator", target: "contact", district: location, size });
+                    // Pre-fill the contact form with what the owner just set in the calculator.
+                    window.dispatchEvent(
+                      new CustomEvent("antam:prefill-contact", {
+                        detail: { location: locations.find((l) => l.value === location)?.label ?? "", size: sizes.find((s) => s.value === size)?.label ?? "" },
+                      })
+                    );
                   }}
                   className="btn btn-primary-inverse w-full"
                 >
                   {t(lang, "calc_cta")}
-                </button>
-                <a
-                  href="#kontakt"
-                  className="block w-full text-center font-body text-xs text-primary-foreground/65 hover:text-gold tracking-[0.15em] uppercase transition-colors"
-                >
-                  {lang === "cs" ? "nebo nezávazně probrat byt →" : "hoặc trao đổi trực tiếp, không ràng buộc →"}
                 </a>
               </div>
             </div>
@@ -401,12 +372,6 @@ const CalculatorSection = () => {
           </p>
         </div>
       </div>
-      <CalculatorLeadDialog
-        open={leadOpen}
-        onOpenChange={setLeadOpen}
-        locationLabel={locations.find((l) => l.value === location)?.label ?? ""}
-        sizeLabel={`${sizes.find((s) => s.value === size)?.label ?? ""} · ${guests === 10 ? "10+" : guests} ${t(lang, "calc_guests_unit")}`}
-      />
     </section>
   );
 };

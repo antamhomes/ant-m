@@ -235,11 +235,20 @@ html {
   }
   .btn-secondary-inverse:hover { background: rgba(247, 241, 232, 0.1); border-color: rgba(247, 241, 232, 0.65); }
 
-  .text-gradient-gold {
-    background: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--gold-light)) 100%);
+  .text-gradient-gold,
+  .text-gradient-gold-on-dark {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+  }
+  /* On cream: deep gold -> gold. Every point of the gradient stays >= 3:1 on the
+     light background, so a 36-56px headline is legible for older readers too. */
+  .text-gradient-gold {
+    background-image: linear-gradient(135deg, hsl(var(--gold-deep)) 0%, hsl(var(--gold)) 100%);
+  }
+  /* On charcoal: gold -> light gold. The light end is what makes the number glow. */
+  .text-gradient-gold-on-dark {
+    background-image: linear-gradient(135deg, hsl(var(--gold)) 0%, hsl(var(--gold-light)) 100%);
   }
 
   /* Editorial eyebrow label — thin gold line + caps text */

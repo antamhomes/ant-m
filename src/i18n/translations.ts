@@ -6,6 +6,7 @@ const translations = {
     nav_portfolio: "Portfolio",
     nav_services: "Služby",
     nav_faq: "Časté otázky",
+    nav_about: "Kdo jsme",
     nav_contact: "Kontakt",
     nav_menu_open: "Otevřít menu",
     nav_menu_close: "Zavřít menu",
@@ -134,12 +135,23 @@ const translations = {
     step4_desc: "Řešíme hosty, úklid, cenu, obsazenost i další provoz.",
     process_cta: "Začít nezávazně",
 
-    // About — Náš přístup
-    about_label: "Náš přístup",
-    about_title: "Neřešíme byty podle šablony.",
-    about_p1: "Každý byt má jinou lokalitu, jiný typ hostů a jiný potenciál. Proto nehledáme univerzální řešení, ale způsob, jak pro konkrétní byt najít jeho nejlepší využití.",
-    about_p2: "Po spuštění nabídky práce nekončí. Průběžně sledujeme obsazenost, cenu, okolní nabídku, sezónu i zpětnou vazbu hostů — a podle toho byt dál ladíme.",
-    about_p3: "Byt, který dobře funguje, hosté, kteří jsou spokojení, a majitel, který má přehled bez zbytečných starostí.",
+    // About — Kdo za tím stojí (REVIEW: nahradit vlastními slovy + fotkou)
+    about_label: "Kdo za tím stojí",
+    about_title: "Malý tým z Prahy, který dělá byty pořádně.",
+    about_p1: "Antam Homes jsme založili v Praze — česko-vietnamský tým, který krátkodobý pronájem nezná z prezentací, ale z vlastních bytů. Začali jsme u rodiny a známých a dnes se staráme o desítku apartmánů v Praze a okolí.",
+    about_p2: "Domluvíte se s námi česky i vietnamsky, telefonem, přes WhatsApp nebo Zalo. Každý byt známe osobně, o hosty se staráme sami a majitel od nás každý měsíc dostane přehled, ze kterého je vidět každá koruna.",
+    about_p3: "Chceme, aby majitel na svůj byt myslel jen tehdy, když si chce přijet užít víkend.",
+
+    // Price strip
+    price_label: "Cena",
+    price_line: "25 % z výnosu z ubytování. Žádné fixní poplatky, žádné překvapení.",
+    price_sub: "Provize pokrývá vše od inzerátu po hosty, úklid a měsíční vyúčtování. Úklid platí host, energie hradí majitel. Částky bez DPH.",
+
+    // Assurance (contact)
+    assure1: "Bez závazku",
+    assure2: "Výpovědní lhůta 4 měsíce",
+    assure3: "Byt kdykoliv pro sebe",
+    assure4: "Vyúčtování každý měsíc",
 
     // Calculator
     calc_label: "Kalkulačka výnosu",
@@ -148,10 +160,8 @@ const translations = {
     calc_desc: "Orientační výpočet podle typu bytu, lokality a očekávané obsazenosti.",
     calc_location: "Lokalita",
     calc_size: "Dispozice",
-    calc_guests: "Počet hostů",
-    calc_guests_unit: "hostů",
     calc_assume_prefix: "Počítáno pro",
-    calc_guests_hint: "Počet hostů, které byt pohodlně ubytuje (lůžka i rozkládací pohovky).",
+    calc_capacity_label: "kapacita",
     calc_extras: "Výbava navíc",
     calc_extra_balkon: "Balkón / terasa",
     calc_extra_parking: "Parkovací místo",
@@ -188,11 +198,11 @@ const translations = {
     calc_net_year: "Roční průměr",
     calc_ltr: "Dlouhodobý pronájem",
     calc_vs_ltr: "více",
-    calc_cta: "Chci přesný odhad pro svůj byt",
+    calc_cta: "Nezávazně poptat byt",
     calc_month_suffix: "/ měsíc",
     calc_approx_prefix: "přibližně",
     calc_trust_line: "Bez závazku · nezávazná konzultace",
-    calc_disclaimer: "Orientační kalkulace, nikoli nabídka ani garance výnosu. Vychází z tržních dat pro Prahu (PriceLabs, Airbtics, sreality, 2025/26) a typického nastavení správy antam homes. Skutečný výnos kolísá podle stavu bytu, sezóny, recenzí, regulace krátkodobých pronájmů a dalších faktorů, které nemůžeme předem zaručit. Konkrétní podmínky vždy upravuje smlouva o správě.",
+    calc_disclaimer: "Orientační kalkulace, nikoli nabídka ani garance výnosu. Vychází z tržních dat pro Prahu (PriceLabs, Airbtics, 2025/26) a typického nastavení správy antam homes; dlouhodobý nájem podle cenové mapy nájemného Bohemian Estates (11/2025). Skutečný výnos kolísá podle stavu bytu, sezóny, recenzí, regulace krátkodobých pronájmů a dalších faktorů, které nemůžeme předem zaručit. Konkrétní podmínky vždy upravuje smlouva o správě.",
     calc_excluded_note: "Částky jsou uvedeny bez DPH. Úklid a prádlo hradí host v ceně rezervace a zajišťuje je antam homes — výnos majitele nesnižují. Energie (elektřina, voda, plyn) nejsou v odhadu zahrnuty a hradí je majitel.",
 
     // Owner report
@@ -221,7 +231,7 @@ const translations = {
     faq4_q: "Jak budu vědět, co byt vydělává?",
     faq4_a: "Každý měsíc dostanete přehled: kolik nocí bylo obsazeno, jaký byl výnos, kolik činila naše provize 25 % a co jsme v bytě řešili. Vše na jednu stranu, bez složitých tabulek.",
     faq5_q: "Kolik správa stojí?",
-    faq5_a: "Provize je 25 % z výnosu z ubytování a je konečná — bez fixních ani měsíčních poplatků. Pokrývá i internet, hygienické potřeby pro hosty, čisticí prostředky a drobné opravy do 1 000 Kč měsíčně. Částky uvádíme bez DPH.",
+    faq5_a: "Provize je 25 % z výnosu z ubytování a je konečná — bez fixních ani měsíčních poplatků. Pokrývá i internet, hygienické potřeby pro hosty a čisticí prostředky. Drobné opravy do 5 000 Kč vyřídíme sami a náklady strhneme z výnosu; větší opravy vám nejdřív nahlásíme a uděláme až po vašem souhlasu. Částky uvádíme bez DPH.",
     faq6_q: "Kdo platí úklid a energie?",
     faq6_a: "Úklid a praní prádla hradí host v ceně rezervace a zajišťujeme je my — váš výnos nesnižují. Energie (elektřina, voda, plyn) hradí majitel jako doposud.",
     faq7_q: "Jak dlouho spolupráce trvá a jak ji ukončím?",
@@ -328,6 +338,7 @@ const translations = {
     nav_portfolio: "Căn hộ đang quản lý",
     nav_services: "Dịch vụ",
     nav_faq: "Câu hỏi thường gặp",
+    nav_about: "Về chúng tôi",
     nav_contact: "Liên hệ",
     nav_menu_open: "Mở menu",
     nav_menu_close: "Đóng menu",
@@ -456,12 +467,23 @@ const translations = {
     step4_desc: "antam homes lo khách, dọn dẹp, giá thuê, tỷ lệ lấp đầy và mọi việc vận hành.",
     process_cta: "Bắt đầu, không ràng buộc",
 
-    // About
-    about_label: "Cách antam homes làm việc",
-    about_title: "Không vận hành căn hộ theo một khuôn mẫu.",
-    about_p1: "Mỗi căn hộ có vị trí, nhóm khách và tiềm năng khác nhau. Vì vậy, chúng tôi không tìm một cách làm chung cho tất cả, mà tìm hướng phù hợp nhất cho từng căn hộ.",
-    about_p2: "Sau khi tin đăng lên sóng, công việc không dừng lại. antam homes tiếp tục theo dõi tỷ lệ lấp đầy, giá thuê, khu vực xung quanh, mùa vụ và phản hồi của khách — rồi điều chỉnh dần theo tình hình thực tế.",
-    about_p3: "Mục tiêu rất rõ ràng: căn hộ vận hành tốt, khách hài lòng và chủ nhà có cái nhìn rõ ràng mà không phải lo quá nhiều việc.",
+    // About — Ai đứng sau (REVIEW: thay bằng lời của Vương + ảnh)
+    about_label: "Ai đứng sau Antam Homes",
+    about_title: "Một nhóm nhỏ ở Praha, làm căn hộ một cách tử tế.",
+    about_p1: "Antam Homes do người Việt và người Séc ở Praha lập nên — chúng tôi biết cho thuê ngắn hạn không phải qua sách vở mà qua chính những căn hộ của mình. Bắt đầu từ gia đình và người quen, hôm nay chúng tôi chăm sóc khoảng mười căn hộ ở Praha và vùng lân cận.",
+    about_p2: "Chủ nhà có thể trao đổi với chúng tôi bằng tiếng Việt hoặc tiếng Séc, qua điện thoại, WhatsApp hay Zalo. Chúng tôi biết từng căn hộ, tự lo cho khách, và mỗi tháng chủ nhà nhận một bản báo cáo rõ từng đồng.",
+    about_p3: "Chúng tôi muốn chủ nhà chỉ phải nghĩ đến căn hộ khi muốn về nghỉ cuối tuần.",
+
+    // Price strip
+    price_label: "Phí dịch vụ",
+    price_line: "25% doanh thu từ lưu trú. Không phí cố định, không bất ngờ.",
+    price_sub: "Phí dịch vụ bao gồm mọi việc từ tin đăng, khách, dọn dẹp đến quyết toán hàng tháng. Dọn dẹp do khách trả, điện nước do chủ nhà chi trả. Số tiền chưa gồm VAT.",
+
+    // Assurance (contact)
+    assure1: "Không ràng buộc",
+    assure2: "Báo trước 4 tháng khi kết thúc",
+    assure3: "Chủ nhà dùng căn hộ bất cứ lúc nào",
+    assure4: "Quyết toán mỗi tháng",
 
     // Calculator
     calc_label: "Tính thử thu nhập",
@@ -470,10 +492,8 @@ const translations = {
     calc_desc: "Ước tính tham khảo theo loại căn hộ, vị trí và tỷ lệ lấp đầy dự kiến.",
     calc_location: "Vị trí",
     calc_size: "Loại căn hộ",
-    calc_guests: "Số khách",
-    calc_guests_unit: "khách",
     calc_assume_prefix: "Tính cho căn",
-    calc_guests_hint: "Số khách căn hộ có thể ở thoải mái (giường và sofa giường).",
+    calc_capacity_label: "sức chứa",
     calc_extras: "Tiện ích thêm",
     calc_extra_balkon: "Ban công / sân thượng",
     calc_extra_parking: "Chỗ đậu xe",
@@ -510,11 +530,11 @@ const translations = {
     calc_net_year: "Trung bình năm",
     calc_ltr: "Cho thuê dài hạn",
     calc_vs_ltr: "so với cho thuê dài hạn",
-    calc_cta: "Nhận ước tính chính xác",
+    calc_cta: "Gửi yêu cầu, không ràng buộc",
     calc_month_suffix: "/ tháng",
     calc_approx_prefix: "khoảng",
     calc_trust_line: "Không ràng buộc · tư vấn miễn phí",
-    calc_disclaimer: "Chỉ là ước tính tham khảo, không phải báo giá hay cam kết lợi nhuận. Dựa trên dữ liệu thị trường Praha (PriceLabs, Airbtics, sreality, 2025/26) và mô hình quản lý của antam homes. Kết quả thực tế thay đổi theo tình trạng căn hộ, mùa, đánh giá, quy định cho thuê ngắn hạn và nhiều yếu tố khác mà chúng tôi không thể bảo đảm trước. Điều kiện cụ thể luôn được quy định trong hợp đồng quản lý.",
+    calc_disclaimer: "Chỉ là ước tính tham khảo, không phải báo giá hay cam kết lợi nhuận. Dựa trên dữ liệu thị trường Praha (PriceLabs, Airbtics, 2025/26) và mô hình quản lý của antam homes; giá thuê dài hạn theo bản đồ giá thuê Bohemian Estates (11/2025). Kết quả thực tế thay đổi theo tình trạng căn hộ, mùa, đánh giá, quy định cho thuê ngắn hạn và nhiều yếu tố khác mà chúng tôi không thể bảo đảm trước. Điều kiện cụ thể luôn được quy định trong hợp đồng quản lý.",
     calc_excluded_note: "Số tiền chưa bao gồm VAT. Phí dọn dẹp và giặt giũ do khách trả trong giá đặt phòng và do antam homes đảm nhận — không ảnh hưởng đến thu nhập của chủ nhà. Điện, nước, gas do chủ nhà chi trả và không tính vào ước tính.",
 
     // Owner report
@@ -543,7 +563,7 @@ const translations = {
     faq4_q: "Làm sao để biết căn hộ tạo doanh thu như thế nào?",
     faq4_a: "Mỗi tháng chủ nhà nhận một bản báo cáo: bao nhiêu đêm có khách, doanh thu bao nhiêu, phí dịch vụ 25% là bao nhiêu và chúng tôi đã xử lý gì trong căn hộ. Gọn trong một trang, không bảng biểu phức tạp.",
     faq5_q: "Phí dịch vụ là bao nhiêu?",
-    faq5_a: "Phí dịch vụ là 25% doanh thu từ lưu trú và là mức cuối cùng — không có phí cố định hay phí hàng tháng nào khác. Phí này đã bao gồm internet, đồ dùng vệ sinh cho khách, hóa chất dọn dẹp và sửa chữa nhỏ đến 1 000 Kč mỗi tháng. Số tiền chưa bao gồm VAT.",
+    faq5_a: "Phí dịch vụ là 25% doanh thu từ lưu trú và là mức cuối cùng — không có phí cố định hay phí hàng tháng nào khác. Phí này đã bao gồm internet, đồ dùng vệ sinh cho khách và hóa chất dọn dẹp. Sửa chữa nhỏ đến 5 000 Kč chúng tôi tự xử lý và trừ vào doanh thu; sửa chữa lớn hơn sẽ báo trước và chỉ làm khi chủ nhà đồng ý. Số tiền chưa bao gồm VAT.",
     faq6_q: "Ai trả tiền dọn dẹp và điện nước?",
     faq6_a: "Dọn dẹp và giặt giũ do khách trả trong giá đặt phòng và do antam homes đảm nhận — không làm giảm thu nhập của chủ nhà. Điện, nước, gas do chủ nhà chi trả như trước.",
     faq7_q: "Hợp tác kéo dài bao lâu và kết thúc thế nào?",
@@ -629,7 +649,7 @@ const translations = {
     mobile_cta: "Trao đổi về căn hộ",
 
     // For you if…
-    foryou_label: "antam homes phù hợp với ai",
+    foryou_label: "Antam Homes phù hợp với ai",
     foryou_title1: "Phù hợp với quý vị ",
     foryou_title2: "nếu…",
     foryou_desc: "Hầu hết chủ nhà chúng tôi làm cùng đều gặp những điều giống nhau. Có thể quý vị cũng vậy.",

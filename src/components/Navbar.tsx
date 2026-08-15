@@ -9,6 +9,7 @@ const NAV_LINKS: { href: string; key: TranslationKey }[] = [
   { href: "#kalkulacka", key: "nav_calculator" },
   { href: "#portfolio", key: "nav_portfolio" },
   { href: "#jak-zacina", key: "nav_howItWorks" },
+  { href: "#kdo-jsme", key: "nav_about" },
   { href: "#faq", key: "nav_faq" },
 ];
 
@@ -54,7 +55,7 @@ const Navbar = () => {
         onClick={() => lang !== "cs" && toggleLang()}
         className={`px-2.5 py-1 text-[11px] font-body font-semibold tracking-wider uppercase transition-colors ${
           lang === "cs"
-            ? "bg-gold/15 text-gold"
+            ? solid ? "bg-gold/15 text-gold-deep" : "bg-gold/15 text-gold"
             : solid
               ? "text-muted-foreground hover:text-foreground"
               : "text-primary-foreground/60 hover:text-primary-foreground"
@@ -68,7 +69,7 @@ const Navbar = () => {
         onClick={() => lang !== "vi" && toggleLang()}
         className={`px-2.5 py-1 text-[11px] font-body font-semibold tracking-wider uppercase transition-colors ${
           lang === "vi"
-            ? "bg-gold/15 text-gold"
+            ? solid ? "bg-gold/15 text-gold-deep" : "bg-gold/15 text-gold"
             : solid
               ? "text-muted-foreground hover:text-foreground"
               : "text-primary-foreground/60 hover:text-primary-foreground"

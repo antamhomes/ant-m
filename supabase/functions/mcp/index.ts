@@ -21,12 +21,11 @@ var locations = {
   praha10: { label: "Praha 10", multiplier: 0.8, occupancy: 0.73 }
 };
 var sizes = {
-  "1kk": { label: "1+kk", defaultGuests: 2 },
-  "2kk": { label: "2+kk", defaultGuests: 4 },
-  "3kk": { label: "3+kk", defaultGuests: 8 },
-  "4kk": { label: "4+kk", defaultGuests: 10 }
+  "1kk": { label: "1+kk", baseADR: 1665, guests: "2\u20134" },
+  "2kk": { label: "2+kk", baseADR: 2250, guests: "6\u20138" },
+  "3kk": { label: "3+kk", baseADR: 3060, guests: "8\u201310" },
+  "4kk": { label: "4+kk", baseADR: 4140, guests: "10\u201312" }
 };
-var guestRates = { 2: 1665, 4: 2250, 6: 2620, 8: 3060, 10: 4140 };
 var extras = {
   balkon: 0.04,
   parking: 0.05,
@@ -42,16 +41,16 @@ var seasons = {
   xmas: { adr: 1.75, occDelta: 0.12 }
 };
 var ltrTable = {
-  praha1: { "1kk": 22e3, "2kk": 32e3, "3kk": 45e3, "4kk": 62e3 },
-  praha2: { "1kk": 19e3, "2kk": 28e3, "3kk": 38e3, "4kk": 52e3 },
-  praha3: { "1kk": 17e3, "2kk": 24e3, "3kk": 32e3, "4kk": 44e3 },
-  praha4: { "1kk": 15e3, "2kk": 21e3, "3kk": 28e3, "4kk": 38e3 },
-  praha5: { "1kk": 16500, "2kk": 23e3, "3kk": 31e3, "4kk": 42e3 },
-  praha6: { "1kk": 17500, "2kk": 25e3, "3kk": 34e3, "4kk": 46e3 },
-  praha7: { "1kk": 17500, "2kk": 25e3, "3kk": 34e3, "4kk": 46e3 },
-  praha8: { "1kk": 14500, "2kk": 2e4, "3kk": 27e3, "4kk": 36e3 },
-  praha9: { "1kk": 13e3, "2kk": 18e3, "3kk": 24e3, "4kk": 32e3 },
-  praha10: { "1kk": 14e3, "2kk": 19500, "3kk": 26e3, "4kk": 35e3 }
+  praha1: { "1kk": 23e3, "2kk": 28e3, "3kk": 32e3, "4kk": 41500 },
+  praha2: { "1kk": 21500, "2kk": 28e3, "3kk": 32500, "4kk": 42500 },
+  praha3: { "1kk": 20500, "2kk": 26500, "3kk": 31e3, "4kk": 40500 },
+  praha4: { "1kk": 18e3, "2kk": 23e3, "3kk": 26e3, "4kk": 33500 },
+  praha5: { "1kk": 18500, "2kk": 24500, "3kk": 28e3, "4kk": 36e3 },
+  praha6: { "1kk": 19e3, "2kk": 25500, "3kk": 3e4, "4kk": 39e3 },
+  praha7: { "1kk": 2e4, "2kk": 25500, "3kk": 30500, "4kk": 4e4 },
+  praha8: { "1kk": 16e3, "2kk": 21500, "3kk": 24e3, "4kk": 31e3 },
+  praha9: { "1kk": 18500, "2kk": 23500, "3kk": 29e3, "4kk": 37500 },
+  praha10: { "1kk": 18e3, "2kk": 23e3, "3kk": 27500, "4kk": 35500 }
 };
 var MGMT_FEE = 0.25;
 var DAYS = 30;
@@ -61,18 +60,16 @@ var estimate_yield_default = defineTool({
   description: "Estimate the monthly net income an apartment owner in Prague could earn with antam homes short-term rental management, and compare it to long-term rent. Same model as the calculator on the website.",
   inputSchema: {
     location: z.enum(["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9", "praha10"]).describe("Prague district of the apartment."),
-    size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout size."),
-    guests: z.union([z.literal(2), z.literal(4), z.literal(6), z.literal(8), z.literal(10)]).optional().describe("How many guests the apartment sleeps (10 = 10 or more). Defaults to the usual capacity for the layout: 1+kk\u21922, 2+kk\u21924, 3+kk\u21928, 4+kk\u219210."),
+    size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout size (each is priced for its usual guest capacity: 1+kk 2\u20134, 2+kk 6\u20138, 3+kk 8\u201310, 4+kk 10\u201312 guests)."),
     season: z.enum(["year", "summer", "winter", "xmas"]).optional().describe("Season to price for. Defaults to 'year' (yearly average)."),
     extras: z.array(z.enum(["balkon", "parking", "klima", "vyhled", "vybaveni", "wellness"])).optional().describe("Extra features that raise the nightly rate.")
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: ({ location, size, guests, season, extras: chosen }) => {
+  handler: ({ location, size, season, extras: chosen }) => {
     const loc = locations[location];
     const sz = sizes[size];
     if (!loc || !sz) throw new ToolError("Unknown location or size.");
-    const capacity = guests ?? sz.defaultGuests;
-    const baseADR = guestRates[capacity];
+    const baseADR = sz.baseADR;
     const extrasPct = (chosen ?? []).reduce((sum, e) => sum + (extras[e] ?? 0), 0);
     const compute = (seasonKey2) => {
       const adj = seasons[seasonKey2];
@@ -90,7 +87,7 @@ var estimate_yield_default = defineTool({
       currency: "CZK",
       location: loc.label,
       size: sz.label,
-      guests: capacity === 10 ? "10+" : capacity,
+      guests: sz.guests,
       season: seasonKey,
       averageNightlyRate: r.adr,
       occupancyRate: Math.round(r.occupancy * 100) / 100,
@@ -107,7 +104,7 @@ var estimate_yield_default = defineTool({
       content: [
         {
           type: "text",
-          text: `${loc.label}, ${sz.label} for ${capacity === 10 ? "10+" : capacity} guests: net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK \u2014 roughly ${result.multipleVsLongTermRent}x.`
+          text: `${loc.label}, ${sz.label} (${sz.guests} guests): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK \u2014 roughly ${result.multipleVsLongTermRent}x.`
         }
       ],
       structuredContent: result
@@ -162,7 +159,7 @@ var faq = [
   { question: "\u0158e\u0161\xEDte Airbnb i Booking.com?", answer: "Ano. Platformy vol\xEDme podle bytu, lokality a typu host\u016F." },
   { question: "M\u016F\u017Eu byt n\u011Bkdy vyu\u017E\xEDt pro sebe?", answer: "Ano. Vybran\xE9 term\xEDny lze v kalend\xE1\u0159i dop\u0159edu zablokovat." },
   { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc dostanete p\u0159ehled: kolik noc\xED bylo obsazeno, jak\xFD byl v\xFDnos, kolik \u010Dinila na\u0161e provize 25 % a co jsme v byt\u011B \u0159e\u0161ili. V\u0161e na jednu stranu, bez slo\u017Eit\xFDch tabulek." },
-  { question: "Kolik spr\xE1va stoj\xED?", answer: "Provize je 25 % z v\xFDnosu z ubytov\xE1n\xED a je kone\u010Dn\xE1 \u2014 bez fixn\xEDch ani m\u011Bs\xED\u010Dn\xEDch poplatk\u016F. Pokr\xFDv\xE1 i internet, hygienick\xE9 pot\u0159eby pro hosty, \u010Distic\xED prost\u0159edky a drobn\xE9 opravy do 1 000 K\u010D m\u011Bs\xED\u010Dn\u011B. \u010C\xE1stky uv\xE1d\xEDme bez DPH." },
+  { question: "Kolik spr\xE1va stoj\xED?", answer: "Provize je 25 % z v\xFDnosu z ubytov\xE1n\xED a je kone\u010Dn\xE1 \u2014 bez fixn\xEDch ani m\u011Bs\xED\u010Dn\xEDch poplatk\u016F. Pokr\xFDv\xE1 i internet, hygienick\xE9 pot\u0159eby pro hosty a \u010Distic\xED prost\u0159edky. Drobn\xE9 opravy do 5 000 K\u010D vy\u0159\xEDd\xEDme sami a n\xE1klady strhneme z v\xFDnosu; v\u011Bt\u0161\xED opravy nejd\u0159\xEDv nahl\xE1s\xEDme majiteli. \u010C\xE1stky uv\xE1d\xEDme bez DPH." },
   { question: "Kdo plat\xED \xFAklid a energie?", answer: "\xDAklid a pran\xED pr\xE1dla hrad\xED host v cen\u011B rezervace a zaji\u0161\u0165uje je antam homes \u2014 v\xFDnos majitele nesni\u017Euj\xED. Energie (elekt\u0159ina, voda, plyn) hrad\xED majitel." },
   { question: "Jak dlouho spolupr\xE1ce trv\xE1 a jak ji ukon\u010D\xEDm?", answer: "Smlouva je na dobu neur\u010Ditou s v\xFDpov\u011Bdn\xED lh\u016Ftou 4 m\u011Bs\xEDce. Potvrzen\xE9 rezervace se b\u011Bhem v\xFDpov\u011Bdn\xED lh\u016Fty je\u0161t\u011B dokon\u010D\xED." },
   { question: "Kdy a jak dostanu vy\xFA\u010Dtov\xE1n\xED?", answer: "M\u011Bs\xED\u010Dn\u011B zp\u011Btn\u011B: p\u0159ehled rezervac\xED a v\xFDnos\u016F z platforem (Airbnb, Booking.com) spolu s fakturou na provizi." }

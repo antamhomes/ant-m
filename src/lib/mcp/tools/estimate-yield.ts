@@ -15,14 +15,13 @@ const locations = {
 } as const;
 
 // Cleaning/laundry is paid by the guest and handled by antam homes; utilities (energy) are paid by the owner.
-// Layout only sets the default capacity; the nightly rate is driven by how many guests the flat sleeps.
+// Each layout is priced for its usual guest capacity (shown as `guests` in the result).
 const sizes = {
-  "1kk": { label: "1+kk", defaultGuests: 2 },
-  "2kk": { label: "2+kk", defaultGuests: 4 },
-  "3kk": { label: "3+kk", defaultGuests: 8 },
-  "4kk": { label: "4+kk", defaultGuests: 10 },
+  "1kk": { label: "1+kk", baseADR: 1665, guests: "2–4" },
+  "2kk": { label: "2+kk", baseADR: 2250, guests: "6–8" },
+  "3kk": { label: "3+kk", baseADR: 3060, guests: "8–10" },
+  "4kk": { label: "4+kk", baseADR: 4140, guests: "10–12" },
 } as const;
-const guestRates: Record<2 | 4 | 6 | 8 | 10, number> = { 2: 1665, 4: 2250, 6: 2620, 8: 3060, 10: 4140 };
 
 const extras = {
   balkon: 0.04,
@@ -40,17 +39,18 @@ const seasons = {
   xmas: { adr: 1.75, occDelta: 0.12 },
 } as const;
 
+// Long-term rent benchmark (CZK/month) — Bohemian Estates rent map, Nov 2025; 4+kk ≈ 1.3 × 3+kk
 const ltrTable: Record<string, Record<string, number>> = {
-  praha1: { "1kk": 22000, "2kk": 32000, "3kk": 45000, "4kk": 62000 },
-  praha2: { "1kk": 19000, "2kk": 28000, "3kk": 38000, "4kk": 52000 },
-  praha3: { "1kk": 17000, "2kk": 24000, "3kk": 32000, "4kk": 44000 },
-  praha4: { "1kk": 15000, "2kk": 21000, "3kk": 28000, "4kk": 38000 },
-  praha5: { "1kk": 16500, "2kk": 23000, "3kk": 31000, "4kk": 42000 },
-  praha6: { "1kk": 17500, "2kk": 25000, "3kk": 34000, "4kk": 46000 },
-  praha7: { "1kk": 17500, "2kk": 25000, "3kk": 34000, "4kk": 46000 },
-  praha8: { "1kk": 14500, "2kk": 20000, "3kk": 27000, "4kk": 36000 },
-  praha9: { "1kk": 13000, "2kk": 18000, "3kk": 24000, "4kk": 32000 },
-  praha10: { "1kk": 14000, "2kk": 19500, "3kk": 26000, "4kk": 35000 },
+  praha1: { "1kk": 23000, "2kk": 28000, "3kk": 32000, "4kk": 41500 },
+  praha2: { "1kk": 21500, "2kk": 28000, "3kk": 32500, "4kk": 42500 },
+  praha3: { "1kk": 20500, "2kk": 26500, "3kk": 31000, "4kk": 40500 },
+  praha4: { "1kk": 18000, "2kk": 23000, "3kk": 26000, "4kk": 33500 },
+  praha5: { "1kk": 18500, "2kk": 24500, "3kk": 28000, "4kk": 36000 },
+  praha6: { "1kk": 19000, "2kk": 25500, "3kk": 30000, "4kk": 39000 },
+  praha7: { "1kk": 20000, "2kk": 25500, "3kk": 30500, "4kk": 40000 },
+  praha8: { "1kk": 16000, "2kk": 21500, "3kk": 24000, "4kk": 31000 },
+  praha9: { "1kk": 18500, "2kk": 23500, "3kk": 29000, "4kk": 37500 },
+  praha10: { "1kk": 18000, "2kk": 23000, "3kk": 27500, "4kk": 35500 },
 };
 
 const MGMT_FEE = 0.25;
@@ -65,11 +65,7 @@ export default defineTool({
     location: z
       .enum(["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9", "praha10"])
       .describe("Prague district of the apartment."),
-    size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout size."),
-    guests: z
-      .union([z.literal(2), z.literal(4), z.literal(6), z.literal(8), z.literal(10)])
-      .optional()
-      .describe("How many guests the apartment sleeps (10 = 10 or more). Defaults to the usual capacity for the layout: 1+kk→2, 2+kk→4, 3+kk→8, 4+kk→10."),
+    size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout size (each is priced for its usual guest capacity: 1+kk 2–4, 2+kk 6–8, 3+kk 8–10, 4+kk 10–12 guests)."),
     season: z
       .enum(["year", "summer", "winter", "xmas"])
       .optional()
@@ -80,12 +76,11 @@ export default defineTool({
       .describe("Extra features that raise the nightly rate."),
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: ({ location, size, guests, season, extras: chosen }) => {
+  handler: ({ location, size, season, extras: chosen }) => {
     const loc = locations[location];
     const sz = sizes[size];
     if (!loc || !sz) throw new ToolError("Unknown location or size.");
-    const capacity = (guests ?? sz.defaultGuests) as 2 | 4 | 6 | 8 | 10;
-    const baseADR = guestRates[capacity];
+    const baseADR = sz.baseADR;
 
     const extrasPct = (chosen ?? []).reduce((sum, e) => sum + (extras[e] ?? 0), 0);
 
@@ -107,7 +102,7 @@ export default defineTool({
       currency: "CZK",
       location: loc.label,
       size: sz.label,
-      guests: capacity === 10 ? "10+" : capacity,
+      guests: sz.guests,
       season: seasonKey,
       averageNightlyRate: r.adr,
       occupancyRate: Math.round(r.occupancy * 100) / 100,
@@ -125,7 +120,7 @@ export default defineTool({
       content: [
         {
           type: "text" as const,
-          text: `${loc.label}, ${sz.label} for ${capacity === 10 ? "10+" : capacity} guests: net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK — roughly ${result.multipleVsLongTermRent}x.`,
+          text: `${loc.label}, ${sz.label} (${sz.guests} guests): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK — roughly ${result.multipleVsLongTermRent}x.`,
         },
       ],
       structuredContent: result,
