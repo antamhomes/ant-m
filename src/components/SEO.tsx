@@ -17,7 +17,7 @@ const META: Record<PageKey, { cs: { title: string; desc: string }; vi: { title: 
     },
     vi: {
       title: "Quản lý cho thuê ngắn hạn & Airbnb tại Praha | Antam Homes",
-      desc: "Dịch vụ quản lý căn hộ cho thuê ngắn hạn tại Praha: chuẩn bị tin đăng, lo cho khách, dọn dẹp, định giá và báo cáo rõ ràng cho chủ nhà. Thu nhập tốt hơn, ít lo hơn.",
+      desc: "Quản lý căn hộ cho thuê ngắn hạn (Airbnb, Booking) tại Praha: chuẩn bị nhà, lo khách, dọn dẹp, đặt giá và bảng kê rõ ràng cho chủ nhà. Thu nhiều hơn, lo ít hơn.",
     },
   },
 };
