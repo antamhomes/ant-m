@@ -1,8 +1,8 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 
 const apartments = [
-  { name: "Secret garden studio", location: "Praha 4" },
-  { name: "Secret garden studio", location: "Praha 4" },
+  { name: "Secret garden studio I", location: "Praha 4" },
+  { name: "Secret garden studio II", location: "Praha 4" },
   { name: "Secret garden loft", location: "Praha 4" },
   { name: "Moderní apartmán se zahradou", location: "Praha 4" },
   { name: "Klement apartment s terasou", location: "Mladá Boleslav" },

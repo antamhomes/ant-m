@@ -3,10 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0C221E" />
     <link rel="icon" href="/favicon.png" type="image/png" />
     <title>Správa krátkodobých pronájmů a Airbnb v Praze | antam homes</title>
     <meta name="description" content="Kompletní správa krátkodobého pronájmu v Praze — příprava nabídky, hosté, úklid, dynamické ceny a přehledné reporty pro majitele. Více výnosu, méně starostí." />
     <meta name="author" content="antam homes" />
+
+    <!-- Fonts: <link> instead of CSS @import so the browser can start fetching them immediately -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+    />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="antam homes" />
@@ -21,9 +30,62 @@
     <meta name="twitter:title" content="Správa krátkodobých pronájmů a Airbnb v Praze | antam homes" />
     <meta name="twitter:description" content="Kompletní správa krátkodobého pronájmu v Praze — příprava nabídky, hosté, úklid, dynamické ceny a přehledné reporty pro majitele. Více výnosu, méně starostí." />
     <meta name="twitter:image" content="https://www.antamhomes.com/og-image.jpg" />
+
+    <!-- Brand splash: shown instantly (before any JS), removed by src/main.tsx once the app has mounted. -->
+    <style>
+      #brand-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #0c221e;
+        transition: opacity 0.45s ease;
+      }
+      #brand-splash.is-leaving {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #brand-splash .wordmark {
+        font-family: "Playfair Display", Georgia, "Times New Roman", serif;
+        font-size: clamp(1.75rem, 4vw, 2.75rem);
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: #f7f1e8;
+        opacity: 0;
+        transform: translateY(6px);
+        animation: splash-in 0.6s ease 0.05s forwards;
+      }
+      #brand-splash .wordmark span {
+        color: #c2a46d;
+      }
+      #brand-splash .rule {
+        display: block;
+        margin: 0.9rem auto 0;
+        width: 0;
+        height: 1px;
+        background: rgba(194, 164, 109, 0.75);
+        animation: splash-rule 0.7s ease 0.35s forwards;
+      }
+      @keyframes splash-in {
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes splash-rule {
+        to { width: 2.5rem; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #brand-splash { transition: none; }
+        #brand-splash .wordmark { animation: none; opacity: 1; transform: none; }
+        #brand-splash .rule { animation: none; width: 2.5rem; }
+      }
+    </style>
   </head>
 
   <body>
+    <div id="brand-splash" aria-hidden="true">
+      <div class="wordmark">antam <span>homes</span><i class="rule"></i></div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

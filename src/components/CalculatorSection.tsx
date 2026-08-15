@@ -4,6 +4,7 @@ import { Calculator, MapPin, Home, Plus, Check, ChevronDown } from "lucide-react
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import CalculatorLeadDialog from "./CalculatorLeadDialog";
+import { trackEvent } from "@/lib/analytics";
 
 type SizeKey = "1kk" | "2kk" | "3kk" | "4kk";
 type LocationKey =
@@ -23,12 +24,14 @@ const locations: { value: LocationKey; label: string; multiplier: number; occupa
   { value: "praha10", label: "Praha 10", multiplier: 0.80, occupancy: 0.73 },
 ];
 
-// Base ADR (Kč/noc), supplies (internet+drogerie/měs), cena 1 úklidu
-const sizes: { value: SizeKey; label: string; baseADR: number; supplies: number; cleaningPrice: number; avgStayNights: number; energy: number }[] = [
-  { value: "1kk", label: "1+kk", baseADR: 1665, supplies: 1200, cleaningPrice: 600,  avgStayNights: 3,   energy: 3500 },
-  { value: "2kk", label: "2+kk", baseADR: 2250, supplies: 1400, cleaningPrice: 700,  avgStayNights: 3,   energy: 5000 },
-  { value: "3kk", label: "3+kk", baseADR: 3060, supplies: 1700, cleaningPrice: 900,  avgStayNights: 3.5, energy: 6500 },
-  { value: "4kk", label: "4+kk", baseADR: 4140, supplies: 2000, cleaningPrice: 1100, avgStayNights: 4,   energy: 8500 },
+// Base ADR (Kč/noc) podle dispozice.
+// Úklid a prádlo hradí host v ceně rezervace a zajišťuje antam homes — do výnosu majitele nevstupují.
+// Energie (elektřina, voda, plyn) hradí majitel a v odhadu nejsou zahrnuty.
+const sizes: { value: SizeKey; label: string; baseADR: number }[] = [
+  { value: "1kk", label: "1+kk", baseADR: 1665 },
+  { value: "2kk", label: "2+kk", baseADR: 2250 },
+  { value: "3kk", label: "3+kk", baseADR: 3060 },
+  { value: "4kk", label: "4+kk", baseADR: 4140 },
 ];
 
 // Extras jako % bonus na ADR
@@ -63,9 +66,12 @@ const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   xmas:   { adr: 1.75, occDelta: 0.12 },
 };
 
-const PLATFORM_FEE = 0.155;
-const MGMT_FEE = 0.22; // 22 % z net po platformě/úklidu/supplies — střed pásma 20–25 %
+const MGMT_FEE = 0.25; // provize antam homes: 25 % z výnosu z ubytování
 const DAYS = 30;
+// Obsazenost = obsazenost lokality + sezónní úprava, omezená na realistické pásmo.
+const MIN_OCCUPANCY = 0.5;
+const MAX_OCCUPANCY = 0.98;
+const clampOccupancy = (v: number) => Math.max(MIN_OCCUPANCY, Math.min(MAX_OCCUPANCY, v));
 
 const CalculatorSection = () => {
   const { lang } = useLanguage();
@@ -86,38 +92,31 @@ const CalculatorSection = () => {
     const sizeData = sizes.find((s) => s.value === size);
     const locationData = locations.find((l) => l.value === location);
     if (!sizeData || !locationData) {
-      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, cleaning: 0, cleanings: 0, supplies: 0, mgmt: 0, energy: 0, net: 0, netYearAvg: 0, ltr: 0, ratio: 0 };
+      return { adr: 0, occupancy: 0, gross: 0, mgmt: 0, net: 0, netYearAvg: 0, ltr: 0, ratio: 0 };
     }
     const extrasPct = extraKeys
       .filter((e) => selectedExtras.includes(e.id))
       .reduce((sum, e) => sum + e.pct, 0);
     const seasonAdj = seasonAdjust[season];
     const adr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * seasonAdj.adr);
-    const occupancy = Math.max(0.88, Math.min(0.98, locationData.occupancy + seasonAdj.occDelta));
+    const occupancy = clampOccupancy(locationData.occupancy + seasonAdj.occDelta);
     const gross = Math.round(adr * occupancy * DAYS);
-    const platformFee = Math.round(gross * PLATFORM_FEE);
-    const cleanings = Math.max(1, Math.round((occupancy * DAYS) / sizeData.avgStayNights));
-    const cleaning = sizeData.cleaningPrice * cleanings;
-    const supplies = sizeData.supplies;
-    // Net = gross − cleaning − commission, where commission = 22% × (gross − cleaning).
-    // Platform fees and supplies are absorbed in the management margin and not shown.
-    const mgmt = Math.round((gross - cleaning) * MGMT_FEE);
-    const net = gross - cleaning - mgmt;
-    const energy = sizeData.energy;
+    // Čistý příjem majitele = výnos z ubytování − provize 25 %.
+    // Úklid hradí host (a zajišťujeme ho my), energie platí majitel zvlášť.
+    const mgmt = Math.round(gross * MGMT_FEE);
+    const net = gross - mgmt;
 
     // Roční průměr — vždy počítaný ze sezóny "year", nezávisle na výběru
     const yAdj = seasonAdjust.year;
     const yAdr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * yAdj.adr);
-    const yOcc = Math.max(0.88, Math.min(0.98, locationData.occupancy + yAdj.occDelta));
+    const yOcc = clampOccupancy(locationData.occupancy + yAdj.occDelta);
     const yGross = Math.round(yAdr * yOcc * DAYS);
-    const yCleanings = Math.max(1, Math.round((yOcc * DAYS) / sizeData.avgStayNights));
-    const yCleaning = sizeData.cleaningPrice * yCleanings;
-    const yNetMonth = yGross - yCleaning - Math.round((yGross - yCleaning) * MGMT_FEE);
+    const yNetMonth = yGross - Math.round(yGross * MGMT_FEE);
     const netYearAvg = yNetMonth * 12;
 
     const ltr = ltrTable[location][size];
     const ratio = ltr > 0 ? net / ltr : 0;
-    return { adr, occupancy, gross, platformFee, cleaning, cleanings, supplies, mgmt, energy, net, netYearAvg, ltr, ratio };
+    return { adr, occupancy, gross, mgmt, net, netYearAvg, ltr, ratio };
   }, [location, size, selectedExtras, season]);
 
   return (
@@ -348,13 +347,20 @@ const CalculatorSection = () => {
                 )}
               </div>
 
+              <p className="font-body text-[11px] text-primary-foreground/60 leading-relaxed border-t border-primary-foreground/10 pt-4">
+                {t(lang, "calc_excluded_note")}
+              </p>
+
               <div className="space-y-3">
                 <p className="font-body text-xs text-primary-foreground/60 text-center tracking-wide">
                   {t(lang, "calc_trust_line")}
                 </p>
                 <button
                   type="button"
-                  onClick={() => setLeadOpen(true)}
+                  onClick={() => {
+                    trackEvent("cta_click", { location: "calculator", target: "lead_dialog", district: location, size });
+                    setLeadOpen(true);
+                  }}
                   className="block w-full text-center px-6 py-3.5 bg-primary text-primary-foreground font-body font-semibold text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-gold/60 ring-1 ring-gold/30 hover:ring-gold/60 transition-all"
                 >
                   {t(lang, "calc_cta")}

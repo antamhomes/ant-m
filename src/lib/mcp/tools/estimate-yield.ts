@@ -14,11 +14,12 @@ const locations = {
   praha10: { label: "Praha 10", multiplier: 0.8, occupancy: 0.73 },
 } as const;
 
+// Cleaning/laundry is paid by the guest and handled by antam homes; utilities (energy) are paid by the owner.
 const sizes = {
-  "1kk": { label: "1+kk", baseADR: 1665, cleaningPrice: 600, avgStayNights: 3 },
-  "2kk": { label: "2+kk", baseADR: 2250, cleaningPrice: 700, avgStayNights: 3 },
-  "3kk": { label: "3+kk", baseADR: 3060, cleaningPrice: 900, avgStayNights: 3.5 },
-  "4kk": { label: "4+kk", baseADR: 4140, cleaningPrice: 1100, avgStayNights: 4 },
+  "1kk": { label: "1+kk", baseADR: 1665 },
+  "2kk": { label: "2+kk", baseADR: 2250 },
+  "3kk": { label: "3+kk", baseADR: 3060 },
+  "4kk": { label: "4+kk", baseADR: 4140 },
 } as const;
 
 const extras = {
@@ -50,7 +51,7 @@ const ltrTable: Record<string, Record<string, number>> = {
   praha10: { "1kk": 14000, "2kk": 19500, "3kk": 26000, "4kk": 35000 },
 };
 
-const MGMT_FEE = 0.22;
+const MGMT_FEE = 0.25;
 const DAYS = 30;
 
 export default defineTool({
@@ -83,12 +84,10 @@ export default defineTool({
     const compute = (seasonKey: keyof typeof seasons) => {
       const adj = seasons[seasonKey];
       const adr = Math.round(sz.baseADR * loc.multiplier * (1 + extrasPct) * adj.adr);
-      const occupancy = Math.max(0.88, Math.min(0.98, loc.occupancy + adj.occDelta));
+      const occupancy = Math.max(0.5, Math.min(0.98, loc.occupancy + adj.occDelta));
       const gross = Math.round(adr * occupancy * DAYS);
-      const cleanings = Math.max(1, Math.round((occupancy * DAYS) / sz.avgStayNights));
-      const cleaning = sz.cleaningPrice * cleanings;
-      const commission = Math.round((gross - cleaning) * MGMT_FEE);
-      return { adr, occupancy, gross, cleanings, cleaning, commission, net: gross - cleaning - commission };
+      const commission = Math.round(gross * MGMT_FEE);
+      return { adr, occupancy, gross, commission, net: gross - commission };
     };
 
     const seasonKey = (season ?? "year") as keyof typeof seasons;
@@ -104,15 +103,13 @@ export default defineTool({
       averageNightlyRate: r.adr,
       occupancyRate: Math.round(r.occupancy * 100) / 100,
       grossMonthlyRevenue: r.gross,
-      cleaningsPerMonth: r.cleanings,
-      cleaningCost: r.cleaning,
       managementCommission: r.commission,
       managementCommissionRate: MGMT_FEE,
       netMonthlyIncomeForOwner: r.net,
       netYearlyAverage: yearly.net * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round((r.net / longTermRent) * 10) / 10,
-      note: "Indicative estimate based on Prague market benchmarks. Platform fees and supplies are absorbed in the management margin. Energy is paid separately by the owner.",
+      note: "Indicative estimate based on Prague market benchmarks; amounts exclude VAT. Cleaning and laundry are paid by guests as part of each booking and handled by antam homes, so they do not reduce the owner's income. Utilities (electricity, water, gas) are paid by the owner and are not included.",
     };
 
     return {

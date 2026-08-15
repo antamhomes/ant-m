@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { t } from "@/i18n/translations";
 import { useEffect } from "react";
 
 const SITE = "https://www.antamhomes.com";
@@ -64,6 +65,44 @@ export const SEO = ({ page }: { page: PageKey }) => {
   const altLocale = lang === "cs" ? "vi_VN" : "cs_CZ";
   const ogImage = `${SITE}/og-image.jpg`;
 
+  // Structured data: FAQ rich results + local business card. Kept in sync with
+  // the on-page FAQ via translations so Google never sees a mismatch.
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: (["faq1", "faq2", "faq3", "faq4"] as const).map((k) => ({
+      "@type": "Question",
+      name: t(lang, `${k}_q`),
+      acceptedAnswer: { "@type": "Answer", text: t(lang, `${k}_a`) },
+    })),
+  };
+  const businessJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${SITE}/#business`,
+    name: "antam homes",
+    legalName: "Donut Point, s.r.o.",
+    taxID: "21904022",
+    url: canonical,
+    image: ogImage,
+    logo: `${SITE}/favicon.png`,
+    description: current.desc,
+    email: t(lang, "footer_email"),
+    telephone: t(lang, "footer_phone"),
+    priceRange: "25 % z výnosu",
+    areaServed: { "@type": "City", name: "Praha" },
+    address: { "@type": "PostalAddress", streetAddress: "Příčná 1892/4", addressLocality: "Praha 1", postalCode: "110 00", addressCountry: "CZ" },
+    knowsLanguage: ["cs", "vi"],
+    makesOffer: {
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: lang === "cs" ? "Správa krátkodobých pronájmů (Airbnb, Booking.com)" : "Quản lý cho thuê ngắn hạn (Airbnb, Booking.com)",
+        areaServed: "Praha",
+      },
+    },
+  };
+
   return (
     <Helmet>
       <html lang={lang === "cs" ? "cs" : "vi"} />
@@ -88,6 +127,9 @@ export const SEO = ({ page }: { page: PageKey }) => {
       <meta name="twitter:title" content={current.title} />
       <meta name="twitter:description" content={current.desc} />
       <meta name="twitter:image" content={ogImage} />
+
+      <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
+      <script type="application/ld+json">{JSON.stringify(businessJsonLd)}</script>
     </Helmet>
   );
 };

@@ -2,6 +2,13 @@ const translations = {
   cs: {
     // Navbar
     nav_howItWorks: "Jak to funguje",
+    nav_calculator: "Kalkulačka",
+    nav_portfolio: "Portfolio",
+    nav_services: "Služby",
+    nav_faq: "Časté otázky",
+    nav_contact: "Kontakt",
+    nav_menu_open: "Otevřít menu",
+    nav_menu_close: "Zavřít menu",
     nav_freeConsultation: "Nezávazně probrat byt",
     footer_brochure: "Vytvořit přehled",
 
@@ -173,7 +180,7 @@ const translations = {
     calc_our_fee: "Naše provize",
     calc_cleaning_note: "",
     calc_net: "Odhadovaný výnos pro majitele",
-    calc_net_sub: "měsíčně, přibližný odhad",
+    calc_net_sub: "měsíčně · čistý příjem po provizi 25 %",
     calc_net_year: "Roční průměr",
     calc_ltr: "Dlouhodobý pronájem",
     calc_vs_ltr: "více",
@@ -182,7 +189,7 @@ const translations = {
     calc_approx_prefix: "přibližně",
     calc_trust_line: "Bez závazku · nezávazná konzultace",
     calc_disclaimer: "Orientační kalkulace, nikoli nabídka ani garance výnosu. Vychází z veřejných benchmarků pro Prahu (AirDNA, Airbtics, sreality, 2025) a typického nastavení správy Antam. Skutečný výnos kolísá podle stavu bytu, sezóny, recenzí, regulace krátkodobých pronájmů a dalších faktorů, které nemůžeme předem zaručit. Konkrétní podmínky vždy upravuje smlouva o správě.",
-    calc_excluded_note: "​",
+    calc_excluded_note: "Částky jsou uvedeny bez DPH. Úklid a prádlo hradí host v ceně rezervace a zajišťuje je antam homes — výnos majitele nesnižují. Energie (elektřina, voda, plyn) nejsou v odhadu zahrnuty a hradí je majitel.",
 
     // Owner report
     report_label: "Přehled pro majitele",
@@ -208,7 +215,7 @@ const translations = {
     faq3_q: "Můžu byt někdy využít pro sebe?",
     faq3_a: "Ano. Vybrané termíny lze v kalendáři dopředu zablokovat.",
     faq4_q: "Jak budu vědět, co byt vydělává?",
-    faq4_a: "Majitel dostává jasný přehled rezervací, výnosů, nákladů a důležitých informací o bytu.",
+    faq4_a: "Každý měsíc dostanete přehled: kolik nocí bylo obsazeno, jaký byl výnos, kolik činila naše provize 25 % a co jsme v bytě řešili. Vše na jednu stranu, bez složitých tabulek.",
 
     // Contact
     contact_label: "Kontakt",
@@ -256,8 +263,10 @@ const translations = {
     // Footer
     footer_desc: "Péče o byt a krátkodobý pronájem.",
     footer_company: "antam homes",
-    footer_legal: "Antam s.r.o. (dříve DAU AN s.r.o.)",
-    footer_ico: "IČO: 03328511",
+    footer_legal: "Provozovatel: Donut Point, s.r.o., IČO 21904022, se sídlem Příčná 1892/4, Nové Město, 110 00 Praha 1, zapsaná v obchodním rejstříku vedeném Městským soudem v Praze, sp. zn. C 407424.",
+    footer_ico: "IČO: 21904022",
+    footer_lang_cs: "Česky",
+    footer_lang_vi: "Tiếng Việt",
     footer_location: "Praha a okolí",
     footer_phone: "+420 727 952 459",
     footer_office_phone: "+420 607 338 126",
@@ -268,7 +277,7 @@ const translations = {
     footer_link_privacy: "Ochrana osobních údajů",
     footer_link_cookies: "Cookies",
     footer_cta: "Nezávazně probrat byt",
-    footer_rights: "© 2026 Antam s.r.o. Všechna práva vyhrazena.",
+    footer_rights: "© 2026 Donut Point, s.r.o. Všechna práva vyhrazena.",
 
     // Sticky mobile
     mobile_cta: "Probrat byt",
@@ -291,6 +300,13 @@ const translations = {
   vi: {
     // Navbar
     nav_howItWorks: "Quy trình làm việc",
+    nav_calculator: "Tính thử thu nhập",
+    nav_portfolio: "Portfolio",
+    nav_services: "Dịch vụ",
+    nav_faq: "Câu hỏi thường gặp",
+    nav_contact: "Liên hệ",
+    nav_menu_open: "Mở menu",
+    nav_menu_close: "Đóng menu",
     nav_freeConsultation: "Trao đổi về căn hộ",
     footer_brochure: "Tạo bản tổng quan",
 
@@ -462,7 +478,7 @@ const translations = {
     calc_our_fee: "Phí dịch vụ của chúng tôi",
     calc_cleaning_note: "",
     calc_net: "Thu nhập ước tính cho chủ nhà",
-    calc_net_sub: "mỗi tháng, con số ước tính",
+    calc_net_sub: "mỗi tháng · thu nhập ròng sau phí dịch vụ 25 %",
     calc_net_year: "Trung bình năm",
     calc_ltr: "Cho thuê dài hạn",
     calc_vs_ltr: "nhiều hơn",
@@ -471,7 +487,7 @@ const translations = {
     calc_approx_prefix: "khoảng",
     calc_trust_line: "Không ràng buộc · tư vấn miễn phí",
     calc_disclaimer: "Chỉ là ước tính tham khảo, không phải lời chào hàng hay cam kết lợi nhuận. Dựa trên dữ liệu công khai cho Praha (AirDNA, Airbtics, sreality, 2025) và mô hình quản lý thông thường của Antam. Kết quả thực tế thay đổi theo tình trạng căn hộ, mùa, đánh giá, quy định cho thuê ngắn hạn và nhiều yếu tố khác mà chúng tôi không thể bảo đảm trước. Điều kiện cụ thể luôn được quy định trong hợp đồng quản lý.",
-    calc_excluded_note: "​",
+    calc_excluded_note: "Số tiền chưa bao gồm VAT. Phí dọn dẹp và giặt giũ do khách trả trong giá đặt phòng và do antam homes đảm nhận — không làm giảm thu nhập của chủ nhà. Điện, nước, gas không được tính vào ước tính và do chủ nhà chi trả.",
 
     // Owner report
     report_label: "Báo cáo cho chủ nhà",
@@ -497,7 +513,7 @@ const translations = {
     faq3_q: "Chủ nhà có thể sử dụng căn hộ khi cần không?",
     faq3_a: "Có. Một số ngày có thể được chặn trước trong lịch để chủ nhà, gia đình hoặc người quen sử dụng.",
     faq4_q: "Làm sao để biết căn hộ tạo doanh thu như thế nào?",
-    faq4_a: "Chủ nhà nhận được báo cáo rõ ràng về đặt phòng, doanh thu, chi phí và các thông tin quan trọng.",
+    faq4_a: "Mỗi tháng cô chú nhận một bản báo cáo: bao nhiêu đêm có khách, doanh thu bao nhiêu, phí dịch vụ 25 % là bao nhiêu và chúng tôi đã xử lý gì trong căn hộ. Gọn trong một trang, không bảng biểu phức tạp.",
 
     // Contact
     contact_label: "Liên hệ",
@@ -545,8 +561,10 @@ const translations = {
     // Footer
     footer_desc: "Chăm sóc căn hộ và cho thuê ngắn hạn.",
     footer_company: "antam homes",
-    footer_legal: "Antam s.r.o. (trước đây DAU AN s.r.o.)",
-    footer_ico: "Mã số doanh nghiệp: 03328511",
+    footer_legal: "Đơn vị vận hành: Donut Point, s.r.o., IČO 21904022, trụ sở Příčná 1892/4, Nové Město, 110 00 Praha 1, đăng ký tại Tòa án thành phố Praha, hồ sơ C 407424.",
+    footer_ico: "IČO: 21904022",
+    footer_lang_cs: "Česky",
+    footer_lang_vi: "Tiếng Việt",
     footer_location: "Praha và khu vực lân cận",
     footer_phone: "+420 727 952 459",
     footer_office_phone: "+420 607 338 126",
@@ -557,7 +575,7 @@ const translations = {
     footer_link_privacy: "Bảo mật thông tin",
     footer_link_cookies: "Cookies",
     footer_cta: "Trao đổi về căn hộ",
-    footer_rights: "© 2026 Antam s.r.o. Mọi quyền được bảo lưu.",
+    footer_rights: "© 2026 Donut Point, s.r.o. Mọi quyền được bảo lưu.",
 
     // Sticky mobile
     mobile_cta: "Trao đổi",

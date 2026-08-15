@@ -1,4 +1,5 @@
 import { Mail, MapPin, Phone } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import logoAsset from "@/assets/antam-logo.png.asset.json";
@@ -117,6 +118,36 @@ const Footer = () => {
           >
             {lang === "cs" ? "Formulář pro odstoupení od smlouvy" : "Mẫu đơn rút khỏi hợp đồng"}
           </a>
+        </div>
+
+        {/* Operator identification (required for a business website) + language links */}
+        <div className="mt-8 pt-6 border-t border-primary-foreground/10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+          <div className="text-center md:text-left">
+            <p className="font-body text-[11px] leading-relaxed text-primary-foreground/45 max-w-2xl">
+              {t(lang, "footer_legal")}
+            </p>
+            <p className="font-body text-[11px] text-primary-foreground/45 mt-1">
+              {t(lang, "footer_rights")}
+            </p>
+          </div>
+          <nav aria-label={lang === "cs" ? "Jazyk" : "Ngôn ngữ"} className="flex justify-center md:justify-end gap-4 font-body text-xs">
+            <Link
+              to="/"
+              className={lang === "cs" ? "text-gold" : "text-primary-foreground/55 hover:text-gold transition-colors"}
+              aria-current={lang === "cs" ? "page" : undefined}
+              hrefLang="cs"
+            >
+              {t(lang, "footer_lang_cs")}
+            </Link>
+            <Link
+              to="/vn"
+              className={lang === "vi" ? "text-gold" : "text-primary-foreground/55 hover:text-gold transition-colors"}
+              aria-current={lang === "vi" ? "page" : undefined}
+              hrefLang="vi"
+            >
+              {t(lang, "footer_lang_vi")}
+            </Link>
+          </nav>
         </div>
 
       </div>

@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { trackEvent } from "@/lib/analytics";
 
 const ContactSection = () => {
   const { lang } = useLanguage();
@@ -38,6 +39,7 @@ const ContactSection = () => {
         },
       });
       if (error) throw error;
+      trackEvent("lead_submit", { form: "contact" });
       setSuccess(true);
       setFormData({ name: "", email: "", message: "", consent: false });
     } catch (err) {

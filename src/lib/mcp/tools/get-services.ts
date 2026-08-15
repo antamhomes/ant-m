@@ -13,7 +13,7 @@ const faq = [
   { question: "Musí být byt už připravený?", answer: "Ne. Umíme se podívat i na byt před spuštěním a říct, co dává smysl připravit." },
   { question: "Řešíte Airbnb i Booking.com?", answer: "Ano. Platformy volíme podle bytu, lokality a typu hostů." },
   { question: "Můžu byt někdy využít pro sebe?", answer: "Ano. Vybrané termíny lze v kalendáři dopředu zablokovat." },
-  { question: "Jak budu vědět, co byt vydělává?", answer: "Majitel dostává jasný přehled rezervací, výnosů, nákladů a důležitých informací o bytu." },
+  { question: "Jak budu vědět, co byt vydělává?", answer: "Každý měsíc dostanete přehled: kolik nocí bylo obsazeno, jaký byl výnos, kolik činila naše provize 25 % a co jsme v bytě řešili. Vše na jednu stranu, bez složitých tabulek." },
 ];
 
 export default defineTool({
@@ -36,6 +36,6 @@ export default defineTool({
         ].join("\n"),
       },
     ],
-    structuredContent: { services, faq, managementCommissionRate: 0.22 },
+    structuredContent: { services, faq, managementCommissionRate: 0.25 },
   }),
 });

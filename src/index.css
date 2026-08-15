@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap&subset=latin,latin-ext,vietnamese');
+/* Fonts are loaded via <link> in index.html (faster than CSS @import). */
 
 @tailwind base;
 @tailwind components;

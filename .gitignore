@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local scratch folder used by Claude (safe to delete)
+_to_delete/

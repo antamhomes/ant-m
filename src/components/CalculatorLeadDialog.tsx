@@ -11,6 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { trackEvent } from "@/lib/analytics";
 
 interface Props {
   open: boolean;
@@ -54,6 +55,7 @@ const CalculatorLeadDialog = ({ open, onOpenChange, locationLabel, sizeLabel }: 
         },
       });
       if (error) throw error;
+      trackEvent("lead_submit", { form: "calculator" });
       setSuccess(true);
     } catch (err) {
       console.error("Failed to send lead", err);

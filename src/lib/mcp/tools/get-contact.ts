@@ -9,7 +9,9 @@ export default defineTool({
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: () => {
     const info = {
-      company: "Antam s.r.o.",
+      company: "Donut Point, s.r.o.",
+      companyId: "21904022",
+      registeredSeat: "Příčná 1892/4, Nové Město, 110 00 Praha 1",
       brand: "antam homes",
       email: "antamhomes@gmail.com",
       phone: "727 952 459",
@@ -23,7 +25,7 @@ export default defineTool({
       content: [
         {
           type: "text" as const,
-          text: `antam homes (Antam s.r.o.)\nEmail: ${info.email}\nTelefon: ${info.phone}\nKancelář: ${info.officePhone}\nWeb: ${info.website} (Vietnamese: ${info.vietnameseVersion})\nOblast: ${info.serviceArea}`,
+          text: `antam homes (Donut Point, s.r.o., IČO 21904022)\nEmail: ${info.email}\nTelefon: ${info.phone}\nKancelář: ${info.officePhone}\nWeb: ${info.website} (Vietnamese: ${info.vietnameseVersion})\nOblast: ${info.serviceArea}`,
         },
       ],
       structuredContent: info,

@@ -13,7 +13,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'Antám Homes'
+const SITE_NAME = 'antam homes'
 
 interface ContactInquiryProps {
   name?: string
@@ -34,7 +34,7 @@ const ContactInquiryEmail = ({
 }: ContactInquiryProps) => (
   <Html lang="cs" dir="ltr">
     <Head />
-    <Preview>Nová poptávka z webu Antám Homes</Preview>
+    <Preview>Nová poptávka z webu antam homes</Preview>
     <Body style={main}>
       <Container style={container}>
         <Heading style={h1}>Nová poptávka z webu</Heading>
@@ -74,7 +74,9 @@ export const template = {
   component: ContactInquiryEmail,
   subject: (data: Record<string, any>) =>
     `Nová poptávka${data?.name ? ` od ${data.name}` : ''} – ${SITE_NAME}`,
-  to: 'info@an-tam.com',
+  // Fixed recipient: the edge function ignores the caller-supplied recipientEmail
+  // whenever a template defines `to`, so the form can only ever email this inbox.
+  to: 'antamhomes@gmail.com',
   displayName: 'Poptávka z kontaktního formuláře',
   previewData: {
     name: 'Jan Novák',

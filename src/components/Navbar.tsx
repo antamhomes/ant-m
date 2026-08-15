@@ -1,11 +1,20 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Menu, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { t } from "@/i18n/translations";
+import { t, type TranslationKey } from "@/i18n/translations";
 import logoAsset from "@/assets/antam-logo.png.asset.json";
+
+const NAV_LINKS: { href: string; key: TranslationKey }[] = [
+  { href: "#kalkulacka", key: "nav_calculator" },
+  { href: "#portfolio", key: "nav_portfolio" },
+  { href: "#jak-zacina", key: "nav_howItWorks" },
+  { href: "#faq", key: "nav_faq" },
+];
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { lang, toggleLang } = useLanguage();
 
   useEffect(() => {
@@ -19,10 +28,25 @@ const Navbar = () => {
     document.documentElement.lang = lang === "cs" ? "cs" : "vi";
   }, [lang]);
 
-  const LangSwitch = ({ compact = false }: { compact?: boolean }) => (
+  // Close the mobile menu on Escape and lock body scroll while it is open
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setMenuOpen(false);
+    window.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [menuOpen]);
+
+  const solid = scrolled || menuOpen;
+
+  const LangSwitch = () => (
     <div
       className={`inline-flex items-center rounded-full border ${
-        scrolled ? "border-border bg-card/60" : "border-primary-foreground/20 bg-transparent"
+        solid ? "border-border bg-card/60" : "border-primary-foreground/20 bg-transparent"
       } overflow-hidden`}
     >
       <button
@@ -30,7 +54,7 @@ const Navbar = () => {
         className={`px-2.5 py-1 text-[11px] font-body font-semibold tracking-wider uppercase transition-colors ${
           lang === "cs"
             ? "bg-gold/15 text-gold"
-            : scrolled
+            : solid
               ? "text-muted-foreground hover:text-foreground"
               : "text-primary-foreground/60 hover:text-primary-foreground"
         }`}
@@ -38,13 +62,13 @@ const Navbar = () => {
       >
         CZ
       </button>
-      <span className={`w-px h-4 ${scrolled ? "bg-border" : "bg-primary-foreground/20"}`} />
+      <span className={`w-px h-4 ${solid ? "bg-border" : "bg-primary-foreground/20"}`} />
       <button
         onClick={() => lang !== "vi" && toggleLang()}
         className={`px-2.5 py-1 text-[11px] font-body font-semibold tracking-wider uppercase transition-colors ${
           lang === "vi"
             ? "bg-gold/15 text-gold"
-            : scrolled
+            : solid
               ? "text-muted-foreground hover:text-foreground"
               : "text-primary-foreground/60 hover:text-primary-foreground"
         }`}
@@ -61,45 +85,55 @@ const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        scrolled
+        solid
           ? "bg-background/95 backdrop-blur-md border-b border-border shadow-sm py-3"
           : "bg-transparent py-5"
       }`}
+      aria-label={lang === "cs" ? "Hlavní navigace" : "Điều hướng chính"}
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-2.5 font-display text-lg md:text-xl font-semibold tracking-tight lowercase" aria-label="antam homes">
+        <a
+          href="#"
+          onClick={() => setMenuOpen(false)}
+          className="flex items-center gap-2.5 font-display text-lg md:text-xl font-semibold tracking-tight lowercase"
+          aria-label="antam homes"
+        >
           <img
             src={logoAsset.url}
             alt=""
             aria-hidden="true"
             className={`h-9 w-9 md:h-10 md:w-10 rounded-full object-cover transition-shadow ${
-              scrolled ? "shadow-sm ring-1 ring-border" : "ring-1 ring-primary-foreground/15"
+              solid ? "shadow-sm ring-1 ring-border" : "ring-1 ring-primary-foreground/15"
             }`}
             width={80}
             height={80}
           />
           <span className="flex items-baseline gap-1">
-            <span className={scrolled ? "text-foreground" : "text-primary-foreground"}>antam</span>
+            <span className={solid ? "text-foreground" : "text-primary-foreground"}>antam</span>
             <span className="text-gold">homes</span>
           </span>
         </a>
 
+        {/* Desktop */}
         <div className="hidden md:flex items-center gap-7">
-          <a
-            href="#jak-zacina"
-            className={`font-body text-sm transition-colors ${
-              scrolled ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/75 hover:text-primary-foreground"
-            }`}
-          >
-            {t(lang, "nav_howItWorks")}
-          </a>
+          {NAV_LINKS.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className={`font-body text-sm transition-colors ${
+                solid ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/75 hover:text-primary-foreground"
+              }`}
+            >
+              {t(lang, l.key)}
+            </a>
+          ))}
 
           <LangSwitch />
 
           <a
             href="#kontakt"
             className={`cta-shine px-5 py-2.5 font-body font-semibold text-xs tracking-wider uppercase rounded-sm transition-all ${
-              scrolled
+              solid
                 ? "bg-primary text-primary-foreground hover:brightness-110"
                 : "bg-primary-foreground text-primary hover:brightness-95"
             }`}
@@ -110,9 +144,57 @@ const Navbar = () => {
 
         {/* Mobile */}
         <div className="flex md:hidden items-center gap-2">
-          <LangSwitch compact />
+          <LangSwitch />
+          <button
+            type="button"
+            onClick={() => setMenuOpen((o) => !o)}
+            aria-expanded={menuOpen}
+            aria-controls="mobile-menu"
+            aria-label={t(lang, menuOpen ? "nav_menu_close" : "nav_menu_open")}
+            className={`inline-flex items-center justify-center w-10 h-10 rounded-full border transition-colors ${
+              solid
+                ? "border-border text-foreground hover:bg-muted"
+                : "border-primary-foreground/25 text-primary-foreground hover:bg-primary-foreground/10"
+            }`}
+          >
+            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
         </div>
       </div>
+
+      {/* Mobile menu panel */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            id="mobile-menu"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2 }}
+            className="md:hidden border-t border-border bg-background/98 backdrop-blur-md"
+          >
+            <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col">
+              {[...NAV_LINKS, { href: "#kontakt", key: "nav_contact" as TranslationKey }].map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="font-body text-base text-foreground py-3 border-b border-border/60 last:border-b-0"
+                >
+                  {t(lang, l.key)}
+                </a>
+              ))}
+              <a
+                href="#kontakt"
+                onClick={() => setMenuOpen(false)}
+                className="mt-4 cta-shine text-center px-5 py-3 bg-primary text-primary-foreground font-body font-semibold text-xs tracking-wider uppercase rounded-sm"
+              >
+                {t(lang, "nav_freeConsultation")}
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 };

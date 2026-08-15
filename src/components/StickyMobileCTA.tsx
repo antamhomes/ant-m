@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
+import { trackEvent } from "@/lib/analytics";
 
 const StickyMobileCTA = () => {
   const { lang } = useLanguage();
@@ -27,6 +28,7 @@ const StickyMobileCTA = () => {
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/95 to-background/0 pointer-events-none" />
       <a
         href="#kontakt"
+        onClick={() => trackEvent("cta_click", { location: "sticky_mobile", target: "contact" })}
         className="relative flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-primary text-primary-foreground font-body font-medium text-[13px] tracking-[0.15em] uppercase rounded-sm shadow-lg shadow-charcoal/20 hover:bg-charcoal transition-all"
       >
         {t(lang, "mobile_cta")}

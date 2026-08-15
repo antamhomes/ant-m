@@ -1,4 +1,5 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useMemo, ReactNode } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type Language = "cs" | "vi";
 
@@ -12,30 +13,35 @@ const LanguageContext = createContext<LanguageContextType>({
   toggleLang: () => {},
 });
 
+const VI_PREFIX = "/vn";
+
+const langFromPath = (pathname: string): Language =>
+  pathname.toLowerCase().startsWith(VI_PREFIX) ? "vi" : "cs";
+
+/**
+ * Language is derived from the URL (`/` = Czech, `/vn` = Vietnamese) so that
+ * refreshing or sharing a link keeps the chosen language and the canonical /
+ * hreflang tags always match the address bar. Must be rendered inside the
+ * router.
+ */
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [lang, setLang] = useState<Language>(() => {
-    if (typeof window !== "undefined" && window.location.pathname.toLowerCase().startsWith("/vn")) {
-      return "vi";
-    }
-    return "cs";
-  });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const lang = langFromPath(location.pathname);
 
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const onPop = () => {
-      setLang(window.location.pathname.toLowerCase().startsWith("/vn") ? "vi" : "cs");
-    };
-    window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
-  }, []);
-
-  const toggleLang = () => setLang((prev) => (prev === "cs" ? "vi" : "cs"));
-
-  return (
-    <LanguageContext.Provider value={{ lang, toggleLang }}>
-      {children}
-    </LanguageContext.Provider>
+  const value = useMemo<LanguageContextType>(
+    () => ({
+      lang,
+      toggleLang: () => {
+        const target = lang === "cs" ? VI_PREFIX : "/";
+        // Keep the current section anchor (e.g. #kalkulacka) when switching.
+        navigate({ pathname: target, hash: location.hash });
+      },
+    }),
+    [lang, location.hash, navigate]
   );
+
+  return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
 };
 
 export const useLanguage = () => useContext(LanguageContext);

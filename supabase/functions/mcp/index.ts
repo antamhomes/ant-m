@@ -21,10 +21,10 @@ var locations = {
   praha10: { label: "Praha 10", multiplier: 0.8, occupancy: 0.73 }
 };
 var sizes = {
-  "1kk": { label: "1+kk", baseADR: 1665, cleaningPrice: 600, avgStayNights: 3 },
-  "2kk": { label: "2+kk", baseADR: 2250, cleaningPrice: 700, avgStayNights: 3 },
-  "3kk": { label: "3+kk", baseADR: 3060, cleaningPrice: 900, avgStayNights: 3.5 },
-  "4kk": { label: "4+kk", baseADR: 4140, cleaningPrice: 1100, avgStayNights: 4 }
+  "1kk": { label: "1+kk", baseADR: 1665 },
+  "2kk": { label: "2+kk", baseADR: 2250 },
+  "3kk": { label: "3+kk", baseADR: 3060 },
+  "4kk": { label: "4+kk", baseADR: 4140 }
 };
 var extras = {
   balkon: 0.04,
@@ -52,7 +52,7 @@ var ltrTable = {
   praha9: { "1kk": 13e3, "2kk": 18e3, "3kk": 24e3, "4kk": 32e3 },
   praha10: { "1kk": 14e3, "2kk": 19500, "3kk": 26e3, "4kk": 35e3 }
 };
-var MGMT_FEE = 0.22;
+var MGMT_FEE = 0.25;
 var DAYS = 30;
 var estimate_yield_default = defineTool({
   name: "estimate_rental_yield",
@@ -73,12 +73,10 @@ var estimate_yield_default = defineTool({
     const compute = (seasonKey2) => {
       const adj = seasons[seasonKey2];
       const adr = Math.round(sz.baseADR * loc.multiplier * (1 + extrasPct) * adj.adr);
-      const occupancy = Math.max(0.88, Math.min(0.98, loc.occupancy + adj.occDelta));
+      const occupancy = Math.max(0.5, Math.min(0.98, loc.occupancy + adj.occDelta));
       const gross = Math.round(adr * occupancy * DAYS);
-      const cleanings = Math.max(1, Math.round(occupancy * DAYS / sz.avgStayNights));
-      const cleaning = sz.cleaningPrice * cleanings;
-      const commission = Math.round((gross - cleaning) * MGMT_FEE);
-      return { adr, occupancy, gross, cleanings, cleaning, commission, net: gross - cleaning - commission };
+      const commission = Math.round(gross * MGMT_FEE);
+      return { adr, occupancy, gross, commission, net: gross - commission };
     };
     const seasonKey = season ?? "year";
     const r = compute(seasonKey);
@@ -92,15 +90,13 @@ var estimate_yield_default = defineTool({
       averageNightlyRate: r.adr,
       occupancyRate: Math.round(r.occupancy * 100) / 100,
       grossMonthlyRevenue: r.gross,
-      cleaningsPerMonth: r.cleanings,
-      cleaningCost: r.cleaning,
       managementCommission: r.commission,
       managementCommissionRate: MGMT_FEE,
       netMonthlyIncomeForOwner: r.net,
       netYearlyAverage: yearly.net * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round(r.net / longTermRent * 10) / 10,
-      note: "Indicative estimate based on Prague market benchmarks. Platform fees and supplies are absorbed in the management margin. Energy is paid separately by the owner."
+      note: "Indicative estimate based on Prague market benchmarks; amounts exclude VAT. Cleaning and laundry are paid by guests as part of each booking and handled by antam homes, so they do not reduce the owner's income. Utilities (electricity, water, gas) are paid by the owner and are not included."
     };
     return {
       content: [
@@ -117,8 +113,8 @@ var estimate_yield_default = defineTool({
 // src/lib/mcp/tools/list-portfolio.ts
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var apartments = [
-  { name: "Secret garden studio", location: "Praha 4" },
-  { name: "Secret garden studio", location: "Praha 4" },
+  { name: "Secret garden studio I", location: "Praha 4" },
+  { name: "Secret garden studio II", location: "Praha 4" },
   { name: "Secret garden loft", location: "Praha 4" },
   { name: "Modern\xED apartm\xE1n se zahradou", location: "Praha 4" },
   { name: "Klement apartment s terasou", location: "Mlad\xE1 Boleslav" },
@@ -160,7 +156,7 @@ var faq = [
   { question: "Mus\xED b\xFDt byt u\u017E p\u0159ipraven\xFD?", answer: "Ne. Um\xEDme se pod\xEDvat i na byt p\u0159ed spu\u0161t\u011Bn\xEDm a \u0159\xEDct, co d\xE1v\xE1 smysl p\u0159ipravit." },
   { question: "\u0158e\u0161\xEDte Airbnb i Booking.com?", answer: "Ano. Platformy vol\xEDme podle bytu, lokality a typu host\u016F." },
   { question: "M\u016F\u017Eu byt n\u011Bkdy vyu\u017E\xEDt pro sebe?", answer: "Ano. Vybran\xE9 term\xEDny lze v kalend\xE1\u0159i dop\u0159edu zablokovat." },
-  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Majitel dost\xE1v\xE1 jasn\xFD p\u0159ehled rezervac\xED, v\xFDnos\u016F, n\xE1klad\u016F a d\u016Fle\u017Eit\xFDch informac\xED o bytu." }
+  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc dostanete p\u0159ehled: kolik noc\xED bylo obsazeno, jak\xFD byl v\xFDnos, kolik \u010Dinila na\u0161e provize 25 % a co jsme v byt\u011B \u0159e\u0161ili. V\u0161e na jednu stranu, bez slo\u017Eit\xFDch tabulek." }
 ];
 var get_services_default = defineTool3({
   name: "get_services_and_faq",
@@ -182,7 +178,7 @@ A: ${f.answer}`)
         ].join("\n")
       }
     ],
-    structuredContent: { services, faq, managementCommissionRate: 0.22 }
+    structuredContent: { services, faq, managementCommissionRate: 0.25 }
   })
 });
 
@@ -196,7 +192,9 @@ var get_contact_default = defineTool4({
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: () => {
     const info = {
-      company: "Antam s.r.o.",
+      company: "Donut Point, s.r.o.",
+      companyId: "21904022",
+      registeredSeat: "P\u0159\xED\u010Dn\xE1 1892/4, Nov\xE9 M\u011Bsto, 110 00 Praha 1",
       brand: "antam homes",
       email: "antamhomes@gmail.com",
       phone: "727 952 459",
@@ -210,7 +208,7 @@ var get_contact_default = defineTool4({
       content: [
         {
           type: "text",
-          text: `antam homes (Antam s.r.o.)
+          text: `antam homes (Donut Point, s.r.o., I\u010CO 21904022)
 Email: ${info.email}
 Telefon: ${info.phone}
 Kancel\xE1\u0159: ${info.officePhone}

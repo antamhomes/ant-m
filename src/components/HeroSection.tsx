@@ -1,8 +1,10 @@
 import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import { useRef } from "react";
-import heroImg from "@/assets/real-bedroom-luxury.jpg";
+import heroImg from "@/assets/hero-bedroom.webp";
+import heroImgSm from "@/assets/hero-bedroom-1280.webp";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
+import { trackEvent } from "@/lib/analytics";
 
 const HeroSection = () => {
   const { lang } = useLanguage();
@@ -21,10 +23,16 @@ const HeroSection = () => {
       <motion.div className="absolute inset-0 will-change-transform" style={{ y: imageY }}>
         <img
           src={heroImg}
-          alt="Luxusní byt spravovaný naším týmem"
+          srcSet={`${heroImgSm} 1280w, ${heroImg} 1920w`}
+          sizes="100vw"
+          alt=""
+          aria-hidden="true"
+          fetchPriority="high"
+          decoding="async"
+          onLoad={() => window.dispatchEvent(new Event("antam:hero-ready"))}
           className="w-full h-[115%] object-cover"
           width={1920}
-          height={1080}
+          height={1530}
         />
         <motion.div
           style={{ opacity: overlayOpacity }}
@@ -74,7 +82,8 @@ const HeroSection = () => {
           className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center items-center"
         >
           <a
-            href="#kontakt"
+            href="#kalkulacka"
+            onClick={() => trackEvent("cta_click", { location: "hero", target: "calculator" })}
             className="font-body inline-flex items-center justify-center px-7 py-3.5 text-sm sm:text-[0.95rem] font-medium tracking-[0.02em] rounded-full border transition-colors duration-300"
             style={{
               backgroundColor: "#F4EBDD",
@@ -93,7 +102,8 @@ const HeroSection = () => {
             {t(lang, "hero_cta")}
           </a>
           <a
-            href="#jak-to-funguje"
+            href="#kontakt"
+            onClick={() => trackEvent("cta_click", { location: "hero", target: "contact" })}
             className="font-body inline-flex items-center justify-center px-6 py-3.5 text-sm sm:text-[0.95rem] font-medium tracking-[0.02em] rounded-full border transition-colors duration-300"
             style={{
               color: "#F7F1E8",
