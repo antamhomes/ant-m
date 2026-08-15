@@ -6,6 +6,7 @@ import { t } from "@/i18n/translations";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
+import { reveal, revealDelayed } from "@/lib/motion";
 
 const ContactSection = () => {
   const { lang } = useLanguage();
@@ -58,31 +59,16 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="kontakt" className="py-16 md:py-24 px-6 bg-secondary">
-      <div className="max-w-2xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.15 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-10"
-        >
-          <p className="eyebrow eyebrow-center mb-5">
-            {t(lang, "contact_label")}
-          </p>
-          <h2 className="font-display text-3xl md:text-4xl font-semibold tracking-tight text-foreground mb-4">
-            {t(lang, "contact_fallback_title")}
-          </h2>
-          <p className="font-body text-muted-foreground max-w-xl mx-auto">
-            {t(lang, "contact_fallback_desc")}
-          </p>
+    <section id="kontakt" className="section bg-secondary scroll-mt-16">
+      <div className="container-prose">
+        <motion.div {...reveal} className="section-head">
+          <p className="eyebrow eyebrow-center">{t(lang, "contact_label")}</p>
+          <h2 className="h-section text-foreground">{t(lang, "contact_fallback_title")}</h2>
+          <p className="lead">{t(lang, "contact_fallback_desc")}</p>
         </motion.div>
 
         <motion.form
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.15 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
+          {...revealDelayed(0.1)}
           onSubmit={handleSubmit}
           className="bg-card border border-border rounded-sm p-6 md:p-8 space-y-5"
         >
@@ -156,7 +142,7 @@ const ContactSection = () => {
           <button
             type="submit"
             disabled={submitting || !formData.consent}
-            className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-body font-semibold text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-gold/60 ring-1 ring-gold/30 hover:ring-gold/60 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="btn btn-primary w-full py-4"
           >
             {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             {t(lang, "contact_submit")}

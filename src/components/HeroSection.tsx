@@ -77,7 +77,7 @@ const HeroSection = () => {
 
         <motion.p
           {...enter(16, 0.65, 0.6)}
-          className="font-body text-base sm:text-lg leading-relaxed mb-8 sm:mb-10 max-w-xl mx-auto"
+          className="font-body text-base sm:text-lg leading-relaxed mb-8 sm:mb-10 max-w-xl mx-auto text-pretty"
           style={{ color: "#E8DED0" }}
         >
           {t(lang, "hero_desc")}
@@ -90,43 +90,17 @@ const HeroSection = () => {
           <a
             href="#kalkulacka"
             onClick={() => trackEvent("cta_click", { location: "hero", target: "calculator" })}
-            className="font-body inline-flex items-center justify-center px-7 py-3.5 text-sm sm:text-[0.95rem] font-medium tracking-[0.02em] rounded-full border transition-colors duration-300"
-            style={{
-              backgroundColor: "#F4EBDD",
-              color: "#1E1A15",
-              borderColor: "#F4EBDD",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "#FFFFFF";
-              e.currentTarget.style.borderColor = "#FFFFFF";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "#F4EBDD";
-              e.currentTarget.style.borderColor = "#F4EBDD";
-            }}
+            className="btn btn-primary-inverse px-8 py-4"
           >
             {t(lang, "hero_cta")}
           </a>
           <a
             href="#kontakt"
             onClick={() => trackEvent("cta_click", { location: "hero", target: "contact" })}
-            className="font-body inline-flex items-center justify-center px-6 py-3.5 text-sm sm:text-[0.95rem] font-medium tracking-[0.02em] rounded-full border transition-colors duration-300"
-            style={{
-              color: "#F7F1E8",
-              borderColor: "rgba(247, 241, 232, 0.35)",
-              backgroundColor: "transparent",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(247, 241, 232, 0.10)";
-              e.currentTarget.style.borderColor = "rgba(247, 241, 232, 0.65)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-              e.currentTarget.style.borderColor = "rgba(247, 241, 232, 0.35)";
-            }}
+            className="btn btn-secondary-inverse px-8 py-4"
           >
             {t(lang, "hero_cta2")}
-            <span className="ml-2" style={{ color: "#C2A46D" }} aria-hidden="true">→</span>
+            <span className="text-gold" aria-hidden="true">→</span>
           </a>
         </motion.div>
       </div>

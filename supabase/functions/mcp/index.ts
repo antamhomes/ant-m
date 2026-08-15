@@ -156,7 +156,11 @@ var faq = [
   { question: "Mus\xED b\xFDt byt u\u017E p\u0159ipraven\xFD?", answer: "Ne. Um\xEDme se pod\xEDvat i na byt p\u0159ed spu\u0161t\u011Bn\xEDm a \u0159\xEDct, co d\xE1v\xE1 smysl p\u0159ipravit." },
   { question: "\u0158e\u0161\xEDte Airbnb i Booking.com?", answer: "Ano. Platformy vol\xEDme podle bytu, lokality a typu host\u016F." },
   { question: "M\u016F\u017Eu byt n\u011Bkdy vyu\u017E\xEDt pro sebe?", answer: "Ano. Vybran\xE9 term\xEDny lze v kalend\xE1\u0159i dop\u0159edu zablokovat." },
-  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc dostanete p\u0159ehled: kolik noc\xED bylo obsazeno, jak\xFD byl v\xFDnos, kolik \u010Dinila na\u0161e provize 25 % a co jsme v byt\u011B \u0159e\u0161ili. V\u0161e na jednu stranu, bez slo\u017Eit\xFDch tabulek." }
+  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc dostanete p\u0159ehled: kolik noc\xED bylo obsazeno, jak\xFD byl v\xFDnos, kolik \u010Dinila na\u0161e provize 25 % a co jsme v byt\u011B \u0159e\u0161ili. V\u0161e na jednu stranu, bez slo\u017Eit\xFDch tabulek." },
+  { question: "Kolik spr\xE1va stoj\xED?", answer: "Provize je 25 % z v\xFDnosu z ubytov\xE1n\xED a je kone\u010Dn\xE1 \u2014 bez fixn\xEDch ani m\u011Bs\xED\u010Dn\xEDch poplatk\u016F. Pokr\xFDv\xE1 i internet, hygienick\xE9 pot\u0159eby pro hosty, \u010Distic\xED prost\u0159edky a drobn\xE9 opravy do 1 000 K\u010D m\u011Bs\xED\u010Dn\u011B. \u010C\xE1stky uv\xE1d\xEDme bez DPH." },
+  { question: "Kdo plat\xED \xFAklid a energie?", answer: "\xDAklid a pran\xED pr\xE1dla hrad\xED host v cen\u011B rezervace a zaji\u0161\u0165uje je antam homes \u2014 v\xFDnos majitele nesni\u017Euj\xED. Energie (elekt\u0159ina, voda, plyn) hrad\xED majitel." },
+  { question: "Jak dlouho spolupr\xE1ce trv\xE1 a jak ji ukon\u010D\xEDm?", answer: "Smlouva je na dobu neur\u010Ditou s v\xFDpov\u011Bdn\xED lh\u016Ftou 4 m\u011Bs\xEDce. Potvrzen\xE9 rezervace se b\u011Bhem v\xFDpov\u011Bdn\xED lh\u016Fty je\u0161t\u011B dokon\u010D\xED." },
+  { question: "Kdy a jak dostanu vy\xFA\u010Dtov\xE1n\xED?", answer: "M\u011Bs\xED\u010Dn\u011B zp\u011Btn\u011B: p\u0159ehled rezervac\xED a v\xFDnos\u016F z platforem (Airbnb, Booking.com) spolu s fakturou na provizi." }
 ];
 var get_services_default = defineTool3({
   name: "get_services_and_faq",

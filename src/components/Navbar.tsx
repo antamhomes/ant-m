@@ -134,11 +134,7 @@ const Navbar = () => {
 
           <a
             href="#kontakt"
-            className={`cta-shine px-5 py-2.5 font-body font-semibold text-xs tracking-wider uppercase rounded-sm transition-all ${
-              solid
-                ? "bg-primary text-primary-foreground hover:brightness-110"
-                : "bg-primary-foreground text-primary hover:brightness-95"
-            }`}
+            className={`btn px-5 py-2.5 text-xs ${solid ? "btn-primary" : "btn-primary-inverse"}`}
           >
             {t(lang, "nav_freeConsultation")}
           </a>
@@ -189,7 +185,7 @@ const Navbar = () => {
               <a
                 href="#kontakt"
                 onClick={() => setMenuOpen(false)}
-                className="mt-4 cta-shine text-center px-5 py-3 bg-primary text-primary-foreground font-body font-semibold text-xs tracking-wider uppercase rounded-sm"
+                className="btn btn-primary mt-4 w-full"
               >
                 {t(lang, "nav_freeConsultation")}
               </a>

@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { MapPin, Sparkles } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { reveal, revealDelayed, stagger } from "@/lib/motion";
 import byt1 from "@/assets/byt-1.jpg.asset.json";
 import byt2 from "@/assets/byt-2.jpg.asset.json";
 import byt3 from "@/assets/byt-3.jpg.asset.json";
@@ -41,30 +42,19 @@ const PortfolioSection = () => {
   const c = copy[lang];
 
   return (
-    <section id="portfolio" className="pt-6 md:pt-10 pb-16 md:pb-24 px-6 bg-background">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.15 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <p className="eyebrow eyebrow-center mb-5">{c.eyebrow}</p>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground mb-6">
-            {c.title}
-          </h2>
-          <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">{c.desc}</p>
+    <section id="portfolio" className="section bg-background scroll-mt-16">
+      <div className="container-wide">
+        <motion.div {...reveal} className="section-head">
+          <p className="eyebrow eyebrow-center">{c.eyebrow}</p>
+          <h2 className="h-section text-foreground">{c.title}</h2>
+          <p className="lead">{c.desc}</p>
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
           {items.map((item, i) => (
             <motion.figure
               key={i}
-              initial={{ opacity: 0, y: 24 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.15 }}
-              transition={{ duration: 0.5, delay: (i % 3) * 0.08 }}
+              {...revealDelayed(stagger(i % 3, 0.08))}
               className="group overflow-hidden rounded-md border border-border bg-card shadow-[0_20px_45px_-30px_hsl(var(--charcoal)/0.4)]"
             >
               <div className="aspect-[4/3] overflow-hidden">
@@ -88,10 +78,7 @@ const PortfolioSection = () => {
           ))}
 
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.5, delay: 0.08 }}
+            {...revealDelayed(0.08)}
             className="flex flex-col items-center justify-center text-center rounded-md border border-dashed border-gold/40 bg-gold/[0.04] px-6 py-10 min-h-[220px]"
           >
             <Sparkles className="w-6 h-6 text-gold mb-4" />

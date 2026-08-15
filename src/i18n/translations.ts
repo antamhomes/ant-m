@@ -9,7 +9,7 @@ const translations = {
     nav_contact: "Kontakt",
     nav_menu_open: "Otevřít menu",
     nav_menu_close: "Zavřít menu",
-    nav_freeConsultation: "Nezávazně probrat byt",
+    nav_freeConsultation: "Probrat můj byt",
     footer_brochure: "Vytvořit přehled",
 
     // Hero
@@ -132,7 +132,7 @@ const translations = {
     step3_desc: "Řekneme, co dává smysl připravit, upravit nebo nastavit.",
     step4_title: "Spustíme správu",
     step4_desc: "Řešíme hosty, úklid, cenu, obsazenost i další provoz.",
-    process_cta: "Nezávazně probrat byt",
+    process_cta: "Začít nezávazně",
 
     // About — Náš přístup
     about_label: "Náš přístup",
@@ -199,11 +199,11 @@ const translations = {
     report_row_reservations: "Rezervace",
     report_row_occupancy: "Obsazenost",
     report_row_revenue: "Výnos",
-    report_row_costs: "Náklady",
-    report_row_net: "Čistý výsledek",
+    report_row_costs: "Provize antam homes (25 %)",
+    report_row_net: "Vyplaceno majiteli",
     report_row_notes: "Poznámky k bytu",
     report_period: "Měsíční přehled pro majitele",
-    report_cta: "Nezávazně probrat byt",
+    report_cta: "Chci takový přehled",
 
     // FAQ
     faq_label: "Časté otázky",
@@ -216,6 +216,14 @@ const translations = {
     faq3_a: "Ano. Vybrané termíny lze v kalendáři dopředu zablokovat.",
     faq4_q: "Jak budu vědět, co byt vydělává?",
     faq4_a: "Každý měsíc dostanete přehled: kolik nocí bylo obsazeno, jaký byl výnos, kolik činila naše provize 25 % a co jsme v bytě řešili. Vše na jednu stranu, bez složitých tabulek.",
+    faq5_q: "Kolik správa stojí?",
+    faq5_a: "Provize je 25 % z výnosu z ubytování a je konečná — bez fixních ani měsíčních poplatků. Pokrývá i internet, hygienické potřeby pro hosty, čisticí prostředky a drobné opravy do 1 000 Kč měsíčně. Částky uvádíme bez DPH.",
+    faq6_q: "Kdo platí úklid a energie?",
+    faq6_a: "Úklid a praní prádla hradí host v ceně rezervace a zajišťujeme je my — váš výnos nesnižují. Energie (elektřina, voda, plyn) hradí majitel jako doposud.",
+    faq7_q: "Jak dlouho spolupráce trvá a jak ji ukončím?",
+    faq7_a: "Smlouva je na dobu neurčitou s výpovědní lhůtou 4 měsíce. Hosté si často rezervují s velkým předstihem, proto se během výpovědní lhůty potvrzené rezervace ještě dokončí.",
+    faq8_q: "Kdy a jak dostanu vyúčtování?",
+    faq8_a: "Vyúčtování probíhá měsíčně zpětně. Dostanete přehled rezervací a výnosů z platforem (Airbnb, Booking.com) spolu s fakturou na naši provizi, takže vždy vidíte, z čeho se částka počítá.",
 
     // Contact
     contact_label: "Kontakt",
@@ -252,8 +260,8 @@ const translations = {
     calc_lead_prefill_note: "Vycházíme z toho, co jste vybrali v kalkulačce:",
 
     // Contact (fallback)
-    contact_fallback_title: "Nepočítali jste výnos? Napište nám.",
-    contact_fallback_desc: "Pošlete nám pár informací o bytě a my se nezávazně ozveme.",
+    contact_fallback_title: "Pojďme si o vašem bytě popovídat.",
+    contact_fallback_desc: "Pár vět o bytě stačí. Ozveme se co nejdříve — nezávazně a bez tlaku.",
     contact_fallback_message: "Krátká zpráva o bytu (nepovinné)",
     contact_fallback_message_placeholder: "Pár vět o bytě nebo odkaz na inzerát…",
     contact_consent_prefix: "Souhlasím se ",
@@ -430,7 +438,7 @@ const translations = {
     step3_desc: "Chúng tôi nói rõ những gì nên chuẩn bị, điều chỉnh hoặc thiết lập.",
     step4_title: "Bắt đầu vận hành",
     step4_desc: "antam homes lo khách, dọn dẹp, giá thuê, tỷ lệ lấp đầy và mọi việc vận hành.",
-    process_cta: "Trao đổi về căn hộ",
+    process_cta: "Bắt đầu, không ràng buộc",
 
     // About
     about_label: "Cách antam homes làm việc",
@@ -497,11 +505,11 @@ const translations = {
     report_row_reservations: "Đặt phòng",
     report_row_occupancy: "Tỷ lệ lấp đầy",
     report_row_revenue: "Doanh thu",
-    report_row_costs: "Chi phí",
-    report_row_net: "Thực nhận",
+    report_row_costs: "Phí dịch vụ antam homes (25%)",
+    report_row_net: "Chủ nhà thực nhận",
     report_row_notes: "Ghi chú về căn hộ",
     report_period: "Báo cáo tháng cho chủ nhà",
-    report_cta: "Trao đổi về căn hộ",
+    report_cta: "Tôi muốn báo cáo như vậy",
 
     // FAQ
     faq_label: "Câu hỏi thường gặp",
@@ -514,6 +522,14 @@ const translations = {
     faq3_a: "Có. Một số ngày có thể được chặn trước trong lịch để chủ nhà, gia đình hoặc người quen sử dụng.",
     faq4_q: "Làm sao để biết căn hộ tạo doanh thu như thế nào?",
     faq4_a: "Mỗi tháng chủ nhà nhận một bản báo cáo: bao nhiêu đêm có khách, doanh thu bao nhiêu, phí dịch vụ 25% là bao nhiêu và chúng tôi đã xử lý gì trong căn hộ. Gọn trong một trang, không bảng biểu phức tạp.",
+    faq5_q: "Phí dịch vụ là bao nhiêu?",
+    faq5_a: "Phí dịch vụ là 25% doanh thu từ lưu trú và là mức cuối cùng — không có phí cố định hay phí hàng tháng nào khác. Phí này đã bao gồm internet, đồ dùng vệ sinh cho khách, hóa chất dọn dẹp và sửa chữa nhỏ đến 1 000 Kč mỗi tháng. Số tiền chưa bao gồm VAT.",
+    faq6_q: "Ai trả tiền dọn dẹp và điện nước?",
+    faq6_a: "Dọn dẹp và giặt giũ do khách trả trong giá đặt phòng và do antam homes đảm nhận — không làm giảm thu nhập của chủ nhà. Điện, nước, gas do chủ nhà chi trả như trước.",
+    faq7_q: "Hợp tác kéo dài bao lâu và kết thúc thế nào?",
+    faq7_a: "Hợp đồng không thời hạn, thời gian báo trước khi chấm dứt là 4 tháng. Khách thường đặt phòng trước rất lâu, nên trong thời gian báo trước, các đặt phòng đã xác nhận vẫn được thực hiện.",
+    faq8_q: "Khi nào và bằng cách nào chủ nhà nhận quyết toán?",
+    faq8_a: "Quyết toán được thực hiện hàng tháng cho tháng trước. Chủ nhà nhận báo cáo đặt phòng và doanh thu từ nền tảng (Airbnb, Booking.com) cùng hóa đơn phí dịch vụ, nên luôn thấy rõ số tiền được tính từ đâu.",
 
     // Contact
     contact_label: "Liên hệ",
@@ -550,8 +566,8 @@ const translations = {
     calc_lead_prefill_note: "Dựa trên lựa chọn trong bảng tính:",
 
     // Contact (fallback)
-    contact_fallback_title: "Chưa tính thu nhập? Cứ nhắn cho chúng tôi.",
-    contact_fallback_desc: "Gửi vài thông tin về căn hộ, chúng tôi sẽ liên hệ lại, không ràng buộc.",
+    contact_fallback_title: "Cùng trao đổi về căn hộ của quý vị.",
+    contact_fallback_desc: "Chỉ cần vài dòng về căn hộ. Chúng tôi sẽ liên hệ lại sớm — không ràng buộc, không áp lực.",
     contact_fallback_message: "Tin nhắn ngắn về căn hộ (không bắt buộc)",
     contact_fallback_message_placeholder: "Vài dòng về căn hộ hoặc link tin đăng…",
     contact_consent_prefix: "Tôi đồng ý cho ",

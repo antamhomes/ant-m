@@ -29,7 +29,7 @@ const StickyMobileCTA = () => {
       <a
         href="#kontakt"
         onClick={() => trackEvent("cta_click", { location: "sticky_mobile", target: "contact" })}
-        className="relative flex items-center justify-center gap-2 w-full px-6 py-3.5 bg-primary text-primary-foreground font-body font-medium text-[13px] tracking-[0.15em] uppercase rounded-sm shadow-lg shadow-charcoal/20 hover:bg-charcoal transition-all"
+        className="btn btn-primary relative w-full py-3.5 shadow-lg shadow-charcoal/20"
       >
         {t(lang, "mobile_cta")}
         <ChevronRight className="w-4 h-4" />

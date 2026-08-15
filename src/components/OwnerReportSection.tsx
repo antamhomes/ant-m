@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { FileBarChart, ChevronRight, CalendarDays, TrendingUp, Wallet, Receipt, ClipboardList, BedDouble } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
+import { reveal, revealDelayed } from "@/lib/motion";
 
 const OwnerReportSection = () => {
   const { lang } = useLanguage();
@@ -18,35 +19,23 @@ const OwnerReportSection = () => {
 
   const rows = [
     { icon: CalendarDays, key: "report_row_reservations" as const, value: "12" },
-    { icon: BedDouble, key: "report_row_occupancy" as const, value: "92%" },
-    { icon: TrendingUp, key: "report_row_revenue" as const, value: "84 200 Kč" },
-    { icon: Receipt, key: "report_row_costs" as const, value: "18 600 Kč" },
-    { icon: Wallet, key: "report_row_net" as const, value: "65 600 Kč", highlight: true },
+    { icon: BedDouble, key: "report_row_occupancy" as const, value: "80 %" },
+    { icon: TrendingUp, key: "report_row_revenue" as const, value: "76 000 Kč" },
+    { icon: Receipt, key: "report_row_costs" as const, value: "19 000 Kč" },
+    { icon: Wallet, key: "report_row_net" as const, value: "57 000 Kč", highlight: true },
     { icon: ClipboardList, key: "report_row_notes" as const, value: "—" },
   ];
 
   return (
-    <section ref={ref} className="py-16 md:py-24 px-6 bg-background">
-      <div className="max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.15 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-14"
-        >
-          <p className="eyebrow eyebrow-center mb-5">
-            {t(lang, "report_label")}
-          </p>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground mb-6">
-            {t(lang, "report_title")}
-          </h2>
-          <p className="font-body text-muted-foreground text-lg max-w-2xl mx-auto">
-            {t(lang, "report_desc")}
-          </p>
+    <section ref={ref} className="section bg-background">
+      <div className="container-wide">
+        <motion.div {...reveal} className="section-head">
+          <p className="eyebrow eyebrow-center">{t(lang, "report_label")}</p>
+          <h2 className="h-section text-foreground">{t(lang, "report_title")}</h2>
+          <p className="lead">{t(lang, "report_desc")}</p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-10 items-center">
+        <div className="grid md:grid-cols-2 gap-10 md:gap-16 items-center max-w-5xl mx-auto">
           <motion.div
             style={{ y: cardY, rotate: cardRotate, scale: cardScale }}
             className="bg-card border border-border rounded-md p-6 md:p-8 shadow-[0_30px_60px_-30px_hsl(var(--charcoal)/0.35)] will-change-transform"
@@ -71,7 +60,7 @@ const OwnerReportSection = () => {
                     {t(lang, key)}
                   </span>
                   <span
-                    className={`font-display text-base font-semibold ${
+                    className={`font-display text-base font-semibold tnum ${
                       highlight ? "text-gradient-gold" : "text-foreground"
                     }`}
                   >
@@ -82,19 +71,11 @@ const OwnerReportSection = () => {
             </ul>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.6 }}
-          >
-            <p className="font-body text-foreground text-lg leading-relaxed mb-8">
+          <motion.div {...revealDelayed(0.1)}>
+            <p className="font-body text-foreground text-lg md:text-xl leading-relaxed mb-8 text-pretty">
               {t(lang, "report_text")}
             </p>
-            <a
-              href="#kontakt"
-              className="inline-flex items-center gap-2 px-7 py-3.5 bg-primary text-primary-foreground font-body font-medium text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-primary transition-all"
-            >
+            <a href="#kontakt" className="btn btn-primary">
               {t(lang, "report_cta")}
               <ChevronRight className="w-4 h-4" />
             </a>

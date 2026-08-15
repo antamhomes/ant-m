@@ -5,6 +5,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import CalculatorLeadDialog from "./CalculatorLeadDialog";
 import { trackEvent } from "@/lib/analytics";
+import { reveal, revealDelayed } from "@/lib/motion";
 
 type SizeKey = "1kk" | "2kk" | "3kk" | "4kk";
 type LocationKey =
@@ -120,33 +121,19 @@ const CalculatorSection = () => {
   }, [location, size, selectedExtras, season]);
 
   return (
-    <section id="kalkulacka" className="pt-6 md:pt-8 pb-10 md:pb-14 bg-muted/30">
-      <div className="max-w-5xl mx-auto px-6">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.15 }}
-          className="text-center mb-10 md:mb-12"
-        >
-          <p className="eyebrow eyebrow-center mb-5">
-            {t(lang, "calc_label")}
-          </p>
-          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-foreground">
+    <section id="kalkulacka" className="section bg-muted/30 scroll-mt-16">
+      <div className="container-narrow">
+        <motion.div {...reveal} className="section-head">
+          <p className="eyebrow eyebrow-center">{t(lang, "calc_label")}</p>
+          <h2 className="h-section text-foreground">
             {t(lang, "calc_title1")}
             <span className="text-gradient-gold">{t(lang, "calc_title2")}</span>
           </h2>
-          <p className="font-body text-muted-foreground mt-4 max-w-xl mx-auto">
-            {t(lang, "calc_desc")}
-          </p>
+          <p className="lead">{t(lang, "calc_desc")}</p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-8 md:items-start">
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            className="space-y-8 order-2 md:order-1"
-          >
+        <div className="grid md:grid-cols-2 gap-8 md:gap-10 md:items-start">
+          <motion.div {...revealDelayed(0.05)} className="space-y-8 order-2 md:order-1">
             <div>
               <label className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
                 <MapPin className="w-4 h-4 text-gold" />
@@ -303,12 +290,7 @@ const CalculatorSection = () => {
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            className="flex items-start order-1 md:order-2 md:sticky md:top-24"
-          >
+          <motion.div {...revealDelayed(0.1)} className="flex items-start order-1 md:order-2 md:sticky md:top-24">
             <div className="w-full bg-gradient-dark rounded-md p-7 md:p-9 space-y-5">
               {/* Net */}
               <div>
@@ -318,7 +300,7 @@ const CalculatorSection = () => {
                 <p className="font-body text-[11px] text-primary-foreground/55 -mt-0.5 mb-1">
                   {t(lang, "calc_net_sub")}
                 </p>
-                <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold leading-tight">
+                <p className="font-display text-5xl md:text-6xl font-bold text-gradient-gold leading-tight tnum">
                   <span className="whitespace-nowrap">
                     ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
                     <span className="font-body text-sm font-normal text-primary-foreground/65">
@@ -333,7 +315,7 @@ const CalculatorSection = () => {
                 <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
                   {t(lang, "calc_ltr")}
                 </p>
-                <p className="font-display text-xl font-semibold text-primary-foreground/60">
+                <p className="font-display text-xl font-semibold text-primary-foreground/60 tnum">
                   ~{(Math.round(result.ltr / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
                 </p>
                 {result.ratio > 0 && (
@@ -361,7 +343,7 @@ const CalculatorSection = () => {
                     trackEvent("cta_click", { location: "calculator", target: "lead_dialog", district: location, size });
                     setLeadOpen(true);
                   }}
-                  className="block w-full text-center px-6 py-3.5 bg-primary text-primary-foreground font-body font-semibold text-[13px] tracking-[0.15em] uppercase rounded-sm hover:bg-charcoal border border-gold/60 ring-1 ring-gold/30 hover:ring-gold/60 transition-all"
+                  className="btn btn-primary-inverse w-full"
                 >
                   {t(lang, "calc_cta")}
                 </button>
