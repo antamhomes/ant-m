@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "sdk_version": "0.26.2",
+  "path": "/functions/v1/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "antamhome",
+      "version": "0.1.0",
+      "title": "Antamhome"
+    },
+    "tools": [
+      {
+        "name": "estimate_rental_yield",
+        "title": "Estimate short-term rental yield",
+        "description": "Estimate the monthly net income an apartment owner in Prague could earn with antam homes short-term rental management, and compare it to long-term rent. Same model as the calculator on the website.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "enum": [
+                "praha1",
+                "praha2",
+                "praha3",
+                "praha4",
+                "praha5",
+                "praha6",
+                "praha7",
+                "praha8",
+                "praha9",
+                "praha10"
+              ],
+              "description": "Prague district of the apartment."
+            },
+            "size": {
+              "type": "string",
+              "enum": [
+                "1kk",
+                "2kk",
+                "3kk",
+                "4kk"
+              ],
+              "description": "Apartment layout size."
+            },
+            "season": {
+              "type": "string",
+              "enum": [
+                "year",
+                "summer",
+                "winter",
+                "xmas"
+              ],
+              "description": "Season to price for. Defaults to 'year' (yearly average)."
+            },
+            "extras": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "balkon",
+                  "parking",
+                  "klima",
+                  "vyhled",
+                  "vybaveni",
+                  "wellness"
+                ]
+              },
+              "description": "Extra features that raise the nightly rate."
+            }
+          },
+          "required": [
+            "location",
+            "size"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_portfolio",
+        "title": "List managed apartments",
+        "description": "List the apartments antam homes currently prepares, photographs and manages, with their locations.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_services_and_faq",
+        "title": "Get services and FAQ",
+        "description": "Get what antam homes does for apartment owners (full short-term rental management) plus the frequently asked questions and answers from the website.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_contact_info",
+        "title": "Get contact information",
+        "description": "Get antam homes contact details and how an apartment owner can start a no-obligation conversation about their apartment.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}

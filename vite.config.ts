@@ -2,6 +2,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
+import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
 
 const VI_TITLE = "Quản lý cho thuê ngắn hạn & Airbnb tại Praha | antam homes";
 const VI_DESC =
@@ -84,6 +85,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     prerenderVnPlugin(),
+    mcpPlugin(),
   ].filter(Boolean),
   resolve: {
     alias: {
