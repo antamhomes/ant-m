@@ -702,7 +702,7 @@ const translations = {
     foryou1_title: "Từng bị người thuê quỵt tiền",
     foryou1_desc: "Nợ tiền nhà, phá nhà, đuổi mãi không chịu đi. Khách ngắn hạn thì trả tiền trước, ở vài đêm rồi đi. Không phải đòi, không phải kiện.",
     foryou2_title: "Không có thời gian tiếp khách",
-    foryou2_desc: "Khách hỏi han, nhận phòng, chìa khóa, nửa đêm có chuyện. Những việc đó cứ để Antam lo cho.",
+    foryou2_desc: "Khách hỏi han, nhận phòng, chìa khóa, nửa đêm có chuyện. Mọi việc đều được Antam lo chu đáo.\n",
     foryou3_title: "Không muốn để ý từng thay đổi",
     foryou3_desc: "Airbnb, Booking thường xuyên đổi quy định, cách xếp hạng, mức phí thu. Việc này Antam làm hằng ngày, chủ\u00a0nhà không phải bận\u00a0tâm.",
     foryou4_title: "Sợ khách làm hỏng nhà",
