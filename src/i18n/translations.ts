@@ -166,7 +166,7 @@ const translations = {
     faq6_q: "Kdo platí úklid a energie?",
     faq6_a: "Host platí vedle ceny za ubytování i úklidový poplatek. Ten pokrývá úklid a praní prádla a zůstává celý nám, proto se vám z výnosu za ubytování na úklid nic nestrhává a ve vyúčtování ho vidíte jako samostatnou položku. Výnos, který se dělí 75/25, je tedy částka za ubytování bez úklidového poplatku. Energie (elektřina, voda) hradí majitel jako doposud.",
     faq7_q: "Jak dlouho spolupráce trvá a jak ji ukončím?",
-    faq7_a: "Smlouvu uzavíráme na jeden rok, poté běží dál a kdykoli ji lze ukončit s výpovědní lhůtou 6\u00a0měsíců. Není to náhoda: hosté rezervují často půl roku i déle dopředu a kalendář držíme otevřený stejně daleko. Byt, u kterého je jisté, že\u00a0poběží, prodává líp. Potvrzené rezervace se během výpovědní lhůty vždy dokončí.",
+    faq7_a: "Smlouvu uzavíráme na jeden rok, aby měl byt dostatek času se rozjet, nasbírat rezervace a hodnocení. Poté smlouva pokračuje dál a kdykoli ji lze ukončit s výpovědní lhůtou 6 měsíců. Hosté často rezervují půl roku i déle dopředu, proto držíme kalendář otevřený stejně daleko. Potvrzené rezervace se během výpovědní lhůty vždy dokončí.\n",
     faq9_q: "Je částka v kalkulačce před, nebo po vaší provizi?",
     faq9_a: "Po. Vše, co na webu označujeme jako výnos pro majitele, je už po odečtení provize 25 %. Provize je včetně DPH; energie hradí majitel zvlášť.",
     faq10_q: "Jaké povinnosti krátkodobý pronájem přináší a kdo je řeší?",
