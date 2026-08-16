@@ -1,5 +1,5 @@
-import { Eye, TrendingUp, CalendarCheck, Wallet, Check, Minus } from "lucide-react";
-import Reveal from "@/components/Reveal";
+import { Eye, TrendingUp, CalendarCheck, Wallet, Check } from "lucide-react";
+import Reveal, { stagger } from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 
@@ -11,9 +11,10 @@ const rows = [
 ] as const;
 
 /**
- * Long-term vs. Antam Homes as a real side-by-side comparison. The antam
- * column is tinted so the eye lands on it first; on mobile the two columns
- * stack inside each row so nothing is hidden behind an accordion.
+ * Long-term vs. Antam Homes. Every row is its own card: the row title runs
+ * across the full width, and under it two columns start from the same line,
+ * each with its own mini header (so the reader always knows which side is
+ * which, however far down they are). The Antam column is tinted.
  */
 const WhyBetterSection = () => {
   const { lang } = useLanguage();
@@ -31,48 +32,45 @@ const WhyBetterSection = () => {
           <p className="lead">{t(lang, "whyBetter_desc")}</p>
         </Reveal>
 
-        <Reveal delay={0.1} className="rounded-md border border-border overflow-hidden bg-card">
-          {/* Header — desktop only */}
-          <div className="grid grid-cols-2 md:grid-cols-[1.1fr_1fr_1.2fr] border-b border-border">
-            <div className="hidden md:block px-6 py-4" />
-            <div className="px-4 md:px-6 py-3 md:py-4 font-body text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.2em] md:tracking-[0.28em] text-muted-foreground">
-              {t(lang, "longTerm_label")}
-            </div>
-            <div className="px-4 md:px-6 py-3 md:py-4 font-body text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.2em] md:tracking-[0.28em] text-gold-deep bg-gold/[0.07] border-l border-gold/20">
-              {t(lang, "shortTerm_label")}
-            </div>
-          </div>
+        {/* Phones: extra room under the last card so the sticky CTA never covers it. */}
+        <ul className="grid gap-3 md:gap-5 md:grid-cols-2 pb-12 md:pb-0 list-none m-0 p-0">
+          {rows.map(({ icon: Icon, title, long, short }, i) => (
+            <Reveal as="li" key={title} delay={stagger(i, 0.07)} className="rounded-md border border-border bg-card overflow-hidden">
+              {/* Row title across both columns */}
+              <div className="flex items-center gap-2 md:gap-2.5 px-3.5 md:px-5 pt-3.5 md:pt-4 pb-3 border-b border-border">
+                <Icon className="w-4 h-4 md:w-5 md:h-5 text-gold shrink-0" strokeWidth={1.6} />
+                <h3 className="font-display text-[15px] md:text-lg font-semibold text-foreground leading-snug whitespace-nowrap">
+                  {t(lang, title)}
+                </h3>
+              </div>
 
-          <ul className="divide-y divide-border">
-            {rows.map(({ icon: Icon, title, long, short }) => (
-              <li key={title} className="grid grid-cols-2 md:grid-cols-[1.1fr_1fr_1.2fr]">
-                <div className="px-3 md:px-6 pt-4 pb-1.5 md:py-6 flex items-center gap-2 md:gap-3">
-                  <Icon className="w-4 h-4 md:w-5 md:h-5 text-gold shrink-0" strokeWidth={1.6} />
-                  <h3 className="font-display text-[15px] md:text-xl font-semibold text-foreground leading-snug whitespace-nowrap">
-                    {t(lang, title)}
-                  </h3>
+              {/* Two columns from one line. The Antam column is a touch wider: it also carries the check
+                  (icon + gap), so both texts get the same measure and wrap into the same number of lines. */}
+              <div className="grid grid-cols-[1fr_1.15fr] md:grid-cols-[1fr_1.12fr] items-start">
+                <div className="px-3 min-[360px]:px-3.5 md:px-5 pt-3 pb-3.5 md:pb-4">
+                  <p className="font-body text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.14em] md:tracking-[0.2em] leading-none whitespace-nowrap text-muted-foreground mb-2 md:mb-2.5">
+                    {t(lang, "longTerm_label")}
+                  </p>
+                  <p className="font-body text-[12px] min-[360px]:text-[13px] md:text-[15px] text-muted-foreground leading-normal md:leading-relaxed text-pretty">
+                    {t(lang, long)}
+                  </p>
                 </div>
-                <div className="col-start-1 md:col-start-auto px-3 md:px-6 pb-4 md:py-6 flex items-start gap-2 md:gap-3">
-                  <Minus className="hidden md:block w-4 h-4 mt-1 text-muted-foreground/60 shrink-0" />
-                  <div>
-                    <p className="font-body text-[13px] md:text-base text-muted-foreground leading-normal md:leading-relaxed text-pretty">
-                      {t(lang, long)}
-                    </p>
-                  </div>
-                </div>
-                {/* Phones: spans the title row too, so the vertical rule is continuous and the text sits mid-row. */}
-                <div className="col-start-2 row-start-1 row-span-2 md:col-start-auto md:row-start-auto md:row-span-1 px-3 md:px-6 py-3 md:py-6 flex items-center md:items-start gap-1.5 md:gap-3 md:bg-gold/[0.07] border-l border-gold/20">
-                  <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mt-[3px] md:mt-1 text-gold-deep shrink-0" strokeWidth={2.2} />
-                  <div>
-                    <p className="font-body text-[13px] md:text-base text-foreground leading-normal md:leading-relaxed text-pretty">
+                <div className="px-3 min-[360px]:px-3.5 md:px-5 pt-3 pb-3.5 md:pb-4 bg-gold/[0.07] border-l border-gold/20 self-stretch">
+                  <p className="font-body text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.14em] md:tracking-[0.2em] leading-none whitespace-nowrap text-gold-deep mb-2 md:mb-2.5">
+                    {t(lang, "shortTerm_label")}
+                  </p>
+                  <div className="flex items-start gap-1.5 md:gap-2">
+                    {/* Sits on the first line of text, not mid-paragraph */}
+                    <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mt-[0.35em] text-gold-deep shrink-0" strokeWidth={2.2} />
+                    <p className="font-body text-[12px] min-[360px]:text-[13px] md:text-[15px] text-foreground leading-normal md:leading-relaxed text-pretty">
                       {t(lang, short)}
                     </p>
                   </div>
                 </div>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
+              </div>
+            </Reveal>
+          ))}
+        </ul>
       </div>
     </section>
   );
