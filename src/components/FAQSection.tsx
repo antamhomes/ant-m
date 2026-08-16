@@ -39,6 +39,7 @@ const groups: Group[] = [
     title: "faq_group_coop",
     items: [
       { q: "faq14_q", a: "faq14_a" }, // proč ne sám
+      { q: "faq15_q", a: "faq15_a" }, // jiné platformy / firmy
       { q: "faq3_q", a: "faq3_a" },   // pro sebe
       { q: "faq7_q", a: "faq7_a" },   // doba / výpověď
       { q: "faq13_q", a: "faq13_a" }, // pro koho ne

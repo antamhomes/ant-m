@@ -52,7 +52,7 @@ const copy = {
     desc: "Nhà thật. Antam chuẩn bị, chụp ảnh và trông nom mỗi ngày cho chủ nhà.",
     guests: (n: number) => `tối đa ${n} khách`,
     soonTitle: "Sắp có thêm",
-    soonDesc: "Đến cuối mùa sẽ mở rộng lên 10 căn ở Praha.",
+    soonDesc: "Đến cuối mùa, Antam sẽ lo tổng cộng 10 căn ở Praha.",
     reviewsLabel: "Khách nói gì",
     reviewsLine: "Hơn 520 đánh giá trên Airbnb và Booking.com.",
   },
