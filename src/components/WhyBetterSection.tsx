@@ -46,13 +46,13 @@ const WhyBetterSection = () => {
           <ul className="divide-y divide-border">
             {rows.map(({ icon: Icon, title, long, short }) => (
               <li key={title} className="grid grid-cols-2 md:grid-cols-[1.1fr_1fr_1.2fr]">
-                <div className="col-span-2 md:col-span-1 px-4 md:px-6 pt-4 pb-1.5 md:py-6 flex items-center gap-2.5 md:gap-3">
-                  <Icon className="w-5 h-5 text-gold shrink-0" strokeWidth={1.6} />
-                  <h3 className="font-display text-base md:text-xl font-semibold text-foreground leading-snug">
+                <div className="px-3 md:px-6 pt-4 pb-1.5 md:py-6 flex items-center gap-2 md:gap-3">
+                  <Icon className="w-4 h-4 md:w-5 md:h-5 text-gold shrink-0" strokeWidth={1.6} />
+                  <h3 className="font-display text-[15px] md:text-xl font-semibold text-foreground leading-snug whitespace-nowrap">
                     {t(lang, title)}
                   </h3>
                 </div>
-                <div className="px-4 md:px-6 pb-4 md:py-6 flex gap-2 md:gap-3">
+                <div className="col-start-1 md:col-start-auto px-3 md:px-6 pb-4 md:py-6 flex items-start gap-2 md:gap-3">
                   <Minus className="hidden md:block w-4 h-4 mt-1 text-muted-foreground/60 shrink-0" />
                   <div>
                     <p className="font-body text-[13px] md:text-base text-muted-foreground leading-normal md:leading-relaxed text-pretty">
@@ -60,8 +60,9 @@ const WhyBetterSection = () => {
                     </p>
                   </div>
                 </div>
-                <div className="px-4 md:px-6 pt-1 pb-4 md:py-6 flex gap-2 md:gap-3 md:bg-gold/[0.07] border-l border-gold/20">
-                  <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mt-1 text-gold-deep shrink-0" strokeWidth={2.2} />
+                {/* Phones: spans the title row too, so the vertical rule is continuous and the text sits mid-row. */}
+                <div className="col-start-2 row-start-1 row-span-2 md:col-start-auto md:row-start-auto md:row-span-1 px-3 md:px-6 py-3 md:py-6 flex items-center md:items-start gap-1.5 md:gap-3 md:bg-gold/[0.07] border-l border-gold/20">
+                  <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mt-[3px] md:mt-1 text-gold-deep shrink-0" strokeWidth={2.2} />
                   <div>
                     <p className="font-body text-[13px] md:text-base text-foreground leading-normal md:leading-relaxed text-pretty">
                       {t(lang, short)}

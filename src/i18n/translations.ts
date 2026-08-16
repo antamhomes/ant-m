@@ -43,7 +43,7 @@ const translations = {
     whyBetter_title2: "lepší péči",
     whyBetter_title3: " i výnos.",
     whyBetter_desc: "Dlouhodobý nájem je jednoduchý. Krátkodobý pronájem, když ho\u00a0někdo dělá pořádně, dává víc kontroly, víc flexibility a vyšší výnos.",
-    comp1_title: "Kontrola stavu bytu",
+    comp1_title: "Kontrola bytu",
     comp1_long: "Byt vidíte jednou za rok, když vůbec.",
     comp1_short: "Kontrola po každém pobytu, drobnosti hned.",
     comp2_title: "Výnos",
