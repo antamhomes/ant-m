@@ -593,3 +593,34 @@ html {
     animation: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   "Pro koho" on phones: native <details> register (components/ReasonsAccordion.tsx)
+   Hairline rows, plus→minus icon and the 0fr → 1fr panel animation. The
+   animation uses ::details-content, so browsers without it just open/close.
+   --------------------------------------------------------------------------- */
+.reasons details {
+  border-top: 0.5px solid hsl(var(--primary) / 0.12);
+}
+.reasons details:last-child {
+  border-bottom: 0.5px solid hsl(var(--primary) / 0.12);
+}
+.reasons .reasons-num,
+.reasons .reasons-icon > span {
+  transition: color 320ms ease-out, background-color 320ms ease-out, transform 320ms ease-out;
+}
+.reasons details::details-content {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 320ms ease-out, content-visibility 320ms allow-discrete;
+}
+.reasons details[open]::details-content {
+  grid-template-rows: 1fr;
+}
+@media (prefers-reduced-motion: reduce) {
+  .reasons details::details-content,
+  .reasons .reasons-num,
+  .reasons .reasons-icon > span {
+    transition: none;
+  }
+}
