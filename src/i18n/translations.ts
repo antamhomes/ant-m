@@ -430,7 +430,7 @@ const translations = {
     faq1_q: "Nhà chưa sẵn sàng thì sao?",
     faq1_a: "Không sao. Antam sẽ xem nhà trước rồi nói rõ nên chuẩn bị gì.",
     faq16_q: "Chuẩn bị nhà tốn khoảng bao\u00a0nhiêu?",
-    faq16_a: "Tùy nhà đang thế nào và đã có sẵn những\u00a0gì. Nhà trống hoàn toàn thì chủ nhà nên tính khoảng 100\u00a0000\u00a0Kč cho mỗi phòng. Mục\u00a0đích là để nhà mình không thua kém những nhà khác, khách xem là thấy ưng. Sau khi đặt cọc, Antam sẽ gửi danh sách cần mua\u00a0gì và hết khoảng bao\u00a0nhiêu.",
+    faq16_a: "Tùy tình trạng nhà và những gì đã có sẵn. Nhà trống hoàn toàn thì chủ nhà nên tính khoảng 100 000 Kč cho mỗi phòng. Mục đích là để nhà mình không thua kém những nhà khác, khách xem là thấy ưng. Sau khi đặt cọc, Antam sẽ gửi danh sách cần mua gì và hết khoảng bao nhiêu.",
     faq3_q: "Muốn về ở thì sao?",
     faq3_a: "Được chứ. Anh chị báo trước là Antam khóa lịch ngay, cho gia đình hay người quen cũng vậy.",
     faq4_q: "Làm sao biết nhà thu được bao nhiêu?",
