@@ -12,11 +12,11 @@ import byt7 from "@/assets/byt-7.jpg.asset.json";
 
 /** The apartments shown publicly (owner's choice); capacities from Hospitable. */
 const items: { src: string; name: string; loc: string; guests: number }[] = [
-  { src: byt1.url, name: "Secret garden studio I", loc: "Praha 4", guests: 4 },
-  { src: byt2.url, name: "Secret garden studio II", loc: "Praha 4", guests: 4 },
+  { src: byt1.url, name: "Secret garden studio\u00a0I", loc: "Praha 4", guests: 4 },
+  { src: byt2.url, name: "Secret garden studio\u00a0II", loc: "Praha 4", guests: 4 },
   { src: byt3.url, name: "Secret garden loft", loc: "Praha 4", guests: 13 },
   { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 4", guests: 6 },
-  { src: byt5.url, name: "Klement apartment s terasou", loc: "Mladá Boleslav", guests: 8 },
+  { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", guests: 8 },
   { src: byt6.url, name: "Klement apartment", loc: "Mladá Boleslav", guests: 8 },
   { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", guests: 4 },
 ];
@@ -26,7 +26,7 @@ const reviews = {
   cs: [
     { text: "Dokonalá lokalita s výbornou dostupností, ale také velice příjemný hostitel, který na všechny zprávy reagoval bleskově rychle.", meta: "Airbnb · 5 ★ · srpen 2026" },
     { text: "Doporučili jsme přidat zapékací mísu. Druhý den stála na stole i s odměrkou.", meta: "Booking.com · 9/10 · červenec 2026 · přeloženo" },
-    { text: "Komunikácia s hostiteľom bola bezproblémová a na všetkom sme sa vedeli dohodnúť.", meta: "Booking.com · 10/10 · červen 2026" },
+    { text: "Komunikácia s hostiteľom bola bezproblémová a na všetkom sme sa\u00a0vedeli dohodnúť.", meta: "Booking.com · 10/10 · červen 2026" },
   ],
   vi: [
     { text: "Vị trí hoàn hảo, đi lại thuận tiện, và chủ nhà rất dễ mến, trả lời mọi tin nhắn nhanh như chớp.", meta: "Airbnb · 5 ★ · 8/2026 · bản dịch" },
@@ -39,22 +39,24 @@ const copy = {
   cs: {
     eyebrow: "Portfolio",
     title: "Byty v naší péči",
-    desc: "Reálné apartmány, které pro majitele připravujeme, fotíme a denně spravujeme.",
+    desc: "Apartmány, které pro majitele připravujeme, fotíme a denně spravujeme.",
     guests: (n: number) => `až ${n} host${n === 4 ? "é" : "ů"}`,
     soonTitle: "Připravujeme",
     soonDesc: "Do konce sezóny rozšiřujeme portfolio na celkem 10 apartmánů po Praze.",
+    soonDescShort: "Do konce sezóny: 10 bytů v\u00a0Praze.",
     reviewsLabel: "Co říkají hosté",
-    reviewsLine: "Přes 520 recenzí na Airbnb a Booking.com.",
+    reviewsLine: "Přes 520 recenzí od hostů na Airbnb a\u00a0Booking.com.",
   },
   vi: {
     eyebrow: "Căn hộ",
     title: "Những căn hộ Antam đang lo",
-    desc: "Nhà thật. Antam chuẩn bị, chụp ảnh và trông nom mỗi ngày cho chủ nhà.",
+    desc: "Antam chuẩn bị, chụp ảnh và trông nom mỗi ngày cho chủ nhà.",
     guests: (n: number) => `tối đa ${n} khách`,
     soonTitle: "Sắp có thêm",
     soonDesc: "Đến cuối mùa, Antam sẽ lo tổng cộng 10 căn ở Praha.",
+    soonDescShort: "Đến cuối mùa: 10 căn ở Praha.",
     reviewsLabel: "Khách nói gì",
-    reviewsLine: "Hơn 520 đánh giá trên Airbnb và Booking.com.",
+    reviewsLine: "Hơn 520 đánh giá của khách trên Airbnb và\u00a0Booking.com.",
   },
 };
 
@@ -107,14 +109,15 @@ const PortfolioSection = () => {
 
           <motion.div
             {...revealDelayed(0.08)}
-            className="flex flex-col items-center justify-center text-center rounded-md border border-dashed border-gold/40 bg-gold/[0.04] px-6 py-10 min-h-[220px]"
+            className="flex flex-col items-center justify-center text-center rounded-md border border-dashed border-gold/40 bg-gold/[0.04] px-4 sm:px-6 py-8 sm:py-10 min-h-[220px]"
           >
             <Sparkles className="w-6 h-6 text-gold mb-4" />
             <h3 className="font-display text-xl font-semibold text-foreground mb-2">
               {c.soonTitle}
             </h3>
             <p className="font-body text-sm text-muted-foreground max-w-[26ch] leading-relaxed">
-              {c.soonDesc}
+              <span className="sm:hidden">{c.soonDescShort}</span>
+              <span className="hidden sm:inline">{c.soonDesc}</span>
             </p>
           </motion.div>
         </div>
@@ -123,7 +126,7 @@ const PortfolioSection = () => {
         <motion.div {...revealDelayed(0.1)} className="mt-14 md:mt-16">
           <div className="text-center mb-6 md:mb-8">
             <p className="eyebrow eyebrow-center">{c.reviewsLabel}</p>
-            <p className="font-display text-xl md:text-2xl font-semibold text-foreground mt-3">{c.reviewsLine}</p>
+            <p className="font-display text-xl md:text-2xl font-semibold text-foreground mt-3 mx-auto max-w-[24ch] md:max-w-none" style={{ textWrap: "balance" }}>{c.reviewsLine}</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
             {reviews[lang].map((r) => (

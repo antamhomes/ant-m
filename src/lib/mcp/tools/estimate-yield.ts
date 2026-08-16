@@ -111,7 +111,7 @@ export default defineTool({
       netYearlyAverage: yearly.net * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round((r.net / longTermRent) * 10) / 10,
-      note: "Indicative estimate based on Prague market benchmarks; the 25 % commission is final and VAT-inclusive. Guests pay a separate cleaning fee, which covers cleaning and laundry and is retained by Antam Homes, so the owner's share of accommodation revenue is not reduced. Utilities (electricity, water, gas) are paid by the owner and are not included.",
+      note: "Indicative estimate based on Prague market benchmarks; the 25 % commission is final and VAT-inclusive. Guests pay a separate cleaning fee, which covers cleaning and laundry and is retained by Antam Homes, so the owner's share of accommodation revenue is not reduced. Utilities (electricity, water) are paid by the owner and are not included.",
     };
 
     return {
