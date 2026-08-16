@@ -60,7 +60,7 @@ const WhyBetterSection = () => {
                     </p>
                   </div>
                 </div>
-                <div className="px-4 md:px-6 pt-1 pb-4 md:py-6 flex gap-2 md:gap-3 bg-gold/[0.07] border-l border-gold/20">
+                <div className="px-4 md:px-6 pt-1 pb-4 md:py-6 flex gap-2 md:gap-3 md:bg-gold/[0.07] border-l border-gold/20">
                   <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mt-1 text-gold-deep shrink-0" strokeWidth={2.2} />
                   <div>
                     <p className="font-body text-[13px] md:text-base text-foreground leading-normal md:leading-relaxed text-pretty">

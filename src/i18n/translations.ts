@@ -247,7 +247,7 @@ const translations = {
     foryou2_title: "Nemáte čas řešit hosty",
     foryou2_desc: "Dotazy, check-iny, klíče, problémy v noci. Po práci ani o víkendu to řešit nechcete. Bereme to my.",
     foryou3_title: "Nechcete hlídat každou změnu",
-    foryou3_desc: "Airbnb i Booking mění pravidla, algoritmy a ceny každý měsíc. My\u00a0v tom žijeme, vy nemusíte.",
+    foryou3_desc: "Airbnb i Booking mění pravidla, algoritmy a ceny každý měsíc. My\u00a0v tom žijeme, vy\u00a0nemusíte.",
     foryou4_title: "Chcete mít byt pod kontrolou",
     foryou4_desc: "Byt vidíme po každém pobytu: úklid, kontrola, drobnosti hned. Ne\u00a0jednou za rok jako u nájmu.",
     foryou5_title: "Chcete si byt nechat i pro sebe",
