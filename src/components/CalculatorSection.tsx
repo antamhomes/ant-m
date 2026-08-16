@@ -1,10 +1,9 @@
 import { useState, useMemo, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import Reveal from "@/components/Reveal";
 import { Calculator, MapPin, Home, Plus, Check, ChevronDown, Share2, Pencil } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
-import { reveal, revealDelayed } from "@/lib/motion";
 
 type SizeKey = "1kk" | "2kk" | "3kk" | "4kk";
 type LocationKey =
@@ -158,17 +157,17 @@ const CalculatorSection = () => {
   return (
     <section id="kalkulacka" className="section bg-muted/30 scroll-mt-16">
       <div className="container-narrow">
-        <motion.div {...reveal} className="section-head">
+        <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "calc_label")}</p>
           <h2 className="h-section text-foreground">
             {t(lang, "calc_title1")}
             <span className="text-gradient-gold">{t(lang, "calc_title2")}</span>
           </h2>
           <p className="lead">{t(lang, "calc_desc")}</p>
-        </motion.div>
+        </Reveal>
 
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 md:items-start">
-          <motion.div id="kalkulacka-zadani" {...revealDelayed(0.05)} className="space-y-8 order-2 md:order-1 scroll-mt-20">
+          <Reveal id="kalkulacka-zadani" delay={0.05} className="space-y-8 order-2 md:order-1 scroll-mt-20 min-w-0">
             <div>
               <label className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
                 <MapPin className="w-4 h-4 text-gold" />
@@ -178,7 +177,7 @@ const CalculatorSection = () => {
               <select
                 value={location}
                 onChange={(e) => setLocation(e.target.value as LocationKey)}
-                className="sm:hidden w-full px-4 py-3 bg-card border border-border rounded-sm font-body text-sm font-medium text-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors"
+                className="sm:hidden w-full min-w-0 max-w-full px-4 py-3 bg-card border border-border rounded-sm font-body text-sm font-medium text-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors"
               >
                 {locations.map((loc) => (
                   <option key={loc.value} value={loc.value}>{loc.label}</option>
@@ -208,7 +207,7 @@ const CalculatorSection = () => {
               <div className="grid grid-cols-4 gap-2">
                 {sizes.map((s) => (
                   <button key={s.value} type="button" onClick={() => setSize(s.value)}
-                    className={`px-3 py-3 rounded-sm text-sm font-body font-semibold transition-all border ${
+                    className={`px-2 sm:px-3 py-3 min-w-0 rounded-sm text-sm font-body font-semibold transition-all border ${
                       size === s.value
                         ? "bg-primary text-primary-foreground border-primary"
                         : "bg-card border-border text-foreground hover:border-gold/50"
@@ -271,15 +270,8 @@ const CalculatorSection = () => {
 
               {/* Mobile collapsible */}
               <div className="sm:hidden">
-                <AnimatePresence initial={false}>
-                  {extrasOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.25 }}
-                      className="overflow-hidden"
-                    >
+                <div className={`collapse-grid ${extrasOpen ? "is-open" : ""}`} aria-hidden={!extrasOpen}>
+                  <div>
                       <div className="grid grid-cols-1 gap-2 pt-1">
                         {extraKeys.map((extra) => {
                           const active = selectedExtras.includes(extra.id);
@@ -298,9 +290,8 @@ const CalculatorSection = () => {
                           );
                         })}
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                  </div>
+                </div>
               </div>
 
               {/* Tablet/Desktop: always visible */}
@@ -323,10 +314,10 @@ const CalculatorSection = () => {
                 })}
               </div>
             </div>
-          </motion.div>
+          </Reveal>
 
-          <motion.div {...revealDelayed(0.1)} className="flex items-start order-1 md:order-2 md:sticky md:top-24">
-            <div className="w-full bg-gradient-dark rounded-md p-7 md:p-9 space-y-5">
+          <Reveal delay={0.1} className="flex items-start order-1 md:order-2 md:sticky md:top-24">
+            <div className="w-full bg-gradient-dark rounded-md p-5 sm:p-7 md:p-9 space-y-4 sm:space-y-5">
               {/* Net */}
               <div>
                 <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
@@ -336,7 +327,7 @@ const CalculatorSection = () => {
                   {t(lang, "calc_net_sub")}
                 </p>
                 <p className="flex flex-wrap items-baseline gap-x-2 leading-tight tnum">
-                  <span className="font-display text-[2.75rem] sm:text-5xl md:text-[3.25rem] font-bold text-gradient-gold-on-dark whitespace-nowrap">
+                  <span className="font-display text-[2.25rem] min-[360px]:text-[2.75rem] sm:text-5xl md:text-[3.25rem] font-bold text-gradient-gold-on-dark whitespace-nowrap">
                     ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
                   </span>
                   <span className="font-body text-sm font-normal text-primary-foreground/65 whitespace-nowrap">
@@ -377,8 +368,8 @@ const CalculatorSection = () => {
                   <span className="block h-full w-3/4 bg-gold" />
                   <span className="block h-full w-1/4 bg-primary-foreground/25" />
                 </div>
-                <div className="mt-2 flex items-baseline justify-between gap-3 font-body text-[13px] tnum">
-                  <span className="text-primary-foreground/85 whitespace-nowrap">
+                <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 font-body text-[13px] tnum">
+                  <span className="text-primary-foreground/85">
                     <strong className="text-gold font-semibold">75 %</strong> {t(lang, "calc_split_owner")}{" "}
                     <span className="text-gold/90">= ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč</span>
                   </span>
@@ -437,11 +428,20 @@ const CalculatorSection = () => {
                 </button>
               </div>
             </div>
-          </motion.div>
+          </Reveal>
         </div>
 
-        <div className="mt-8 max-w-2xl mx-auto border-t border-border/60 pt-5">
-          <p className="font-body text-xs md:text-[13px] text-foreground/75 text-center leading-relaxed">
+        {/* Phones: the methodology note folds behind one line; larger screens show it in full. */}
+        <div className="mt-6 sm:mt-8 max-w-2xl mx-auto border-t border-border/60 pt-4 sm:pt-5">
+          <details className="sm:hidden group">
+            <summary className="list-none cursor-pointer font-body text-xs text-muted-foreground text-center underline underline-offset-4 decoration-border [&::-webkit-details-marker]:hidden">
+              {t(lang, "calc_disclaimer_toggle")}
+            </summary>
+            <p className="mt-3 font-body text-xs text-foreground/75 text-center leading-relaxed">
+              {t(lang, "calc_disclaimer")}
+            </p>
+          </details>
+          <p className="hidden sm:block font-body text-xs md:text-[13px] text-foreground/75 text-center leading-relaxed">
             {t(lang, "calc_disclaimer")}
           </p>
         </div>

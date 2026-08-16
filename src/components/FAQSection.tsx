@@ -1,15 +1,8 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
+import Reveal from "@/components/Reveal";
 import { ChevronDown } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t, type TranslationKey } from "@/i18n/translations";
-import { reveal, revealDelayed } from "@/lib/motion";
 
 type Item = { q: TranslationKey; a: TranslationKey };
 type Group = { title: TranslationKey; items: Item[] };
@@ -52,18 +45,19 @@ const MOBILE_VISIBLE = 5; // questions shown on mobile before "show more"
 const FAQSection = () => {
   const { lang } = useLanguage();
   const [expanded, setExpanded] = useState(false);
+  const [open, setOpen] = useState<TranslationKey | null>(null);
   let flatIndex = 0;
   const total = groups.reduce((n, g) => n + g.items.length, 0);
 
   return (
     <section id="faq" className="section bg-background scroll-mt-16">
       <div className="container-wide">
-        <motion.div {...reveal} className="section-head">
+        <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "faq_label")}</p>
           <h2 className="h-section-sm text-foreground">{t(lang, "faq_title")}</h2>
-        </motion.div>
+        </Reveal>
 
-        <motion.div {...revealDelayed(0.1)} className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-6 md:gap-y-0">
+        <Reveal delay={0.1} className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-6 md:gap-y-0">
           {groups.map((g) => (
             <div key={g.title}>
               <h3
@@ -73,29 +67,49 @@ const FAQSection = () => {
               >
                 {t(lang, g.title)}
               </h3>
-              <Accordion type="single" collapsible className="w-full">
+              <div className="w-full">
                 {g.items.map(({ q, a }) => {
                   const idx = flatIndex++;
                   const hiddenOnMobile = idx >= MOBILE_VISIBLE && !expanded;
+                  const isOpen = open === q;
                   return (
-                    <AccordionItem
-                      key={q}
-                      value={q}
-                      className={`border-b border-border ${hiddenOnMobile ? "hidden md:block" : ""}`}
-                    >
-                      <AccordionTrigger className="font-display text-base md:text-[17px] font-semibold text-foreground text-left py-3.5 md:py-4 hover:no-underline leading-snug">
-                        {t(lang, q)}
-                      </AccordionTrigger>
-                      <AccordionContent className="font-body text-[15px] text-muted-foreground leading-relaxed pb-5 pr-6 text-pretty">
-                        {t(lang, a)}
-                      </AccordionContent>
-                    </AccordionItem>
+                    <div key={q} className={`border-b border-border ${hiddenOnMobile ? "hidden md:block" : ""}`}>
+                      <h4 className="m-0">
+                        <button
+                          type="button"
+                          id={`faq-q-${q}`}
+                          aria-expanded={isOpen}
+                          aria-controls={`faq-a-${q}`}
+                          onClick={() => setOpen(isOpen ? null : q)}
+                          className="flex w-full items-center justify-between gap-4 font-display text-base md:text-[17px] font-semibold text-foreground text-left py-3.5 md:py-4 leading-snug"
+                        >
+                          {t(lang, q)}
+                          <ChevronDown
+                            className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+                            aria-hidden="true"
+                          />
+                        </button>
+                      </h4>
+                      {/* grid-rows 0fr→1fr animates height without measuring; older browsers just snap. */}
+                      <div
+                        id={`faq-a-${q}`}
+                        role="region"
+                        aria-labelledby={`faq-q-${q}`}
+                        className={`grid transition-[grid-template-rows] duration-200 ease-out ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
+                      >
+                        <div className="overflow-hidden">
+                          <p className="font-body text-[15px] text-muted-foreground leading-relaxed pb-5 pr-6 text-pretty">
+                            {t(lang, a)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   );
                 })}
-              </Accordion>
+              </div>
             </div>
           ))}
-        </motion.div>
+        </Reveal>
 
         {/* Mobile only: the rest of the questions on demand */}
         <div className="md:hidden mt-5 text-center">

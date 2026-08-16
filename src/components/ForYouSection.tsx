@@ -1,8 +1,7 @@
-import { motion } from "framer-motion";
 import { Clock, ShieldCheck, TrendingUp, CalendarHeart, UserX, Plane } from "lucide-react";
+import Reveal, { stagger } from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t, type TranslationKey } from "@/i18n/translations";
-import { reveal, revealDelayed, stagger } from "@/lib/motion";
 
 const items: { icon: typeof Clock; titleKey: TranslationKey; descKey: TranslationKey }[] = [
   { icon: UserX,         titleKey: "foryou1_title", descKey: "foryou1_desc" },
@@ -20,34 +19,33 @@ const ForYouSection = () => {
   return (
     <section id="pro-koho" className="section bg-secondary scroll-mt-16">
       <div className="container-wide">
-        <motion.div {...reveal} className="section-head">
+        <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "foryou_label")}</p>
           <h2 className="h-section text-foreground">
             {t(lang, "foryou_title1")}
             <span className="text-gradient-gold">{t(lang, "foryou_title2")}</span>
           </h2>
           <p className="lead">{t(lang, "foryou_desc")}</p>
-        </motion.div>
+        </Reveal>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 md:gap-5 max-w-6xl mx-auto">
           {items.map(({ icon: Icon, titleKey, descKey }, i) => (
-            <motion.div
-              key={titleKey}
-              {...revealDelayed(stagger(i, 0.07))}
-              className="flex items-start gap-3.5 md:gap-4 p-4 md:p-6 rounded-sm bg-card border border-border hover:border-gold/40 transition-colors duration-300 h-full"
+            <Reveal
+              key={titleKey} delay={stagger(i, 0.07)}
+              className="flex flex-col sm:flex-row items-start gap-2.5 sm:gap-3.5 md:gap-4 p-3.5 sm:p-4 md:p-6 rounded-sm bg-card border border-border hover:border-gold/40 transition-colors duration-300 h-full"
             >
-              <div className="w-10 h-10 rounded-sm bg-gold/10 flex items-center justify-center shrink-0">
-                <Icon className="w-5 h-5 text-gold" strokeWidth={1.6} />
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-sm bg-gold/10 flex items-center justify-center shrink-0">
+                <Icon className="w-4 h-4 sm:w-5 sm:h-5 text-gold" strokeWidth={1.6} />
               </div>
               <div>
-                <h3 className="font-display text-[17px] md:text-[1.2rem] font-semibold text-foreground mb-1 md:mb-1.5 leading-snug">
+                <h3 className="font-display text-[15px] sm:text-[17px] md:text-[1.2rem] font-semibold text-foreground mb-1 md:mb-1.5 leading-snug text-balance">
                   {t(lang, titleKey)}
                 </h3>
-                <p className="font-body text-sm md:text-base text-muted-foreground leading-relaxed text-pretty">
+                <p className="font-body text-[13px] sm:text-sm md:text-base text-muted-foreground leading-normal sm:leading-relaxed text-pretty">
                   {t(lang, descKey)}
                 </p>
               </div>
-            </motion.div>
+            </Reveal>
           ))}
         </div>
       </div>

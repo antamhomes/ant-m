@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import Reveal from "@/components/Reveal";
 import { Send, Loader2, ChevronDown, ShieldCheck, CalendarClock, KeyRound, Receipt } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { sendInquiry } from "@/lib/inquiry";
 import { trackEvent } from "@/lib/analytics";
-import { reveal, revealDelayed } from "@/lib/motion";
 
 const LOCATIONS = [
   "Praha 1", "Praha 2", "Praha 3", "Praha 4", "Praha 5",
@@ -55,6 +53,7 @@ const ContactSection = () => {
   const { lang } = useLanguage();
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [sendError, setSendError] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
   const set = (k: keyof typeof emptyForm, v: string | boolean) => setFormData((f) => ({ ...f, [k]: v }));
 
@@ -100,39 +99,30 @@ const ContactSection = () => {
     e.preventDefault();
     if (submitting || !formData.consent) return;
     setSubmitting(true);
+    setSendError(false);
     try {
-      const { error } = await supabase.functions.invoke("send-transactional-email", {
-        body: {
-          templateName: "contact-inquiry",
-          recipientEmail: "antamhomes@gmail.com",
-          idempotencyKey: `contact-${Date.now()}-${formData.phone || formData.email}`,
-          templateData: {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            address: labelOf(locationOptions, formData.location),
-            size: labelOf(sizeOptions, formData.size),
-            status: labelOf(statusOptions, formData.status),
-            contactPref: labelOf(prefOptions, formData.contactPref),
-            language: lang === "cs" ? "čeština" : "Tiếng Việt",
-            message: formData.message,
-          },
+      await sendInquiry({
+        templateName: "contact-inquiry",
+        recipientEmail: "antamhomes@gmail.com",
+        idempotencyKey: `contact-${Date.now()}-${formData.phone || formData.email}`,
+        templateData: {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          address: labelOf(locationOptions, formData.location),
+          size: labelOf(sizeOptions, formData.size),
+          status: labelOf(statusOptions, formData.status),
+          contactPref: labelOf(prefOptions, formData.contactPref),
+          language: lang === "cs" ? "čeština" : "Tiếng Việt",
+          message: formData.message,
         },
       });
-      if (error) throw error;
       trackEvent("lead_submit", { form: "contact", status: formData.status || "n/a" });
       setSuccess(true);
       setFormData(emptyForm);
     } catch (err) {
       console.error("Failed to send inquiry", err);
-      toast({
-        title: lang === "cs" ? "Něco se nepovedlo" : "Có lỗi xảy ra",
-        description:
-          lang === "cs"
-            ? "Zkuste to prosím znovu nebo nám napište přímo na antamhomes@gmail.com."
-            : "Vui lòng thử lại hoặc viết trực tiếp cho chúng tôi qua antamhomes@gmail.com.",
-        variant: "destructive",
-      });
+      setSendError(true);
     } finally {
       setSubmitting(false);
     }
@@ -141,14 +131,14 @@ const ContactSection = () => {
   return (
     <section id="kontakt" className="section bg-secondary scroll-mt-16">
       <div className="container-prose md:max-w-[calc(46rem+3rem)]">
-        <motion.div {...reveal} className="section-head">
+        <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "contact_label")}</p>
           <h2 className="h-section text-foreground">{t(lang, "contact_fallback_title")}</h2>
           <p className="lead">{t(lang, "contact_fallback_desc")}</p>
-        </motion.div>
+        </Reveal>
 
         {/* Assurance strip — the four things that take the fear out of saying yes */}
-        <motion.ul {...revealDelayed(0.05)} className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+        <Reveal as="ul" delay={0.05} className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 mb-6 sm:mb-8">
           {[
             { icon: ShieldCheck, key: "assure1" as const },
             { icon: CalendarClock, key: "assure2" as const },
@@ -160,12 +150,11 @@ const ContactSection = () => {
               <span>{t(lang, key)}</span>
             </li>
           ))}
-        </motion.ul>
+        </Reveal>
 
-        <motion.form
-          {...revealDelayed(0.1)}
+        <Reveal as="form" delay={0.1}
           onSubmit={handleSubmit}
-          className="bg-card border border-border rounded-sm p-6 md:p-8 space-y-5"
+          className="bg-card border border-border rounded-sm p-5 sm:p-6 md:p-8 space-y-4 sm:space-y-5"
         >
           {success ? (
             <p className="font-body text-foreground text-center py-6 leading-relaxed">
@@ -174,7 +163,7 @@ const ContactSection = () => {
           ) : (
             <>
               {/* Who */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-4 sm:gap-5">
                 <div>
                   <label htmlFor="c-name" className={labelCls}>
                     {t(lang, "contact_name")} <span className="text-gold-deep">*</span>
@@ -278,10 +267,15 @@ const ContactSection = () => {
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 {t(lang, "contact_submit")}
               </button>
+              {sendError && (
+                <p role="alert" className="font-body text-sm text-center text-destructive">
+                  {t(lang, "contact_error")}
+                </p>
+              )}
               <p className="font-body text-[13px] md:text-sm text-muted-foreground text-center">{t(lang, "contact_small")}</p>
             </>
           )}
-        </motion.form>
+        </Reveal>
       </div>
     </section>
   );

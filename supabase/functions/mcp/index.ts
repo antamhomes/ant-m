@@ -7,7 +7,7 @@ import { defineMcp } from "npm:@lovable.dev/mcp-js@0.26.2";
 
 // src/lib/mcp/tools/estimate-yield.ts
 import { defineTool, ToolError } from "npm:@lovable.dev/mcp-js@0.26.2";
-import { z } from "npm:zod@^3.25.76";
+import { z } from "npm:zod";
 var locations = {
   praha1: { label: "Praha 1", multiplier: 1.45, occupancy: 0.85 },
   praha2: { label: "Praha 2", multiplier: 1.25, occupancy: 0.83 },

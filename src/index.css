@@ -96,6 +96,9 @@ html {
     line-height: 1.6;
   }
 
+  /* Only 400/500/600 of the body font ship; bold text uses 600. */
+  strong, b { font-weight: 600; }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-display);
     line-height: 1.2;
@@ -144,7 +147,8 @@ html {
      Type: .h-section (H2), .lead (intro paragraph), .tnum (tabular numbers)
      Buttons: .btn + .btn-primary | .btn-primary-inverse | .btn-secondary | .btn-secondary-inverse
      ===================================================================== */
-  .section { padding-top: 4rem; padding-bottom: 4rem; }
+  .section { padding-top: 3rem; padding-bottom: 3rem; }
+  @media (min-width: 640px) { .section { padding-top: 4rem; padding-bottom: 4rem; } }
   .section-tight { padding-top: 3.5rem; padding-bottom: 3.5rem; }
   @media (min-width: 768px) {
     .section { padding-top: 6rem; padding-bottom: 6rem; }
@@ -161,7 +165,8 @@ html {
   .container-narrow { max-width: calc(56rem + 3rem); }
   .container-prose { max-width: calc(42rem + 3rem); }
 
-  .section-head { text-align: center; margin-bottom: 2.5rem; }
+  .section-head { text-align: center; margin-bottom: 1.75rem; }
+  @media (min-width: 640px) { .section-head { margin-bottom: 2.5rem; } }
   @media (min-width: 768px) { .section-head { margin-bottom: 3rem; } }
   .section-head .eyebrow { margin-bottom: 1.25rem; }
   .section-head .lead { margin-top: 1.25rem; }
@@ -216,6 +221,12 @@ html {
     border: 1px solid transparent;
     transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
     white-space: nowrap;
+    text-align: center;
+    min-width: 0;
+  }
+  /* Small phones: wrap rather than push the page wider. */
+  @media (max-width: 480px) {
+    .btn { white-space: normal; }
   }
   .btn:hover { transform: translateY(-1px); }
   .btn:active { transform: translateY(0); }
@@ -495,5 +506,90 @@ html {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+.no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* ---------------------------------------------------------------------------
+   Motion without a motion library.
+   [data-reveal]  scroll reveal (see components/Reveal.tsx)
+   [data-enter]   hero / navbar entrance, released when the splash lifts
+   .parallax      transform is set from JS on scroll (hero image)
+   --------------------------------------------------------------------------- */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+[data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+/* Owner-report card: a longer, slightly rotated settle instead of the plain slide. */
+[data-reveal].reveal-card {
+  transform: translate3d(0, 60px, 0) rotate(-1.5deg) scale(0.96);
+  transition-duration: 0.9s, 0.9s;
+}
+[data-reveal].reveal-card.is-in {
+  transform: none;
+}
+
+/* Hero + navbar entrance: children carry --enter-y / --enter-delay and wait for .is-ready. */
+[data-enter] {
+  opacity: 0;
+  transform: translate3d(0, var(--enter-y, 16px), 0);
+  transition: opacity var(--enter-dur, 0.7s) cubic-bezier(0.22, 1, 0.36, 1),
+    transform var(--enter-dur, 0.7s) cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: 0s;
+}
+.is-ready [data-enter],
+.is-ready[data-enter] {
+  opacity: 1;
+  transform: none;
+  transition-delay: var(--enter-delay, 0s);
+}
+.hero-zoom {
+  transform: scale(1.06);
+  transition: transform 1.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.is-ready .hero-zoom {
+  transform: scale(1);
+}
+/* Small expand/collapse (mobile extras in the calculator). */
+.collapse-grid {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.25s ease-out, opacity 0.25s ease-out;
+  opacity: 0;
+}
+.collapse-grid.is-open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+.collapse-grid > * {
+  overflow: hidden;
+}
+/* Mobile menu panel */
+@keyframes menu-in {
+  from { opacity: 0; transform: translate3d(0, -8px, 0); }
+  to { opacity: 1; transform: none; }
+}
+.menu-in {
+  animation: menu-in 0.2s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  [data-enter],
+  .hero-zoom {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .menu-in {
+    animation: none;
   }
 }

@@ -1,5 +1,4 @@
 import { createRoot } from "react-dom/client";
-import { HelmetProvider } from "react-helmet-async";
 import App from "./App.tsx";
 import { initAnalytics } from "./lib/analytics";
 import "./index.css";
@@ -8,9 +7,9 @@ initAnalytics();
 
 // Brand splash (see index.html): stays at least SPLASH_MIN_MS, hides as soon as
 // the hero image has rendered, and never later than SPLASH_MAX_MS.
-const SPLASH_MIN_MS = 1000;
-const SPLASH_MAX_MS = 2500;
-const SPLASH_FADE_MS = 750;
+const SPLASH_MIN_MS = 650;
+const SPLASH_MAX_MS = 1800;
+const SPLASH_FADE_MS = 600;
 const HERO_READY_EVENT = "antam:hero-ready";
 const SPLASH_DONE_EVENT = "antam:splash-done";
 
@@ -37,8 +36,4 @@ const dismissSplash = () => {
 window.addEventListener(HERO_READY_EVENT, dismissSplash, { once: true });
 window.setTimeout(dismissSplash, SPLASH_MAX_MS);
 
-createRoot(document.getElementById("root")!).render(
-  <HelmetProvider>
-    <App />
-  </HelmetProvider>
-);
+createRoot(document.getElementById("root")!).render(<App />);

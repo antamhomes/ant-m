@@ -1,7 +1,6 @@
-import { motion } from "framer-motion";
 import { MapPin, Users, Quote, Sparkles } from "lucide-react";
+import Reveal, { stagger } from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { reveal, revealDelayed, stagger } from "@/lib/motion";
 import byt1 from "@/assets/byt-1.jpg.asset.json";
 import byt2 from "@/assets/byt-2.jpg.asset.json";
 import byt3 from "@/assets/byt-3.jpg.asset.json";
@@ -67,17 +66,16 @@ const PortfolioSection = () => {
   return (
     <section id="portfolio" className="section bg-background scroll-mt-16">
       <div className="container-wide">
-        <motion.div {...reveal} className="section-head">
+        <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{c.eyebrow}</p>
           <h2 className="h-section-sm text-foreground">{c.title}</h2>
           <p className="lead">{c.desc}</p>
-        </motion.div>
+        </Reveal>
 
         <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-6">
           {items.map((item, i) => (
-            <motion.figure
-              key={item.name}
-              {...revealDelayed(stagger(i % 3, 0.08))}
+            <Reveal as="figure"
+              key={item.name} delay={stagger(i % 3, 0.08)}
               className="group overflow-hidden rounded-md border border-border bg-card shadow-[0_20px_45px_-30px_hsl(var(--charcoal)/0.4)]"
             >
               <div className="aspect-[4/3] overflow-hidden bg-secondary">
@@ -89,8 +87,8 @@ const PortfolioSection = () => {
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                 />
               </div>
-              <figcaption className="px-3 py-3 sm:px-5 sm:py-4">
-                <h3 className="font-display text-[15px] sm:text-lg font-semibold text-foreground leading-snug">
+              <figcaption className="px-2.5 py-2.5 sm:px-5 sm:py-4">
+                <h3 className="font-display text-[14px] sm:text-lg font-semibold text-foreground leading-snug text-balance">
                   {item.name}
                 </h3>
                 <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 font-body text-xs sm:text-sm text-muted-foreground">
@@ -104,11 +102,10 @@ const PortfolioSection = () => {
                   </span>
                 </p>
               </figcaption>
-            </motion.figure>
+            </Reveal>
           ))}
 
-          <motion.div
-            {...revealDelayed(0.08)}
+          <Reveal delay={0.08}
             className="flex flex-col items-center justify-center text-center rounded-md border border-dashed border-gold/40 bg-gold/[0.04] px-4 sm:px-6 py-8 sm:py-10 min-h-[220px]"
           >
             <Sparkles className="w-6 h-6 text-gold mb-4" />
@@ -119,27 +116,28 @@ const PortfolioSection = () => {
               <span className="sm:hidden">{c.soonDescShort}</span>
               <span className="hidden sm:inline">{c.soonDesc}</span>
             </p>
-          </motion.div>
+          </Reveal>
         </div>
 
         {/* Guest voices: the service quality an owner is really buying. */}
-        <motion.div {...revealDelayed(0.1)} className="mt-14 md:mt-16">
+        <Reveal delay={0.1} className="mt-14 md:mt-16">
           <div className="text-center mb-6 md:mb-8">
             <p className="eyebrow eyebrow-center">{c.reviewsLabel}</p>
             <p className="font-display text-xl md:text-2xl font-semibold text-foreground mt-3 mx-auto max-w-[24ch] md:max-w-none" style={{ textWrap: "balance" }}>{c.reviewsLine}</p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+          {/* Phones: one row you swipe (snap), so three quotes don't cost three screens. */}
+          <div className="flex md:grid md:grid-cols-3 gap-3 md:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-6 px-6 md:mx-0 md:px-0 pb-2 md:pb-0 no-scrollbar">
             {reviews[lang].map((r) => (
-              <blockquote key={r.meta} className="rounded-md bg-card border border-border p-5 md:p-6">
+              <blockquote key={r.meta} className="snap-start shrink-0 w-[82%] sm:w-[60%] md:w-auto rounded-md bg-card border border-border p-5 md:p-6">
                 <Quote className="w-5 h-5 text-gold mb-3" aria-hidden="true" />
-                <p className="font-body text-[15px] md:text-base text-foreground leading-relaxed text-pretty">
+                <p className="font-body text-sm md:text-base text-foreground leading-relaxed text-pretty">
                   „{r.text}“
                 </p>
                 <footer className="mt-3 font-body text-xs text-muted-foreground">{r.meta}</footer>
               </blockquote>
             ))}
           </div>
-        </motion.div>
+        </Reveal>
       </div>
     </section>
   );

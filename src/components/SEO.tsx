@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet-async";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { useEffect } from "react";
@@ -24,36 +23,6 @@ const META: Record<PageKey, { cs: { title: string; desc: string }; vi: { title: 
 
 export const SEO = ({ page }: { page: PageKey }) => {
   const { lang } = useLanguage();
-
-  // react-helmet-async appends its tags but does not remove pre-existing
-  // static ones from index.html, which leaves duplicates (the static Czech
-  // tags appear first and win for crawlers/queries). Strip any meta tags in
-  // the static head that Helmet now manages so Helmet's values are the only
-  // ones present.
-  useEffect(() => {
-    const selectors = [
-      'meta[name="description"]',
-      'meta[name="twitter:card"]',
-      'meta[name="twitter:title"]',
-      'meta[name="twitter:description"]',
-      'meta[name="twitter:image"]',
-      'meta[property="og:type"]',
-      'meta[property="og:site_name"]',
-      'meta[property="og:title"]',
-      'meta[property="og:description"]',
-      'meta[property="og:url"]',
-      'meta[property="og:locale"]',
-      'meta[property="og:locale:alternate"]',
-      'meta[property="og:image"]',
-    ];
-    selectors.forEach((sel) => {
-      document.head
-        .querySelectorAll(sel)
-        .forEach((el) => {
-          if (!el.hasAttribute("data-rh")) el.remove();
-        });
-    });
-  }, [lang]);
 
   const meta = META[page];
   const current = meta[lang];
@@ -103,35 +72,65 @@ export const SEO = ({ page }: { page: PageKey }) => {
     },
   };
 
-  return (
-    <Helmet>
-      <html lang={lang === "cs" ? "cs" : "vi"} />
-      <title>{current.title}</title>
-      <meta name="description" content={current.desc} />
-      <link rel="canonical" href={canonical} />
+  // Static <head> in index.html / vn/index.html already carries the right
+  // tags for crawlers; this keeps them in sync when the visitor switches
+  // language client-side, and injects the structured data. No head library.
+  useEffect(() => {
+    document.documentElement.lang = lang === "cs" ? "cs" : "vi";
+    document.title = current.title;
+    const setMeta = (attr: "name" | "property", key: string, content: string) => {
+      let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
+      if (!el) {
+        el = document.createElement("meta");
+        el.setAttribute(attr, key);
+        document.head.appendChild(el);
+      }
+      el.setAttribute("content", content);
+    };
+    const setLink = (rel: string, href: string, hreflang?: string) => {
+      const sel = hreflang ? `link[rel="${rel}"][hreflang="${hreflang}"]` : `link[rel="${rel}"]`;
+      let el = document.head.querySelector<HTMLLinkElement>(sel);
+      if (!el) {
+        el = document.createElement("link");
+        el.rel = rel;
+        if (hreflang) el.hreflang = hreflang;
+        document.head.appendChild(el);
+      }
+      el.href = href;
+    };
+    const setJsonLd = (id: string, data: unknown) => {
+      let el = document.getElementById(id) as HTMLScriptElement | null;
+      if (!el) {
+        el = document.createElement("script");
+        el.id = id;
+        el.type = "application/ld+json";
+        document.head.appendChild(el);
+      }
+      el.textContent = JSON.stringify(data);
+    };
+    setMeta("name", "description", current.desc);
+    setLink("canonical", canonical);
+    setLink("alternate", csUrl, "cs");
+    setLink("alternate", viUrl, "vi");
+    setLink("alternate", csUrl, "x-default");
+    setMeta("property", "og:type", "website");
+    setMeta("property", "og:site_name", "Antam Homes");
+    setMeta("property", "og:title", current.title);
+    setMeta("property", "og:description", current.desc);
+    setMeta("property", "og:url", canonical);
+    setMeta("property", "og:locale", locale);
+    setMeta("property", "og:locale:alternate", altLocale);
+    setMeta("property", "og:image", ogImage);
+    setMeta("name", "twitter:card", "summary_large_image");
+    setMeta("name", "twitter:title", current.title);
+    setMeta("name", "twitter:description", current.desc);
+    setMeta("name", "twitter:image", ogImage);
+    setJsonLd("ld-faq", faqJsonLd);
+    setJsonLd("ld-business", businessJsonLd);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]);
 
-      <link rel="alternate" hrefLang="cs" href={csUrl} />
-      <link rel="alternate" hrefLang="vi" href={viUrl} />
-      <link rel="alternate" hrefLang="x-default" href={csUrl} />
-
-      <meta property="og:type" content="website" />
-      <meta property="og:site_name" content="Antam Homes" />
-      <meta property="og:title" content={current.title} />
-      <meta property="og:description" content={current.desc} />
-      <meta property="og:url" content={canonical} />
-      <meta property="og:locale" content={locale} />
-      <meta property="og:locale:alternate" content={altLocale} />
-      <meta property="og:image" content={ogImage} />
-
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={current.title} />
-      <meta name="twitter:description" content={current.desc} />
-      <meta name="twitter:image" content={ogImage} />
-
-      <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
-      <script type="application/ld+json">{JSON.stringify(businessJsonLd)}</script>
-    </Helmet>
-  );
+  return null;
 };
 
 export default SEO;

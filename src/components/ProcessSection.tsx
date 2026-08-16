@@ -1,8 +1,7 @@
-import { motion } from "framer-motion";
 import { ChevronRight } from "lucide-react";
+import Reveal, { stagger } from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
-import { reveal, revealDelayed, stagger } from "@/lib/motion";
 
 const numberLabels = ["01", "02", "03", "04"];
 const titleKeys = ["step1_title", "step2_title", "step3_title", "step4_title"] as const;
@@ -18,13 +17,13 @@ const ProcessSection = () => {
   return (
     <section id="jak-zacina" className="section bg-gradient-dark scroll-mt-16">
       <div className="container-wide">
-        <motion.div {...reveal} className="section-head">
+        <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "process_label")}</p>
           <h2 className="h-section-sm text-primary-foreground">{t(lang, "process_title")}</h2>
           <p className="lead lead-on-dark">{t(lang, "process_desc")}</p>
-        </motion.div>
+        </Reveal>
 
-        <ol className="relative grid grid-cols-1 md:grid-cols-4 gap-10 md:gap-8">
+        <ol className="relative grid grid-cols-1 md:grid-cols-4 gap-7 sm:gap-10 md:gap-8">
           {/* Desktop connector */}
           <div
             aria-hidden="true"
@@ -34,9 +33,8 @@ const ProcessSection = () => {
           <div aria-hidden="true" className="md:hidden absolute left-[22px] top-3 bottom-3 w-px bg-primary-foreground/15" />
 
           {numberLabels.map((num, index) => (
-            <motion.li
-              key={num}
-              {...revealDelayed(stagger(index, 0.08))}
+            <Reveal as="li"
+              key={num} delay={stagger(index, 0.08)}
               className="relative pl-16 md:pl-0 md:text-center"
             >
               {/* Number badge */}
@@ -49,16 +47,16 @@ const ProcessSection = () => {
               <p className="font-body text-[15px] md:text-base text-primary-foreground/70 leading-relaxed md:max-w-[26ch] md:mx-auto text-pretty">
                 {t(lang, descKeys[index])}
               </p>
-            </motion.li>
+            </Reveal>
           ))}
         </ol>
 
-        <motion.div {...revealDelayed(0.2)} className="text-center mt-14 md:mt-16">
+        <Reveal delay={0.2} className="text-center mt-10 md:mt-16">
           <a href="#kontakt" className="btn btn-primary-inverse">
             {t(lang, "process_cta")}
             <ChevronRight className="w-4 h-4" />
           </a>
-        </motion.div>
+        </Reveal>
       </div>
     </section>
   );

@@ -20,13 +20,21 @@ const Footer = lazy(() => import("@/components/Footer"));
 const StickyMobileCTA = lazy(() => import("@/components/StickyMobileCTA"));
 const CookieConsent = lazy(() => import("@/components/CookieConsent"));
 
-/** Once the lazy sections are on the page, honour a #anchor in the URL (e.g. /#kalkulacka). */
+/** Honour a #anchor in the URL (e.g. /#kalkulacka) once its lazy section has mounted. */
 const ScrollToHash = () => {
   useEffect(() => {
     const id = window.location.hash.replace(/^#/, "");
     if (!id) return;
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ block: "start" });
+    let tries = 0;
+    const timer = window.setInterval(() => {
+      const el = document.getElementById(id);
+      tries += 1;
+      if (el || tries > 40) {
+        window.clearInterval(timer);
+        el?.scrollIntoView({ block: "start" });
+      }
+    }, 100);
+    return () => window.clearInterval(timer);
   }, []);
   return null;
 };
@@ -47,25 +55,22 @@ const Index = () => {
       <main id="obsah">
         <HeroSection />
         <ForYouSection />
-        <Suspense fallback={null}>
-          <WhyBetterSection />
-          <PriceStrip />
-          <CalculatorSection />
-          <PortfolioSection />
-          <ServicesSection />
-          <OwnerReportSection />
-          <ProcessSection />
-          <AboutSection />
-          <FAQSection />
-          <ContactSection />
-          <ScrollToHash />
-        </Suspense>
+        {/* Each section has its own boundary, so a slow chunk never holds the others back. */}
+        <Suspense fallback={null}><WhyBetterSection /></Suspense>
+        <Suspense fallback={null}><PriceStrip /></Suspense>
+        <Suspense fallback={null}><CalculatorSection /></Suspense>
+        <Suspense fallback={null}><PortfolioSection /></Suspense>
+        <Suspense fallback={null}><ServicesSection /></Suspense>
+        <Suspense fallback={null}><OwnerReportSection /></Suspense>
+        <Suspense fallback={null}><ProcessSection /></Suspense>
+        <Suspense fallback={null}><AboutSection /></Suspense>
+        <Suspense fallback={null}><FAQSection /></Suspense>
+        <Suspense fallback={null}><ContactSection /></Suspense>
+        <ScrollToHash />
       </main>
-      <Suspense fallback={null}>
-        <Footer />
-        <StickyMobileCTA />
-        <CookieConsent />
-      </Suspense>
+      <Suspense fallback={null}><Footer /></Suspense>
+      <Suspense fallback={null}><StickyMobileCTA /></Suspense>
+      <Suspense fallback={null}><CookieConsent /></Suspense>
     </div>
   );
 };

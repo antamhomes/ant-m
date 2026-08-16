@@ -1,8 +1,7 @@
-import { motion } from "framer-motion";
 import { useLanguage } from "@/contexts/LanguageContext";
+import Reveal from "@/components/Reveal";
 import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
-import { reveal, revealDelayed } from "@/lib/motion";
 
 /**
  * "Kdo za tím stojí" — a face and three sentences. The photo is a placeholder
@@ -15,22 +14,21 @@ const AboutSection = () => {
   return (
     <section id="kdo-jsme" className="section bg-background scroll-mt-16">
       <div className="container-narrow">
-        <motion.div {...reveal} className="section-head">
+        <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "about_label")}</p>
           <h2 className="h-section-sm text-foreground">{t(lang, "about_title")}</h2>
-        </motion.div>
+        </Reveal>
 
         <div className="grid md:grid-cols-[minmax(0,320px)_1fr] gap-8 md:gap-12 items-center max-w-4xl mx-auto">
           {/* Photo placeholder — replace with <img src={teamPhoto} … /> */}
-          <motion.div
-            {...revealDelayed(0.05)}
-            className="aspect-[4/5] rounded-md bg-gradient-dark border border-gold/20 flex items-end p-5 shadow-[0_30px_60px_-30px_hsl(var(--charcoal)/0.45)]"
+          <Reveal delay={0.05}
+            className="hidden md:flex aspect-[4/5] rounded-md bg-gradient-dark border border-gold/20 items-end p-5 shadow-[0_30px_60px_-30px_hsl(var(--charcoal)/0.45)]"
             aria-hidden="true"
           >
             <Wordmark on="dark" size="sm" className="opacity-90" />
-          </motion.div>
+          </Reveal>
 
-          <motion.div {...revealDelayed(0.1)}>
+          <Reveal delay={0.1}>
             <p className="font-body text-[17px] md:text-lg text-foreground leading-relaxed mb-5 text-pretty">
               {t(lang, "about_p1")}
             </p>
@@ -40,7 +38,7 @@ const AboutSection = () => {
             <p className="font-display italic text-lg md:text-xl text-foreground/90 leading-relaxed border-l-2 border-gold/60 pl-4">
               {t(lang, "about_p3")}
             </p>
-          </motion.div>
+          </Reveal>
         </div>
       </div>
     </section>

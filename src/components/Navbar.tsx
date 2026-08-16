@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
@@ -22,7 +21,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -83,11 +82,10 @@ const Navbar = () => {
   );
 
   return (
-    <motion.nav
-      initial={{ y: -100, opacity: 0 }}
-      animate={ready ? { y: 0, opacity: 1 } : { y: -100, opacity: 0 }}
-      transition={{ duration: 0.7, delay: ready ? 0.3 : 0, ease: [0.22, 1, 0.36, 1] }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+    <nav
+      data-enter=""
+      style={{ "--enter-y": "-100%", "--enter-delay": "0.3s", "--enter-dur": "0.7s" } as React.CSSProperties}
+      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${ready ? "is-ready" : ""} ${
         solid
           ? "bg-background/95 backdrop-blur-md border-b border-border shadow-sm py-3"
           : "bg-transparent py-5"
@@ -105,7 +103,7 @@ const Navbar = () => {
         </a>
 
         {/* Desktop */}
-        <div className="hidden md:flex items-center gap-7">
+        <div className="hidden lg:flex items-center gap-7">
           {NAV_LINKS.map((l) => (
             <a
               key={l.href}
@@ -129,7 +127,7 @@ const Navbar = () => {
         </div>
 
         {/* Mobile */}
-        <div className="flex md:hidden items-center gap-2">
+        <div className="flex lg:hidden items-center gap-2">
           <LangSwitch />
           <button
             type="button"
@@ -149,15 +147,10 @@ const Navbar = () => {
       </div>
 
       {/* Mobile menu panel */}
-      <AnimatePresence>
-        {menuOpen && (
-          <motion.div
+      {menuOpen && (
+          <div
             id="mobile-menu"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2 }}
-            className="md:hidden border-t border-border bg-background/98 backdrop-blur-md"
+            className="menu-in lg:hidden border-t border-border bg-background/98 backdrop-blur-md"
           >
             <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col">
               {[...NAV_LINKS, { href: "#kontakt", key: "nav_contact" as TranslationKey }].map((l) => (
@@ -178,10 +171,9 @@ const Navbar = () => {
                 {t(lang, "nav_freeConsultation")}
               </a>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
+          </div>
+      )}
+    </nav>
   );
 };
 

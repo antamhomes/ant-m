@@ -1,43 +1,57 @@
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import { useRef } from "react";
-import heroImg from "@/assets/hero-bedroom.webp";
-import heroImgSm from "@/assets/hero-bedroom-1280.webp";
+import { useEffect, useRef } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
 import { useSplashDone } from "@/hooks/use-splash-done";
 
+/** Entrance timing per element (seconds); the CSS in index.css does the animating once `.is-ready` is set. */
+const enter = (y: number, delay: number, duration = 0.7) =>
+  ({
+    "data-enter": "",
+    style: { "--enter-y": `${y}px`, "--enter-delay": `${delay}s`, "--enter-dur": `${duration}s` } as React.CSSProperties,
+  }) as const;
+
 const HeroSection = () => {
   const { lang } = useLanguage();
   const ref = useRef<HTMLElement>(null);
-  const reduce = useReducedMotion();
+  const mediaRef = useRef<HTMLDivElement>(null);
   const ready = useSplashDone();
-  // Entrance animations wait for the splash to lift so they are actually seen.
-  const enter = (y: number, delay: number, duration = 0.7) => ({
-    initial: { opacity: 0, y },
-    animate: ready ? { opacity: 1, y: 0 } : { opacity: 0, y },
-    transition: { duration, delay: ready ? delay : 0, ease: [0.22, 1, 0.36, 1] as const },
-  });
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-  // Very subtle parallax: image moves slower than scroll
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", reduce ? "0%" : "18%"]);
-  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
+
+  // Very subtle parallax: the image moves at ~18 % of scroll speed while the
+  // hero is on screen. One passive scroll listener + rAF, no library.
+  useEffect(() => {
+    const section = ref.current;
+    const media = mediaRef.current;
+    if (!section || !media) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const h = section.offsetHeight || 1;
+      const p = Math.min(1, Math.max(0, window.scrollY / h));
+      media.style.transform = `translate3d(0, ${(p * 18).toFixed(2)}%, 0)`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, []);
 
   return (
-    <section ref={ref} className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      <motion.div
-        className="absolute inset-0 will-change-transform"
-        style={{ y: imageY }}
-        initial={{ scale: 1.06 }}
-        animate={{ scale: ready ? 1 : 1.06 }}
-        transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
-      >
+    <section
+      ref={ref}
+      className={`relative min-h-screen flex items-center justify-center overflow-hidden ${ready ? "is-ready" : ""}`}
+    >
+      <div ref={mediaRef} className="absolute inset-0 will-change-transform">
+       <div className="absolute inset-0 hero-zoom">
         <img
-          src={heroImg}
-          srcSet={`${heroImgSm} 1280w, ${heroImg} 1920w`}
+          src="/hero/bedroom-1280.webp"
+          srcSet="/hero/bedroom-768.webp 768w, /hero/bedroom-1280.webp 1280w, /hero/bedroom-1920.webp 1920w"
           sizes="100vw"
           alt=""
           aria-hidden="true"
@@ -48,42 +62,37 @@ const HeroSection = () => {
           width={1920}
           height={1530}
         />
-        <motion.div
-          style={{ opacity: overlayOpacity }}
-          className="absolute inset-0 bg-gradient-to-b from-charcoal/55 via-charcoal/55 to-charcoal/85"
-        />
+        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/55 via-charcoal/55 to-charcoal/85" />
         {/* Extra readability gradient behind headline */}
         <div className="absolute inset-x-0 top-0 h-[70%] bg-[radial-gradient(ellipse_at_center,_hsl(var(--charcoal)/0.55)_0%,_transparent_70%)] pointer-events-none" />
-      </motion.div>
+       </div>
+      </div>
 
       <div className="relative z-10 text-center px-6 max-w-3xl mx-auto">
-        <motion.div
+        <div
           {...enter(12, 0.35, 0.6)}
-          className="font-body text-[0.78rem] sm:text-sm tracking-[0.22em] uppercase mb-5 sm:mb-6"
-          style={{ color: "#C2A46D" }}
+          className="font-body text-[0.78rem] sm:text-sm tracking-[0.22em] uppercase mb-5 sm:mb-6 text-gold-on-dark"
         >
           {t(lang, "hero_subtitle")}
-        </motion.div>
+        </div>
 
-        <motion.h1
+        <h1
           {...enter(20, 0.45, 0.8)}
-          className="font-display text-4xl sm:text-5xl md:text-6xl font-medium leading-[1.1] tracking-[-0.02em] mb-5 sm:mb-6 text-balance"
-          style={{ color: "#F7F1E8" }}
+          className="font-display text-4xl sm:text-5xl md:text-6xl font-medium leading-[1.1] tracking-[-0.02em] mb-5 sm:mb-6 text-balance text-[#F7F1E8]"
         >
           {t(lang, "hero_title1")}
           <br />
           {t(lang, "hero_title2")}
-        </motion.h1>
+        </h1>
 
-        <motion.p
+        <p
           {...enter(16, 0.65, 0.6)}
-          className="font-body text-base sm:text-lg leading-relaxed mb-8 sm:mb-10 max-w-xl mx-auto text-pretty"
-          style={{ color: "#E8DED0" }}
+          className="font-body text-base sm:text-lg leading-relaxed mb-8 sm:mb-10 max-w-xl mx-auto text-pretty text-[#E8DED0]"
         >
           {t(lang, "hero_desc")}
-        </motion.p>
+        </p>
 
-        <motion.div
+        <div
           {...enter(16, 0.8, 0.6)}
           className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center items-center"
         >
@@ -102,32 +111,27 @@ const HeroSection = () => {
             {t(lang, "hero_cta2")}
             <span className="text-gold" aria-hidden="true">→</span>
           </a>
-        </motion.div>
+        </div>
 
         {/* Trust line under the CTAs: three facts, no adjectives. */}
-        <motion.p
+        <p
           {...enter(10, 1.0, 0.6)}
-          className="mt-5 sm:mt-6 font-body text-[13px] sm:text-sm tracking-wide"
-          style={{ color: "rgba(232, 222, 208, 0.75)" }}
+          className="mt-5 sm:mt-6 font-body text-[13px] sm:text-sm tracking-wide text-[rgba(232,222,208,0.75)]"
         >
           {t(lang, "hero_extra")}
-        </motion.p>
+        </p>
       </div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: ready ? 1 : 0 }}
-        transition={{ delay: ready ? 1.4 : 0, duration: 1 }}
+      <div
+        data-enter=""
+        style={{ "--enter-y": "0px", "--enter-delay": "1.4s", "--enter-dur": "1s" } as React.CSSProperties}
         className="absolute bottom-8 left-1/2 -translate-x-1/2"
+        aria-hidden="true"
       >
         <div className="w-6 h-10 border-2 border-primary-foreground/40 rounded-full flex justify-center pt-2">
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-            className="w-1.5 h-1.5 bg-gold rounded-full"
-          />
+          <div className="w-1.5 h-1.5 bg-gold rounded-full animate-scroll-dot" />
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };

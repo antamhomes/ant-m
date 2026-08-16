@@ -53,6 +53,15 @@ function prerenderVnPlugin(): Plugin {
         /<meta\s+property="og:locale:alternate"\s+content="[^"]*"\s*\/?>/i,
         `<meta property="og:locale:alternate" content="cs_CZ" />`
       );
+      html = html.replace(
+        /<link rel="canonical" href="[^"]*" \/>/,
+        `<link rel="canonical" href="${SITE}/vn" />`
+      );
+      // Vietnamese page: preload the vietnamese Playfair subset instead of latin-ext
+      html = html.replace(
+        /playfair-display-latin-ext-500-normal\.woff2/,
+        "playfair-display-vietnamese-500-normal.woff2"
+      );
       // twitter
       html = html.replace(
         /<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/i,
@@ -74,6 +83,12 @@ function prerenderVnPlugin(): Plugin {
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  build: {
+    // Older phones (iOS 13/14, Android WebView) still get plain ES2019 syntax.
+    target: ["es2019", "safari13", "chrome80", "firefox78"],
+    cssTarget: ["safari13", "chrome80", "firefox78"],
+    chunkSizeWarningLimit: 600,
+  },
   server: {
     host: "::",
     port: 8080,
