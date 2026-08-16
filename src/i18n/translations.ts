@@ -435,7 +435,7 @@ const translations = {
     faq13_q: "Khi nào không nên cho thuê ngắn hạn?",
     faq13_a: "Khi SVJ cấm hoặc hàng xóm không muốn. Khi cần tháng nào cũng đúng một số tiền, vì tiền theo mùa có lên có xuống. Khi muốn tự ở phần lớn thời gian. Và khi nhà xuống cấp mà không muốn bỏ thêm gì. Còn lại Antam đều xem được; xa trung tâm hay nhà cũ không phải vấn đề.",
     faq14_q: "Sao không tự làm qua Airbnb?",
-    faq14_a: "Có người tự làm được. Nhưng đây là việc mỗi ngày: trả lời khách trong vài phút, chỉnh giá theo khách, lo dọn dẹp và chìa khóa. Và nhất là theo kịp Airbnb, Booking đổi luật liên tục. Tuần làm một lần là nhà bị tụt hạng, phải bán rẻ. Antam làm hằng ngày cho nhiều nhà một lúc. Khác nhau ở chỗ đó.",
+    faq14_a: "Có người tự làm được. Nhưng đây là việc mỗi ngày: trả lời khách trong vài phút, chỉnh giá, lo dọn dẹp và chìa khóa. Thị trường thay đổi liên tục, giá và cách làm cũng phải theo sát. Antam làm hằng ngày cho nhiều nhà cùng lúc. Khác nhau ở chỗ đó.",
     faq15_q: "Antam có dùng nền tảng khác không?",
     faq15_a: "Nhà được đăng ở nơi có khách thật ở Praha, chủ yếu là Airbnb và Booking.com. Hai nền tảng này Antam nắm rất chắc, từ cách xếp hạng đến từng lần đổi luật. Nền tảng khác chỉ thêm khi thật sự mang thêm khách cho nhà mình, không thêm cho có. Việc vận hành Antam tự làm, không qua trung gian: khách, giá, dọn dẹp, kiểm tra nhà đều do người của Antam lo, chỉ thợ sửa chữa là bên ngoài.",
 
@@ -500,7 +500,7 @@ const translations = {
     foryou_title2: "thu nhiều hơn?",
     foryou_desc: "Dù đang cho thuê dài hạn, tự làm Airbnb, hay nhà đang trống. Đây là những lý do chủ nhà hay tìm đến Antam.",
     foryou1_title: "Từng bị người thuê quỵt tiền",
-    foryou1_desc: "Nợ tiền nhà, phá nhà, đuổi mãi không chịu đi. Khách ngắn hạn thì trả tiền trước, ở vài đêm rồi đi. Không phải đòi, không phải kiện.",
+    foryou1_desc: "Cho thuê dài hạn, gặp người thuê chậm tiền hay làm hỏng nhà thì chủ nhà phải tự giải quyết. Khách ngắn hạn trả tiền trước, ở vài hôm rồi đi. Không phải đòi, không phải kiện.\n",
     foryou2_title: "Không có thời gian tiếp khách",
     foryou2_desc: "Khách hỏi han, nhận phòng, chìa khóa, nửa đêm có chuyện. Mọi việc đều được Antam lo chu đáo.",
     foryou3_title: "Ngại theo dõi từng thay đổi",
