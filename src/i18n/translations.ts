@@ -646,7 +646,7 @@ const translations = {
     contact_message: "Lời nhắn / link nhà",
     contact_message_placeholder: "Link tin đăng, vài tấm ảnh hoặc đôi dòng về nhà…",
     contact_submit: "Gửi thông tin nhà",
-    contact_small: "Antam sẽ gọi lại cho anh chị trong 24 giờ, tiếng Việt hay tiếng Séc tùy anh chị. Không\u00a0ràng\u00a0buộc\u00a0gì.",
+    contact_small: "Antam sẽ gọi lại cho anh chị trong 24 giờ, tiếng Việt hay tiếng Séc đều được. Không\u00a0ràng\u00a0buộc\u00a0gì.",
     contact_success: "Cảm ơn anh chị. Antam sẽ gọi lại trong 24 giờ.",
 
     // Calculator lead dialog
