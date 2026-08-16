@@ -23,6 +23,7 @@ const groups: Group[] = [
     title: "faq_group_flat",
     items: [
       { q: "faq1_q", a: "faq1_a" },   // musí být připravený
+      { q: "faq16_q", a: "faq16_a" }, // kolik stojí příprava
       { q: "faq11_q", a: "faq11_a" }, // škody
       { q: "faq12_q", a: "faq12_a" }, // sousedé / SVJ
       { q: "faq10_q", a: "faq10_a" }, // povinnosti
