@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Clock, ShieldCheck, TrendingUp, CalendarHeart, UserX, Plane } from "lucide-react";
 import Reveal, { stagger } from "@/components/Reveal";
-import ReasonsAccordion from "@/components/ReasonsAccordion";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t, type TranslationKey } from "@/i18n/translations";
 
@@ -16,7 +15,7 @@ const items: { icon: typeof Clock; titleKey: TranslationKey; descKey: Translatio
 
 const DESKTOP = "(min-width: 768px)";
 
-/** Phones get the native <details> register (ReasonsAccordion); tablet and desktop keep the card grid. */
+/** Phones get a compact 2×3 hairline grid with shorter copy (…_m keys); tablet and desktop keep the card grid. */
 const useIsDesktop = () => {
   const [desktop, setDesktop] = useState(() => window.matchMedia(DESKTOP).matches);
   useEffect(() => {
@@ -67,10 +66,25 @@ const ForYouSection = () => {
             ))}
           </div>
         ) : (
-          /* Phones: 3 rem section padding + 4 rem here = 7 rem, so the sticky CTA never sits on the last row. */
-          <div className="pb-16">
-            <ReasonsAccordion />
-          </div>
+          /* Phones: 2×3 grid without cards. Gold hairlines between the cells (left rule on the
+             right column, top rule from the second row), icons bare, everything centred.
+             Extra bottom room so the sticky CTA never sits on the last row. */
+          <ul className="grid grid-cols-2 pb-10 list-none m-0 p-0">
+            {items.map(({ icon: Icon, titleKey, descKey }, i) => (
+              <Reveal
+                as="li" key={titleKey} delay={stagger(i, 0.06)}
+                className={`text-center px-3 pt-4 pb-[18px] ${i % 2 === 1 ? "border-l border-gold/30" : ""} ${i >= 2 ? "border-t border-gold/30" : ""}`}
+              >
+                <Icon className="w-[18px] h-[18px] text-gold mx-auto mb-[9px]" strokeWidth={1.8} aria-hidden="true" />
+                <h3 className="font-display text-[14px] font-normal leading-[1.3] text-primary mb-[5px] text-balance">
+                  {t(lang, `${titleKey}_m` as TranslationKey)}
+                </h3>
+                <p className="font-body text-[11.5px] leading-[1.5] text-primary/70 text-pretty m-0">
+                  {t(lang, `${descKey}_m` as TranslationKey)}
+                </p>
+              </Reveal>
+            ))}
+          </ul>
         )}
       </div>
     </section>

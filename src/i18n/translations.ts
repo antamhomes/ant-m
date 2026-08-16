@@ -256,6 +256,19 @@ const translations = {
     foryou5_desc: "Rodina, návštěvy, vlastní pobyty. V kalendáři si\u00a0termíny zablokujete, kdy\u00a0potřebujete.",
     foryou6_title: "Bydlíte daleko nebo cestujete",
     foryou6_desc: "Byt běží bez vás a každý měsíc vidíte, kolik vydělal, ať jste kdekoli.",
+    // Phone grid (2×3 cards): shorter titles and one-breath answers, two lines each.
+    foryou1_title_m: "Zklamal vás nájemník",
+    foryou1_desc_m: "Hosté platí předem. Žádný\u00a0neplatič.",
+    foryou2_title_m: "Nemáte čas na\u00a0hosty",
+    foryou2_desc_m: "Komunikaci s\u00a0hosty řešíme za\u00a0vás.",
+    foryou3_title_m: "Nechcete hlídat\u00a0ceny",
+    foryou3_desc_m: "My\u00a0v\u00a0tom žijeme, vy\u00a0nemusíte.",
+    foryou4_title_m: "Chcete byt pod\u00a0kontrolou",
+    foryou4_desc_m: "Prohlídka po\u00a0každém pobytu.",
+    foryou5_title_m: "Chcete byt i\u00a0pro\u00a0sebe",
+    foryou5_desc_m: "Byt si\u00a0kdykoli zablokujete.",
+    foryou6_title_m: "Bydlíte daleko nebo\u00a0cestujete",
+    foryou6_desc_m: "Byt běží bez vás, ať\u00a0jste kdekoli.",
   },
 
   vi: {
@@ -515,6 +528,19 @@ const translations = {
     foryou5_desc: "Người nhà sang chơi, có khách quý, hay muốn về ở vài hôm. Chỉ cần báo trước, Antam sẽ khóa lịch ngay.",
     foryou6_title: "Ở xa hoặc hay đi vắng",
     foryou6_desc: "Về Việt Nam nửa năm cũng không sao. Nhà mình vẫn có khách đều, tháng nào cũng thấy rõ tiền về.",
+    // Phone grid (2×3 cards): same titles, one-breath answers.
+    foryou1_title_m: "Từng bị người thuê quỵt\u00a0tiền",
+    foryou1_desc_m: "Khách trả trước. Không lo\u00a0quỵt.",
+    foryou2_title_m: "Không có thời gian tiếp\u00a0khách",
+    foryou2_desc_m: "Nửa đêm khách gọi, Antam cũng\u00a0lo.",
+    foryou3_title_m: "Ngại theo dõi từng thay\u00a0đổi",
+    foryou3_desc_m: "Antam theo sát mọi cập\u00a0nhật\u00a0mới.",
+    foryou4_title_m: "Sợ khách làm hỏng\u00a0nhà",
+    foryou4_desc_m: "Luôn kiểm tra khi khách rời\u00a0phòng.",
+    foryou5_title_m: "Muốn giữ nhà cho gia\u00a0đình",
+    foryou5_desc_m: "Muốn về ở, khóa lịch trên\u00a0app là\u00a0được.",
+    foryou6_title_m: "Ở xa hoặc hay đi\u00a0vắng",
+    foryou6_desc_m: "Về Việt Nam nửa\u00a0năm cũng không\u00a0sao.",
   },
 } as const;
 
