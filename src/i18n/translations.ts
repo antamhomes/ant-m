@@ -17,7 +17,7 @@ const translations = {
     hero_subtitle: "Antam Homes · péče o byt a krátkodobý pronájem",
     hero_title1: "Váš byt. Naše péče. ",
     hero_title2: "Váš zisk.",
-    hero_desc: "Správa Airbnb a krátkodobých pronájmů v Praze. Vyšší výnos, méně starostí.",
+    hero_desc: "Správa krátkodobých pronájmů v Praze. Vyšší výnos, méně starostí.",
     hero_extra: "Nezávazná poptávka · smlouva na 1 rok · ozveme se do 24 hodin",
     hero_cta: "Spočítat výnos bytu",
     hero_cta2: "Nezávazně probrat byt",
@@ -69,7 +69,7 @@ const translations = {
     svc1_title: "Příprava bytu a interiér",
     svc1_desc: "Poradíme uspořádání, vybavení a detaily, které rozhodují o dojmu i hodnocení. Bez zbytečných investic.",
     svc2_title: "Fotky a prezentace",
-    svc2_desc: "Profesionální fotky a inzerát, který na Airbnb i Booking.com vynikne mezi stovkami dalších. První dojem rozhoduje.",
+    svc2_desc: "Profesionální fotky a nabídka, která vynikne mezi stovkami dalších. První dojem rozhoduje.",
     svc3_title: "Cenotvorba",
     svc3_desc: "Cenu ladíme denně podle sezóny, poptávky a obsazenosti. Ne jedna cena na celý rok.",
     svc4_title: "Hosté a komunikace",
@@ -96,7 +96,7 @@ const translations = {
     comp3_short: "Termíny pro sebe zablokujete v kalendáři.",
     comp4_title: "Přehled plateb",
     comp4_long: "Platby a zpoždění řešíte s nájemníkem sami.",
-    comp4_short: "Platby jdou předem přes Airbnb či Booking.com, vše vidíte ve vyúčtování.",
+    comp4_short: "Platby jdou přes platformu, vše vidíte ve vyúčtování.",
     longTerm_label: "Dlouhodobý pronájem",
     shortTerm_label: "S Antam Homes",
 
@@ -316,7 +316,7 @@ const translations = {
     contact_consent_suffix: ".",
 
     // Footer
-    footer_desc: "Péče o byt a krátkodobý pronájem přes Airbnb a Booking.com.",
+    footer_desc: "Péče o byt a krátkodobý pronájem.",
     footer_company: "Antam Homes",
     footer_legal: "Provozovatel: Donut Point, s.r.o., IČO 21904022, se sídlem Příčná 1892/4, Nové Město, 110 00 Praha 1, zapsaná v obchodním rejstříku vedeném Městským soudem v Praze, sp. zn. C 407424.",
     footer_ico: "IČO: 21904022",
@@ -374,7 +374,7 @@ const translations = {
     hero_subtitle: "ANTAM HOMES · QUẢN LÝ CĂN HỘ CHO THUÊ NGẮN HẠN",
     hero_title1: "Thu nhập tốt hơn. ",
     hero_title2: "Chủ nhà an tâm hơn.",
-    hero_desc: "Quản lý Airbnb và cho thuê ngắn hạn tại Praha. Tối ưu lợi nhuận, trọn vẹn an tâm.",
+    hero_desc: "Quản lý cho thuê ngắn hạn tại Praha. Tối ưu lợi nhuận, trọn vẹn an tâm.",
     hero_extra: "Hỏi không ràng buộc · hợp đồng 1 năm · nói tiếng Việt",
     hero_cta: "Tính thử thu nhập",
     hero_cta2: "Nói chuyện với Antam",
@@ -426,7 +426,7 @@ const translations = {
     svc1_title: "Chuẩn bị nhà và nội thất",
     svc1_desc: "Nội thất gọn gàng, đẹp mắt, đúng cái khách cần. Không bảo chủ nhà mua thừa.",
     svc2_title: "Ảnh và tin đăng",
-    svc2_desc: "Ảnh sáng sủa, tin đăng nổi giữa hàng trăm căn khác trên Airbnb, Booking. Khách quyết định theo ảnh.",
+    svc2_desc: "Ảnh sáng sủa, tin đăng nổi giữa hàng trăm căn khác. Khách quyết định theo ảnh.",
     svc3_title: "Đặt giá",
     svc3_desc: "Giá đặt theo mùa và địa điểm, điều chỉnh mỗi ngày. Không để một giá cả năm.",
     svc4_title: "Khách và liên lạc",
@@ -453,7 +453,7 @@ const translations = {
     comp3_short: "Muốn về ở, chỉ cần báo trước là được.",
     comp4_title: "Tiền bạc rõ ràng",
     comp4_long: "Người thuê chậm tiền, chủ nhà phải tự đi đòi.",
-    comp4_short: "Khách trả qua Airbnb, Booking trước khi bước vào nhà. Tháng nào Antam cũng gửi bảng kê.",
+    comp4_short: "Khách trả qua mọi nền tảng trước khi bước vào nhà. Tháng nào Antam cũng gửi bảng kê.",
     longTerm_label: "Cho thuê dài hạn",
     shortTerm_label: "Với Antam Homes",
 
@@ -673,7 +673,7 @@ const translations = {
     contact_consent_suffix: ".",
 
     // Footer
-    footer_desc: "Chăm sóc nhà và cho thuê ngắn hạn qua Airbnb, Booking.",
+    footer_desc: "Chăm sóc nhà và cho thuê ngắn hạn.",
     footer_company: "Antam Homes",
     footer_legal: "Đơn vị vận hành: Donut Point, s.r.o., IČO 21904022, trụ sở Příčná 1892/4, Nové Město, 110 00 Praha 1, đăng ký tại Tòa án thành phố Praha, hồ sơ C 407424.",
     footer_ico: "IČO: 21904022",
