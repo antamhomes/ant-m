@@ -99,9 +99,10 @@ const FAQSection = () => {
                         className={`grid transition-[grid-template-rows] duration-200 ease-out ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
                       >
                         <div className="overflow-hidden">
-                          <p className="font-body text-[15px] text-muted-foreground leading-relaxed pb-5 pr-6 text-pretty">
-                            {t(lang, a)}
-                          </p>
+                          <p
+                            className="font-body text-[15px] text-muted-foreground leading-relaxed pb-5 pr-6 text-pretty"
+                            dangerouslySetInnerHTML={{ __html: t(lang, a) }}
+                          />
                         </div>
                       </div>
                     </div>
