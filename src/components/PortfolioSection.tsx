@@ -9,8 +9,11 @@ import byt5 from "@/assets/byt-5.jpg.asset.json";
 import byt6 from "@/assets/byt-6.jpg.asset.json";
 import byt7 from "@/assets/byt-7.jpg.asset.json";
 
-/** The apartments shown publicly (owner's choice); capacities from Hospitable. */
+/** The apartments shown publicly (owner's choice); capacities from Hospitable.
+ *  byt-1…7 are Lovable assets; 402/405 (Praha 1, Čelakovského sady) live in public/portfolio. */
 const items: { src: string; name: string; loc: string; guests: number }[] = [
+  { src: "/portfolio/byt-405.jpg", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", guests: 8 },
+  { src: "/portfolio/byt-402.jpg", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", guests: 8 },
   { src: byt1.url, name: "Secret garden studio\u00a0I", loc: "Praha 4", guests: 4 },
   { src: byt2.url, name: "Secret garden studio\u00a0II", loc: "Praha 4", guests: 4 },
   { src: byt3.url, name: "Secret garden loft", loc: "Praha 4", guests: 13 },

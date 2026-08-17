@@ -113,6 +113,8 @@ var estimate_yield_default = defineTool({
 // src/lib/mcp/tools/list-portfolio.ts
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var apartments = [
+  { name: "Modern Museum View Apartment (405)", location: "Praha 1", maxGuests: 8 },
+  { name: "Elegant Museum View Apartment (402)", location: "Praha 1", maxGuests: 8 },
   { name: "Secret garden studio I", location: "Praha 4", maxGuests: 4 },
   { name: "Secret garden studio II", location: "Praha 4", maxGuests: 4 },
   { name: "Secret garden loft", location: "Praha 4", maxGuests: 13 },
