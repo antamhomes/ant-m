@@ -489,7 +489,7 @@ const translations = {
 
     // Contact (fallback)
     contact_fallback_title: "Cùng bàn về căn nhà của anh chị.",
-    contact_fallback_desc: "Viết vài dòng về nhà là đủ, còn lại nói qua điện thoại.",
+    contact_fallback_desc: "Viết vài dòng về nhà là đủ, chi tiết sẽ được trao đổi qua điện thoại.",
     contact_consent_prefix: "Tôi đồng ý cho ",
     contact_consent_link: "xử lý dữ liệu cá nhân",
     contact_consent_suffix: ".",
