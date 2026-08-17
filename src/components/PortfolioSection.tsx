@@ -13,12 +13,12 @@ import byt7 from "@/assets/byt-7.jpg.asset.json";
  *  byt-1…7 are Lovable assets; 402/405 (Praha 1, Čelakovského sady) are small webp files in public/portfolio.
  *  Order: the big loft first, then the two Praha 1 flagships, the Praha 4 cluster, Mladá Boleslav, Mozart last. */
 const items: { src: string; name: string; loc: string; guests: number }[] = [
-  { src: byt3.url, name: "Secret garden loft", loc: "Praha 4", guests: 13 },
+  { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", guests: 13 },
   { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", guests: 8 },
   { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", guests: 8 },
   { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 4", guests: 6 },
-  { src: byt1.url, name: "Secret garden studio\u00a0I", loc: "Praha 4", guests: 4 },
-  { src: byt2.url, name: "Secret garden studio\u00a0II", loc: "Praha 4", guests: 4 },
+  { src: byt1.url, name: "Secret Garden Studio\u00a0I", loc: "Praha 4", guests: 4 },
+  { src: byt2.url, name: "Secret Garden Studio\u00a0II", loc: "Praha 4", guests: 4 },
   { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", guests: 8 },
   { src: byt6.url, name: "Klement apartment", loc: "Mladá Boleslav", guests: 8 },
   { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", guests: 4 },
