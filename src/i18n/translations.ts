@@ -295,7 +295,7 @@ const translations = {
     // Services
     services_label: "Antam lo những việc gì",
     services_title: "Cho thuê ngắn hạn bây giờ là một nghề.",
-    services_desc: "Nội thất đẹp mắt. Ảnh sáng sủa. Giá đặt theo mùa và địa điểm. Phục vụ chu đáo. Việc nào Antam cũng lo đến nơi đến chốn.",
+    services_desc: "Nội thất chỉn chu. Hình ảnh bắt mắt.. Giá đặt theo mùa và địa điểm. Phục vụ chu đáo. Việc nào Antam cũng lo đến nơi đến\u00a0chốn.",
     svc1_title: "Chuẩn bị nhà và nội thất",
     svc1_desc: "Nội thất gọn gàng, đẹp mắt, đúng cái khách cần. Không bảo chủ nhà mua thừa.",
     svc2_title: "Ảnh và tin đăng",
