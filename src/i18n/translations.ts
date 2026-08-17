@@ -16,7 +16,7 @@ const translations = {
     hero_title1: "Váš byt. Naše péče. ",
     hero_title2: "Váš zisk.",
     hero_desc: "Správa krátkodobých pronájmů v Praze. Vyšší výnos, méně starostí.",
-    hero_extra: "Nezávazná poptávka · smlouva na 1 rok · ozveme se do 24 hodin",
+    hero_extra: "Nezávazná poptávka · ozveme se do 24 hodin",
     hero_cta: "Spočítat výnos bytu",
     hero_cta2: "Nezávazně probrat byt",
 
@@ -75,7 +75,7 @@ const translations = {
     // About — Kdo za tím stojí (REVIEW: nahradit vlastními slovy + fotkou)
     about_label: "Kdo za tím stojí",
     about_title: "Malý tým z Prahy, který se o byty stará osobně.",
-    about_p1: "Antam Homes jsme založili v Praze. Jsme česko-vietnamský tým, který krátkodobý pronájem nezná z prezentací, ale z vlastních bytů. Začali jsme u rodiny a známých a dnes se staráme o desítku apartmánů v Praze a okolí.",
+    about_p1: "Antam Homes jsme založili v Praze jako česko-vietnamský tým, který krátkodobý pronájem zná z vlastní praxe. Začínali jsme s vlastními byty a byty rodiny a známých. Díky výsledkům a doporučením nám postupně začali své nemovitosti svěřovat i další majitelé. Dnes se staráme o zhruba desítku apartmánů v Praze a okolí a každý z nich bereme jako vlastní.\n\n",
     about_p2: "Domluvíte se s námi česky i vietnamsky, telefonem, přes WhatsApp nebo Zalo. Každý byt známe osobně, o hosty se staráme sami a majitel od nás každý měsíc dostane přehled, ze kterého je vidět každá koruna.",
     about_p3: "Chceme, aby majitel na svůj byt myslel jen tehdy, když si chce přijet užít víkend.",
 
@@ -347,7 +347,7 @@ const translations = {
     // About — Ai đứng sau (REVIEW: thay bằng lời của Vương + ảnh)
     about_label: "Ai đứng sau",
     about_title: "Một nhóm nhỏ ở Praha, tự tay chăm sóc từng căn nhà.",
-    about_p1: "Antam Homes do người Việt và người Séc ở Praha lập nên. Kinh nghiệm cho thuê ngắn hạn của Antam đến từ chính những căn nhà mình trực tiếp chăm sóc. Bắt đầu với nhà của gia đình và người quen, rồi nhờ sự tin tưởng và giới thiệu từ những chủ nhà đã làm việc cùng, Antam dần được giao chăm sóc thêm nhiều căn. Đến nay, Antam lo khoảng mười căn ở Praha và quanh Praha.\n\n",
+    about_p1: "Antam Homes bắt đầu từ những căn nhà của chính gia đình và người quen tại Praha. Từ việc trực tiếp vận hành, chăm sóc từng căn a mang lại kết quả tốt, Antam dần được các chủ nhà tin tưởng, giới thiệu a giao thêm nhiều căn khác. Hiện nay, Antam đang chăm sóc khoảng mười căn tại Praha a khu vực lân cận. Đội ngũ Antam gồm cả người Việt a người Séc, luôn học hỏi a cập nhật thị trường để ngày càng làm tốt hơn a mang lại kết quả tốt nhất cho chủ nhà.\n\n",
     about_p2: "Nói chuyện với Antam bằng tiếng Việt hay tiếng Séc đều được, qua điện thoại, Zalo hay WhatsApp. Nhà nào Antam cũng biết tận nơi, khách Antam tự lo, tháng nào chủ nhà cũng có bảng kê\u00a0rõ từng khoản.",
     about_p3: "Antam mong chủ nhà chỉ phải nghĩ đến căn nhà khi muốn về nghỉ cuối tuần.",
 
@@ -489,7 +489,7 @@ const translations = {
 
     // Contact (fallback)
     contact_fallback_title: "Cùng bàn về căn nhà của anh chị.",
-    contact_fallback_desc: "Viết vài dòng về nhà là đủ, chi tiết sẽ được trao đổi qua điện thoại.",
+    contact_fallback_desc: "Viết vài dòng về nhà là đủ, trao đổi chi tiết qua điện\u00a0thoại.",
     contact_consent_prefix: "Tôi đồng ý cho ",
     contact_consent_link: "xử lý dữ liệu cá nhân",
     contact_consent_suffix: ".",
