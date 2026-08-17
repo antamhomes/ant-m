@@ -52,7 +52,7 @@ const copy = {
   },
   vi: {
     eyebrow: "Căn hộ",
-    title: "Những căn hộ Antam quản lý",
+    title: "Những căn hộ Antam đang quản lý",
     desc: "Antam chuẩn bị, chụp ảnh và trông nom mỗi ngày cho chủ nhà.",
     guests: (n: number) => `tối đa ${n} khách`,
     soonTitle: "Sắp có thêm",
