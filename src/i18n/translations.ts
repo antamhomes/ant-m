@@ -319,7 +319,7 @@ const translations = {
     comp1_long: "Cả năm mới thấy nhà một\u00a0lần.",
     comp1_short: "Khách đi, Antam kiểm\u00a0tra\u00a0ngay.",
     comp2_title: "Tiền thu về",
-    comp2_long: "Tiền thuê cố\u00a0định, mùa nào cũng\u00a0vậy.",
+    comp2_long: "Tiền thuê cố định, không tận dụng hết tiềm năng doanh thu của căn nhà.\n",
     comp2_short: "Giá điều chỉnh theo mùa và nhu\u00a0cầu.",
     comp3_title: "Linh hoạt",
     comp3_long: "Ký dài hạn, nhà bị buộc nhiều\u00a0năm.",
