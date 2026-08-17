@@ -8,16 +8,14 @@ import byt4 from "@/assets/byt-4.jpg.asset.json";
 import byt5 from "@/assets/byt-5.jpg.asset.json";
 import byt6 from "@/assets/byt-6.jpg.asset.json";
 import byt7 from "@/assets/byt-7.jpg.asset.json";
-import byt402 from "@/assets/portfolio/byt-402.jpg";
-import byt405 from "@/assets/portfolio/byt-405.jpg";
 
 /** The apartments shown publicly (owner's choice); capacities from Hospitable.
- *  byt-1…7 are Lovable assets; 402/405 (Praha 1, Čelakovského sady) are bundled from src/assets/portfolio.
+ *  byt-1…7 are Lovable assets; 402/405 (Praha 1, Čelakovského sady) are small webp files in public/portfolio.
  *  Order: the big loft first, then the two Praha 1 flagships, the Praha 4 cluster, Mladá Boleslav, Mozart last. */
 const items: { src: string; name: string; loc: string; guests: number }[] = [
   { src: byt3.url, name: "Secret garden loft", loc: "Praha 4", guests: 13 },
-  { src: byt402, name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", guests: 8 },
-  { src: byt405, name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", guests: 8 },
+  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", guests: 8 },
+  { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", guests: 8 },
   { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 4", guests: 6 },
   { src: byt1.url, name: "Secret garden studio\u00a0I", loc: "Praha 4", guests: 4 },
   { src: byt2.url, name: "Secret garden studio\u00a0II", loc: "Praha 4", guests: 4 },
@@ -47,8 +45,8 @@ const copy = {
     desc: "Apartmány, které pro majitele připravujeme, fotíme a denně spravujeme.",
     guests: (n: number) => `až ${n} host${n === 4 ? "é" : "ů"}`,
     soonTitle: "Připravujeme",
-    soonDesc: "Abychom si udrželi vysokou kvalitu správy, nové byty přebíráme postupně a v omezeném počtu.\n",
-    soonDescShort: "Byty přebíráme postupně,\nv omezeném počtu.",
+    soonDesc: "Do konce sezóny rozšiřujeme portfolio na celkem 10 apartmánů po Praze.",
+    soonDescShort: "Do konce sezóny: 10 bytů v\u00a0Praze.",
     reviewsLabel: "Co říkají hosté",
     reviewsLine: "Přes 520 recenzí od hostů na Airbnb a\u00a0Booking.com.",
   },
