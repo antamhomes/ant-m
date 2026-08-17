@@ -288,7 +288,7 @@ const translations = {
     hero_title1: "Thu nhập tốt hơn. ",
     hero_title2: "Chủ nhà an tâm hơn.",
     hero_desc: "Quản lý cho thuê ngắn hạn tại Praha. Tối ưu lợi nhuận, trọn vẹn an tâm.",
-    hero_extra: "Hỏi không ràng buộc · hợp đồng 1 năm · nói tiếng Việt",
+    hero_extra: "Hỏi không ràng buộc · Chúng tôi nói tiếng Việt",
     hero_cta: "Tính thử thu nhập",
     hero_cta2: "Liên hệ",
 
