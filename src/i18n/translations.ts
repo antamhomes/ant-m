@@ -16,7 +16,7 @@ const translations = {
     hero_title1: "Váš byt. Naše péče. ",
     hero_title2: "Váš zisk.",
     hero_desc: "Správa krátkodobých pronájmů v Praze. Vyšší výnos, méně starostí.",
-    hero_extra: "Nezávazná poptávka · smlouva na 1 rok · ozveme se do 24 hodin",
+    hero_extra: "Nezávazná poptávka · ozveme se do 24 hodin",
     hero_cta: "Spočítat výnos bytu",
     hero_cta2: "Nezávazně probrat byt",
 
