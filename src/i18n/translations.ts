@@ -305,7 +305,7 @@ const translations = {
     svc4_title: "Khách và liên lạc",
     svc4_desc: "Trả lời nhanh, hướng dẫn rõ ràng, phục vụ chu đáo suốt thời gian khách ở. Có chuyện là được xử lý ngay.",
     svc5_title: "Dọn dẹp, kiểm tra, sửa chữa",
-    svc5_desc: "Khách đi là dọn dẹp sạch sẽ, kiểm tra kỹ. Hỏng nhỏ được sửa ngay, việc lớn thì gọi thợ.",
+    svc5_desc: "Khách đi là dọn dẹp sạch sẽ, kiểm tra kỹ. Hỏng nhỏ được sửa ngay, việc lớn thì có thợ.",
     svc6_title: "Bảng kê hàng tháng",
     svc6_desc: "Khách đặt bao nhiêu, tiền về bao nhiêu, chi gì, Antam đã làm gì trong nhà. Rõ ràng, gọn trong một trang.",
 
