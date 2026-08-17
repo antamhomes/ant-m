@@ -75,7 +75,7 @@ const translations = {
     // About — Kdo za tím stojí (REVIEW: nahradit vlastními slovy + fotkou)
     about_label: "Kdo za tím stojí",
     about_title: "Malý tým z Prahy, který se o byty stará osobně.",
-    about_p1: "Antam Homes jsme založili v Praze. Jsme česko-vietnamský tým, který krátkodobý pronájem nezná z prezentací, ale z vlastních bytů. Začali jsme u rodiny a známých a dnes se staráme o desítku apartmánů v Praze a okolí.",
+    about_p1: "Antam Homes jsme založili v Praze jako česko-vietnamský tým, který krátkodobý pronájem zná z vlastní praxe. Začínali jsme s vlastními byty a byty rodiny a známých. Díky výsledkům a doporučením nám postupně začali své nemovitosti svěřovat i další majitelé. Dnes se staráme o zhruba desítku apartmánů v Praze a okolí a každý z nich bereme jako vlastní.\n\n",
     about_p2: "Domluvíte se s námi česky i vietnamsky, telefonem, přes WhatsApp nebo Zalo. Každý byt známe osobně, o hosty se staráme sami a majitel od nás každý měsíc dostane přehled, ze kterého je vidět každá koruna.",
     about_p3: "Chceme, aby majitel na svůj byt myslel jen tehdy, když si chce přijet užít víkend.",
 
