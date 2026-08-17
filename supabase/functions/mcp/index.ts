@@ -9,7 +9,7 @@ import { defineMcp } from "npm:@lovable.dev/mcp-js@0.26.2";
 import { defineTool, ToolError } from "npm:@lovable.dev/mcp-js@0.26.2";
 import { z } from "npm:zod";
 var locations = {
-  praha1: { label: "Praha 1", multiplier: 1.45, occupancy: 0.85 },
+  praha1: { label: "Praha 1", multiplier: 1.35, occupancy: 0.85 },
   praha2: { label: "Praha 2", multiplier: 1.25, occupancy: 0.83 },
   praha3: { label: "Praha 3", multiplier: 1.05, occupancy: 0.8 },
   praha4: { label: "Praha 4", multiplier: 0.8, occupancy: 0.72 },
@@ -34,9 +34,9 @@ var extras = {
 };
 var seasons = {
   year: { adr: 1.05, occDelta: 0.02 },
-  summer: { adr: 1.33, occDelta: 0.08 },
-  winter: { adr: 0.88, occDelta: 0.05 },
-  xmas: { adr: 1.75, occDelta: 0.12 }
+  summer: { adr: 1.25, occDelta: 0.03 },
+  winter: { adr: 0.7, occDelta: 0 },
+  xmas: { adr: 1.65, occDelta: 0.05 }
 };
 var ltrTable = {
   praha1: { "1kk": 23e3, "2kk": 28e3, "3kk": 32e3, "4kk": 41500 },

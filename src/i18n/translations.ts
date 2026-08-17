@@ -129,7 +129,7 @@ const translations = {
     calc_share_done: "Odkaz zkopírován",
     calc_share_copy: "Zkopírujte si odkaz:",
     calc_approx_prefix: "přibližně",
-    calc_disclaimer: "Orientační kalkulace, nikoli nabídka ani garance výnosu. Vychází z tržních dat pro Prahu (PriceLabs, Airbtics, 2025/26) a typického nastavení správy Antam Homes; dlouhodobý nájem podle cenové mapy nájemného Bohemian Estates (11/2025). Skutečný výnos kolísá podle stavu bytu, sezóny, recenzí, regulace krátkodobých pronájmů a dalších faktorů, které nemůžeme předem zaručit. Konkrétní podmínky vždy upravuje smlouva\u00a0o správě.",
+    calc_disclaimer: "Orientační kalkulace, nikoli nabídka ani garance výnosu. Vychází z tržních dat pro Prahu (PriceLabs, Airbtics, 2025/26), ověřených proti skutečným výsledkům bytů v naší správě (2025/26), a z typického nastavení správy Antam Homes; ceny za noc počítáme po provizi Airbnb a Booking.com, dlouhodobý nájem podle cenové mapy nájemného Bohemian Estates (11/2025). Skutečný výnos kolísá podle stavu bytu, sezóny, recenzí, regulace krátkodobých pronájmů a dalších faktorů, které nemůžeme předem zaručit. Konkrétní podmínky vždy upravuje smlouva\u00a0o správě.",
     calc_disclaimer_toggle: "Jak počítáme a co výsledek ovlivní",
     calc_excluded_note: "Provize 25 % je konečná, včetně DPH, a počítá se z ceny za ubytování bez úklidového poplatku. Ten platí host zvlášť a zůstává nám (úklid a prádlo). Energie hradí majitel.",
 
@@ -401,7 +401,7 @@ const translations = {
     calc_share_done: "Đã sao chép đường link",
     calc_share_copy: "Sao chép đường link:",
     calc_approx_prefix: "khoảng",
-    calc_disclaimer: "Đây chỉ là con số tham khảo, không phải báo giá hay cam kết. Dựa trên số liệu thị trường Praha (PriceLabs, Airbtics, 2025/26) và cách Antam Homes vận hành; giá thuê dài hạn theo bản đồ giá Bohemian Estates (11/2025). Thực tế còn tùy tình trạng nhà, mùa, đánh giá của khách và quy định về cho thuê ngắn hạn. Điều kiện cụ thể theo hợp đồng.",
+    calc_disclaimer: "Đây chỉ là con số tham khảo, không phải báo giá hay cam kết. Dựa trên số liệu thị trường Praha (PriceLabs, Airbtics, 2025/26), đã đối chiếu với kết quả thật của những căn Antam đang lo (2025/26), và cách Antam Homes vận hành; giá mỗi đêm đã trừ phí Airbnb, Booking.com, giá thuê dài hạn theo bản đồ giá Bohemian Estates (11/2025). Thực tế còn tùy tình trạng nhà, mùa, đánh giá của khách và quy định về cho thuê ngắn hạn. Điều kiện cụ thể theo hợp đồng.",
     calc_disclaimer_toggle: "Antam tính thế nào và điều gì ảnh hưởng",
     calc_excluded_note: "Phí 25% là mức cuối, đã gồm VAT, tính trên tiền phòng chưa gồm phí dọn dẹp. Phí dọn dẹp khách trả riêng và thuộc về Antam (dọn dẹp, giặt giũ). Điện nước chủ\u00a0nhà\u00a0lo.",
 

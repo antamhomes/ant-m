@@ -11,7 +11,7 @@ type LocationKey =
   | "praha6" | "praha7" | "praha8" | "praha9" | "praha10";
 
 const locations: { value: LocationKey; label: string; multiplier: number; occupancy: number }[] = [
-  { value: "praha1",  label: "Praha 1",  multiplier: 1.45, occupancy: 0.85 },
+  { value: "praha1",  label: "Praha 1",  multiplier: 1.35, occupancy: 0.85 },
   { value: "praha2",  label: "Praha 2",  multiplier: 1.25, occupancy: 0.83 },
   { value: "praha3",  label: "Praha 3",  multiplier: 1.05, occupancy: 0.80 },
   { value: "praha4",  label: "Praha 4",  multiplier: 0.80, occupancy: 0.72 },
@@ -26,7 +26,8 @@ const locations: { value: LocationKey; label: string; multiplier: number; occupa
 // Base ADR (Kč/noc) podle dispozice; každá dispozice počítá s obvyklou kapacitou bytu
 // (guestsCs/guestsVi je jen popisek — česky se správným skloňováním).
 // Úklid a prádlo hradí host v ceně rezervace a zajišťuje Antam Homes — do výnosu majitele nevstupují.
-// Energie (elektřina, voda, plyn) hradí majitel a v odhadu nejsou zahrnuty.
+// Energie (elektřina, voda) hradí majitel a v odhadu nejsou zahrnuty.
+// ADR = cena za noc po provizi platformy (Airbnb/Booking), protože z té se dělí 75/25.
 const sizes: { value: SizeKey; label: string; baseADR: number; guestsCs: string; guestsVi: string }[] = [
   { value: "1kk", label: "1+kk", baseADR: 1665, guestsCs: "2–4 hosté",  guestsVi: "2–4 khách" },
   { value: "2kk", label: "2+kk", baseADR: 2250, guestsCs: "6–8 hostů",  guestsVi: "6–8 khách" },
@@ -57,11 +58,14 @@ const ltrTable: Record<LocationKey, Record<SizeKey, number>> = {
 };
 
 type Season = "year" | "summer" | "winter" | "xmas";
+// Sezónní přirážky sladěné se skutečnými výsledky bytů v naší správě (8/2025–7/2026):
+// 2+kk Praha 1 vychází rok ≈ 62 tis., léto ≈ 75 tis., zima ≈ 41 tis., prosinec ≈ 102 tis. pro majitele.
+// Léto/Vánoce zvedají hlavně cenu, ne obsazenost (ta je i v lednu přes 80 %).
 const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   year:   { adr: 1.05, occDelta: 0.02 },
-  summer: { adr: 1.33, occDelta: 0.08 },
-  winter: { adr: 0.88, occDelta: 0.05 },
-  xmas:   { adr: 1.75, occDelta: 0.12 },
+  summer: { adr: 1.25, occDelta: 0.03 },
+  winter: { adr: 0.70, occDelta: 0.0 },
+  xmas:   { adr: 1.65, occDelta: 0.05 },
 };
 
 const MGMT_FEE = 0.25; // provize Antam Homes: 25 % z výnosu z ubytování

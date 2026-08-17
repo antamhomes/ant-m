@@ -2,7 +2,7 @@ import { defineTool, ToolError } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 
 const locations = {
-  praha1: { label: "Praha 1", multiplier: 1.45, occupancy: 0.85 },
+  praha1: { label: "Praha 1", multiplier: 1.35, occupancy: 0.85 },
   praha2: { label: "Praha 2", multiplier: 1.25, occupancy: 0.83 },
   praha3: { label: "Praha 3", multiplier: 1.05, occupancy: 0.8 },
   praha4: { label: "Praha 4", multiplier: 0.8, occupancy: 0.72 },
@@ -30,11 +30,12 @@ const extras = {
   wellness: 0.05,
 } as const;
 
+// Season factors calibrated on real results of managed flats (Aug 2025 – Jul 2026); ADR is net of platform commission.
 const seasons = {
   year: { adr: 1.05, occDelta: 0.02 },
-  summer: { adr: 1.33, occDelta: 0.08 },
-  winter: { adr: 0.88, occDelta: 0.05 },
-  xmas: { adr: 1.75, occDelta: 0.12 },
+  summer: { adr: 1.25, occDelta: 0.03 },
+  winter: { adr: 0.7, occDelta: 0.0 },
+  xmas: { adr: 1.65, occDelta: 0.05 },
 } as const;
 
 // Long-term rent benchmark (CZK/month), Bohemian Estates rent map, Nov 2025; 4+kk ≈ 1.3 × 3+kk
