@@ -178,7 +178,7 @@ const translations = {
     faq12_q: "Co na to sousedé a SVJ?",
     faq12_a: "Dobré vztahy v domě jsou podmínka, aby byt fungoval dlouhodobě. Hosté dostávají pravidla domu předem, byt má jasně danou kapacitu (žádné party) a sousedé mají kontakt, na který se dovolají. Pokud stanovy vašeho SVJ krátkodobé ubytování výslovně zakazují, řekneme vám to na rovinu ještě před podpisem.",
     faq13_q: "Pro koho krátkodobý pronájem nedává smysl?",
-    faq13_a: "Když SVJ ubytování zakazuje nebo to sousedé v domě nechtějí. Když potřebujete každý měsíc přesně stejnou částku, protože výnos kolísá se sezónou. Když chcete byt většinu roku používat sami. A když je byt ve stavu, do kterého už\u00a0nechcete nic dát. Ve všech ostatních případech se na to rádi podíváme; lokalita mimo centrum ani starší dům problém nejsou.",
+    faq13_a: "Krátkodobý pronájem není ideální pro každého. Pokud potřebujete každý měsíc přesně stejný příjem, chcete byt většinu roku využívat sami nebo byt potřebuje další úpravy či dovybavení, do kterých už nechcete investovat, bude pro vás pravděpodobně vhodnější jiná forma pronájmu.\nV ostatních případech se na byt rádi podíváme. Lokalita mimo centrum, starší dům ani méně moderní dispozice samy o sobě nemusí být překážkou.",
     faq14_q: "Proč to nedělat sám přes Airbnb?",
     faq14_a: "Můžete, někteří majitelé to zvládají. Jen počítejte s tím, že to je práce na každý den: odpovídat hostům do minut, hlídat ceny podle poptávky, řešit úklid a klíče, a hlavně držet krok s tím, co Airbnb a Booking mění: algoritmy, pravidla, poplatky, nové povinnosti. Kdo to dělá jednou za týden, mizí z výsledků a prodává pod cenou. My to děláme denně pro víc bytů najednou, a to je celý rozdíl.",
     faq15_q: "Pracujete i s jinými platformami nebo firmami?",
