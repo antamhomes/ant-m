@@ -67,7 +67,7 @@ const Footer = () => {
                 <Phone className="w-4 h-4 text-gold mt-0.5 shrink-0" />
                 <div>
                   <span className="font-body text-primary-foreground/50 text-xs block leading-none mb-0.5">
-                    {lang === "cs" ? "Kancelář" : "Văn phòng"}
+                    Tiếng Việt
                   </span>
                   <a href={`tel:${t(lang, "footer_office_phone").replace(/\s/g, "")}`} className="hover:text-gold transition-colors font-body">
                     {t(lang, "footer_office_phone")}
