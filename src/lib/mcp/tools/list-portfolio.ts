@@ -2,11 +2,11 @@ import { defineTool } from "@lovable.dev/mcp-js";
 
 const apartments = [
   { name: "Secret garden loft", location: "Praha 4", maxGuests: 13 },
+  { name: "Elegant Museum View Apartment (402)", location: "Praha 1", maxGuests: 8 },
+  { name: "Modern Museum View Apartment (405)", location: "Praha 1", maxGuests: 8 },
   { name: "Moderní apartmán se zahradou", location: "Praha 4", maxGuests: 6 },
   { name: "Secret garden studio I", location: "Praha 4", maxGuests: 4 },
   { name: "Secret garden studio II", location: "Praha 4", maxGuests: 4 },
-  { name: "Elegant Museum View Apartment (402)", location: "Praha 1", maxGuests: 8 },
-  { name: "Modern Museum View Apartment (405)", location: "Praha 1", maxGuests: 8 },
   { name: "Klement apartment s terasou", location: "Mladá Boleslav", maxGuests: 8 },
   { name: "Klement apartment", location: "Mladá Boleslav", maxGuests: 8 },
   { name: "My Mozart studio", location: "Praha 5", maxGuests: 4 },
