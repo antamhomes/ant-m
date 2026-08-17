@@ -525,7 +525,7 @@ const translations = {
     foryou4_title: "Sợ khách làm hỏng nhà",
     foryou4_desc: "Khách đi là Antam vào dọn dẹp, kiểm tra, có gì hỏng thì xử lý ngay. Nhờ vậy, căn nhà luôn được theo dõi và chăm sóc thường xuyên.\n",
     foryou5_title: "Muốn giữ nhà cho gia đình",
-    foryou5_desc: "Người nhà sang chơi, có khách quý, hay muốn về ở vài hôm. Chỉ cần báo trước, Antam sẽ khóa lịch ngay.",
+    foryou5_desc: "Người nhà sang chơi, có khách quý, hay muốn về ở vài hôm. Chỉ cần đặt ngày trên app, Antam sẽ khóa lịch ngay.\n",
     foryou6_title: "Ở xa hoặc hay đi vắng",
     foryou6_desc: "Về Việt Nam nửa năm cũng không sao. Nhà mình vẫn có khách đều, tháng nào cũng thấy rõ tiền về.",
     // Phone grid (2×3 cards): same titles, one-breath answers.
