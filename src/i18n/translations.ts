@@ -521,7 +521,7 @@ const translations = {
     foryou2_title: "Không có thời gian tiếp khách",
     foryou2_desc: "Khách hỏi han, nhận phòng, chìa khóa, nửa đêm có chuyện. Mọi việc đều được Antam lo chu đáo.",
     foryou3_title: "Ngại theo dõi từng thay đổi",
-    foryou3_desc: "Airbnb, Booking thường xuyên đổi quy định, cách xếp hạng, mức phí thu. Việc này Antam làm hằng ngày, chủ\u00a0nhà không phải bận\u00a0tâm.",
+    foryou3_desc: "Airbnb, Booking thường xuyên thay đổi quy định, cách xếp hạng và mức phí. Antam theo dõi và cập nhật những thay đổi này hằng ngày, chủ nhà không phải bận tâm.\n",
     foryou4_title: "Sợ khách làm hỏng nhà",
     foryou4_desc: "Khách đi là Antam vào dọn dẹp, kiểm tra, có gì hỏng thì được sửa ngay. Cho thuê dài hạn thì cả năm mới thấy nhà mình một lần.",
     foryou5_title: "Muốn giữ nhà cho gia đình",
