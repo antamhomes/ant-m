@@ -347,7 +347,7 @@ const translations = {
     // About — Ai đứng sau (REVIEW: thay bằng lời của Vương + ảnh)
     about_label: "Ai đứng sau",
     about_title: "Một nhóm nhỏ ở Praha, tự tay chăm sóc từng căn nhà.",
-    about_p1: "Antam Homes do người Việt và người Séc ở Praha lập nên. Kinh nghiệm cho thuê ngắn hạn của Antam đến từ chính những căn nhà mình trực tiếp chăm sóc. Bắt đầu với nhà của gia đình và người quen, rồi nhờ sự tin tưởng và giới thiệu từ những chủ nhà đã làm việc cùng, Antam dần được giao chăm sóc thêm nhiều căn. Đến nay, Antam lo khoảng mười căn ở Praha và quanh Praha.\n\n",
+    about_p1: "Antam Homes bắt đầu từ những căn nhà của chính gia đình và người quen tại Praha. Từ việc trực tiếp vận hành, chăm sóc từng căn a mang lại kết quả tốt, Antam dần được các chủ nhà tin tưởng, giới thiệu a giao thêm nhiều căn khác. Hiện nay, Antam đang chăm sóc khoảng mười căn tại Praha a khu vực lân cận. Đội ngũ Antam gồm cả người Việt a người Séc, luôn học hỏi a cập nhật thị trường để ngày càng làm tốt hơn a mang lại kết quả tốt nhất cho chủ nhà.\n\n",
     about_p2: "Nói chuyện với Antam bằng tiếng Việt hay tiếng Séc đều được, qua điện thoại, Zalo hay WhatsApp. Nhà nào Antam cũng biết tận nơi, khách Antam tự lo, tháng nào chủ nhà cũng có bảng kê\u00a0rõ từng khoản.",
     about_p3: "Antam mong chủ nhà chỉ phải nghĩ đến căn nhà khi muốn về nghỉ cuối tuần.",
 
