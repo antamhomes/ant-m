@@ -517,7 +517,7 @@ const translations = {
     foryou_title2: "thu nhiều hơn?",
     foryou_desc: "Dù đang cho thuê dài hạn, tự làm Airbnb, hay nhà đang trống. Đây là những lý do chủ nhà hay tìm đến Antam.",
     foryou1_title: "Từng bị người thuê quỵt tiền",
-    foryou1_desc: "Cho thuê dài hạn, gặp người thuê chậm tiền hay làm hỏng nhà thì chủ nhà phải tự giải quyết. Khách ngắn hạn trả tiền trước, ở vài hôm rồi đi. Không phải đòi, không phải kiện.",
+    foryou1_desc: "Cho thuê dài hạn, gặp người thuê chậm tiền hay làm hỏng nhà thì chủ nhà phải tự bỏ ra thời gian giải quyết. Khách Antam trả tiền trước, du lịch xong về nhà. Không phải đòi, không phải\u00a0kiện.",
     foryou2_title: "Không có thời gian tiếp khách",
     foryou2_desc: "Khách hỏi han, nhận phòng, chìa khóa, nửa đêm có chuyện. Mọi việc đều được Antam lo chu đáo.",
     foryou3_title: "Ngại theo dõi từng thay đổi",
