@@ -9,20 +9,34 @@ import byt5 from "@/assets/byt-5.jpg.asset.json";
 import byt6 from "@/assets/byt-6.jpg.asset.json";
 import byt7 from "@/assets/byt-7.jpg.asset.json";
 
+/** Results shown on the cards: owner's monthly income AFTER platform commission, cleaning fees and the
+ *  Antam Homes 25 % (i.e. what the owner really receives), rounded to thousands, plus occupancy.
+ *  Source: Hospitable reservations, checked against the owner statements. Window: last 12 full months
+ *  (1. 8. 2025 – 31. 7. 2026) or, for flats that joined later, from the first stay (`since`).
+ *  `ratio` = owner income vs. long-term rent for that size/district (Bohemian Estates 11/2025).
+ *  Flats younger than ~3 months get no numbers yet (`newSince`), only a note.
+ *  Refresh monthly: STATS_ASOF + the numbers below. */
+const STATS_ASOF = { cs: "31. 7. 2026", vi: "31/7/2026" };
+
+type Stats = { owner: number; occupancy: number; since?: string; ratio?: number };
+type Item = { src: string; name: string; loc: string; guests: number; stats?: Stats; newSince?: string };
+
 /** The apartments shown publicly (owner's choice); capacities from Hospitable.
  *  byt-1…7 are Lovable assets; 402/405 (Praha 1, Čelakovského sady) are small webp files in public/portfolio.
  *  Order: the big loft first, then the two Praha 1 flagships, the Praha 4 cluster, Mladá Boleslav, Mozart last. */
-const items: { src: string; name: string; loc: string; guests: number }[] = [
-  { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", guests: 13 },
-  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", guests: 8 },
-  { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", guests: 8 },
-  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 4", guests: 6 },
-  { src: byt1.url, name: "Secret Garden Studio\u00a0I", loc: "Praha 4", guests: 4 },
-  { src: byt2.url, name: "Secret Garden Studio\u00a0II", loc: "Praha 4", guests: 4 },
-  { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", guests: 8 },
-  { src: byt6.url, name: "Klement apartment", loc: "Mladá Boleslav", guests: 8 },
-  { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", guests: 4 },
+const items: Item[] = [
+  { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", guests: 13, newSince: "7/2026" },
+  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", guests: 8, stats: { owner: 68000, occupancy: 96, ratio: 2.4 } },
+  { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", guests: 8, stats: { owner: 61000, occupancy: 95, ratio: 2.2 } },
+  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 4", guests: 6, stats: { owner: 45000, occupancy: 83, since: "4/2026", ratio: 1.7 } },
+  { src: byt1.url, name: "Secret Garden Studio\u00a0I", loc: "Praha 4", guests: 4, newSince: "7/2026" },
+  { src: byt2.url, name: "Secret Garden Studio\u00a0II", loc: "Praha 4", guests: 4, newSince: "7/2026" },
+  { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", guests: 8, stats: { owner: 32000, occupancy: 93, since: "4/2026" } },
+  { src: byt6.url, name: "Klement apartment", loc: "Mladá Boleslav", guests: 8, newSince: "8/2026" },
+  { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", guests: 4, stats: { owner: 31000, occupancy: 94, since: "2/2026", ratio: 1.7 } },
 ];
+
+const fmtCzk = (n: number) => n.toLocaleString("cs-CZ").replace(/\s/g, "\u00a0");
 
 /** Real guest reviews (Hospitable, 2026). Fragments are verbatim; translations are marked. */
 const reviews = {
@@ -49,6 +63,13 @@ const copy = {
     soonDescShort: "Kvalita je pro nás důležitější než počet. Proto nové byty do portfolia zařazujeme postupně.\n",
     reviewsLabel: "Co říkají hosté",
     reviewsLine: "Přes 520 recenzí od hostů na Airbnb a\u00a0Booking.com.",
+    statOwner: "majiteli měsíčně",
+    statPeriod12: "průměr 12 měsíců",
+    statPeriodSince: (m: string) => `průměr od ${m}`,
+    statRatio: (r: number) => `${r.toLocaleString("cs-CZ")}× dlouhodobý nájem`,
+    statOcc: (o: number) => `obsazenost ${o}\u00a0%`,
+    statNew: (m: string) => `V naší správě od ${m}. Čísla doplníme po první sezóně.`,
+    statNote: (d: string) => `Částky pro majitele jsou skutečné výsledky bytů po provizi Airbnb a Booking.com, bez úklidových poplatků a po naší provizi 25\u00a0%, tedy to, co majitel opravdu dostane; energie hradí majitel. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. Nájem podle cenové mapy Bohemian Estates (11/2025). Minulé výsledky nejsou zárukou budoucích.`,
   },
   vi: {
     eyebrow: "Căn hộ",
@@ -60,6 +81,13 @@ const copy = {
     soonDescShort: "Để đảm bảo chất lượng cho từng căn, Antam chủ động giới hạn số lượng căn hộ nhận thêm.\n",
     reviewsLabel: "Khách nói gì",
     reviewsLine: "Hơn 520 đánh giá của khách trên Airbnb và\u00a0Booking.com.",
+    statOwner: "chủ nhà nhận / tháng",
+    statPeriod12: "trung bình 12 tháng",
+    statPeriodSince: (m: string) => `trung bình từ ${m}`,
+    statRatio: (r: number) => `gấp ${r.toLocaleString("vi-VN")} lần cho thuê dài hạn`,
+    statOcc: (o: number) => `lấp phòng ${o}\u00a0%`,
+    statNew: (m: string) => `Antam lo từ ${m}. Số liệu sẽ có sau mùa đầu tiên.`,
+    statNote: (d: string) => `Số tiền chủ nhà nhận là kết quả thật của từng căn, đã trừ phí Airbnb và Booking.com, không tính phí dọn dẹp và đã trừ phí Antam 25\u00a0%, tức là đúng số tiền về tay chủ nhà; điện nước chủ nhà lo. Trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Giá thuê dài hạn theo bản đồ giá Bohemian Estates (11/2025). Kết quả đã qua không phải là cam kết cho tương lai.`,
   },
 };
 
@@ -105,6 +133,27 @@ const PortfolioSection = () => {
                     {c.guests(item.guests)}
                   </span>
                 </p>
+                {/* Real results: what the owner receives per month, plus occupancy. New flats get a note instead. */}
+                {item.stats && (
+                  <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border">
+                    <p className="font-display text-[15px] sm:text-xl font-semibold text-foreground leading-none tnum">
+                      {fmtCzk(item.stats.owner)}&nbsp;Kč
+                    </p>
+                    <p className="mt-1 font-body text-[10px] sm:text-[11px] uppercase tracking-[0.12em] text-muted-foreground leading-tight">
+                      {c.statOwner}
+                    </p>
+                    <p className="mt-2 font-body text-[10.5px] sm:text-xs text-muted-foreground leading-snug">
+                      {item.stats.ratio ? <span className="text-gold-deep font-semibold">{c.statRatio(item.stats.ratio)}</span> : null}
+                      {item.stats.ratio ? " · " : ""}
+                      {c.statOcc(item.stats.occupancy)} · {item.stats.since ? c.statPeriodSince(item.stats.since) : c.statPeriod12}
+                    </p>
+                  </div>
+                )}
+                {item.newSince && (
+                  <p className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border font-body text-[10.5px] sm:text-xs text-muted-foreground leading-snug">
+                    {c.statNew(item.newSince)}
+                  </p>
+                )}
               </figcaption>
             </Reveal>
           ))}
@@ -122,6 +171,13 @@ const PortfolioSection = () => {
             </p>
           </Reveal>
         </div>
+
+        {/* How the numbers on the cards are computed (kept short; the calculator disclaimer covers the rest). */}
+        <Reveal delay={0.05} className="mt-4 sm:mt-5">
+          <p className="font-body text-[11px] sm:text-xs text-muted-foreground/90 leading-relaxed text-pretty max-w-3xl mx-auto text-center">
+            {c.statNote(STATS_ASOF[lang])}
+          </p>
+        </Reveal>
 
         {/* Guest voices: the service quality an owner is really buying. */}
         <Reveal delay={0.1} className="mt-14 md:mt-16">
