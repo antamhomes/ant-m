@@ -33,13 +33,13 @@ const WhyBetterSection = () => {
         </Reveal>
 
         {/* Phones: extra room under the last card so the sticky CTA never covers it. */}
-        <ul className="grid gap-3 md:gap-5 md:grid-cols-2 pb-12 md:pb-0 list-none m-0 p-0">
+        <ul className="grid gap-3 max-w-2xl mx-auto pb-12 md:pb-0 list-none m-0 p-0">
           {rows.map(({ icon: Icon, title, long, short }, i) => (
             <Reveal as="li" key={title} delay={stagger(i, 0.07)} className="rounded-md border border-border bg-card overflow-hidden">
               {/* Row title across both columns */}
-              <div className="flex items-center gap-2 md:gap-2.5 px-3.5 md:px-5 pt-3.5 md:pt-4 pb-3 border-b border-border">
+              <div className="flex items-center gap-2 md:gap-2.5 px-4 pt-3.5 pb-3 border-b border-border">
                 <Icon className="w-4 h-4 md:w-5 md:h-5 text-gold shrink-0" strokeWidth={1.6} />
-                <h3 className="font-display text-[15px] md:text-lg font-semibold text-foreground leading-snug whitespace-nowrap">
+                <h3 className="font-display text-[15px] font-semibold text-foreground leading-snug whitespace-nowrap">
                   {t(lang, title)}
                 </h3>
               </div>
