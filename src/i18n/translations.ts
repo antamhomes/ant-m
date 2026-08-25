@@ -74,10 +74,13 @@ const translations = {
 
     // About — Kdo za tím stojí (REVIEW: nahradit vlastními slovy + fotkou)
     about_label: "Kdo za tím stojí",
-    about_title: "Malý tým z Prahy, který se o byty stará osobně.",
-    about_p1: "Antam Homes jsme založili v Praze jako česko-vietnamský tým, který krátkodobý pronájem zná z vlastní praxe. Začínali jsme s vlastními byty a byty rodiny a známých. Díky výsledkům a doporučením nám postupně začali své nemovitosti svěřovat i další majitelé. Dnes se staráme o zhruba desítku apartmánů v Praze a okolí a každý z nich bereme jako vlastní.\n\n",
-    about_p2: "Domluvíte se s námi česky i vietnamsky, telefonem, přes WhatsApp nebo Zalo. Každý byt známe osobně, o hosty se staráme sami a majitel od nás každý měsíc dostane přehled, ze kterého je vidět každá koruna.",
-    about_p3: "Chceme, aby majitel na svůj byt myslel jen tehdy, když si chce přijet užít víkend.",
+    about_title: "Víme, co je potřeba, aby\u00a0byt na dnešním trhu uspěl.",
+    about_p1: "Krátkodobým pronájmem se zabýváme každý den. Spravujeme apartmány různých velikostí, v různých lokalitách a pro různé typy hostů. Přesto se nám u nich dlouhodobě daří dosahovat lepších výsledků než u srovnatelných nabídek v okolí.",
+    about_p2: "Není to náhoda. Úspěšný byt dnes nestačí jen vystavit na Airbnb nebo Booking. Rozhoduje správné nastavení ceny, prezentace, fotografie, hodnocení, rychlost komunikace, práce s obsazeností i desítky malých rozhodnutí během celého roku.",
+    about_p3: "Právě v tom je naše výhoda. Trh se neustále mění a my s ním. Víme, co funguje, sledujeme výsledky každý den a průběžně upravujeme způsob, jakým je každý byt nabízen a řízen, abychom si udrželi náskok před ostatními nabídkami.",
+    about_p4: "Začínali jsme na vlastních a rodinných bytech. Dnes spravujeme zhruba desítku apartmánů v Praze a okolí a máme za sebou přes 520 hodnocení od hostů.",
+    about_p5: "Neřešíme jen každodenní správu. Každý byt bereme jako samostatný byznys a neustále hledáme způsoby, jak zlepšovat jeho výsledky.",
+    about_quote: "Nestačí nám byt jen obsadit. Naším cílem je dostat z každého bytu maximum jeho\u00a0potenciálu.",
 
     // Price strip
     price_label: "Cena",
@@ -351,10 +354,13 @@ const translations = {
 
     // About — Ai đứng sau (REVIEW: thay bằng lời của Vương + ảnh)
     about_label: "Ai đứng sau",
-    about_title: "Một nhóm nhỏ ở Praha, tự tay chăm sóc từng căn nhà.",
-    about_p1: "Antam Homes bắt đầu từ những căn nhà của chính gia đình và người quen tại Praha. Từ việc trực tiếp vận hành, chăm sóc từng căn a mang lại kết quả tốt, Antam dần được các chủ nhà tin tưởng, giới thiệu a giao thêm nhiều căn khác. Hiện nay, Antam đang chăm sóc khoảng mười căn tại Praha a khu vực lân cận. Đội ngũ Antam gồm cả người Việt a người Séc, luôn học hỏi a cập nhật thị trường để ngày càng làm tốt hơn a mang lại kết quả tốt nhất cho chủ nhà.\n\n",
-    about_p2: "Nói chuyện với Antam bằng tiếng Việt hay tiếng Séc đều được, qua điện thoại, Zalo hay WhatsApp. Nhà nào Antam cũng biết tận nơi, khách Antam tự lo, tháng nào chủ nhà cũng có bảng kê\u00a0rõ từng khoản.",
-    about_p3: "Antam mong chủ nhà chỉ phải nghĩ đến căn nhà khi muốn về nghỉ cuối tuần.",
+    about_title: "Antam hiểu cần làm gì để\u00a0một căn hộ cho thuê tốt.",
+    about_p1: "Từ căn nhỏ đến căn lớn, ở\u00a0trung tâm hay xa\u00a0hơn, mỗi căn đều có lợi thế riêng, và việc của Antam là tận dụng những lợi thế đó để đạt kết quả tốt nhất.",
+    about_p2: "Các căn Antam đang quản lý thường đạt kết quả tốt hơn những căn tương đương trong cùng khu vực. Để làm được điều đó, chỉ đăng lên Airbnb hay Booking là chưa đủ. Giá phải được điều chỉnh đúng theo từng thời điểm, hình ảnh phải đủ thu hút để\u00a0khách muốn xem, thông tin phải rõ ràng, phản hồi phải nhanh và lịch đặt phòng phải được theo dõi sát. Từng chi tiết nhỏ đều có thể ảnh hưởng trực tiếp đến doanh thu.",
+    about_p3: "Thị trường thay đổi liên tục nên cách làm cũng phải thay đổi theo. Antam theo dõi kết quả hằng ngày, xem điều gì đang hiệu quả, điều gì cần điều chỉnh và liên tục cải thiện cách vận hành từng căn. Mục tiêu không chỉ là theo kịp thị trường, mà là duy trì kết quả tốt hơn so với những căn đang cạnh tranh trực tiếp trong cùng khu vực.",
+    about_p4: "Hiện nay, Antam đang quản lý khoảng 10 căn hộ tại Praha và khu vực lân cận, với hơn 520 đánh giá từ\u00a0khách. Kinh nghiệm từ nhiều căn hộ khác nhau giúp Antam hiểu rõ điều gì thực sự ảnh hưởng đến kết quả.",
+    about_p5: "Antam không chỉ lo những công việc hằng ngày như khách, dọn dẹp hay đặt phòng. Mỗi căn hộ được xem như một hoạt động kinh doanh riêng, cần được theo dõi và cải thiện liên tục.",
+    about_quote: "Với Antam, kín lịch chưa phải là\u00a0đủ. Mục tiêu là giúp mỗi căn hộ phát huy tối đa tiềm năng và đạt kết quả tốt nhất có thể.",
 
     // Price strip
     price_label: "Phí dịch vụ",
