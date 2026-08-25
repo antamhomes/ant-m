@@ -216,7 +216,7 @@ const translations = {
     contact_message: "Zpráva / odkaz na byt",
     contact_message_placeholder: "Odkaz na inzerát, fotky nebo pár vět o bytě…",
     contact_submit: "Odeslat poptávku",
-    contact_small: "Ozveme se do 24 hodin, česky nebo vietnamsky, a nezávazně probereme, co by pro váš byt dávalo smysl.",
+    contact_small: "Ozveme se do 24 hodin a nezávazně probereme, co by pro váš byt dávalo smysl.",
     contact_success: "Děkujeme. Ozveme se do 24 hodin.",
     contact_error: "Něco se nepovedlo. Zkuste to prosím znovu, nebo napište na antamhomes@gmail.com.",
 
