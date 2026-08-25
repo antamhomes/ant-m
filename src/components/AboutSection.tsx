@@ -1,11 +1,11 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import Reveal from "@/components/Reveal";
-import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
 
 /**
- * "Kdo za tím stojí" — a face and three sentences. The photo is a placeholder
- * until Vuong supplies one: drop `src/assets/team.jpg` and swap the block below.
+ * "Kdo za tím stojí" — three sentences, one centred column. The photo slot is
+ * removed for now; when Vuong supplies a photo, bring back the two-column grid
+ * (md:grid-cols-[minmax(0,320px)_1fr]) with <img src={teamPhoto} … /> on the left.
  * REVIEW: about_p1–p3 (CZ + VI) are drafts to be replaced with Vuong's own words.
  */
 const AboutSection = () => {
@@ -19,16 +19,8 @@ const AboutSection = () => {
           <h2 className="h-section-sm text-foreground">{t(lang, "about_title")}</h2>
         </Reveal>
 
-        <div className="grid md:grid-cols-[minmax(0,320px)_1fr] gap-8 md:gap-12 items-center max-w-4xl mx-auto">
-          {/* Photo placeholder — replace with <img src={teamPhoto} … /> */}
-          <Reveal delay={0.05}
-            className="hidden md:flex aspect-[4/5] rounded-md bg-gradient-dark border border-gold/20 items-end p-5 shadow-[0_30px_60px_-30px_hsl(var(--charcoal)/0.45)]"
-            aria-hidden="true"
-          >
-            <Wordmark on="dark" size="sm" className="opacity-90" />
-          </Reveal>
-
-          <Reveal delay={0.1}>
+        <div className="max-w-2xl mx-auto">
+          <Reveal delay={0.05}>
             <p className="font-body text-[17px] md:text-lg text-foreground leading-relaxed mb-5 text-pretty">
               {t(lang, "about_p1")}
             </p>
