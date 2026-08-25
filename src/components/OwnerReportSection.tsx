@@ -1,5 +1,5 @@
 import Reveal from "@/components/Reveal";
-import { FileBarChart, ChevronRight, CalendarDays, TrendingUp, Wallet, Receipt, ClipboardList, BedDouble } from "lucide-react";
+import { FileBarChart, ChevronRight, CalendarDays, TrendingUp, Wallet, Receipt, ClipboardList, BedDouble, Landmark } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
@@ -10,9 +10,10 @@ const OwnerReportSection = () => {
   const rows = [
     { icon: CalendarDays, key: "report_row_reservations" as const, value: "12" },
     { icon: BedDouble, key: "report_row_occupancy" as const, value: "80 %" },
-    { icon: TrendingUp, key: "report_row_revenue" as const, value: "76 000 Kč" },
-    { icon: Receipt, key: "report_row_costs" as const, value: "19 000 Kč" },
-    { icon: Wallet, key: "report_row_net" as const, value: "57 000 Kč", highlight: true },
+    { icon: TrendingUp, key: "report_row_revenue" as const, value: "76\u00a0000\u00a0Kč" },
+    { icon: Landmark, key: "report_row_vat" as const, value: "3\u00a0000\u00a0Kč" },
+    { icon: Receipt, key: "report_row_costs" as const, value: "18\u00a0000\u00a0Kč" },
+    { icon: Wallet, key: "report_row_net" as const, value: "55\u00a0000\u00a0Kč", highlight: true },
     { icon: ClipboardList, key: "report_row_notes" as const, value: "—" },
   ];
 

@@ -1,6 +1,6 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 
-// Owner income = real results after platform commission, cleaning fees and the 25 % Antam fee (what the owner receives),
+// Owner income = real results after platform commission incl. Czech VAT on it, cleaning fees and the 25 % Antam fee (what the owner receives),
 // monthly average over the last 12 full months (to 31 Jul 2026) or since the first stay for newer flats.
 const apartments = [
   { name: "Secret garden loft", location: "Praha 4", maxGuests: 13, managedSince: "2026-07", note: "new, results after the first season" },
@@ -34,7 +34,7 @@ export default defineTool({
             return `${base}: managed since ${a.managedSince}, ${a.note}`;
           })
           .join("\n") +
-          "\n\nOwner income = after Airbnb/Booking commission, without cleaning fees, after the 25 % Antam Homes fee; energy paid by owner. Past results are not a guarantee." +
+          "\n\nOwner income = after Airbnb/Booking commission incl. the statutory Czech VAT on it, without cleaning fees, after the 25 % Antam Homes fee; energy paid by owner. Past results are not a guarantee." +
           "\n\nComing soon: the portfolio is expanding to a total of 10 apartments across Prague. Guests have left over 520 reviews across Airbnb and Booking.com.",
       },
     ],

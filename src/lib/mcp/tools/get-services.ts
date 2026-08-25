@@ -12,12 +12,13 @@ const services = [
 const faq = [
   { question: "Musí být byt už připravený?", answer: "Ne. Umíme se podívat i na byt před spuštěním a říct, co dává smysl připravit." },
   { question: "Kolik je potřeba investovat do přípravy nemovitosti?", answer: "Záleží na současném stavu a vybavení bytu. U úplně prázdného bytu počítejte orientačně kolem 100 000 Kč na jeden pokoj. Cílem je připravit byt tak, aby mezi ostatními nabídkami dobře obstál a působil konkurenceschopně. Po zaplacení zálohy Antam Homes připraví orientační seznam toho, co je potřeba koupit a kolik to bude stát." },
-  { question: "Můžu byt někdy využít pro sebe?", answer: "Ano. Vybrané termíny lze v kalendáři dopředu zablokovat." },
-  { question: "Jak budu vědět, co byt vydělává?", answer: "Každý měsíc zpětně přehled na jednu stranu: obsazené noci, výnos z jednotlivých platforem, provize 25 % a co se v bytě řešilo, spolu s fakturou na provizi." },
-  { question: "Kolik správa stojí?", answer: "Provize je 25 % z výnosu z ubytování a je konečná, bez fixních ani měsíčních poplatků. Pokrývá i internet, hygienické potřeby pro hosty a čisticí prostředky. Drobné opravy do 5 000 Kč vyřídíme sami a náklady strhneme z výnosu; větší opravy nejdřív nahlásíme majiteli. Provize je včetně DPH, nic dalšího se nepřičítá." },
-  { question: "Kdo platí úklid a energie?", answer: "Host platí vedle ceny za ubytování i úklidový poplatek; ten pokrývá úklid a prádlo a zůstává celý Antam Homes, takže se z výnosu majitele na úklid nic nestrhává (ve vyúčtování je samostatnou položkou). Výnos, který se dělí 75/25, je částka za ubytování bez úklidového poplatku. Energie (elektřina, voda) hradí majitel." },
+  { question: "Můžu byt někdy využít pro sebe?", answer: "Byt si můžete kdykoli blokovat pro sebe nebo rodinu. U nejvytíženějších svátků, jako jsou Vánoce, Silvestr a Velikonoce, se na termínu nejdřív domluvíme. Už potvrzené rezervace hostů zůstávají nedotčené." },
+  { question: "Jak budu vědět, co byt vydělává?", answer: "Každý měsíc zpětně přehled na jednu stranu: obsazené noci, výnos z jednotlivých platforem, DPH z provize platformy, odměna 25 % a co se v bytě řešilo, spolu s fakturou na odměnu." },
+  { question: "Kolik správa stojí?", answer: "Naše odměna je 25 % z čistého výnosu: tržby za ubytování bez úklidového poplatku, po odečtení provize Airbnb/Booking.com a zákonné DPH z této provize. Je konečná včetně DPH, nic dalšího se nepřičítá, bez fixních ani měsíčních poplatků. Pokrývá i internet, hygienické potřeby pro hosty a čisticí prostředky. Drobné opravy do 5 000 Kč vyřídíme sami a náklady strhneme z výnosu; větší opravy nejdřív nahlásíme majiteli." },
+  { question: "Kdo platí úklid a energie?", answer: "Host platí vedle ceny za ubytování i úklidový poplatek; ten pokrývá úklid a prádlo a zůstává celý Antam Homes, takže se z výnosu majitele na úklid nic nestrhává (ve vyúčtování je samostatnou položkou). Výnos, který se dělí 75/25, je částka za ubytování bez úklidového poplatku, po odečtení provize platformy a zákonné DPH z ní. Energie (elektřina, voda) hradí majitel." },
+  { question: "Proč se odečítá DPH z provize platformy?", answer: "Airbnb a Booking.com si účtují provizi z celé ceny rezervace včetně úklidového poplatku a fakturují ji ze zahraničí. Česká DPH z této provize se podle zákona odvádí u nás. Není to náš příjem, odvádí se státu a ve vyúčtování ji vidíte jako samostatnou položku." },
   { question: "Jak dlouho spolupráce trvá a jak ji ukončím?", answer: "Smlouva se uzavírá na jeden rok, poté pokračuje a lze ji ukončit s výpovědní lhůtou 6 měsíců. Důvod: hosté rezervují často půl roku i déle dopředu a kalendář je otevřený stejně daleko; byt s jistotou provozu prodává líp. Potvrzené rezervace se během výpovědní lhůty vždy dokončí." },
-  { question: "Je částka v kalkulačce před, nebo po provizi?", answer: "Po. Vše označené jako výnos pro majitele je už po odečtení provize 25 %. Provize je včetně DPH; energie hradí majitel zvlášť." },
+  { question: "Je částka v kalkulačce před, nebo po provizi?", answer: "Po. Vše označené jako výnos pro majitele je už po odečtení provize platformy včetně DPH z ní i odměny 25 %. Odměna je včetně DPH; energie hradí majitel zvlášť." },
   { question: "Jaké povinnosti krátkodobý pronájem přináší a kdo je řeší?", answer: "Evidence hostů, hlášení zahraničních hostů cizinecké policii, místní poplatek z pobytu a registrace v e-Turista, provozní povinnosti kolem hostů řeší Antam Homes. Zdanění příjmu z pronájmu zůstává na majiteli; podklady dostane." },
   { question: "Co když host něco poničí?", answer: "Byt se kontroluje po každém pobytu. Drobnosti se opraví hned (do 5 000 Kč z výnosu). Větší škoda se zdokumentuje a nejdřív vymáhá po hostovi a přes platformu (Airbnb AirCover, řešení škod Booking.com); na majitele se Antam Homes obrací až tehdy, když se náhrada nepodaří získat tam. Majitel se dozví hned, včetně fotek." },
   { question: "Co na to sousedé a SVJ?", answer: "Hosté dostávají pravidla domu předem, byt má danou kapacitu (žádné party) a sousedé mají kontakt. Pokud stanovy SVJ krátkodobé ubytování výslovně zakazují, Antam Homes to majiteli řekne před podpisem." },
@@ -46,6 +47,12 @@ export default defineTool({
         ].join("\n"),
       },
     ],
-    structuredContent: { services, faq, managementCommissionRate: 0.25 },
+    structuredContent: {
+      services,
+      faq,
+      managementCommissionRate: 0.25,
+      commissionBase:
+        "net revenue = accommodation revenue without the cleaning fee, after deducting the Airbnb/Booking.com commission and the statutory Czech VAT on that commission",
+    },
   }),
 });

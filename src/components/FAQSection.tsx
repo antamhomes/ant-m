@@ -17,6 +17,7 @@ const groups: Group[] = [
       { q: "faq9_q", a: "faq9_a" },   // před / po provizi
       { q: "faq4_q", a: "faq4_a" },   // přehled + vyúčtování
       { q: "faq6_q", a: "faq6_a" },   // úklid a energie
+      { q: "faq17_q", a: "faq17_a" }, // DPH z provize platformy
     ],
   },
   {

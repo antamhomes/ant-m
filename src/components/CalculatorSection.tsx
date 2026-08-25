@@ -24,10 +24,12 @@ const locations: { value: LocationKey; label: string; multiplier: number; occupa
 ];
 
 // Base ADR (Kč/noc) podle dispozice; každá dispozice počítá s obvyklou kapacitou bytu
-// (guestsCs/guestsVi je jen popisek — česky se správným skloňováním).
-// Úklid a prádlo hradí host v ceně rezervace a zajišťuje Antam Homes — do výnosu majitele nevstupují.
+// (guestsCs/guestsVi je jen popisek, česky se správným skloňováním).
+// Úklidový poplatek hradí host v ceně rezervace a patří Antam Homes; do výnosu majitele nevstupuje,
+// ale platformy z něj počítají provizi, proto vstupuje do odpočtu provize níže.
 // Energie (elektřina, voda) hradí majitel a v odhadu nejsou zahrnuty.
-// ADR = cena za noc po provizi platformy (Airbnb/Booking), protože z té se dělí 75/25.
+// ADR = benchmark ceny za noc po provizi platformy (Airbnb/Booking); hrubé tržby za ubytování
+// se z něj dopočítávají přes PLATFORM_FEE (viz výpočet).
 const sizes: { value: SizeKey; label: string; baseADR: number; guestsCs: string; guestsVi: string }[] = [
   { value: "1kk", label: "1+kk", baseADR: 1665, guestsCs: "2–4 hosté",  guestsVi: "2–4 khách" },
   { value: "2kk", label: "2+kk", baseADR: 2250, guestsCs: "6–8 hostů",  guestsVi: "6–8 khách" },
@@ -68,7 +70,12 @@ const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   xmas:   { adr: 1.65, occDelta: 0.05 },
 };
 
-const MGMT_FEE = 0.25; // provize Antam Homes: 25 % z výnosu z ubytování
+const MGMT_FEE = 0.25; // odměna Antam Homes: 25 % z čistého výnosu (po provizi platformy a DPH z ní)
+// Provize platforem se počítá z CELÉ ceny rezervace včetně úklidového poplatku
+// a z provize se u nás odvádí česká DPH (reverse charge).
+const PLATFORM_FEE = 0.15;    // orientační smíšená sazba provize Airbnb/Booking.com
+const CLEANING_SHARE = 0.10;  // interní odhad podílu úklidových poplatků na tržbách za ubytování (jen pro odpočet provize)
+const VAT_RATE = 1.21;        // DPH z provize platformy
 const DAYS = 30;
 // Obsazenost = obsazenost lokality + sezónní úprava, omezená na realistické pásmo.
 const MIN_OCCUPANCY = 0.5;
@@ -131,31 +138,36 @@ const CalculatorSection = () => {
     const sizeData = sizes.find((s) => s.value === size);
     const locationData = locations.find((l) => l.value === location);
     if (!sizeData || !locationData) {
-      return { adr: 0, occupancy: 0, gross: 0, mgmt: 0, net: 0, netYearAvg: 0, ltr: 0, ratio: 0 };
+      return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, mgmt: 0, net: 0, netYearAvg: 0, ltr: 0, ratio: 0 };
     }
     const extrasPct = extraKeys
       .filter((e) => selectedExtras.includes(e.id))
       .reduce((sum, e) => sum + e.pct, 0);
-    const seasonAdj = seasonAdjust[season];
-    const adr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * seasonAdj.adr);
-    const occupancy = clampOccupancy(locationData.occupancy + seasonAdj.occDelta);
-    const gross = Math.round(adr * occupancy * DAYS);
-    // Čistý příjem majitele = výnos z ubytování − provize 25 %.
-    // Úklid hradí host (a zajišťujeme ho my), energie platí majitel zvlášť.
-    const mgmt = Math.round(gross * MGMT_FEE);
-    const net = gross - mgmt;
 
+    // Výpočet podle smlouvy: z hrubých tržeb za ubytování se nejdřív odečte provize
+    // platformy včetně DPH (počítá se z celé ceny rezervace včetně úklidu),
+    // zbytek (čistý výnos) se dělí 75/25.
+    const compute = (seasonKey: Season) => {
+      const adj = seasonAdjust[seasonKey];
+      const adrNet = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * adj.adr);
+      const occupancy = clampOccupancy(locationData.occupancy + adj.occDelta);
+      // Hrubé tržby za ubytování (před provizí platformy) z benchmarkového ADR.
+      const gross = Math.round((adrNet / (1 - PLATFORM_FEE)) * occupancy * DAYS);
+      // Odpočet = sazba provize × (tržby za ubytování + odhad úklidových poplatků) × DPH.
+      const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE) * VAT_RATE);
+      const netRevenue = gross - platformFee; // čistý výnos
+      const mgmt = Math.round(netRevenue * MGMT_FEE);
+      const net = netRevenue - mgmt;
+      return { adr: adrNet, occupancy, gross, platformFee, mgmt, net };
+    };
+
+    const r = compute(season);
     // Roční průměr — vždy počítaný ze sezóny "year", nezávisle na výběru
-    const yAdj = seasonAdjust.year;
-    const yAdr = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * yAdj.adr);
-    const yOcc = clampOccupancy(locationData.occupancy + yAdj.occDelta);
-    const yGross = Math.round(yAdr * yOcc * DAYS);
-    const yNetMonth = yGross - Math.round(yGross * MGMT_FEE);
-    const netYearAvg = yNetMonth * 12;
+    const netYearAvg = compute("year").net * 12;
 
     const ltr = ltrTable[location][size];
-    const ratio = ltr > 0 ? net / ltr : 0;
-    return { adr, occupancy, gross, mgmt, net, netYearAvg, ltr, ratio };
+    const ratio = ltr > 0 ? r.net / ltr : 0;
+    return { ...r, netYearAvg, ltr, ratio };
   }, [location, size, selectedExtras, season]);
 
   return (
@@ -363,8 +375,14 @@ const CalculatorSection = () => {
                 </p>
               </div>
 
-              {/* 75 / 25 split — the honest version of "kolik vám zůstane". */}
+              {/* Provize platformy vč. DPH — jeden řádek, pak teprve dělení 75/25. */}
               <div className="border-t border-primary-foreground/10 pt-4">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 font-body text-[13px] tnum mb-3">
+                  <span className="text-primary-foreground/65">{t(lang, "calc_platform_fee_label")}</span>
+                  <span className="text-primary-foreground/80 whitespace-nowrap">
+                    ~{(Math.round(result.platformFee / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
+                  </span>
+                </div>
                 <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-2">
                   {t(lang, "calc_split_label")}
                 </p>
@@ -437,6 +455,9 @@ const CalculatorSection = () => {
 
         {/* Phones: the methodology note folds behind one line; larger screens show it in full. */}
         <div className="mt-6 sm:mt-8 max-w-2xl mx-auto border-t border-border/60 pt-4 sm:pt-5">
+          <p className="font-body text-xs md:text-[13px] text-foreground/80 text-center leading-relaxed mb-3 sm:mb-4">
+            {t(lang, "calc_method_note")}
+          </p>
           <details className="sm:hidden group">
             <summary className="list-none cursor-pointer font-body text-xs text-muted-foreground text-center underline underline-offset-4 decoration-border [&::-webkit-details-marker]:hidden">
               {t(lang, "calc_disclaimer_toggle")}

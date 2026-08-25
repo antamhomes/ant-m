@@ -51,6 +51,9 @@ var ltrTable = {
   praha10: { "1kk": 18e3, "2kk": 23e3, "3kk": 27500, "4kk": 35500 }
 };
 var MGMT_FEE = 0.25;
+var PLATFORM_FEE = 0.15;
+var CLEANING_SHARE = 0.1;
+var VAT_RATE = 1.21;
 var DAYS = 30;
 var estimate_yield_default = defineTool({
   name: "estimate_rental_yield",
@@ -73,9 +76,11 @@ var estimate_yield_default = defineTool({
       const adj = seasons[seasonKey2];
       const adr = Math.round(baseADR * loc.multiplier * (1 + extrasPct) * adj.adr);
       const occupancy = Math.max(0.5, Math.min(0.98, loc.occupancy + adj.occDelta));
-      const gross = Math.round(adr * occupancy * DAYS);
-      const commission = Math.round(gross * MGMT_FEE);
-      return { adr, occupancy, gross, commission, net: gross - commission };
+      const gross = Math.round(adr / (1 - PLATFORM_FEE) * occupancy * DAYS);
+      const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE) * VAT_RATE);
+      const netRevenue = gross - platformFee;
+      const commission = Math.round(netRevenue * MGMT_FEE);
+      return { adr, occupancy, gross, platformFee, netRevenue, commission, net: netRevenue - commission };
     };
     const seasonKey = season ?? "year";
     const r = compute(seasonKey);
@@ -90,19 +95,21 @@ var estimate_yield_default = defineTool({
       averageNightlyRate: r.adr,
       occupancyRate: Math.round(r.occupancy * 100) / 100,
       grossMonthlyRevenue: r.gross,
+      platformCommissionInclVat: r.platformFee,
+      netRevenueAfterPlatform: r.netRevenue,
       managementCommission: r.commission,
       managementCommissionRate: MGMT_FEE,
       netMonthlyIncomeForOwner: r.net,
       netYearlyAverage: yearly.net * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round(r.net / longTermRent * 10) / 10,
-      note: "Indicative estimate based on Prague market benchmarks; the 25 % commission is final and VAT-inclusive. Guests pay a separate cleaning fee, which covers cleaning and laundry and is retained by Antam Homes, so the owner's share of accommodation revenue is not reduced. Utilities (electricity, water) are paid by the owner and are not included."
+      note: "Indicative estimate based on Prague market benchmarks. The Antam Homes fee is 25 % of net revenue: accommodation revenue without the cleaning fee, after deducting the Airbnb/Booking.com commission and the statutory Czech VAT on that commission. The fee is final and VAT-inclusive; nothing is added on top. Platform commission is charged on the whole reservation price incl. the cleaning fee. Guests pay the cleaning fee separately; it covers cleaning and laundry and is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included."
     };
     return {
       content: [
         {
           type: "text",
-          text: `${loc.label}, ${sz.label} (${sz.guests} guests): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`
+          text: `${loc.label}, ${sz.label} (${sz.guests} guests): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, platform commission incl. VAT ${result.platformCommissionInclVat.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`
         }
       ],
       structuredContent: result
@@ -139,7 +146,7 @@ var list_portfolio_default = defineTool2({
             return `${base}: owner receives ~${a.ownerMonthlyCzk.toLocaleString("en-US")} CZK/month after all fees, occupancy ${a.occupancyPct} % (${a.period})${a.vsLongTermRent ? `, ${a.vsLongTermRent}x long-term rent` : ""}`;
           }
           return `${base}: managed since ${a.managedSince}, ${a.note}`;
-        }).join("\n") + "\n\nOwner income = after Airbnb/Booking commission, without cleaning fees, after the 25 % Antam Homes fee; energy paid by owner. Past results are not a guarantee.\n\nComing soon: the portfolio is expanding to a total of 10 apartments across Prague. Guests have left over 520 reviews across Airbnb and Booking.com."
+        }).join("\n") + "\n\nOwner income = after Airbnb/Booking commission incl. the statutory Czech VAT on it, without cleaning fees, after the 25 % Antam Homes fee; energy paid by owner. Past results are not a guarantee.\n\nComing soon: the portfolio is expanding to a total of 10 apartments across Prague. Guests have left over 520 reviews across Airbnb and Booking.com."
       }
     ],
     structuredContent: {
@@ -164,12 +171,13 @@ var services = [
 var faq = [
   { question: "Mus\xED b\xFDt byt u\u017E p\u0159ipraven\xFD?", answer: "Ne. Um\xEDme se pod\xEDvat i na byt p\u0159ed spu\u0161t\u011Bn\xEDm a \u0159\xEDct, co d\xE1v\xE1 smysl p\u0159ipravit." },
   { question: "Kolik je pot\u0159eba investovat do p\u0159\xEDpravy nemovitosti?", answer: "Z\xE1le\u017E\xED na sou\u010Dasn\xE9m stavu a vybaven\xED bytu. U \xFApln\u011B pr\xE1zdn\xE9ho bytu po\u010D\xEDtejte orienta\u010Dn\u011B kolem 100 000 K\u010D na jeden pokoj. C\xEDlem je p\u0159ipravit byt tak, aby mezi ostatn\xEDmi nab\xEDdkami dob\u0159e obst\xE1l a p\u016Fsobil konkurenceschopn\u011B. Po zaplacen\xED z\xE1lohy Antam Homes p\u0159iprav\xED orienta\u010Dn\xED seznam toho, co je pot\u0159eba koupit a kolik to bude st\xE1t." },
-  { question: "M\u016F\u017Eu byt n\u011Bkdy vyu\u017E\xEDt pro sebe?", answer: "Ano. Vybran\xE9 term\xEDny lze v kalend\xE1\u0159i dop\u0159edu zablokovat." },
-  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc zp\u011Btn\u011B p\u0159ehled na jednu stranu: obsazen\xE9 noci, v\xFDnos z jednotliv\xFDch platforem, provize 25 % a co se v byt\u011B \u0159e\u0161ilo, spolu s fakturou na provizi." },
-  { question: "Kolik spr\xE1va stoj\xED?", answer: "Provize je 25 % z v\xFDnosu z ubytov\xE1n\xED a je kone\u010Dn\xE1, bez fixn\xEDch ani m\u011Bs\xED\u010Dn\xEDch poplatk\u016F. Pokr\xFDv\xE1 i internet, hygienick\xE9 pot\u0159eby pro hosty a \u010Distic\xED prost\u0159edky. Drobn\xE9 opravy do 5 000 K\u010D vy\u0159\xEDd\xEDme sami a n\xE1klady strhneme z v\xFDnosu; v\u011Bt\u0161\xED opravy nejd\u0159\xEDv nahl\xE1s\xEDme majiteli. Provize je v\u010Detn\u011B DPH, nic dal\u0161\xEDho se nep\u0159i\u010D\xEDt\xE1." },
-  { question: "Kdo plat\xED \xFAklid a energie?", answer: "Host plat\xED vedle ceny za ubytov\xE1n\xED i \xFAklidov\xFD poplatek; ten pokr\xFDv\xE1 \xFAklid a pr\xE1dlo a z\u016Fst\xE1v\xE1 cel\xFD Antam Homes, tak\u017Ee se z v\xFDnosu majitele na \xFAklid nic nestrh\xE1v\xE1 (ve vy\xFA\u010Dtov\xE1n\xED je samostatnou polo\u017Ekou). V\xFDnos, kter\xFD se d\u011Bl\xED 75/25, je \u010D\xE1stka za ubytov\xE1n\xED bez \xFAklidov\xE9ho poplatku. Energie (elekt\u0159ina, voda) hrad\xED majitel." },
+  { question: "M\u016F\u017Eu byt n\u011Bkdy vyu\u017E\xEDt pro sebe?", answer: "Byt si m\u016F\u017Eete kdykoli blokovat pro sebe nebo rodinu. U nejvyt\xED\u017Een\u011Bj\u0161\xEDch sv\xE1tk\u016F, jako jsou V\xE1noce, Silvestr a Velikonoce, se na term\xEDnu nejd\u0159\xEDv domluv\xEDme. U\u017E potvrzen\xE9 rezervace host\u016F z\u016Fst\xE1vaj\xED nedot\u010Den\xE9." },
+  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc zp\u011Btn\u011B p\u0159ehled na jednu stranu: obsazen\xE9 noci, v\xFDnos z jednotliv\xFDch platforem, DPH z provize platformy, odm\u011Bna 25 % a co se v byt\u011B \u0159e\u0161ilo, spolu s fakturou na odm\u011Bnu." },
+  { question: "Kolik spr\xE1va stoj\xED?", answer: "Na\u0161e odm\u011Bna je 25 % z \u010Dist\xE9ho v\xFDnosu: tr\u017Eby za ubytov\xE1n\xED bez \xFAklidov\xE9ho poplatku, po ode\u010Dten\xED provize Airbnb/Booking.com a z\xE1konn\xE9 DPH z t\xE9to provize. Je kone\u010Dn\xE1 v\u010Detn\u011B DPH, nic dal\u0161\xEDho se nep\u0159i\u010D\xEDt\xE1, bez fixn\xEDch ani m\u011Bs\xED\u010Dn\xEDch poplatk\u016F. Pokr\xFDv\xE1 i internet, hygienick\xE9 pot\u0159eby pro hosty a \u010Distic\xED prost\u0159edky. Drobn\xE9 opravy do 5 000 K\u010D vy\u0159\xEDd\xEDme sami a n\xE1klady strhneme z v\xFDnosu; v\u011Bt\u0161\xED opravy nejd\u0159\xEDv nahl\xE1s\xEDme majiteli." },
+  { question: "Kdo plat\xED \xFAklid a energie?", answer: "Host plat\xED vedle ceny za ubytov\xE1n\xED i \xFAklidov\xFD poplatek; ten pokr\xFDv\xE1 \xFAklid a pr\xE1dlo a z\u016Fst\xE1v\xE1 cel\xFD Antam Homes, tak\u017Ee se z v\xFDnosu majitele na \xFAklid nic nestrh\xE1v\xE1 (ve vy\xFA\u010Dtov\xE1n\xED je samostatnou polo\u017Ekou). V\xFDnos, kter\xFD se d\u011Bl\xED 75/25, je \u010D\xE1stka za ubytov\xE1n\xED bez \xFAklidov\xE9ho poplatku, po ode\u010Dten\xED provize platformy a z\xE1konn\xE9 DPH z n\xED. Energie (elekt\u0159ina, voda) hrad\xED majitel." },
+  { question: "Pro\u010D se ode\u010D\xEDt\xE1 DPH z provize platformy?", answer: "Airbnb a Booking.com si \xFA\u010Dtuj\xED provizi z cel\xE9 ceny rezervace v\u010Detn\u011B \xFAklidov\xE9ho poplatku a fakturuj\xED ji ze zahrani\u010D\xED. \u010Cesk\xE1 DPH z t\xE9to provize se podle z\xE1kona odv\xE1d\xED u n\xE1s. Nen\xED to n\xE1\u0161 p\u0159\xEDjem, odv\xE1d\xED se st\xE1tu a ve vy\xFA\u010Dtov\xE1n\xED ji vid\xEDte jako samostatnou polo\u017Eku." },
   { question: "Jak dlouho spolupr\xE1ce trv\xE1 a jak ji ukon\u010D\xEDm?", answer: "Smlouva se uzav\xEDr\xE1 na jeden rok, pot\xE9 pokra\u010Duje a lze ji ukon\u010Dit s v\xFDpov\u011Bdn\xED lh\u016Ftou 6 m\u011Bs\xEDc\u016F. D\u016Fvod: host\xE9 rezervuj\xED \u010Dasto p\u016Fl roku i d\xE9le dop\u0159edu a kalend\xE1\u0159 je otev\u0159en\xFD stejn\u011B daleko; byt s jistotou provozu prod\xE1v\xE1 l\xEDp. Potvrzen\xE9 rezervace se b\u011Bhem v\xFDpov\u011Bdn\xED lh\u016Fty v\u017Edy dokon\u010D\xED." },
-  { question: "Je \u010D\xE1stka v kalkula\u010Dce p\u0159ed, nebo po provizi?", answer: "Po. V\u0161e ozna\u010Den\xE9 jako v\xFDnos pro majitele je u\u017E po ode\u010Dten\xED provize 25 %. Provize je v\u010Detn\u011B DPH; energie hrad\xED majitel zvl\xE1\u0161\u0165." },
+  { question: "Je \u010D\xE1stka v kalkula\u010Dce p\u0159ed, nebo po provizi?", answer: "Po. V\u0161e ozna\u010Den\xE9 jako v\xFDnos pro majitele je u\u017E po ode\u010Dten\xED provize platformy v\u010Detn\u011B DPH z n\xED i odm\u011Bny 25 %. Odm\u011Bna je v\u010Detn\u011B DPH; energie hrad\xED majitel zvl\xE1\u0161\u0165." },
   { question: "Jak\xE9 povinnosti kr\xE1tkodob\xFD pron\xE1jem p\u0159in\xE1\u0161\xED a kdo je \u0159e\u0161\xED?", answer: "Evidence host\u016F, hl\xE1\u0161en\xED zahrani\u010Dn\xEDch host\u016F cizineck\xE9 policii, m\xEDstn\xED poplatek z pobytu a registrace v e-Turista, provozn\xED povinnosti kolem host\u016F \u0159e\u0161\xED Antam Homes. Zdan\u011Bn\xED p\u0159\xEDjmu z pron\xE1jmu z\u016Fst\xE1v\xE1 na majiteli; podklady dostane." },
   { question: "Co kdy\u017E host n\u011Bco poni\u010D\xED?", answer: "Byt se kontroluje po ka\u017Ed\xE9m pobytu. Drobnosti se oprav\xED hned (do 5 000 K\u010D z v\xFDnosu). V\u011Bt\u0161\xED \u0161koda se zdokumentuje a nejd\u0159\xEDv vym\xE1h\xE1 po hostovi a p\u0159es platformu (Airbnb AirCover, \u0159e\u0161en\xED \u0161kod Booking.com); na majitele se Antam Homes obrac\xED a\u017E tehdy, kdy\u017E se n\xE1hrada nepoda\u0159\xED z\xEDskat tam. Majitel se dozv\xED hned, v\u010Detn\u011B fotek." },
   { question: "Co na to soused\xE9 a SVJ?", answer: "Host\xE9 dost\xE1vaj\xED pravidla domu p\u0159edem, byt m\xE1 danou kapacitu (\u017E\xE1dn\xE9 party) a soused\xE9 maj\xED kontakt. Pokud stanovy SVJ kr\xE1tkodob\xE9 ubytov\xE1n\xED v\xFDslovn\u011B zakazuj\xED, Antam Homes to majiteli \u0159ekne p\u0159ed podpisem." },
@@ -197,7 +205,12 @@ A: ${f.answer}`)
         ].join("\n")
       }
     ],
-    structuredContent: { services, faq, managementCommissionRate: 0.25 }
+    structuredContent: {
+      services,
+      faq,
+      managementCommissionRate: 0.25,
+      commissionBase: "net revenue = accommodation revenue without the cleaning fee, after deducting the Airbnb/Booking.com commission and the statutory Czech VAT on that commission"
+    }
   })
 });
 

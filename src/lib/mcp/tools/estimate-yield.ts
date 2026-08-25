@@ -52,7 +52,12 @@ const ltrTable: Record<string, Record<string, number>> = {
   praha10: { "1kk": 18000, "2kk": 23000, "3kk": 27500, "4kk": 35500 },
 };
 
-const MGMT_FEE = 0.25;
+const MGMT_FEE = 0.25; // Antam Homes fee: 25 % of net revenue (after platform commission incl. Czech VAT on it)
+// Platforms charge their commission on the WHOLE reservation price incl. the cleaning fee,
+// and Czech VAT (reverse charge) is due on that commission.
+const PLATFORM_FEE = 0.15; // indicative blended Airbnb/Booking.com commission rate
+const CLEANING_SHARE = 0.1; // internal estimate of cleaning fees as a share of accommodation revenue (used only for the commission deduction)
+const VAT_RATE = 1.21;
 const DAYS = 30;
 
 export default defineTool({
@@ -83,13 +88,19 @@ export default defineTool({
 
     const extrasPct = (chosen ?? []).reduce((sum, e) => sum + (extras[e] ?? 0), 0);
 
+    // Contract-aligned model: platform commission incl. VAT is deducted from gross
+    // accommodation revenue first (commission is charged on the whole reservation
+    // incl. the cleaning fee); the remaining net revenue is split 75/25.
     const compute = (seasonKey: keyof typeof seasons) => {
       const adj = seasons[seasonKey];
       const adr = Math.round(baseADR * loc.multiplier * (1 + extrasPct) * adj.adr);
       const occupancy = Math.max(0.5, Math.min(0.98, loc.occupancy + adj.occDelta));
-      const gross = Math.round(adr * occupancy * DAYS);
-      const commission = Math.round(gross * MGMT_FEE);
-      return { adr, occupancy, gross, commission, net: gross - commission };
+      // Gross accommodation revenue (before platform commission) from the net-of-commission ADR benchmark.
+      const gross = Math.round((adr / (1 - PLATFORM_FEE)) * occupancy * DAYS);
+      const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE) * VAT_RATE);
+      const netRevenue = gross - platformFee;
+      const commission = Math.round(netRevenue * MGMT_FEE);
+      return { adr, occupancy, gross, platformFee, netRevenue, commission, net: netRevenue - commission };
     };
 
     const seasonKey = (season ?? "year") as keyof typeof seasons;
@@ -106,20 +117,22 @@ export default defineTool({
       averageNightlyRate: r.adr,
       occupancyRate: Math.round(r.occupancy * 100) / 100,
       grossMonthlyRevenue: r.gross,
+      platformCommissionInclVat: r.platformFee,
+      netRevenueAfterPlatform: r.netRevenue,
       managementCommission: r.commission,
       managementCommissionRate: MGMT_FEE,
       netMonthlyIncomeForOwner: r.net,
       netYearlyAverage: yearly.net * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round((r.net / longTermRent) * 10) / 10,
-      note: "Indicative estimate based on Prague market benchmarks; the 25 % commission is final and VAT-inclusive. Guests pay a separate cleaning fee, which covers cleaning and laundry and is retained by Antam Homes, so the owner's share of accommodation revenue is not reduced. Utilities (electricity, water) are paid by the owner and are not included.",
+      note: "Indicative estimate based on Prague market benchmarks. The Antam Homes fee is 25 % of net revenue: accommodation revenue without the cleaning fee, after deducting the Airbnb/Booking.com commission and the statutory Czech VAT on that commission. The fee is final and VAT-inclusive; nothing is added on top. Platform commission is charged on the whole reservation price incl. the cleaning fee. Guests pay the cleaning fee separately; it covers cleaning and laundry and is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included.",
     };
 
     return {
       content: [
         {
           type: "text" as const,
-          text: `${loc.label}, ${sz.label} (${sz.guests} guests): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`,
+          text: `${loc.label}, ${sz.label} (${sz.guests} guests): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, platform commission incl. VAT ${result.platformCommissionInclVat.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`,
         },
       ],
       structuredContent: result,
