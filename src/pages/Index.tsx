@@ -9,6 +9,8 @@ import { useLanguage } from "@/contexts/LanguageContext";
 const WhyBetterSection = lazy(() => import("@/components/WhyBetterSection"));
 const PriceStrip = lazy(() => import("@/components/PriceStrip"));
 const CalculatorSection = lazy(() => import("@/components/CalculatorSection"));
+const HorizonSection = lazy(() => import("@/components/HorizonSection"));
+const PricingSection = lazy(() => import("@/components/PricingSection"));
 const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
 const ServicesSection = lazy(() => import("@/components/ServicesSection"));
 const ProcessSection = lazy(() => import("@/components/ProcessSection"));
@@ -59,11 +61,13 @@ const Index = () => {
         <Suspense fallback={null}><WhyBetterSection /></Suspense>
         <Suspense fallback={null}><PriceStrip /></Suspense>
         <Suspense fallback={null}><CalculatorSection /></Suspense>
+        <Suspense fallback={null}><HorizonSection /></Suspense>
         <Suspense fallback={null}><PortfolioSection /></Suspense>
         <Suspense fallback={null}><ServicesSection /></Suspense>
         <Suspense fallback={null}><OwnerReportSection /></Suspense>
         <Suspense fallback={null}><ProcessSection /></Suspense>
         <Suspense fallback={null}><AboutSection /></Suspense>
+        <Suspense fallback={null}><PricingSection /></Suspense>
         <Suspense fallback={null}><FAQSection /></Suspense>
         <Suspense fallback={null}><ContactSection /></Suspense>
         <ScrollToHash />

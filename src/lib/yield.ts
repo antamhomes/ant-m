@@ -1,0 +1,95 @@
+/**
+ * One source of truth for every yield number on the site.
+ *
+ * Kalibrováno 27. 8. 2026 proti skutečným datům, ne proti tržnímu průměru:
+ * Hospitable (byt 302, 12 měsíců, 143 rezervací, 341 nocí) + PriceLabs ADR,
+ * obsazenost a percentily okolních nabídek. Dvě zjištění, která starou tabulku
+ * opravila: (1) mezi vnějšími čtvrtěmi je na krátkodobém pronájmu mnohem menší
+ * rozdíl než na nájmu, (2) obsazenost spravovaných bytů je 83–92 %, ne 68–85 %.
+ *
+ * Pravidlo pro tyto hodnoty: vlastní portfolio musí veřejné číslo PŘEKONAT.
+ * Kontrola proti měřené skutečnosti: 302 (P1) 0 %, Modern AC (P3) +3 %,
+ * free movies (P4) −1 %.
+ *
+ * Kalkulačka i graf horizontu čtou odsud, aby se nikdy nerozešly.
+ */
+
+export type SizeKey = "1kk" | "2kk" | "3kk" | "4kk";
+export type LocationKey =
+  | "praha1" | "praha2" | "praha3" | "praha4" | "praha5"
+  | "praha6" | "praha7" | "praha8" | "praha9" | "praha10";
+
+/** multiplier = cenová hladina čtvrti, occupancy = obsazenost před sezónní úpravou */
+export const DISTRICTS: Record<LocationKey, { multiplier: number; occupancy: number }> = {
+  praha1:  { multiplier: 1.20, occupancy: 0.88 },
+  praha2:  { multiplier: 1.15, occupancy: 0.86 },
+  praha3:  { multiplier: 1.15, occupancy: 0.84 },
+  praha4:  { multiplier: 1.02, occupancy: 0.80 },
+  praha5:  { multiplier: 1.00, occupancy: 0.82 },
+  praha6:  { multiplier: 1.00, occupancy: 0.80 },
+  praha7:  { multiplier: 1.10, occupancy: 0.84 },
+  praha8:  { multiplier: 0.95, occupancy: 0.78 },
+  praha9:  { multiplier: 0.90, occupancy: 0.76 },
+  praha10: { multiplier: 0.95, occupancy: 0.78 },
+};
+
+/** ADR po provizi platformy; hrubé tržby se dopočítávají přes PLATFORM_FEE */
+export const BASE_ADR: Record<SizeKey, number> = {
+  "1kk": 1580, "2kk": 2150, "3kk": 2900, "4kk": 3900,
+};
+
+/** Dlouhodobý nájem, Kč/měs — cenová mapa nájemného Bohemian Estates, 11/2025 */
+export const LTR: Record<LocationKey, Record<SizeKey, number>> = {
+  praha1:  { "1kk": 23000, "2kk": 28000, "3kk": 32000, "4kk": 41500 },
+  praha2:  { "1kk": 21500, "2kk": 28000, "3kk": 32500, "4kk": 42500 },
+  praha3:  { "1kk": 20500, "2kk": 26500, "3kk": 31000, "4kk": 40500 },
+  praha4:  { "1kk": 18000, "2kk": 23000, "3kk": 26000, "4kk": 33500 },
+  praha5:  { "1kk": 18500, "2kk": 24500, "3kk": 28000, "4kk": 36000 },
+  praha6:  { "1kk": 19000, "2kk": 25500, "3kk": 30000, "4kk": 39000 },
+  praha7:  { "1kk": 20000, "2kk": 25500, "3kk": 30500, "4kk": 40000 },
+  praha8:  { "1kk": 16000, "2kk": 21500, "3kk": 24000, "4kk": 31000 },
+  praha9:  { "1kk": 18500, "2kk": 23500, "3kk": 29000, "4kk": 37500 },
+  praha10: { "1kk": 18000, "2kk": 23000, "3kk": 27500, "4kk": 35500 },
+};
+
+/** Zálohy na energie, které u krátkodobého pronájmu hradí majitel (u nájmu nájemce) */
+export const ENERGY: Record<SizeKey, number> = {
+  "1kk": 2500, "2kk": 3500, "3kk": 4500, "4kk": 5500,
+};
+
+export const ROOMS: Record<SizeKey, number> = { "1kk": 1, "2kk": 2, "3kk": 3, "4kk": 4 };
+
+export const MGMT_FEE = 0.25;      // odměna Antam Homes z čistého výnosu
+export const PLATFORM_FEE = 0.15;  // orientační smíšená sazba provize Airbnb/Booking.com
+export const CLEANING_SHARE = 0.10;// podíl úklidových poplatků na tržbách (jen pro odpočet provize)
+export const VAT_RATE = 1.21;      // DPH z provize platformy
+export const DAYS = 30;
+
+/** Uvedení do provozu, vybavení a obnova — vstupy pro graf horizontu */
+export const LAUNCH_FEE = 25000;
+export const KIT_PER_ROOM = 30000;    // dovybavení bytu zařízeného pro nájemníka
+export const EMPTY_PER_ROOM = 100000; // kompletní vybavení prázdného bytu
+export const RENEW_PER_ROOM_YEAR = 4000;
+export const YEAR_ONE_RAMP = 0.85;    // nová nabídka nenajede hned na plný výkon
+
+export const clampOccupancy = (v: number) => Math.max(0.5, Math.min(0.98, v));
+
+/**
+ * Výnos majitele za měsíc: z hrubých tržeb se odečte provize platformy včetně
+ * DPH z ní (počítá se z celé ceny rezervace včetně úklidu), zbytek se dělí 75/25.
+ * Energie NEjsou odečteny — hradí je majitel zvlášť.
+ */
+export function ownerMonthly(
+  location: LocationKey,
+  size: SizeKey,
+  { adrAdjust = 1.05, occDelta = 0.02, extrasPct = 0 } = {},
+) {
+  const d = DISTRICTS[location];
+  const adrNet = Math.round(BASE_ADR[size] * d.multiplier * (1 + extrasPct) * adrAdjust);
+  const occupancy = clampOccupancy(d.occupancy + occDelta);
+  const gross = Math.round((adrNet / (1 - PLATFORM_FEE)) * occupancy * DAYS);
+  const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE) * VAT_RATE);
+  const netRevenue = gross - platformFee;
+  const mgmt = Math.round(netRevenue * MGMT_FEE);
+  return { adr: adrNet, occupancy, gross, platformFee, netRevenue, mgmt, net: netRevenue - mgmt };
+}

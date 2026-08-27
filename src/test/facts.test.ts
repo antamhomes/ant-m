@@ -1,0 +1,166 @@
+/**
+ * FAKTA — pojistka proti tichému rozjetí čísel.
+ *
+ * Každé číslo, které majitel na webu uvidí, musí souhlasit se smlouvou, s VOP,
+ * s prezentací a s portálem. Historicky se to rozešlo: web účtoval 28 %, zatímco
+ * smlouva i VOP na stejné doméně říkaly 25 %. Tenhle test takovou změnu zastaví
+ * dřív, než se dostane k majiteli.
+ *
+ * Když test spadne, NEopravuj ho, aby prošel. Buď je změna omyl a patří zpět,
+ * nebo je záměrná a pak se mění na VŠECH místech naráz: translations.ts (cs+vi),
+ * src/lib/yield.ts, src/lib/mcp/tools/*, VOP (make_legal.py), smlouva, prezentace
+ * a portál. Teprve potom se přepíše hodnota tady.
+ */
+import { describe, it, expect } from "vitest";
+import translations from "@/i18n/translations";
+import { DISTRICTS, BASE_ADR, LTR, ENERGY, MGMT_FEE, LAUNCH_FEE, ownerMonthly } from "@/lib/yield";
+
+const cs = translations.cs as Record<string, string>;
+const vi = translations.vi as Record<string, string>;
+const strip = (s: string) => s.replace(/ /g, " ");
+
+describe("odměna za správu", () => {
+  it("je 25 % v modelu", () => {
+    expect(MGMT_FEE).toBe(0.25);
+  });
+
+  it("je 25 % všude v české i vietnamské kopii", () => {
+    expect(strip(cs.price_figure)).toBe("25 %");
+    expect(strip(vi.price_figure)).toBe("25%");
+    for (const key of ["calc_net_sub", "calc_excluded_note", "faq5_a", "faq9_a", "report_row_costs"]) {
+      expect(strip(cs[key]), `cs.${key}`).toMatch(/25\s?%/);
+      expect(strip(vi[key]), `vi.${key}`).toMatch(/25\s?%/);
+    }
+  });
+
+  it("nikde nezůstalo staré 28 % ani dělení 72/28", () => {
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(strip(value), `${lang}.${key}`).not.toMatch(/28\s?%/);
+        expect(strip(value), `${lang}.${key}`).not.toMatch(/72\s?\/\s?28/);
+      }
+    }
+  });
+
+  it("dělí čistý výnos 75/25", () => {
+    expect(strip(cs.calc_split_aria)).toBe("75 % majitel, 25 % Antam Homes");
+    expect(strip(vi.calc_split_aria)).toBe("75% chủ nhà, 25% Antam Homes");
+    expect(strip(cs.calc_method_note)).toMatch(/75\/25/);
+    expect(strip(vi.calc_method_note)).toMatch(/75\/25/);
+  });
+
+  it("je konečná a netvrdí, že se k ní účtuje DPH", () => {
+    // Jako identifikovaná osoba Antam DPH z odměny neúčtuje; čl. 8.2 smlouvy
+    // mluví o konečné ceně. „Včetně DPH" popisuje něco, co se neděje.
+    expect(strip(cs.price_sub)).toMatch(/[Kk]onečná/);
+    expect(strip(cs.price_sub)).not.toMatch(/včetně DPH/i);
+    expect(strip(cs.faq5_a)).not.toMatch(/konečná včetně DPH/i);
+  });
+});
+
+describe("ceník", () => {
+  it("uvedení do provozu stojí 25 000 Kč a stejné číslo je v kopii", () => {
+    expect(LAUNCH_FEE).toBe(25000);
+    expect(strip(cs.pr2_price)).toMatch(/25 000 Kč/);
+    expect(strip(cs.faq16_a)).toMatch(/25 000/);
+    expect(strip(vi.faq16_a)).toMatch(/25 000/);
+  });
+
+  it("řízení projektu je 20 % a platí až nad 30 000 Kč", () => {
+    expect(strip(cs.pr4_price)).toMatch(/20 %/);
+    expect(strip(cs.pr4_note)).toMatch(/30 000/);
+    expect(strip(vi.pr4_note)).toMatch(/30 000/);
+  });
+
+  it("drobné opravy: 5 000 Kč na případ, nejvýše 20 000 Kč za rok", () => {
+    expect(strip(cs.faq5_a)).toMatch(/5 000 Kč/);
+    expect(strip(cs.faq5_a)).toMatch(/20 000 Kč za rok/);
+    expect(strip(vi.faq5_a)).toMatch(/5 000 Kč/);
+    expect(strip(vi.faq5_a)).toMatch(/20 000 Kč/);
+  });
+
+  it("netvrdí, že vstupní poplatky neexistují", () => {
+    for (const dict of [cs, vi]) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(strip(value).toLowerCase(), key).not.toMatch(/žádné vstupní poplatky|không có phí vào/);
+      }
+    }
+  });
+});
+
+describe("garance výnosu", () => {
+  it("je na webu popsaná v obou jazycích", () => {
+    expect(cs.price_garance).toBeTruthy();
+    expect(vi.price_garance).toBeTruthy();
+    expect(strip(cs.faq18_a)).toMatch(/nájem/);
+    expect(strip(cs.faq18_a)).toMatch(/energie/);
+  });
+
+  it("nikde neslibuje garanci z kalkulačky", () => {
+    // Kalkulačka je odhad. Garance vzniká až písemným ujednáním pro konkrétní byt.
+    expect(strip(cs.calc_disclaimer)).toMatch(/[Gg]arance výnosu vzniká až/);
+    expect(strip(vi.calc_disclaimer)).toMatch(/[Cc]am kết doanh thu chỉ có khi/);
+  });
+
+  it("blokace: 14 nocí zdarma, dál poměrná úprava", () => {
+    expect(strip(cs.faq3_a)).toMatch(/14 nocí/);
+    expect(strip(vi.faq3_a)).toMatch(/14 đêm/);
+  });
+});
+
+describe("výplata a vyúčtování", () => {
+  it("slibuje 15. den, jak stanoví čl. 9.3 smlouvy", () => {
+    expect(strip(cs.assure4)).toMatch(/15/);
+    expect(strip(cs.faq4_a)).toMatch(/15\. dne/);
+    expect(strip(vi.faq4_a)).toMatch(/ngày 15/);
+  });
+});
+
+describe("model výnosu", () => {
+  it("drží kalibraci z 27. 8. 2026", () => {
+    expect(DISTRICTS.praha1).toEqual({ multiplier: 1.20, occupancy: 0.88 });
+    expect(DISTRICTS.praha4).toEqual({ multiplier: 1.02, occupancy: 0.80 });
+    expect(DISTRICTS.praha9).toEqual({ multiplier: 0.90, occupancy: 0.76 });
+    expect(BASE_ADR).toEqual({ "1kk": 1580, "2kk": 2150, "3kk": 2900, "4kk": 3900 });
+  });
+
+  it("nepřeslibuje: Praha 1 2+kk zůstane pod měřenou skutečností bytu 302", () => {
+    // Byt 302, Hospitable, 26. 8. 2025 – 25. 8. 2026: majiteli 637 536 Kč,
+    // tj. 53 128 Kč měsíčně. Veřejné číslo musí být níž, jinak slibujeme víc,
+    // než sami dodáváme.
+    const MEASURED_302 = 53128;
+    expect(ownerMonthly("praha1", "2kk").net).toBeLessThan(MEASURED_302);
+  });
+
+  it("žebřík čtvrtí zůstává stlačený (na krátkodobém pronájmu je rozdíl menší než na nájmu)", () => {
+    const mults = Object.values(DISTRICTS).map((d) => d.multiplier);
+    expect(Math.max(...mults) / Math.min(...mults)).toBeLessThan(1.4);
+  });
+
+  it("nájemní tabulka a energie pokrývají všechny čtvrti a dispozice", () => {
+    for (const key of Object.keys(DISTRICTS) as (keyof typeof LTR)[]) {
+      for (const size of ["1kk", "2kk", "3kk", "4kk"] as const) {
+        expect(LTR[key][size], `${key}.${size}`).toBeGreaterThan(0);
+        expect(ENERGY[size]).toBeGreaterThan(0);
+      }
+    }
+  });
+});
+
+describe("kopie v obou jazycích", () => {
+  it("každý klíč z češtiny existuje i ve vietnamštině", () => {
+    const missing = Object.keys(cs).filter((k) => !(k in vi));
+    expect(missing).toEqual([]);
+  });
+
+  it("neobsahuje pomlčky em dash (čtou se jako AI text)", () => {
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(value, `${lang}.${key}`).not.toMatch(/—/);
+      }
+    }
+  });
+});

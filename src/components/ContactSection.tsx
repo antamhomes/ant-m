@@ -4,6 +4,7 @@ import { Send, Loader2, ChevronDown, ShieldCheck, CalendarClock, KeyRound, Recei
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { sendInquiry } from "@/lib/inquiry";
+import { mirrorInquiryToPortal } from "@/lib/portalLead";
 import { trackEvent } from "@/lib/analytics";
 
 const LOCATIONS = [
@@ -121,6 +122,20 @@ const ContactSection = () => {
             .filter(Boolean)
             .join("\n"),
         },
+      });
+      // The e-mail above is the delivery that counts; this only mirrors the same
+      // enquiry into the portal pipeline and is never awaited for the success state.
+      void mirrorInquiryToPortal({
+        name: formData.name,
+        phone: formData.phone,
+        email: formData.email,
+        location: labelOf(locationOptions, formData.location),
+        size: labelOf(sizeOptions, formData.size),
+        status: labelOf(statusOptions, formData.status),
+        contact_pref: labelOf(prefOptions, formData.contactPref),
+        energy: formData.energy,
+        message: formData.message,
+        lang,
       });
       trackEvent("lead_submit", { form: "contact", status: formData.status || "n/a" });
       setSuccess(true);

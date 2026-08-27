@@ -4,24 +4,23 @@ import { Calculator, MapPin, Home, Plus, Check, ChevronDown, Share2, Pencil } fr
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
+import { DISTRICTS, BASE_ADR, LTR as LTR_TABLE, type LocationKey as LK, type SizeKey as SK } from "@/lib/yield";
 
 type SizeKey = "1kk" | "2kk" | "3kk" | "4kk";
 type LocationKey =
   | "praha1" | "praha2" | "praha3" | "praha4" | "praha5"
   | "praha6" | "praha7" | "praha8" | "praha9" | "praha10";
 
-const locations: { value: LocationKey; label: string; multiplier: number; occupancy: number }[] = [
-  { value: "praha1",  label: "Praha 1",  multiplier: 1.35, occupancy: 0.85 },
-  { value: "praha2",  label: "Praha 2",  multiplier: 1.25, occupancy: 0.83 },
-  { value: "praha3",  label: "Praha 3",  multiplier: 1.05, occupancy: 0.80 },
-  { value: "praha4",  label: "Praha 4",  multiplier: 0.80, occupancy: 0.72 },
-  { value: "praha5",  label: "Praha 5",  multiplier: 1.00, occupancy: 0.78 },
-  { value: "praha6",  label: "Praha 6",  multiplier: 0.95, occupancy: 0.76 },
-  { value: "praha7",  label: "Praha 7",  multiplier: 1.15, occupancy: 0.83 },
-  { value: "praha8",  label: "Praha 8",  multiplier: 0.85, occupancy: 0.74 },
-  { value: "praha9",  label: "Praha 9",  multiplier: 0.70, occupancy: 0.68 },
-  { value: "praha10", label: "Praha 10", multiplier: 0.80, occupancy: 0.73 },
-];
+// Kalibrováno 27. 8. 2026 proti skutečným datům, ne proti tržnímu průměru:
+// Hospitable (byt 302, 12 měsíců, 143 rezervací) + PriceLabs ADR/obsazenost a percentily
+// okolních nabídek. Dvě zjištění, která starou tabulku opravila:
+//  1) mezi vnějšími čtvrtěmi je na krátkodobém pronájmu mnohem menší rozdíl než na nájmu
+//     (medián ADR 1BR: okolí P3 1 971, P5 2 276, P4/P9 2 110 = rozptyl ~15 %, ne 31 %),
+//  2) obsazenost, kterou spravované byty reálně drží, je 83–92 %, ne 68–85 %.
+// Pravidlo pro tyto hodnoty: vlastní portfolio musí veřejné číslo PŘEKONAT, nikdy ho minout.
+const locations: { value: LocationKey; label: string; multiplier: number; occupancy: number }[] =
+  (["praha1","praha2","praha3","praha4","praha5","praha6","praha7","praha8","praha9","praha10"] as LocationKey[])
+    .map((v) => ({ value: v, label: `Praha ${v.replace("praha", "")}`, ...DISTRICTS[v] }));
 
 // Base ADR (Kč/noc) podle dispozice; každá dispozice počítá s obvyklou kapacitou bytu
 // (guestsCs/guestsVi je jen popisek, česky se správným skloňováním).
@@ -31,10 +30,10 @@ const locations: { value: LocationKey; label: string; multiplier: number; occupa
 // ADR = benchmark ceny za noc po provizi platformy (Airbnb/Booking); hrubé tržby za ubytování
 // se z něj dopočítávají přes PLATFORM_FEE (viz výpočet).
 const sizes: { value: SizeKey; label: string; baseADR: number; guestsCs: string; guestsVi: string }[] = [
-  { value: "1kk", label: "1+kk", baseADR: 1665, guestsCs: "2–4 hosté",  guestsVi: "2–4 khách" },
-  { value: "2kk", label: "2+kk", baseADR: 2250, guestsCs: "6–8 hostů",  guestsVi: "6–8 khách" },
-  { value: "3kk", label: "3+kk", baseADR: 3060, guestsCs: "8–10 hostů", guestsVi: "8–10 khách" },
-  { value: "4kk", label: "4+kk", baseADR: 4140, guestsCs: "10–12 hostů", guestsVi: "10–12 khách" },
+  { value: "1kk", label: "1+kk", baseADR: BASE_ADR["1kk"], guestsCs: "2–4 hosté",  guestsVi: "2–4 khách" },
+  { value: "2kk", label: "2+kk", baseADR: BASE_ADR["2kk"], guestsCs: "6–8 hostů",  guestsVi: "6–8 khách" },
+  { value: "3kk", label: "3+kk", baseADR: BASE_ADR["3kk"], guestsCs: "8–10 hostů", guestsVi: "8–10 khách" },
+  { value: "4kk", label: "4+kk", baseADR: BASE_ADR["4kk"], guestsCs: "10–12 hostů", guestsVi: "10–12 khách" },
 ];
 
 // Extras jako % bonus na ADR
@@ -46,22 +45,12 @@ const extraKeys = [
 ];
 
 // Dlouhodobý nájem (Kč/měs) — cenová mapa nájemného Bohemian Estates, 11/2025; 4+kk ≈ 1,3× 3+kk
-const ltrTable: Record<LocationKey, Record<SizeKey, number>> = {
-  praha1:  { "1kk": 23000, "2kk": 28000, "3kk": 32000, "4kk": 41500 },
-  praha2:  { "1kk": 21500, "2kk": 28000, "3kk": 32500, "4kk": 42500 },
-  praha3:  { "1kk": 20500, "2kk": 26500, "3kk": 31000, "4kk": 40500 },
-  praha4:  { "1kk": 18000, "2kk": 23000, "3kk": 26000, "4kk": 33500 },
-  praha5:  { "1kk": 18500, "2kk": 24500, "3kk": 28000, "4kk": 36000 },
-  praha6:  { "1kk": 19000, "2kk": 25500, "3kk": 30000, "4kk": 39000 },
-  praha7:  { "1kk": 20000, "2kk": 25500, "3kk": 30500, "4kk": 40000 },
-  praha8:  { "1kk": 16000, "2kk": 21500, "3kk": 24000, "4kk": 31000 },
-  praha9:  { "1kk": 18500, "2kk": 23500, "3kk": 29000, "4kk": 37500 },
-  praha10: { "1kk": 18000, "2kk": 23000, "3kk": 27500, "4kk": 35500 },
-};
+const ltrTable = LTR_TABLE;
 
 type Season = "year" | "summer" | "winter" | "xmas";
-// Sezónní přirážky sladěné se skutečnými výsledky bytů v naší správě (8/2025–7/2026):
-// 2+kk Praha 1 vychází rok ≈ 62 tis., léto ≈ 75 tis., zima ≈ 41 tis., prosinec ≈ 102 tis. pro majitele (kalibrováno při dřívější odměně 25 %).
+// Sezónní přirážky sladěné se skutečnými výsledky bytů v naší správě (8/2025–7/2026).
+// Po kalibraci 27. 8. 2026 vychází 2+kk Praha 1 rok ≈ 52 tis. pro majitele; měřená skutečnost
+// bytu 302 za 12 měsíců je ≈ 53 tis., tedy veřejné číslo je mírně pod skutečností (záměr).
 // Léto/Vánoce zvedají hlavně cenu, ne obsazenost (ta je i v lednu přes 80 %).
 const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   year:   { adr: 1.05, occDelta: 0.02 },
