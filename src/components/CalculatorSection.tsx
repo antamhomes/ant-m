@@ -61,7 +61,7 @@ const ltrTable: Record<LocationKey, Record<SizeKey, number>> = {
 
 type Season = "year" | "summer" | "winter" | "xmas";
 // Sezónní přirážky sladěné se skutečnými výsledky bytů v naší správě (8/2025–7/2026):
-// 2+kk Praha 1 vychází rok ≈ 62 tis., léto ≈ 75 tis., zima ≈ 41 tis., prosinec ≈ 102 tis. pro majitele.
+// 2+kk Praha 1 vychází rok ≈ 62 tis., léto ≈ 75 tis., zima ≈ 41 tis., prosinec ≈ 102 tis. pro majitele (kalibrováno při dřívější odměně 25 %).
 // Léto/Vánoce zvedají hlavně cenu, ne obsazenost (ta je i v lednu přes 80 %).
 const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   year:   { adr: 1.05, occDelta: 0.02 },
@@ -375,20 +375,15 @@ const CalculatorSection = () => {
                 </p>
               </div>
 
-              {/* Provize platformy vč. DPH — jeden řádek, pak teprve dělení 75/25. */}
+              {/* 75/25 split. Platform commission incl. VAT is deducted inside the math;
+                 the sub-line and the note under the calculator say so, no scary number here. */}
               <div className="border-t border-primary-foreground/10 pt-4">
-                <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 font-body text-[13px] tnum mb-3">
-                  <span className="text-primary-foreground/65">{t(lang, "calc_platform_fee_label")}</span>
-                  <span className="text-primary-foreground/80 whitespace-nowrap">
-                    ~{(Math.round(result.platformFee / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
-                  </span>
-                </div>
                 <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-2">
                   {t(lang, "calc_split_label")}
                 </p>
                 <div className="flex h-2 w-full overflow-hidden rounded-full bg-primary-foreground/10" role="img" aria-label={t(lang, "calc_split_aria")}>
-                  <span className="block h-full w-3/4 bg-gold" />
-                  <span className="block h-full w-1/4 bg-primary-foreground/25" />
+                  <span className="block h-full w-[75%] bg-gold" />
+                  <span className="block h-full w-[25%] bg-primary-foreground/25" />
                 </div>
                 <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 font-body text-[13px] tnum">
                   <span className="text-primary-foreground/85">
@@ -422,6 +417,9 @@ const CalculatorSection = () => {
 
               <p className="font-body text-[12px] text-primary-foreground/60 leading-relaxed border-t border-primary-foreground/10 pt-4">
                 {t(lang, "calc_excluded_note")}
+              </p>
+              <p className="font-body text-[12px] text-primary-foreground/60 leading-relaxed">
+                {t(lang, "calc_energy_note")}
               </p>
 
               <div className="space-y-3">

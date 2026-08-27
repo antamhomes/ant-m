@@ -13,6 +13,7 @@ const groups: Group[] = [
   {
     title: "faq_group_money",
     items: [
+      { q: "faq18_q", a: "faq18_a" }, // garance výnosu
       { q: "faq5_q", a: "faq5_a" },   // kolik to stojí
       { q: "faq9_q", a: "faq9_a" },   // před / po provizi
       { q: "faq4_q", a: "faq4_a" },   // přehled + vyúčtování

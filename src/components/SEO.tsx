@@ -58,7 +58,7 @@ export const SEO = ({ page }: { page: PageKey }) => {
     description: current.desc,
     email: t(lang, "footer_email"),
     telephone: t(lang, "footer_phone"),
-    priceRange: "25 % z výnosu",
+    priceRange: "25 % z čistého výnosu",
     areaServed: { "@type": "City", name: "Praha" },
     address: { "@type": "PostalAddress", streetAddress: "Příčná 1892/4", addressLocality: "Praha 1", postalCode: "110 00", addressCountry: "CZ" },
     knowsLanguage: ["cs", "vi"],

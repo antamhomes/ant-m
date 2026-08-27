@@ -5,7 +5,7 @@ import { t } from "@/i18n/translations";
 /**
  * The price, said once and plainly, right before the calculator.
  * Light surface (not another dark band): the big "25 %" is the highlight,
- * everything else steps back.
+ * everything else steps back. Below it, one line for the written guarantee.
  */
 const PriceStrip = () => {
   const { lang } = useLanguage();
@@ -25,6 +25,11 @@ const PriceStrip = () => {
         <div aria-hidden="true" className="hidden md:block w-px self-stretch bg-border" />
         <p className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed max-w-[44ch] text-pretty">
           {t(lang, "price_sub")}
+        </p>
+      </Reveal>
+      <Reveal className="container-narrow pb-9 md:pb-11 -mt-3 md:-mt-5">
+        <p className="font-body text-[15px] md:text-base text-foreground/85 leading-relaxed text-center text-pretty border-t border-border pt-5">
+          {t(lang, "price_garance")}
         </p>
       </Reveal>
     </section>

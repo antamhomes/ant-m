@@ -10,7 +10,7 @@ import byt6 from "@/assets/byt-6.jpg.asset.json";
 import byt7 from "@/assets/byt-7.jpg.asset.json";
 
 /** Results shown on the cards: owner's monthly income AFTER platform commission, cleaning fees and the
- *  Antam Homes 25 % (i.e. what the owner really receives), rounded to thousands, plus occupancy.
+ *  current Antam Homes 25 % fee (real results recalculated to today's fee), rounded to thousands, plus occupancy.
  *  Source: Hospitable reservations, checked against the owner statements. Window: last 12 full months
  *  (1. 8. 2025 – 31. 7. 2026) or, for flats that joined later, from the first stay (`since`).
  *  `ratio` = owner income vs. long-term rent for that size/district (Bohemian Estates 11/2025).
@@ -62,14 +62,17 @@ const copy = {
     soonDesc: "Kvalita je pro nás důležitější než počet. Proto nové byty do portfolia zařazujeme postupně.\n",
     soonDescShort: "Kvalita je pro nás důležitější než počet. Proto nové byty do portfolia zařazujeme postupně.\n",
     reviewsLabel: "Co říkají hosté",
-    reviewsLine: "Přes 520 recenzí od hostů na Airbnb a\u00a0Booking.com.",
+    reviewsPre: "Přes ",
+    reviewsNum: "520 recenzí",
+    reviewsPost: " od hostů na Airbnb a\u00a0Booking.com.",
     statOwner: "majiteli měsíčně",
     statPeriod12: "průměr 12 měsíců",
     statPeriodSince: (m: string) => `průměr od ${m}`,
     statRatio: (r: number) => `${r.toLocaleString("cs-CZ")}× dlouhodobý nájem`,
     statOcc: (o: number) => `obsazenost ${o}\u00a0%`,
-    statNew: (m: string) => `V naší správě od ${m}. Čísla doplníme po první sezóně.`,
-    statNote: (d: string) => `Částky pro majitele jsou skutečné výsledky bytů po provizi Airbnb a Booking.com, bez úklidových poplatků a po naší provizi 25\u00a0%, tedy to, co majitel opravdu dostane; energie hradí majitel. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. Nájem podle cenové mapy Bohemian Estates (11/2025). Minulé výsledky nejsou zárukou budoucích.`,
+    newBadge: (m: string) => `V naší správě od ${m}`,
+    newNote: "Čísla doplníme po první sezóně.",
+    statNote: (d: string) => `Částky pro majitele vycházejí ze skutečných výsledků bytů, přepočtených na aktuální odměnu 25\u00a0%: po provizi Airbnb a Booking.com včetně DPH z ní, bez úklidových poplatků a po naší odměně, tedy to, co by majitel dostal při dnešních podmínkách; energie hradí majitel. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. Nájem podle cenové mapy Bohemian Estates (11/2025). Minulé výsledky nejsou zárukou budoucích.`,
   },
   vi: {
     eyebrow: "Căn hộ",
@@ -80,14 +83,17 @@ const copy = {
     soonDesc: "Để đảm bảo chất lượng cho từng căn, Antam chủ động giới hạn số lượng căn hộ nhận thêm.\n",
     soonDescShort: "Để đảm bảo chất lượng cho từng căn, Antam chủ động giới hạn số lượng căn hộ nhận thêm.\n",
     reviewsLabel: "Khách nói gì",
-    reviewsLine: "Hơn 520 đánh giá của khách trên Airbnb và\u00a0Booking.com.",
+    reviewsPre: "Hơn ",
+    reviewsNum: "520 đánh giá",
+    reviewsPost: " của khách trên Airbnb và\u00a0Booking.com.",
     statOwner: "chủ nhà nhận / tháng",
     statPeriod12: "trung bình 12 tháng",
     statPeriodSince: (m: string) => `trung bình từ ${m}`,
     statRatio: (r: number) => `gấp ${r.toLocaleString("vi-VN")} lần cho thuê dài hạn`,
     statOcc: (o: number) => `lấp phòng ${o}\u00a0%`,
-    statNew: (m: string) => `Antam lo từ ${m}. Số liệu sẽ có sau mùa đầu tiên.`,
-    statNote: (d: string) => `Số tiền chủ nhà nhận là kết quả thật của từng căn, đã trừ phí Airbnb và Booking.com, không tính phí dọn dẹp và đã trừ phí Antam 25\u00a0%, tức là đúng số tiền về tay chủ nhà; điện nước chủ nhà lo. Trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Giá thuê dài hạn theo bản đồ giá Bohemian Estates (11/2025). Kết quả đã qua không phải là cam kết cho tương lai.`,
+    newBadge: (m: string) => `Antam lo từ ${m}`,
+    newNote: "Số liệu sẽ có sau mùa đầu tiên.",
+    statNote: (d: string) => `Số tiền chủ nhà nhận dựa trên kết quả thật của từng căn, tính lại theo mức phí Antam hiện nay 25\u00a0%: đã trừ phí Airbnb và Booking.com cùng VAT của khoản phí đó, không tính phí dọn dẹp, tức là số tiền chủ nhà sẽ nhận với điều kiện hiện nay; điện nước chủ nhà lo. Trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Giá thuê dài hạn theo bản đồ giá Bohemian Estates (11/2025). Kết quả đã qua không phải là cam kết cho tương lai.`,
   },
 };
 
@@ -136,7 +142,7 @@ const PortfolioSection = () => {
                 {/* Real results: what the owner receives per month, plus occupancy. New flats get a note instead. */}
                 {item.stats && (
                   <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border">
-                    <p className="font-display text-[15px] sm:text-xl font-semibold text-foreground leading-none tnum">
+                    <p className="font-display text-base sm:text-2xl font-semibold text-foreground leading-none tnum">
                       {fmtCzk(item.stats.owner)}&nbsp;Kč
                     </p>
                     <p className="mt-1 font-body text-[10px] sm:text-[11px] uppercase tracking-[0.12em] text-muted-foreground leading-tight">
@@ -150,9 +156,14 @@ const PortfolioSection = () => {
                   </div>
                 )}
                 {item.newSince && (
-                  <p className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border font-body text-[10.5px] sm:text-xs text-muted-foreground leading-snug">
-                    {c.statNew(item.newSince)}
-                  </p>
+                  <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border">
+                    <span className="inline-flex items-center rounded-full bg-gold/10 text-gold-deep font-body text-[9.5px] sm:text-[11px] font-semibold uppercase tracking-[0.08em] px-2 sm:px-2.5 py-0.5 sm:py-1">
+                      {c.newBadge(item.newSince)}
+                    </span>
+                    <p className="mt-1.5 font-body text-[10.5px] sm:text-xs text-muted-foreground leading-snug">
+                      {c.newNote}
+                    </p>
+                  </div>
                 )}
               </figcaption>
             </Reveal>
@@ -183,7 +194,11 @@ const PortfolioSection = () => {
         <Reveal delay={0.1} className="mt-14 md:mt-16">
           <div className="text-center mb-6 md:mb-8">
             <p className="eyebrow eyebrow-center">{c.reviewsLabel}</p>
-            <p className="font-display text-xl md:text-2xl font-semibold text-foreground mt-3 mx-auto max-w-[24ch] md:max-w-none" style={{ textWrap: "balance" }}>{c.reviewsLine}</p>
+            <p className="font-display text-xl md:text-2xl font-semibold text-foreground mt-3 mx-auto max-w-[24ch] md:max-w-none" style={{ textWrap: "balance" }}>
+              {c.reviewsPre}
+              <span className="text-gradient-gold whitespace-nowrap">{c.reviewsNum}</span>
+              {c.reviewsPost}
+            </p>
           </div>
           {/* Phones: one row you swipe (snap), so three quotes don't cost three screens. */}
           <div className="flex md:grid md:grid-cols-3 gap-3 md:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-6 px-6 md:mx-0 md:px-0 pb-2 md:pb-0 no-scrollbar">

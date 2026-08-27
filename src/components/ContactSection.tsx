@@ -24,6 +24,7 @@ const emptyForm = {
   size: "",
   status: "",
   contactPref: "",
+  energy: "",
   message: "",
   consent: false,
 };
@@ -114,7 +115,11 @@ const ContactSection = () => {
           status: labelOf(statusOptions, formData.status),
           contactPref: labelOf(prefOptions, formData.contactPref),
           language: lang === "cs" ? "čeština" : "Tiếng Việt",
-          message: formData.message,
+          // The e-mail template has fixed fields, so the energy answer rides
+          // inside the message body instead of a template key of its own.
+          message: [formData.message, formData.energy ? `Energie: ${formData.energy}` : ""]
+            .filter(Boolean)
+            .join("\n"),
         },
       });
       trackEvent("lead_submit", { form: "contact", status: formData.status || "n/a" });
@@ -231,6 +236,18 @@ const ContactSection = () => {
                     placeholder={t(lang, "contact_status_placeholder") as string} options={statusOptions}
                   />
                 </div>
+              </div>
+
+              <div>
+                <label htmlFor="c-energy" className={labelCls}>
+                  {t(lang, "contact_energy")}{" "}
+                  <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
+                </label>
+                <input
+                  id="c-energy" type="text" inputMode="numeric" value={formData.energy}
+                  onChange={(e) => set("energy", e.target.value)} className={inputCls}
+                  placeholder={t(lang, "contact_energy_placeholder") as string}
+                />
               </div>
 
               <div>
