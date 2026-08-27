@@ -52,12 +52,14 @@ const ltrTable: Record<string, Record<string, number>> = {
   praha10: { "1kk": 18000, "2kk": 23000, "3kk": 27500, "4kk": 35500 },
 };
 
-const MGMT_FEE = 0.25; // Antam Homes fee: 25 % of net revenue (after platform commission incl. Czech VAT on it)
-// Platforms charge their commission on the WHOLE reservation price incl. the cleaning fee,
-// and Czech VAT (reverse charge) is due on that commission.
-const PLATFORM_FEE = 0.15; // indicative blended Airbnb/Booking.com commission rate
+const MGMT_FEE = 0.30; // Antam Homes fee: 30 % of net revenue (after platform commission)
+// Platforms charge their commission on the WHOLE reservation price incl. the cleaning fee.
+// Czech VAT (reverse charge) on that commission is paid by Antam Homes out of its own fee
+// and is NOT deducted from the owner's revenue.
+// Measured 27 Aug 2026 across 7 managed flats: real commission runs 17.3–20.6 % of the room
+// price depending on the listing (Airbnb 15.4–20.7 %, Booking 18.1–21.4 %). 0.17 is the middle.
+const PLATFORM_FEE = 0.17;
 const CLEANING_SHARE = 0.1; // internal estimate of cleaning fees as a share of accommodation revenue (used only for the commission deduction)
-const VAT_RATE = 1.21;
 const DAYS = 30;
 
 export default defineTool({
@@ -88,16 +90,16 @@ export default defineTool({
 
     const extrasPct = (chosen ?? []).reduce((sum, e) => sum + (extras[e] ?? 0), 0);
 
-    // Contract-aligned model: platform commission incl. VAT is deducted from gross
-    // accommodation revenue first (commission is charged on the whole reservation
-    // incl. the cleaning fee); the remaining net revenue is split 75/25.
+    // Contract-aligned model: platform commission is deducted from gross accommodation
+    // revenue first (commission is charged on the whole reservation incl. the cleaning
+    // fee); the remaining net revenue is split 70/30.
     const compute = (seasonKey: keyof typeof seasons) => {
       const adj = seasons[seasonKey];
       const adr = Math.round(baseADR * loc.multiplier * (1 + extrasPct) * adj.adr);
       const occupancy = Math.max(0.5, Math.min(0.98, loc.occupancy + adj.occDelta));
       // Gross accommodation revenue (before platform commission) from the net-of-commission ADR benchmark.
       const gross = Math.round((adr / (1 - PLATFORM_FEE)) * occupancy * DAYS);
-      const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE) * VAT_RATE);
+      const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE));
       const netRevenue = gross - platformFee;
       const commission = Math.round(netRevenue * MGMT_FEE);
       return { adr, occupancy, gross, platformFee, netRevenue, commission, net: netRevenue - commission };
@@ -117,7 +119,7 @@ export default defineTool({
       averageNightlyRate: r.adr,
       occupancyRate: Math.round(r.occupancy * 100) / 100,
       grossMonthlyRevenue: r.gross,
-      platformCommissionInclVat: r.platformFee,
+      platformCommission: r.platformFee,
       netRevenueAfterPlatform: r.netRevenue,
       managementCommission: r.commission,
       managementCommissionRate: MGMT_FEE,
@@ -125,14 +127,14 @@ export default defineTool({
       netYearlyAverage: yearly.net * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round((r.net / longTermRent) * 10) / 10,
-      note: "Indicative estimate based on Prague market benchmarks. The Antam Homes fee is 25 % of net revenue: accommodation revenue without the cleaning fee, after deducting the Airbnb/Booking.com commission and the statutory Czech VAT on that commission. The fee is final; nothing is added on top. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Platform commission is charged on the whole reservation price incl. the cleaning fee. Guests pay the cleaning fee separately; it covers cleaning and laundry and is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included.",
+      note: "Indicative estimate based on Prague market benchmarks. The Antam Homes fee is 30 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Platform commission is charged on the whole reservation price incl. the cleaning fee. Guests pay the cleaning fee separately; it covers cleaning and laundry and is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included.",
     };
 
     return {
       content: [
         {
           type: "text" as const,
-          text: `${loc.label}, ${sz.label} (${sz.guests} guests): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, platform commission incl. VAT ${result.platformCommissionInclVat.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`,
+          text: `${loc.label}, ${sz.label} (${sz.guests} guests): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, platform commission ${result.platformCommission.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`,
         },
       ],
       structuredContent: result,

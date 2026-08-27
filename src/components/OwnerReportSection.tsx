@@ -10,10 +10,11 @@ const OwnerReportSection = () => {
   const rows = [
     { icon: CalendarDays, key: "report_row_reservations" as const, value: "12" },
     { icon: BedDouble, key: "report_row_occupancy" as const, value: "80 %" },
-    { icon: TrendingUp, key: "report_row_revenue" as const, value: "76\u00a0000\u00a0Kč" },
-    { icon: Landmark, key: "report_row_vat" as const, value: "3\u00a0000\u00a0Kč" },
-    { icon: Receipt, key: "report_row_costs" as const, value: "20\u00a0000\u00a0Kč" },
-    { icon: Wallet, key: "report_row_net" as const, value: "53\u00a0000\u00a0Kč", highlight: true },
+    { icon: TrendingUp, key: "report_row_revenue" as const, value: "91\u00a0000\u00a0Kč" },
+    { icon: Landmark, key: "report_row_vat" as const, value: "16\u00a0000\u00a0Kč" },
+    { icon: FileBarChart, key: "report_row_base" as const, value: "75\u00a0000\u00a0Kč" },
+    { icon: Receipt, key: "report_row_costs" as const, value: "22\u00a0500\u00a0Kč" },
+    { icon: Wallet, key: "report_row_net" as const, value: "52\u00a0500\u00a0Kč", highlight: true },
     { icon: ClipboardList, key: "report_row_notes" as const, value: "—" },
   ];
 

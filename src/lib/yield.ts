@@ -8,8 +8,9 @@
  * rozdíl než na nájmu, (2) obsazenost spravovaných bytů je 83–92 %, ne 68–85 %.
  *
  * Pravidlo pro tyto hodnoty: vlastní portfolio musí veřejné číslo PŘEKONAT.
- * Kontrola proti měřené skutečnosti: 302 (P1) 0 %, Modern AC (P3) +3 %,
- * free movies (P4) −1 %.
+ * Kontrola 27. 8. 2026 proti skutečným rezervacím: byt 302 vynesl majiteli za
+ * 12 měsíců 56 793 Kč měsíčně, model pro Prahu 1 2+kk dává 48 tis., tedy 15 % pod
+ * měřenou skutečností.
  *
  * Kalkulačka i graf horizontu čtou odsud, aby se nikdy nerozešly.
  */
@@ -59,10 +60,17 @@ export const ENERGY: Record<SizeKey, number> = {
 
 export const ROOMS: Record<SizeKey, number> = { "1kk": 1, "2kk": 2, "3kk": 3, "4kk": 4 };
 
-export const MGMT_FEE = 0.25;      // odměna Antam Homes z čistého výnosu
-export const PLATFORM_FEE = 0.15;  // orientační smíšená sazba provize Airbnb/Booking.com
+export const MGMT_FEE = 0.30;      // odměna Antam Homes z čistého výnosu
+// Změřeno 27. 8. 2026 na 7 bytech (Hospitable, 12 měsíců): skutečná provize je
+// 17,3 až 20,6 % z ceny pokoje, podle listingu, ne podle platformy. Airbnb 15,4–20,7 %,
+// Booking 18,1–21,4 %. Jedna sazba to nikdy nevystihne; 0,17 je střed měřeného pásma.
+// Pozn.: BASE_ADR je cena po provizi, takže se změna sazby z větší části vykrátí
+// v dopočtu hrubých tržeb a na výsledek má vliv pod 0,5 %.
+export const PLATFORM_FEE = 0.17;
 export const CLEANING_SHARE = 0.10;// podíl úklidových poplatků na tržbách (jen pro odpočet provize)
-export const VAT_RATE = 1.21;      // DPH z provize platformy
+// DPH z provize platformy. Od přechodu na odměnu 30 % ji nese Antam ze své odměny,
+// takže do výpočtu výnosu majitele NEVSTUPUJE. Zůstává tu jen pro interní propočty.
+export const VAT_RATE = 1.21;
 export const DAYS = 30;
 
 /** Uvedení do provozu, vybavení a obnova — vstupy pro graf horizontu */
@@ -77,8 +85,9 @@ export const PROJECT_FEE_THRESHOLD = 30000;// pod tímto rozpočtem je řízení
 export const clampOccupancy = (v: number) => Math.max(0.5, Math.min(0.98, v));
 
 /**
- * Výnos majitele za měsíc: z hrubých tržeb se odečte provize platformy včetně
- * DPH z ní (počítá se z celé ceny rezervace včetně úklidu), zbytek se dělí 75/25.
+ * Výnos majitele za měsíc: z hrubých tržeb se odečte provize platformy (počítá se
+ * z celé ceny rezervace včetně úklidu), zbytek se dělí 70/30. DPH z provize se
+ * neodečítá, hradí ji Antam ze své odměny.
  * Energie NEjsou odečteny — hradí je majitel zvlášť.
  */
 export function ownerMonthly(
@@ -90,7 +99,7 @@ export function ownerMonthly(
   const adrNet = Math.round(BASE_ADR[size] * d.multiplier * (1 + extrasPct) * adrAdjust);
   const occupancy = clampOccupancy(d.occupancy + occDelta);
   const gross = Math.round((adrNet / (1 - PLATFORM_FEE)) * occupancy * DAYS);
-  const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE) * VAT_RATE);
+  const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE));
   const netRevenue = gross - platformFee;
   const mgmt = Math.round(netRevenue * MGMT_FEE);
   return { adr: adrNet, occupancy, gross, platformFee, netRevenue, mgmt, net: netRevenue - mgmt };

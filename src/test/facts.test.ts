@@ -13,41 +13,57 @@
  */
 import { describe, it, expect } from "vitest";
 import translations from "@/i18n/translations";
-import { DISTRICTS, BASE_ADR, LTR, ENERGY, MGMT_FEE, LAUNCH_FEE, ownerMonthly } from "@/lib/yield";
+import { DISTRICTS, BASE_ADR, LTR, ENERGY, MGMT_FEE, PLATFORM_FEE, LAUNCH_FEE, ownerMonthly } from "@/lib/yield";
 
 const cs = translations.cs as Record<string, string>;
 const vi = translations.vi as Record<string, string>;
 const strip = (s: string) => s.replace(/ /g, " ");
 
 describe("odměna za správu", () => {
-  it("je 25 % v modelu", () => {
-    expect(MGMT_FEE).toBe(0.25);
+  it("je 30 % v modelu", () => {
+    expect(MGMT_FEE).toBe(0.30);
   });
 
-  it("je 25 % všude v české i vietnamské kopii", () => {
-    expect(strip(cs.pr1_price)).toMatch(/25 %/);
-    expect(strip(vi.pr1_price)).toMatch(/25 %/);
+  it("je 30 % všude v české i vietnamské kopii", () => {
+    expect(strip(cs.pr1_price)).toMatch(/30 %/);
+    expect(strip(vi.pr1_price)).toMatch(/30 %/);
     for (const key of ["calc_net_sub", "calc_excluded_note", "faq5_a", "faq9_a", "report_row_costs"]) {
-      expect(strip(cs[key]), `cs.${key}`).toMatch(/25\s?%/);
-      expect(strip(vi[key]), `vi.${key}`).toMatch(/25\s?%/);
+      expect(strip(cs[key]), `cs.${key}`).toMatch(/30\s?%/);
+      expect(strip(vi[key]), `vi.${key}`).toMatch(/30\s?%/);
     }
   });
 
-  it("nikde nezůstalo staré 28 % ani dělení 72/28", () => {
+  it("nikde nezůstalo staré 25 %, 28 % ani dělení 75/25", () => {
     for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
       for (const [key, value] of Object.entries(dict)) {
         if (typeof value !== "string") continue;
-        expect(strip(value), `${lang}.${key}`).not.toMatch(/28\s?%/);
-        expect(strip(value), `${lang}.${key}`).not.toMatch(/72\s?\/\s?28/);
+        const v = strip(value);
+        // 25 000 Kč (uvedení do provozu) je jiné číslo a zůstává
+        expect(v.replace(/25 000/g, ""), `${lang}.${key}`).not.toMatch(/25\s?%/);
+        expect(v, `${lang}.${key}`).not.toMatch(/28\s?%/);
+        expect(v, `${lang}.${key}`).not.toMatch(/75\s?\/\s?25/);
       }
     }
   });
 
-  it("dělí čistý výnos 75/25", () => {
-    expect(strip(cs.calc_split_aria)).toBe("75 % majitel, 25 % Antam Homes");
-    expect(strip(vi.calc_split_aria)).toBe("75% chủ nhà, 25% Antam Homes");
-    expect(strip(cs.calc_method_note)).toMatch(/75\/25/);
-    expect(strip(vi.calc_method_note)).toMatch(/75\/25/);
+  it("dělí čistý výnos 70/30", () => {
+    expect(strip(cs.calc_split_aria)).toBe("70 % majitel, 30 % Antam Homes");
+    expect(strip(vi.calc_split_aria)).toBe("70% chủ nhà, 30% Antam Homes");
+    expect(strip(cs.calc_method_note)).toMatch(/70\/30/);
+    expect(strip(vi.calc_method_note)).toMatch(/70\/30/);
+  });
+
+  it("DPH z provize platformy nezatěžuje majitele: v modelu ani v kopii", () => {
+    // Od přechodu na 30 % ji hradí Antam ze své odměny. Kdyby se vrátila do
+    // výpočtu, majitel by platil dvakrát: nižším podílem i vyšší sazbou.
+    expect(strip(cs.calc_method_note)).toMatch(/ze své odměny|neodečítá|nevstupuje/);
+    expect(strip(cs.pr1_note)).toMatch(/DPH z provize/);
+  });
+
+  it("provize v modelu odpovídá měřenému pásmu 17–21 %", () => {
+    // Změřeno 27. 8. 2026 na 7 bytech; jedna sazba to nevystihne, 0,17 je střed.
+    expect(PLATFORM_FEE).toBeGreaterThanOrEqual(0.15);
+    expect(PLATFORM_FEE).toBeLessThanOrEqual(0.21);
   });
 
   it("je konečná a netvrdí, že se k ní účtuje DPH", () => {
@@ -100,12 +116,21 @@ describe("garance výnosu", () => {
     expect(strip(cs.faq18_a)).toMatch(/energie/);
   });
 
-  it("hero teaser sedí s kartami portfolia (61/68 tis., Praha 1)", () => {
+  it("hero teaser sedí s kartami portfolia (53/61 tis., Praha 1)", () => {
+    expect(strip(cs.hero_extra)).toMatch(/53 000/);
     expect(strip(cs.hero_extra)).toMatch(/61 000/);
-    expect(strip(cs.hero_extra)).toMatch(/68 000/);
     expect(strip(cs.hero_extra)).toMatch(/Praha 1/);
+    expect(strip(vi.hero_extra)).toMatch(/53 000/);
     expect(strip(vi.hero_extra)).toMatch(/61 000/);
-    expect(strip(vi.hero_extra)).toMatch(/68 000/);
+  });
+
+  it("ilustrační trojice v garanci sedí s kalkulačkou", () => {
+    // Minimum = nájem + energie pro Prahu 1 2+kk; očekávaný výnos = co dá kalkulačka.
+    expect(LTR.praha1["2kk"] + ENERGY["2kk"]).toBe(31500);
+    expect(strip(cs.g_num2_value)).toMatch(/31 500/);
+    const model = ownerMonthly("praha1", "2kk").net;
+    expect(Math.round(model / 1000) * 1000).toBe(50000);
+    expect(strip(cs.g_num3_value)).toMatch(/50 000/);
   });
 
   it("jedna pojmenovaná nabídka: hero, kalkulačka i garance vedou na stejný propočet", () => {
@@ -144,10 +169,12 @@ describe("model výnosu", () => {
   });
 
   it("nepřeslibuje: Praha 1 2+kk zůstane pod měřenou skutečností bytu 302", () => {
-    // Byt 302, Hospitable, 26. 8. 2025 – 25. 8. 2026: majiteli 637 536 Kč,
-    // tj. 53 128 Kč měsíčně. Veřejné číslo musí být níž, jinak slibujeme víc,
+    // Byt 302, Hospitable, 1. 8. 2025 – 31. 7. 2026: majiteli 56 793 Kč měsíčně
+    // za dnešních podmínek. Veřejné číslo musí být níž, jinak slibujeme víc,
     // než sami dodáváme.
-    const MEASURED_302 = 53128;
+    // Přepočteno 27. 8. 2026 ze skutečných rezervací na dnešní podmínky
+    // (30 %, bez odpočtu DPH z provize, bez poplatku z pobytu).
+    const MEASURED_302 = 56793;
     expect(ownerMonthly("praha1", "2kk").net).toBeLessThan(MEASURED_302);
   });
 

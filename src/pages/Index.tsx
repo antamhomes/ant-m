@@ -9,8 +9,8 @@ const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
 const CalculatorSection = lazy(() => import("@/components/CalculatorSection"));
 const GaranceSection = lazy(() => import("@/components/GaranceSection"));
 const PricingSection = lazy(() => import("@/components/PricingSection"));
-const HorizonSection = lazy(() => import("@/components/HorizonSection"));
 const ServicesSection = lazy(() => import("@/components/ServicesSection"));
+const HorizonSection = lazy(() => import("@/components/HorizonSection"));
 const OwnerReportSection = lazy(() => import("@/components/OwnerReportSection"));
 const FitSection = lazy(() => import("@/components/FitSection"));
 const AboutSection = lazy(() => import("@/components/AboutSection"));
@@ -57,14 +57,14 @@ const Index = () => {
       <main id="obsah">
         <HeroSection />
         {/* Question chain: claim → proof → my number → downside → price → long run
-            → what we do → visibility → fit → people → process → form → FAQ.
+            → what we do → long run → visibility → fit → people → process → form → FAQ.
             Each section has its own boundary, so a slow chunk never holds the others back. */}
         <Suspense fallback={null}><PortfolioSection /></Suspense>
         <Suspense fallback={null}><CalculatorSection /></Suspense>
         <Suspense fallback={null}><GaranceSection /></Suspense>
         <Suspense fallback={null}><PricingSection /></Suspense>
-        <Suspense fallback={null}><HorizonSection /></Suspense>
         <Suspense fallback={null}><ServicesSection /></Suspense>
+        <Suspense fallback={null}><HorizonSection /></Suspense>
         <Suspense fallback={null}><OwnerReportSection /></Suspense>
         <Suspense fallback={null}><FitSection /></Suspense>
         <Suspense fallback={null}><AboutSection /></Suspense>

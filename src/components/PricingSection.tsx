@@ -7,8 +7,10 @@ import { t } from "@/i18n/translations";
  * Existuje proto, že "žádné vstupní poplatky" přestalo platit ve chvíli,
  * kdy má Uvedení do provozu svou cenu. Radši to říct dřív než na schůzce.
  */
-const ROWS: { k: "pr1" | "pr2" | "pr3" | "pr4" | "pr5"; accent?: boolean }[] = [
+const ROWS: { k: "pr1" | "pr6" | "pr2" | "pr3" | "pr4" | "pr5"; accent?: boolean }[] = [
   { k: "pr1", accent: true },
+  // Garance hned pod odměnou: jediné místo v ceníku, kde je vidět, co je v těch 30 % navíc.
+  { k: "pr6" },
   { k: "pr2" },
   { k: "pr3" },
   { k: "pr4" },

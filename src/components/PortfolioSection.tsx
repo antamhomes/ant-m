@@ -9,10 +9,14 @@ import byt5 from "@/assets/byt-5.jpg.asset.json";
 import byt6 from "@/assets/byt-6.jpg.asset.json";
 import byt7 from "@/assets/byt-7.jpg.asset.json";
 
-/** Results shown on the cards: owner's monthly income AFTER platform commission, cleaning fees and the
- *  current Antam Homes 25 % fee (real results recalculated to today's fee), rounded to thousands, plus occupancy.
- *  Source: Hospitable reservations, checked against the owner statements. Window: last 12 full months
- *  (1. 8. 2025 – 31. 7. 2026) or, for flats that joined later, from the first stay (`since`).
+/** Results shown on the cards: owner's monthly income AFTER platform commission, cleaning fees, the
+ *  local tourist tax and the current Antam Homes 30 % fee (real results recalculated to today's terms),
+ *  rounded DOWN to thousands, plus occupancy.
+ *  Recomputed from scratch 27. 8. 2026 against real Hospitable reservations, reconciled to the cent
+ *  against Booking.com payout statements and commission invoices. The previous figures counted the
+ *  tourist tax collected from guests as owner income, which it is not; that is why they were higher.
+ *  Window: last 12 full months (1. 8. 2025 – 31. 7. 2026) or, for flats that joined later, from the
+ *  first stay (`since`).
  *  `ratio` = owner income vs. long-term rent for that size/district (Bohemian Estates 11/2025).
  *  Flats younger than ~3 months get no numbers yet (`newSince`), only a note.
  *  Refresh monthly: STATS_ASOF + the numbers below. */
@@ -25,11 +29,11 @@ type Item = { src: string; name: string; loc: string; guests: number; stats?: St
  *  byt-1…7 are Lovable assets; 402/405 (Praha 1, Čelakovského sady) are small webp files in public/portfolio.
  *  Order: measured results first (the section pays off the hero claim), longest window leading; flats without a full season follow with their honest badge. */
 const items: Item[] = [
-  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", guests: 8, stats: { owner: 68000, occupancy: 96, ratio: 2.4 } },
-  { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", guests: 8, stats: { owner: 61000, occupancy: 95, ratio: 2.2 } },
-  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 4", guests: 6, stats: { owner: 45000, occupancy: 83, since: "4/2026", ratio: 1.7 } },
-  { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", guests: 8, stats: { owner: 32000, occupancy: 93, since: "4/2026" } },
-  { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", guests: 4, stats: { owner: 31000, occupancy: 94, since: "2/2026", ratio: 1.7 } },
+  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", guests: 8, stats: { owner: 61000, occupancy: 96, ratio: 2.2 } },
+  { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", guests: 8, stats: { owner: 53000, occupancy: 95, ratio: 1.9 } },
+  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 4", guests: 6, stats: { owner: 42000, occupancy: 83, since: "4/2026", ratio: 1.6 } },
+  { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", guests: 8, stats: { owner: 30000, occupancy: 93, since: "4/2026" } },
+  { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", guests: 4, stats: { owner: 31000, occupancy: 93, since: "2/2026", ratio: 1.7 } },
   { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", guests: 13, newSince: "7/2026" },
   { src: byt1.url, name: "Secret Garden Studio\u00a0I", loc: "Praha 4", guests: 4, newSince: "7/2026" },
   { src: byt2.url, name: "Secret Garden Studio\u00a0II", loc: "Praha 4", guests: 4, newSince: "7/2026" },
@@ -72,7 +76,7 @@ const copy = {
     statOcc: (o: number) => `obsazenost ${o}\u00a0%`,
     newBadge: (m: string) => `V naší správě od ${m}`,
     newNote: "Čísla doplníme po první sezóně.",
-    statNote: (d: string) => `Částky pro majitele vycházejí ze skutečných výsledků bytů, přepočtených na aktuální odměnu 25\u00a0%: po provizi Airbnb a Booking.com včetně DPH z ní, bez úklidových poplatků a po naší odměně, tedy to, co by majitel dostal při dnešních podmínkách; energie hradí majitel. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. Nájem podle cenové mapy Bohemian Estates (11/2025). Minulé výsledky nejsou zárukou budoucích.`,
+    statNote: (d: string) => `Částky pro majitele vycházejí ze skutečných rezervací, přepočtených na aktuální odměnu 30\u00a0%: tržby za ubytování po provizi Airbnb a Booking.com, bez úklidových poplatků a bez místního poplatku z pobytu, po naší odměně. Tedy to, co by majitel dostal při dnešních podmínkách; energie hradí majitel. Zaokrouhleno dolů na tisíce. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. Nájem podle cenové mapy Bohemian Estates (11/2025). Minulé výsledky nejsou zárukou budoucích.`,
   },
   vi: {
     eyebrow: "Kết quả thực tế",
@@ -93,7 +97,7 @@ const copy = {
     statOcc: (o: number) => `lấp phòng ${o}\u00a0%`,
     newBadge: (m: string) => `Antam lo từ ${m}`,
     newNote: "Số liệu sẽ có sau mùa đầu tiên.",
-    statNote: (d: string) => `Số tiền chủ nhà nhận dựa trên kết quả thật của từng căn, tính lại theo mức phí Antam hiện nay 25\u00a0%: đã trừ phí Airbnb và Booking.com cùng VAT của khoản phí đó, không tính phí dọn dẹp, tức là số tiền chủ nhà sẽ nhận với điều kiện hiện nay; điện nước chủ nhà lo. Trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Giá thuê dài hạn theo bản đồ giá Bohemian Estates (11/2025). Kết quả đã qua không phải là cam kết cho tương lai.`,
+    statNote: (d: string) => `Số tiền chủ nhà nhận dựa trên đặt phòng thật của từng căn, tính lại theo mức phí Antam hiện nay 30\u00a0%: tiền phòng sau khi trừ phí Airbnb và Booking.com, không tính phí dọn dẹp và phí lưu trú thành phố, sau phí của Antam. Tức là số tiền chủ nhà sẽ nhận với điều kiện hiện nay; điện nước chủ nhà lo. Làm tròn xuống hàng nghìn. Trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Giá thuê dài hạn theo bản đồ giá Bohemian Estates (11/2025). Kết quả đã qua không phải là cam kết cho tương lai.`,
   },
 };
 

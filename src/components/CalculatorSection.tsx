@@ -4,7 +4,10 @@ import { Calculator, MapPin, Home, Plus, Check, ChevronDown, Share2, Pencil } fr
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
-import { DISTRICTS, BASE_ADR, LTR as LTR_TABLE, type LocationKey as LK, type SizeKey as SK } from "@/lib/yield";
+import {
+  DISTRICTS, BASE_ADR, LTR as LTR_TABLE, MGMT_FEE, PLATFORM_FEE, CLEANING_SHARE, DAYS,
+  clampOccupancy, type LocationKey as LK, type SizeKey as SK,
+} from "@/lib/yield";
 
 type SizeKey = "1kk" | "2kk" | "3kk" | "4kk";
 type LocationKey =
@@ -16,7 +19,7 @@ type LocationKey =
 // okolních nabídek. Dvě zjištění, která starou tabulku opravila:
 //  1) mezi vnějšími čtvrtěmi je na krátkodobém pronájmu mnohem menší rozdíl než na nájmu
 //     (medián ADR 1BR: okolí P3 1 971, P5 2 276, P4/P9 2 110 = rozptyl ~15 %, ne 31 %),
-//  2) obsazenost, kterou spravované byty reálně drží, je 83–92 %, ne 68–85 %.
+//  2) obsazenost, kterou spravované byty reálně drží, je 83–96 %, ne 68–85 %.
 // Pravidlo pro tyto hodnoty: vlastní portfolio musí veřejné číslo PŘEKONAT, nikdy ho minout.
 const locations: { value: LocationKey; label: string; multiplier: number; occupancy: number }[] =
   (["praha1","praha2","praha3","praha4","praha5","praha6","praha7","praha8","praha9","praha10"] as LocationKey[])
@@ -49,8 +52,8 @@ const ltrTable = LTR_TABLE;
 
 type Season = "year" | "summer" | "winter" | "xmas";
 // Sezónní přirážky sladěné se skutečnými výsledky bytů v naší správě (8/2025–7/2026).
-// Po kalibraci 27. 8. 2026 vychází 2+kk Praha 1 rok ≈ 52 tis. pro majitele; měřená skutečnost
-// bytu 302 za 12 měsíců je ≈ 53 tis., tedy veřejné číslo je mírně pod skutečností (záměr).
+// Po přechodu na odměnu 30 % vychází 2+kk Praha 1 rok ≈ 50 tis. pro majitele; měřená
+// skutečnost bytu 302 za 12 měsíců je 56,8 tis., tedy veřejné číslo zůstává pod ní (záměr).
 // Léto/Vánoce zvedají hlavně cenu, ne obsazenost (ta je i v lednu přes 80 %).
 const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   year:   { adr: 1.05, occDelta: 0.02 },
@@ -59,17 +62,10 @@ const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
   xmas:   { adr: 1.65, occDelta: 0.05 },
 };
 
-const MGMT_FEE = 0.25; // odměna Antam Homes: 25 % z čistého výnosu (po provizi platformy a DPH z ní)
-// Provize platforem se počítá z CELÉ ceny rezervace včetně úklidového poplatku
-// a z provize se u nás odvádí česká DPH (reverse charge).
-const PLATFORM_FEE = 0.15;    // orientační smíšená sazba provize Airbnb/Booking.com
-const CLEANING_SHARE = 0.10;  // interní odhad podílu úklidových poplatků na tržbách za ubytování (jen pro odpočet provize)
-const VAT_RATE = 1.21;        // DPH z provize platformy
-const DAYS = 30;
-// Obsazenost = obsazenost lokality + sezónní úprava, omezená na realistické pásmo.
-const MIN_OCCUPANCY = 0.5;
-const MAX_OCCUPANCY = 0.98;
-const clampOccupancy = (v: number) => Math.max(MIN_OCCUPANCY, Math.min(MAX_OCCUPANCY, v));
+// Odměna, provize i dělení čte komponenta z lib/yield, aby se kalkulačka a graf
+// horizontu nikdy nerozešly. Provize platforem se počítá z CELÉ ceny rezervace
+// včetně úklidového poplatku; DPH z provize hradí Antam ze své odměny a do výnosu
+// majitele nevstupuje.
 
 const CalculatorSection = () => {
   const { lang } = useLanguage();
@@ -134,16 +130,16 @@ const CalculatorSection = () => {
       .reduce((sum, e) => sum + e.pct, 0);
 
     // Výpočet podle smlouvy: z hrubých tržeb za ubytování se nejdřív odečte provize
-    // platformy včetně DPH (počítá se z celé ceny rezervace včetně úklidu),
-    // zbytek (čistý výnos) se dělí 75/25.
+    // platformy (počítá se z celé ceny rezervace včetně úklidu), zbytek (čistý
+    // výnos) se dělí 70/30.
     const compute = (seasonKey: Season) => {
       const adj = seasonAdjust[seasonKey];
       const adrNet = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * adj.adr);
       const occupancy = clampOccupancy(locationData.occupancy + adj.occDelta);
       // Hrubé tržby za ubytování (před provizí platformy) z benchmarkového ADR.
       const gross = Math.round((adrNet / (1 - PLATFORM_FEE)) * occupancy * DAYS);
-      // Odpočet = sazba provize × (tržby za ubytování + odhad úklidových poplatků) × DPH.
-      const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE) * VAT_RATE);
+      // Odpočet = sazba provize × (tržby za ubytování + odhad úklidových poplatků).
+      const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE));
       const netRevenue = gross - platformFee; // čistý výnos
       const mgmt = Math.round(netRevenue * MGMT_FEE);
       const net = netRevenue - mgmt;
@@ -364,23 +360,23 @@ const CalculatorSection = () => {
                 </p>
               </div>
 
-              {/* 75/25 split. Platform commission incl. VAT is deducted inside the math;
-                 the sub-line and the note under the calculator say so, no scary number here. */}
+              {/* 70/30 split. Platform commission is deducted inside the math; the
+                 sub-line and the note under the calculator say so, no scary number here. */}
               <div className="border-t border-primary-foreground/10 pt-4">
                 <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-2">
                   {t(lang, "calc_split_label")}
                 </p>
                 <div className="flex h-2 w-full overflow-hidden rounded-full bg-primary-foreground/10" role="img" aria-label={t(lang, "calc_split_aria")}>
-                  <span className="block h-full w-[75%] bg-gold" />
-                  <span className="block h-full w-[25%] bg-primary-foreground/25" />
+                  <span className="block h-full w-[70%] bg-gold" />
+                  <span className="block h-full w-[30%] bg-primary-foreground/25" />
                 </div>
                 <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 font-body text-[13px] tnum">
                   <span className="text-primary-foreground/85">
-                    <strong className="text-gold font-semibold">75 %</strong> {t(lang, "calc_split_owner")}{" "}
+                    <strong className="text-gold font-semibold">70 %</strong> {t(lang, "calc_split_owner")}{" "}
                     <span className="text-gold/90">= ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč</span>
                   </span>
                   <span className="text-primary-foreground/65 text-right">
-                    <strong className="font-semibold text-primary-foreground/80">25 %</strong> {t(lang, "calc_split_fee")}
+                    <strong className="font-semibold text-primary-foreground/80">30 %</strong> {t(lang, "calc_split_fee")}
                   </span>
                 </div>
               </div>
