@@ -1,4 +1,5 @@
 import { defineTool } from "@lovable.dev/mcp-js";
+import { DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, ROOMS, annualDamageCover } from "../../yield";
 
 const services = [
   { title: "Příprava bytu a interiér", description: "Poradíme, co hosté v dané lokalitě hledají: uspořádání, vybavení, drobnosti, které rozhodují o hodnocení. Bez zbytečných investic." },
@@ -21,7 +22,7 @@ const faq = [
   { question: "Jak dlouho spolupráce trvá a jak ji ukončím?", answer: "Smlouva se uzavírá na 12 měsíců. Po nich pokračuje na dobu neurčitou a lze ji kdykoli ukončit s výpovědní lhůtou 4 měsíce. Potvrzené rezervace se během výpovědní lhůty vždy dokončí." },
   { question: "Je částka v kalkulačce před, nebo po provizi?", answer: "Po. Vše označené jako výnos pro majitele je už po odečtení provize platformy i odměny 30 %. Odměna je konečná; energie hradí majitel zvlášť." },
   { question: "Jaké povinnosti krátkodobý pronájem přináší a kdo je řeší?", answer: "Evidence hostů, hlášení zahraničních hostů cizinecké policii, místní poplatek z pobytu a registrace v e-Turista, provozní povinnosti kolem hostů řeší Antam Homes. Zdanění příjmu z pronájmu zůstává na majiteli; podklady dostane." },
-  { question: "Co když host něco poničí?", answer: "Byt se kontroluje po každém pobytu. Škoda se zdokumentuje a nejdřív vymáhá po hostovi a přes platformu (Airbnb AirCover, řešení škod Booking.com). Co se tam nepodaří získat, hradí Antam Homes do ročního limitu sjednaného pro konkrétní byt; limit se stanovuje před podpisem. Majitel se dozví hned, včetně fotek. Krytí se týká škod způsobených hostem; opotřebení, poruchy z věku a závady v domě jsou opravy a údržba a zůstávají na majiteli (drobné do 5 000 Kč se řeší hned a strhávají z výnosu, nejvýše 20 000 Kč za rok, větší po jeho souhlasu)." },
+  { question: "Co když host něco poničí?", answer: "Byt se kontroluje po každém pobytu. Škoda se zdokumentuje a nejdřív vymáhá po hostovi a přes platformu (Airbnb AirCover, řešení škod Booking.com). Co se tam nepodaří získat, hradí Antam Homes do ročního limitu podle velikosti bytu: 5 000 Kč u 1+kk, 10 000 Kč u 2+kk, 15 000 Kč u 3+kk, 20 000 Kč u 4+kk a 25 000 Kč u větších. Majitel se dozví hned, včetně fotek. Krytí se týká škod způsobených hostem; opotřebení, poruchy z věku a závady v domě jsou opravy a údržba a zůstávají na majiteli (drobné do 5 000 Kč se řeší hned a strhávají z výnosu, nejvýše 20 000 Kč za rok, větší po jeho souhlasu)." },
   { question: "Co na to sousedé a SVJ?", answer: "Hosté dostávají pravidla domu předem, byt má danou kapacitu (žádné party) a sousedé mají kontakt. Pokud stanovy SVJ krátkodobé ubytování výslovně zakazují, Antam Homes to majiteli řekne před podpisem." },
   { question: "Proč to nedělat sám přes Airbnb?", answer: "Můžete, někteří majitelé to zvládají. Je to ale práce na každý den: odpovídat hostům do minut, hlídat ceny podle poptávky, řešit úklid a klíče a držet krok s tím, co Airbnb a Booking mění (algoritmy, pravidla, poplatky, povinnosti). Antam Homes to dělá denně pro víc bytů najednou." },
   { question: "Pracujete i s jinými platformami nebo firmami?", answer: "Byty se inzerují tam, kde je v Praze reálná poptávka: především Airbnb a Booking.com, které Antam Homes zná do detailu (algoritmy, pravidla, změny). Další platformy se přidávají jen tam, kde bytu přinesou rezervace navíc. Provoz nejde přes prostředníky: hosty, ceny, úklid i kontrolu bytu řeší vlastní tým, externí jsou jen řemeslníci." },
@@ -59,8 +60,16 @@ export default defineTool({
         thenIndefinite: true,
         noticePeriodMonths: 4,
       },
-      guestDamageCover:
-        "Guest-caused damage is first claimed from the guest and through the platform. What is not recovered there is covered by Antam Homes up to a yearly limit agreed for that specific apartment before signing. Wear and tear, age-related failures and building faults are repairs and stay with the owner.",
+      guestDamageCover: {
+        description:
+          "Qualifying smaller guest-caused damage is first claimed from the guest and through the platform. What is not recovered there is covered by Antam Homes up to a yearly per-apartment limit. Wear and tear, age-related failures and building faults are repairs and stay with the owner.",
+        yearlyLimitPerRoomCzk: DAMAGE_COVER_PER_ROOM,
+        yearlyLimitMaxCzk: DAMAGE_COVER_MAX,
+        yearlyLimitByLayoutCzk: {
+          ...Object.fromEntries(Object.entries(ROOMS).map(([k, rooms]) => [k, annualDamageCover(rooms)])),
+          "5kk+": DAMAGE_COVER_MAX,
+        },
+      },
     },
   }),
 });

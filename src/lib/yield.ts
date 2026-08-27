@@ -60,6 +60,17 @@ export const ENERGY: Record<SizeKey, number> = {
 
 export const ROOMS: Record<SizeKey, number> = { "1kk": 1, "2kk": 2, "3kk": 3, "4kk": 4 };
 
+/**
+ * Krytí menších škod způsobených hostem, roční limit na byt: 5 000 Kč za pokoj,
+ * nejvýše 25 000 Kč. Platí na to, co se nepodaří získat po hostovi ani přes
+ * platformu. Jediné místo, kde tohle pravidlo žije: kalkulačka, kopie i MCP
+ * z něj vycházejí, aby se čísla nikdy nerozešla.
+ */
+export const DAMAGE_COVER_PER_ROOM = 5000;
+export const DAMAGE_COVER_MAX = 25000;
+export const annualDamageCover = (rooms: number) =>
+  Math.min(Math.max(0, Math.round(rooms)) * DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX);
+
 export const MGMT_FEE = 0.30;      // odměna Antam Homes z čistého výnosu
 // Změřeno 27. 8. 2026 na 7 bytech (Hospitable, 12 měsíců): skutečná provize je
 // 17,3 až 20,6 % z ceny pokoje, podle listingu, ne podle platformy. Airbnb 15,4–20,7 %,

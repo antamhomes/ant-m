@@ -14,7 +14,10 @@
 import { readFileSync } from "node:fs";
 import { describe, it, expect } from "vitest";
 import translations from "@/i18n/translations";
-import { DISTRICTS, BASE_ADR, LTR, ENERGY, MGMT_FEE, PLATFORM_FEE, LAUNCH_FEE, ownerMonthly } from "@/lib/yield";
+import {
+  DISTRICTS, BASE_ADR, LTR, ENERGY, MGMT_FEE, PLATFORM_FEE, LAUNCH_FEE, ROOMS,
+  DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, annualDamageCover, ownerMonthly,
+} from "@/lib/yield";
 
 const cs = translations.cs as Record<string, string>;
 const vi = translations.vi as Record<string, string>;
@@ -222,15 +225,52 @@ describe("krytí drobných škod od hostů", () => {
     expect(vi.pr7_price).toBe(vi.pr6_price);
   });
 
-  it("neslibuje univerzální limit: stanovuje se pro konkrétní byt", () => {
-    // Žádný vzorec pro limit zatím neexistuje. Dokud nebude, nesmí se na webu
-    // objevit číslo, které bychom pak museli u konkrétního bytu brát zpátky.
-    for (const key of ["g_pair2_text", "pr7_note", "calc_cover_note"] as const) {
-      expect(strip(cs[key]), `cs.${key}`).not.toMatch(/\d{2}\s?000/);
-      expect(strip(vi[key]), `vi.${key}`).not.toMatch(/\d{2}\s?000/);
+  it("limit je 5 000 Kč na pokoj ročně, nejvýše 25 000 Kč", () => {
+    expect(DAMAGE_COVER_PER_ROOM).toBe(5000);
+    expect(DAMAGE_COVER_MAX).toBe(25000);
+    expect(annualDamageCover(1)).toBe(5000);
+    expect(annualDamageCover(2)).toBe(10000);
+    expect(annualDamageCover(3)).toBe(15000);
+    expect(annualDamageCover(4)).toBe(20000);
+    expect(annualDamageCover(5)).toBe(25000);
+    expect(annualDamageCover(6)).toBe(25000);
+    expect(annualDamageCover(12)).toBe(25000);
+    expect(annualDamageCover(0)).toBe(0);
+  });
+
+  it("dispozice v kalkulačce se mapují na počet pokojů", () => {
+    // Kalkulačka bere počet pokojů z ROOMS, žádný další vstup nepřibyl.
+    expect(ROOMS).toEqual({ "1kk": 1, "2kk": 2, "3kk": 3, "4kk": 4 });
+    expect(annualDamageCover(ROOMS["2kk"])).toBe(10000);
+    expect(annualDamageCover(ROOMS["4kk"])).toBe(20000);
+  });
+
+  it("strop 25 000 Kč je v kopii i ve vietnamštině", () => {
+    const max = `${DAMAGE_COVER_MAX / 1000} 000 Kč`;
+    for (const key of ["g_pair2_text", "pr7_note"] as const) {
+      expect(strip(cs[key]), `cs.${key}`).toContain(max);
+      expect(strip(vi[key]), `vi.${key}`).toContain(max);
     }
-    expect(strip(cs.pr7_note)).toMatch(/pro váš byt|podle bytu/);
-    expect(strip(cs.calc_cover_note)).toMatch(/pro váš byt/);
+  });
+
+  it("žebříček ve FAQ sedí s pravidlem pro každou dispozici", () => {
+    for (const size of ["1kk", "2kk", "3kk", "4kk"] as const) {
+      const amount = `${annualDamageCover(ROOMS[size]) / 1000} 000 Kč`;
+      expect(strip(cs.faq11_a), `cs ${size}`).toContain(amount);
+      expect(strip(vi.faq11_a), `vi ${size}`).toContain(amount);
+    }
+    expect(strip(cs.faq11_a)).toContain(`${DAMAGE_COVER_MAX / 1000} 000 Kč`);
+    expect(strip(vi.faq11_a)).toContain(`${DAMAGE_COVER_MAX / 1000} 000 Kč`);
+  });
+
+  it("částku počítá jedno místo: lib/yield, ne komponenta ani MCP", () => {
+    const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
+    expect(calc).toContain("annualDamageCover(ROOMS[size])");
+    expect(calc).not.toContain("25000");
+    expect(calc).not.toContain("5000");
+    const mcp = readFileSync("src/lib/mcp/tools/get-services.ts", "utf8");
+    expect(mcp).toContain("DAMAGE_COVER_MAX");
+    expect(mcp).not.toContain("25000");
   });
 
   it("pořadí je host, platforma, teprve pak Antam", () => {

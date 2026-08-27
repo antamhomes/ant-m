@@ -159,6 +159,14 @@ var list_portfolio_default = defineTool2({
 
 // src/lib/mcp/tools/get-services.ts
 import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.26.2";
+
+// src/lib/yield.ts
+var ROOMS = { "1kk": 1, "2kk": 2, "3kk": 3, "4kk": 4 };
+var DAMAGE_COVER_PER_ROOM = 5e3;
+var DAMAGE_COVER_MAX = 25e3;
+var annualDamageCover = (rooms) => Math.min(Math.max(0, Math.round(rooms)) * DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX);
+
+// src/lib/mcp/tools/get-services.ts
 var services = [
   { title: "P\u0159\xEDprava bytu a interi\xE9r", description: "Porad\xEDme, co host\xE9 v dan\xE9 lokalit\u011B hledaj\xED: uspo\u0159\xE1d\xE1n\xED, vybaven\xED, drobnosti, kter\xE9 rozhoduj\xED o hodnocen\xED. Bez zbyte\u010Dn\xFDch investic." },
   { title: "Fotky a prezentace", description: "Profesion\xE1ln\xED fotky, popis a nastaven\xED nab\xEDdky tak, aby byt vynikl mezi stovkami dal\u0161\xEDch." },
@@ -179,7 +187,7 @@ var faq = [
   { question: "Jak dlouho spolupr\xE1ce trv\xE1 a jak ji ukon\u010D\xEDm?", answer: "Smlouva se uzav\xEDr\xE1 na 12 m\u011Bs\xEDc\u016F. Po nich pokra\u010Duje na dobu neur\u010Ditou a lze ji kdykoli ukon\u010Dit s v\xFDpov\u011Bdn\xED lh\u016Ftou 4 m\u011Bs\xEDce. Potvrzen\xE9 rezervace se b\u011Bhem v\xFDpov\u011Bdn\xED lh\u016Fty v\u017Edy dokon\u010D\xED." },
   { question: "Je \u010D\xE1stka v kalkula\u010Dce p\u0159ed, nebo po provizi?", answer: "Po. V\u0161e ozna\u010Den\xE9 jako v\xFDnos pro majitele je u\u017E po ode\u010Dten\xED provize platformy i odm\u011Bny 30 %. Odm\u011Bna je kone\u010Dn\xE1; energie hrad\xED majitel zvl\xE1\u0161\u0165." },
   { question: "Jak\xE9 povinnosti kr\xE1tkodob\xFD pron\xE1jem p\u0159in\xE1\u0161\xED a kdo je \u0159e\u0161\xED?", answer: "Evidence host\u016F, hl\xE1\u0161en\xED zahrani\u010Dn\xEDch host\u016F cizineck\xE9 policii, m\xEDstn\xED poplatek z pobytu a registrace v e-Turista, provozn\xED povinnosti kolem host\u016F \u0159e\u0161\xED Antam Homes. Zdan\u011Bn\xED p\u0159\xEDjmu z pron\xE1jmu z\u016Fst\xE1v\xE1 na majiteli; podklady dostane." },
-  { question: "Co kdy\u017E host n\u011Bco poni\u010D\xED?", answer: "Byt se kontroluje po ka\u017Ed\xE9m pobytu. \u0160koda se zdokumentuje a nejd\u0159\xEDv vym\xE1h\xE1 po hostovi a p\u0159es platformu (Airbnb AirCover, \u0159e\u0161en\xED \u0161kod Booking.com). Co se tam nepoda\u0159\xED z\xEDskat, hrad\xED Antam Homes do ro\u010Dn\xEDho limitu sjednan\xE9ho pro konkr\xE9tn\xED byt; limit se stanovuje p\u0159ed podpisem. Majitel se dozv\xED hned, v\u010Detn\u011B fotek. Kryt\xED se t\xFDk\xE1 \u0161kod zp\u016Fsoben\xFDch hostem; opot\u0159eben\xED, poruchy z v\u011Bku a z\xE1vady v dom\u011B jsou opravy a \xFAdr\u017Eba a z\u016Fst\xE1vaj\xED na majiteli (drobn\xE9 do 5 000 K\u010D se \u0159e\u0161\xED hned a strh\xE1vaj\xED z v\xFDnosu, nejv\xFD\u0161e 20 000 K\u010D za rok, v\u011Bt\u0161\xED po jeho souhlasu)." },
+  { question: "Co kdy\u017E host n\u011Bco poni\u010D\xED?", answer: "Byt se kontroluje po ka\u017Ed\xE9m pobytu. \u0160koda se zdokumentuje a nejd\u0159\xEDv vym\xE1h\xE1 po hostovi a p\u0159es platformu (Airbnb AirCover, \u0159e\u0161en\xED \u0161kod Booking.com). Co se tam nepoda\u0159\xED z\xEDskat, hrad\xED Antam Homes do ro\u010Dn\xEDho limitu podle velikosti bytu: 5 000 K\u010D u 1+kk, 10 000 K\u010D u 2+kk, 15 000 K\u010D u 3+kk, 20 000 K\u010D u 4+kk a 25 000 K\u010D u v\u011Bt\u0161\xEDch. Majitel se dozv\xED hned, v\u010Detn\u011B fotek. Kryt\xED se t\xFDk\xE1 \u0161kod zp\u016Fsoben\xFDch hostem; opot\u0159eben\xED, poruchy z v\u011Bku a z\xE1vady v dom\u011B jsou opravy a \xFAdr\u017Eba a z\u016Fst\xE1vaj\xED na majiteli (drobn\xE9 do 5 000 K\u010D se \u0159e\u0161\xED hned a strh\xE1vaj\xED z v\xFDnosu, nejv\xFD\u0161e 20 000 K\u010D za rok, v\u011Bt\u0161\xED po jeho souhlasu)." },
   { question: "Co na to soused\xE9 a SVJ?", answer: "Host\xE9 dost\xE1vaj\xED pravidla domu p\u0159edem, byt m\xE1 danou kapacitu (\u017E\xE1dn\xE9 party) a soused\xE9 maj\xED kontakt. Pokud stanovy SVJ kr\xE1tkodob\xE9 ubytov\xE1n\xED v\xFDslovn\u011B zakazuj\xED, Antam Homes to majiteli \u0159ekne p\u0159ed podpisem." },
   { question: "Pro\u010D to ned\u011Blat s\xE1m p\u0159es Airbnb?", answer: "M\u016F\u017Eete, n\u011Bkte\u0159\xED majitel\xE9 to zvl\xE1daj\xED. Je to ale pr\xE1ce na ka\u017Ed\xFD den: odpov\xEDdat host\u016Fm do minut, hl\xEDdat ceny podle popt\xE1vky, \u0159e\u0161it \xFAklid a kl\xED\u010De a dr\u017Eet krok s t\xEDm, co Airbnb a Booking m\u011Bn\xED (algoritmy, pravidla, poplatky, povinnosti). Antam Homes to d\u011Bl\xE1 denn\u011B pro v\xEDc byt\u016F najednou." },
   { question: "Pracujete i s jin\xFDmi platformami nebo firmami?", answer: "Byty se inzeruj\xED tam, kde je v Praze re\xE1ln\xE1 popt\xE1vka: p\u0159edev\u0161\xEDm Airbnb a Booking.com, kter\xE9 Antam Homes zn\xE1 do detailu (algoritmy, pravidla, zm\u011Bny). Dal\u0161\xED platformy se p\u0159id\xE1vaj\xED jen tam, kde bytu p\u0159inesou rezervace nav\xEDc. Provoz nejde p\u0159es prost\u0159edn\xEDky: hosty, ceny, \xFAklid i kontrolu bytu \u0159e\u0161\xED vlastn\xED t\xFDm, extern\xED jsou jen \u0159emesln\xEDci." },
@@ -215,7 +223,15 @@ A: ${f.answer}`)
         thenIndefinite: true,
         noticePeriodMonths: 4
       },
-      guestDamageCover: "Guest-caused damage is first claimed from the guest and through the platform. What is not recovered there is covered by Antam Homes up to a yearly limit agreed for that specific apartment before signing. Wear and tear, age-related failures and building faults are repairs and stay with the owner."
+      guestDamageCover: {
+        description: "Qualifying smaller guest-caused damage is first claimed from the guest and through the platform. What is not recovered there is covered by Antam Homes up to a yearly per-apartment limit. Wear and tear, age-related failures and building faults are repairs and stay with the owner.",
+        yearlyLimitPerRoomCzk: DAMAGE_COVER_PER_ROOM,
+        yearlyLimitMaxCzk: DAMAGE_COVER_MAX,
+        yearlyLimitByLayoutCzk: {
+          ...Object.fromEntries(Object.entries(ROOMS).map(([k, rooms]) => [k, annualDamageCover(rooms)])),
+          "5kk+": DAMAGE_COVER_MAX
+        }
+      }
     }
   })
 });

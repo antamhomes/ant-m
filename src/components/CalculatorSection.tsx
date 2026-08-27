@@ -6,6 +6,7 @@ import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
 import {
   DISTRICTS, BASE_ADR, LTR as LTR_TABLE, MGMT_FEE, PLATFORM_FEE, CLEANING_SHARE, DAYS,
+  ROOMS, annualDamageCover,
   clampOccupancy, type LocationKey as LK, type SizeKey as SK,
 } from "@/lib/yield";
 
@@ -400,6 +401,23 @@ const CalculatorSection = () => {
                 )}
               </div>
 
+              {/* Krytí menších škod: počítá se z téže dispozice jako odhad, takže
+                  kalkulačka nepotřebuje další vstup. Pravidlo žije v lib/yield. */}
+              <div className="border-t border-primary-foreground/10 pt-4">
+                <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
+                  {t(lang, "calc_cover_label")}
+                </p>
+                <p className="font-display text-lg font-semibold text-primary-foreground/85 tnum">
+                  {annualDamageCover(ROOMS[size]).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
+                  <span className="font-body text-[13px] font-normal text-primary-foreground/60">
+                    {t(lang, "calc_cover_suffix")}
+                  </span>
+                </p>
+                <p className="mt-1 font-body text-[12px] text-primary-foreground/60 leading-relaxed">
+                  {t(lang, "calc_cover_note")}
+                </p>
+              </div>
+
               <p className="font-body text-[12px] text-primary-foreground/60 leading-relaxed border-t border-primary-foreground/10 pt-4">
                 {t(lang, "calc_excluded_note")}
               </p>
@@ -411,11 +429,6 @@ const CalculatorSection = () => {
                   signs is a different product, computed per flat within 24 hours. */}
               <p className="font-body text-[13px] text-primary-foreground/75 leading-relaxed border-t border-primary-foreground/10 pt-4">
                 {t(lang, "calc_bridge")}
-              </p>
-              {/* The apartment-specific coverage limit has no formula yet, so the
-                  result names the promise and says where the number comes from. */}
-              <p className="font-body text-[13px] text-primary-foreground/75 leading-relaxed">
-                {t(lang, "calc_cover_note")}
               </p>
 
               <div className="space-y-3">
