@@ -11,6 +11,7 @@
  * src/lib/yield.ts, src/lib/mcp/tools/*, VOP (make_legal.py), smlouva, prezentace
  * a portál. Teprve potom se přepíše hodnota tady.
  */
+import { readFileSync } from "node:fs";
 import { describe, it, expect } from "vitest";
 import translations from "@/i18n/translations";
 import { DISTRICTS, BASE_ADR, LTR, ENERGY, MGMT_FEE, PLATFORM_FEE, LAUNCH_FEE, ownerMonthly } from "@/lib/yield";
@@ -190,6 +191,80 @@ describe("model výnosu", () => {
         expect(ENERGY[size]).toBeGreaterThan(0);
       }
     }
+  });
+});
+
+describe("délka smlouvy a výpověď", () => {
+  it("12 měsíců závazku, pak doba neurčitá, výpověď 4 měsíce", () => {
+    expect(strip(cs.faq7_a)).toMatch(/12 měsíců/);
+    expect(strip(cs.faq7_a)).toMatch(/dobu neurčitou/);
+    expect(strip(cs.faq7_a)).toMatch(/4 měsíce/);
+    expect(strip(vi.faq7_a)).toMatch(/12 tháng/);
+    expect(strip(vi.faq7_a)).toMatch(/4 tháng/);
+  });
+
+  it("nikde nezůstala stará šestiměsíční lhůta", () => {
+    expect(strip(cs.faq7_a)).not.toMatch(/6 měsíc/);
+    expect(strip(vi.faq7_a)).not.toMatch(/6 tháng/);
+  });
+
+  it("neprodává otevřený kalendář jako délku smlouvy", () => {
+    // Kalendář otevíráme zhruba 8 měsíců dopředu. Je to provozní politika,
+    // ne délka závazku, a na webu se tím výpovědní lhůta nezdůvodňuje.
+    expect(strip(cs.faq7_a)).not.toMatch(/kalendář/i);
+    expect(strip(vi.faq7_a)).not.toMatch(/lịch nhà/i);
+  });
+});
+
+describe("krytí drobných škod od hostů", () => {
+  it("je v odměně, stejně jako garance", () => {
+    expect(cs.pr7_price).toBe(cs.pr6_price);
+    expect(vi.pr7_price).toBe(vi.pr6_price);
+  });
+
+  it("neslibuje univerzální limit: stanovuje se pro konkrétní byt", () => {
+    // Žádný vzorec pro limit zatím neexistuje. Dokud nebude, nesmí se na webu
+    // objevit číslo, které bychom pak museli u konkrétního bytu brát zpátky.
+    for (const key of ["g_pair2_text", "pr7_note", "calc_cover_note"] as const) {
+      expect(strip(cs[key]), `cs.${key}`).not.toMatch(/\d{2}\s?000/);
+      expect(strip(vi[key]), `vi.${key}`).not.toMatch(/\d{2}\s?000/);
+    }
+    expect(strip(cs.pr7_note)).toMatch(/pro váš byt|podle bytu/);
+    expect(strip(cs.calc_cover_note)).toMatch(/pro váš byt/);
+  });
+
+  it("pořadí je host, platforma, teprve pak Antam", () => {
+    expect(strip(cs.faq11_a)).toMatch(/AirCover/);
+    expect(strip(cs.faq11_a)).toMatch(/nepodaří získat/);
+    expect(strip(vi.faq11_a)).toMatch(/AirCover/);
+    expect(strip(vi.faq11_a)).toMatch(/không đòi được/);
+  });
+
+  it("nemíchá škody od hostů s opotřebením a opravami", () => {
+    expect(strip(cs.faq11_a)).toMatch(/[Oo]potřebení/);
+    expect(strip(cs.faq11_a)).toMatch(/20 000 Kč za rok/);
+    expect(strip(vi.faq11_a)).toMatch(/20 000 Kč/);
+  });
+
+  it("není to pojištění a nikde se tak nejmenuje", () => {
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(value, `${lang}.${key}`).not.toMatch(/pojiš|bảo hiểm/i);
+      }
+    }
+  });
+});
+
+describe("dělící pruh v ceníku", () => {
+  it("kreslí 70/30, ne staré 75/25", () => {
+    // Pruh byl v ceníku natvrdo 75/25, zatímco popisky vedle něj říkaly 70/30.
+    // Číslo v kopii hlídají testy výše; tenhle hlídá ten obrázek.
+    const src = readFileSync("src/components/PricingSection.tsx", "utf8");
+    expect(src).toContain("w-[70%]");
+    expect(src).toContain("w-[30%]");
+    expect(src).not.toContain("w-[75%]");
+    expect(src).not.toContain("w-[25%]");
   });
 });
 

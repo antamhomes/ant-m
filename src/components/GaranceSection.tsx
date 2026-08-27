@@ -8,8 +8,9 @@ import { trackEvent } from "@/lib/analytics";
  * Garance výnosu — the section the funnel pivots on. It answers the question
  * the calculator just created ("nice estimate, what if it doesn't happen?"):
  * three numbers (rent → written minimum → expected), three steps, one honest
- * reason why Antam can afford it. Mechanics stay in the contract; this is the
- * concept, not the addendum.
+ * reason why Antam can afford it, and the second protection that completes the
+ * offer: ordinary guest-caused damage. Mechanics stay in the contract; this is
+ * the concept, not the addendum.
  */
 const NUMS = [
   { label: "g_num1_label", value: "g_num1_value" },
@@ -21,6 +22,12 @@ const STEPS = [
   { title: "g_step1_title", desc: "g_step1" },
   { title: "g_step2_title", desc: "g_step2" },
   { title: "g_step3_title", desc: "g_step3" },
+] as const;
+
+/** Two protections, said once, side by side: the income floor and the flat itself. */
+const PAIR = [
+  { label: "g_pair1_label", text: "g_pair1_text" },
+  { label: "g_pair2_label", text: "g_pair2_text" },
 ] as const;
 
 const GaranceSection = () => {
@@ -96,6 +103,25 @@ const GaranceSection = () => {
           <p className="font-body text-[15px] text-foreground/85 leading-relaxed text-pretty border-l-2 border-gold/60 pl-4">
             {t(lang, "g_why")}
           </p>
+        </Reveal>
+
+        {/* The second protection. It sits inside this section on purpose: the owner
+            should read one offer, not two. Scope and exclusions live in the FAQ
+            and in the contract, never here. */}
+        <Reveal delay={0.12} className="mt-10 md:mt-12 max-w-3xl mx-auto">
+          <p className="font-display text-lg md:text-xl text-foreground text-center text-pretty mb-5 md:mb-6">
+            {t(lang, "g_pair_title")}
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
+            {PAIR.map(({ label, text }) => (
+              <div key={label} className="rounded-md border border-border bg-card px-5 py-5">
+                <p className="eyebrow mb-2">{t(lang, label)}</p>
+                <p className="font-body text-[14.5px] text-muted-foreground leading-relaxed text-pretty">
+                  {t(lang, text)}
+                </p>
+              </div>
+            ))}
+          </div>
         </Reveal>
 
         <Reveal delay={0.1} className="mt-8 text-center">

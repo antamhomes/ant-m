@@ -3,10 +3,10 @@
 // supabase function: mcp
 // Bundled from src/lib/mcp/index.ts by @lovable.dev/mcp-js.
 // src/lib/mcp/index.ts
-import { defineMcp } from "npm:@lovable.dev/mcp-js@0.26.3";
+import { defineMcp } from "npm:@lovable.dev/mcp-js@0.26.2";
 
 // src/lib/mcp/tools/estimate-yield.ts
-import { defineTool, ToolError } from "npm:@lovable.dev/mcp-js@0.26.3";
+import { defineTool, ToolError } from "npm:@lovable.dev/mcp-js@0.26.2";
 import { z } from "npm:zod";
 var locations = {
   praha1: { label: "Praha 1", multiplier: 1.35, occupancy: 0.85 },
@@ -117,7 +117,7 @@ var estimate_yield_default = defineTool({
 });
 
 // src/lib/mcp/tools/list-portfolio.ts
-import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.26.3";
+import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var apartments = [
   { name: "Secret garden loft", location: "Praha 4", maxGuests: 13, managedSince: "2026-07", note: "new, results after the first season" },
   { name: "Elegant Museum View Apartment (402)", location: "Praha 1", maxGuests: 8, ownerMonthlyCzk: 61e3, occupancyPct: 96, period: "12 months to 2026-07", vsLongTermRent: 2.2 },
@@ -158,7 +158,7 @@ var list_portfolio_default = defineTool2({
 });
 
 // src/lib/mcp/tools/get-services.ts
-import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.26.3";
+import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var services = [
   { title: "P\u0159\xEDprava bytu a interi\xE9r", description: "Porad\xEDme, co host\xE9 v dan\xE9 lokalit\u011B hledaj\xED: uspo\u0159\xE1d\xE1n\xED, vybaven\xED, drobnosti, kter\xE9 rozhoduj\xED o hodnocen\xED. Bez zbyte\u010Dn\xFDch investic." },
   { title: "Fotky a prezentace", description: "Profesion\xE1ln\xED fotky, popis a nastaven\xED nab\xEDdky tak, aby byt vynikl mezi stovkami dal\u0161\xEDch." },
@@ -171,15 +171,15 @@ var faq = [
   { question: "Mus\xED b\xFDt byt u\u017E p\u0159ipraven\xFD?", answer: "Ne. Um\xEDme se pod\xEDvat i na byt p\u0159ed spu\u0161t\u011Bn\xEDm a \u0159\xEDct, co d\xE1v\xE1 smysl p\u0159ipravit." },
   { question: "Kolik je pot\u0159eba investovat do p\u0159\xEDpravy nemovitosti?", answer: "Z\xE1le\u017E\xED na stavu a vybaven\xED bytu. Uveden\xED do provozu stoj\xED 25 000 K\u010D: p\u0159\xEDprava bytu a nab\xEDdek, focen\xED, nastaven\xED cen a spu\u0161t\u011Bn\xED prodeje. Vybaven\xED se kupuje za po\u0159izovac\xED ceny s doklady, bez p\u0159ir\xE1\u017Eky; u projekt\u016F nad 30 000 K\u010D \xFA\u010Dtuje Antam Homes 20 % z rozpo\u010Dtu za \u0159\xEDzen\xED. U \xFApln\u011B pr\xE1zdn\xE9ho bytu po\u010D\xEDtejte orienta\u010Dn\u011B kolem 100 000 K\u010D na jeden pokoj; vybaven\xED z\u016Fst\xE1v\xE1 majitele." },
   { question: "M\u016F\u017Eu byt n\u011Bkdy vyu\u017E\xEDt pro sebe?", answer: "Byt si m\u016F\u017Eete kdykoli blokovat pro sebe nebo rodinu. U nejvyt\xED\u017Een\u011Bj\u0161\xEDch sv\xE1tk\u016F, jako jsou V\xE1noce, Silvestr a Velikonoce, se na term\xEDnu nejd\u0159\xEDv domluv\xEDme. U\u017E potvrzen\xE9 rezervace host\u016F z\u016Fst\xE1vaj\xED nedot\u010Den\xE9." },
-  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc zp\u011Btn\u011B p\u0159ehled na jednu stranu: obsazen\xE9 noci, v\xFDnos z jednotliv\xFDch platforem, DPH z provize platformy, odm\u011Bna 30 % a co se v byt\u011B \u0159e\u0161ilo, spolu s fakturou na odm\u011Bnu. Vy\xFA\u010Dtov\xE1n\xED i v\xFDplata prob\u011Bhnou do 15. dne n\xE1sleduj\xEDc\xEDho m\u011Bs\xEDce." },
+  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc zp\u011Btn\u011B p\u0159ehled na jednu stranu: obsazen\xE9 noci, v\xFDnos z jednotliv\xFDch platforem, provize platforem, odm\u011Bna 30 % a co se v byt\u011B \u0159e\u0161ilo, spolu s fakturou na odm\u011Bnu. Vy\xFA\u010Dtov\xE1n\xED i v\xFDplata prob\u011Bhnou do 15. dne n\xE1sleduj\xEDc\xEDho m\u011Bs\xEDce." },
   { question: "Kolik spr\xE1va stoj\xED?", answer: "Na\u0161e odm\u011Bna je 30 % z \u010Dist\xE9ho v\xFDnosu: z toho, co p\u0159ijde od Airbnb a Booking.com, po ode\u010Dten\xED \xFAklidov\xE9ho poplatku. Je kone\u010Dn\xE1, nic dal\u0161\xEDho se nep\u0159i\u010D\xEDt\xE1, bez fixn\xEDch ani m\u011Bs\xED\u010Dn\xEDch poplatk\u016F, a je v n\xED i garance v\xFDnosu. Pokr\xFDv\xE1 tak\xE9 DPH z provize platformy, internet, hygienick\xE9 pot\u0159eby pro hosty a \u010Distic\xED prost\u0159edky. Drobn\xE9 opravy do 5 000 K\u010D vy\u0159\xEDd\xEDme sami a n\xE1klady strhneme z v\xFDnosu, dohromady nejv\xFD\u0161e 20 000 K\u010D za rok; v\u011Bt\u0161\xED opravy nejd\u0159\xEDv nahl\xE1s\xEDme majiteli." },
   { question: "Co je Garance v\xFDnosu?", answer: "Ke ka\u017Ed\xE9mu bytu, kter\xFD Antam Homes vezme do spr\xE1vy, dostane majitel p\xEDsemn\xE9 ro\u010Dn\xED minimum: n\xE1jem, kter\xFD by byt vyd\u011Blal dlouhodob\u011B, plus energie. Kdy\u017E v\xFDnos za 12 m\u011Bs\xEDc\u016F z\u016Fstane pod minimem, rozd\xEDl se dorovn\xE1 z odm\u011Bn Antam Homes, nebo m\u016F\u017Ee majitel okam\u017Eit\u011B odej\xEDt; volba je jeho. Zp\u016Fsobilost bytu se ov\u011B\u0159uje zdarma p\u0159edem a byt, kter\xFD garanci neunese, Antam Homes do spr\xE1vy nevezme." },
   { question: "Kdo plat\xED \xFAklid a energie?", answer: "Host plat\xED vedle ceny za ubytov\xE1n\xED i \xFAklidov\xFD poplatek; ten pokr\xFDv\xE1 \xFAklid a pr\xE1dlo a z\u016Fst\xE1v\xE1 cel\xFD Antam Homes, tak\u017Ee se z v\xFDnosu majitele na \xFAklid nic nestrh\xE1v\xE1 (ve vy\xFA\u010Dtov\xE1n\xED je samostatnou polo\u017Ekou). V\xFDnos, kter\xFD se d\u011Bl\xED 70/30, je to, co p\u0159ijde od platformy, po ode\u010Dten\xED \xFAklidov\xE9ho poplatku. Energie (elekt\u0159ina, voda) hrad\xED majitel." },
-  { question: "Pro\u010D se ode\u010D\xEDt\xE1 DPH z provize platformy?", answer: "Airbnb a Booking.com si \xFA\u010Dtuj\xED provizi z cel\xE9 ceny rezervace v\u010Detn\u011B \xFAklidov\xE9ho poplatku a fakturuj\xED ji ze zahrani\u010D\xED. \u010Cesk\xE1 DPH z t\xE9to provize se podle z\xE1kona odv\xE1d\xED u n\xE1s. Nen\xED to n\xE1\u0161 p\u0159\xEDjem, odv\xE1d\xED se st\xE1tu a ve vy\xFA\u010Dtov\xE1n\xED ji vid\xEDte jako samostatnou polo\u017Eku." },
-  { question: "Jak dlouho spolupr\xE1ce trv\xE1 a jak ji ukon\u010D\xEDm?", answer: "Smlouva se uzav\xEDr\xE1 na jeden rok, pot\xE9 pokra\u010Duje a lze ji ukon\u010Dit s v\xFDpov\u011Bdn\xED lh\u016Ftou 6 m\u011Bs\xEDc\u016F. D\u016Fvod: host\xE9 rezervuj\xED \u010Dasto p\u016Fl roku i d\xE9le dop\u0159edu a kalend\xE1\u0159 je otev\u0159en\xFD stejn\u011B daleko; byt s jistotou provozu prod\xE1v\xE1 l\xEDp. Potvrzen\xE9 rezervace se b\u011Bhem v\xFDpov\u011Bdn\xED lh\u016Fty v\u017Edy dokon\u010D\xED." },
+  { question: "Kdo plat\xED DPH z provize platformy?", answer: "Antam Homes, ze sv\xE9 odm\u011Bny. Airbnb a Booking.com fakturuj\xED provizi ze zahrani\u010D\xED a \u010Desk\xE1 DPH z n\xED se odv\xE1d\xED u n\xE1s; do v\xFDnosu majitele nevstupuje a z jeho pod\xEDlu se nestrh\xE1v\xE1." },
+  { question: "Jak dlouho spolupr\xE1ce trv\xE1 a jak ji ukon\u010D\xEDm?", answer: "Smlouva se uzav\xEDr\xE1 na 12 m\u011Bs\xEDc\u016F. Po nich pokra\u010Duje na dobu neur\u010Ditou a lze ji kdykoli ukon\u010Dit s v\xFDpov\u011Bdn\xED lh\u016Ftou 4 m\u011Bs\xEDce. Potvrzen\xE9 rezervace se b\u011Bhem v\xFDpov\u011Bdn\xED lh\u016Fty v\u017Edy dokon\u010D\xED." },
   { question: "Je \u010D\xE1stka v kalkula\u010Dce p\u0159ed, nebo po provizi?", answer: "Po. V\u0161e ozna\u010Den\xE9 jako v\xFDnos pro majitele je u\u017E po ode\u010Dten\xED provize platformy i odm\u011Bny 30 %. Odm\u011Bna je kone\u010Dn\xE1; energie hrad\xED majitel zvl\xE1\u0161\u0165." },
   { question: "Jak\xE9 povinnosti kr\xE1tkodob\xFD pron\xE1jem p\u0159in\xE1\u0161\xED a kdo je \u0159e\u0161\xED?", answer: "Evidence host\u016F, hl\xE1\u0161en\xED zahrani\u010Dn\xEDch host\u016F cizineck\xE9 policii, m\xEDstn\xED poplatek z pobytu a registrace v e-Turista, provozn\xED povinnosti kolem host\u016F \u0159e\u0161\xED Antam Homes. Zdan\u011Bn\xED p\u0159\xEDjmu z pron\xE1jmu z\u016Fst\xE1v\xE1 na majiteli; podklady dostane." },
-  { question: "Co kdy\u017E host n\u011Bco poni\u010D\xED?", answer: "Byt se kontroluje po ka\u017Ed\xE9m pobytu. Drobnosti se oprav\xED hned (do 5 000 K\u010D z v\xFDnosu). V\u011Bt\u0161\xED \u0161koda se zdokumentuje a nejd\u0159\xEDv vym\xE1h\xE1 po hostovi a p\u0159es platformu (Airbnb AirCover, \u0159e\u0161en\xED \u0161kod Booking.com); na majitele se Antam Homes obrac\xED a\u017E tehdy, kdy\u017E se n\xE1hrada nepoda\u0159\xED z\xEDskat tam. Majitel se dozv\xED hned, v\u010Detn\u011B fotek." },
+  { question: "Co kdy\u017E host n\u011Bco poni\u010D\xED?", answer: "Byt se kontroluje po ka\u017Ed\xE9m pobytu. \u0160koda se zdokumentuje a nejd\u0159\xEDv vym\xE1h\xE1 po hostovi a p\u0159es platformu (Airbnb AirCover, \u0159e\u0161en\xED \u0161kod Booking.com). Co se tam nepoda\u0159\xED z\xEDskat, hrad\xED Antam Homes do ro\u010Dn\xEDho limitu sjednan\xE9ho pro konkr\xE9tn\xED byt; limit se stanovuje p\u0159ed podpisem. Majitel se dozv\xED hned, v\u010Detn\u011B fotek. Kryt\xED se t\xFDk\xE1 \u0161kod zp\u016Fsoben\xFDch hostem; opot\u0159eben\xED, poruchy z v\u011Bku a z\xE1vady v dom\u011B jsou opravy a \xFAdr\u017Eba a z\u016Fst\xE1vaj\xED na majiteli (drobn\xE9 do 5 000 K\u010D se \u0159e\u0161\xED hned a strh\xE1vaj\xED z v\xFDnosu, nejv\xFD\u0161e 20 000 K\u010D za rok, v\u011Bt\u0161\xED po jeho souhlasu)." },
   { question: "Co na to soused\xE9 a SVJ?", answer: "Host\xE9 dost\xE1vaj\xED pravidla domu p\u0159edem, byt m\xE1 danou kapacitu (\u017E\xE1dn\xE9 party) a soused\xE9 maj\xED kontakt. Pokud stanovy SVJ kr\xE1tkodob\xE9 ubytov\xE1n\xED v\xFDslovn\u011B zakazuj\xED, Antam Homes to majiteli \u0159ekne p\u0159ed podpisem." },
   { question: "Pro\u010D to ned\u011Blat s\xE1m p\u0159es Airbnb?", answer: "M\u016F\u017Eete, n\u011Bkte\u0159\xED majitel\xE9 to zvl\xE1daj\xED. Je to ale pr\xE1ce na ka\u017Ed\xFD den: odpov\xEDdat host\u016Fm do minut, hl\xEDdat ceny podle popt\xE1vky, \u0159e\u0161it \xFAklid a kl\xED\u010De a dr\u017Eet krok s t\xEDm, co Airbnb a Booking m\u011Bn\xED (algoritmy, pravidla, poplatky, povinnosti). Antam Homes to d\u011Bl\xE1 denn\u011B pro v\xEDc byt\u016F najednou." },
   { question: "Pracujete i s jin\xFDmi platformami nebo firmami?", answer: "Byty se inzeruj\xED tam, kde je v Praze re\xE1ln\xE1 popt\xE1vka: p\u0159edev\u0161\xEDm Airbnb a Booking.com, kter\xE9 Antam Homes zn\xE1 do detailu (algoritmy, pravidla, zm\u011Bny). Dal\u0161\xED platformy se p\u0159id\xE1vaj\xED jen tam, kde bytu p\u0159inesou rezervace nav\xEDc. Provoz nejde p\u0159es prost\u0159edn\xEDky: hosty, ceny, \xFAklid i kontrolu bytu \u0159e\u0161\xED vlastn\xED t\xFDm, extern\xED jsou jen \u0159emesln\xEDci." },
@@ -209,13 +209,19 @@ A: ${f.answer}`)
       services,
       faq,
       managementCommissionRate: 0.3,
-      commissionBase: "net revenue = accommodation revenue without the cleaning fee, after deducting the Airbnb/Booking.com commission and the statutory Czech VAT on that commission"
+      commissionBase: "net revenue = what the platform pays out for accommodation, without the cleaning fee, after deducting the Airbnb/Booking.com commission. The Czech VAT on that commission is paid by Antam Homes out of its own fee and is not deducted from the owner's share.",
+      ownerContract: {
+        initialTermMonths: 12,
+        thenIndefinite: true,
+        noticePeriodMonths: 4
+      },
+      guestDamageCover: "Guest-caused damage is first claimed from the guest and through the platform. What is not recovered there is covered by Antam Homes up to a yearly limit agreed for that specific apartment before signing. Wear and tear, age-related failures and building faults are repairs and stay with the owner."
     }
   })
 });
 
 // src/lib/mcp/tools/get-contact.ts
-import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.26.3";
+import { defineTool as defineTool4 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var get_contact_default = defineTool4({
   name: "get_contact_info",
   title: "Get contact information",
@@ -263,5 +269,5 @@ var mcp_default = defineMcp({
 });
 
 // lovable-mcp-supabase-entry.ts
-import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.26.3/stacks/supabase";
+import { createSupabaseHandler } from "npm:@lovable.dev/mcp-js@0.26.2/stacks/supabase";
 Deno.serve(createSupabaseHandler(mcp_default, { functionName: "mcp" }));

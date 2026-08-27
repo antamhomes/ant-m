@@ -412,6 +412,11 @@ const CalculatorSection = () => {
               <p className="font-body text-[13px] text-primary-foreground/75 leading-relaxed border-t border-primary-foreground/10 pt-4">
                 {t(lang, "calc_bridge")}
               </p>
+              {/* The apartment-specific coverage limit has no formula yet, so the
+                  result names the promise and says where the number comes from. */}
+              <p className="font-body text-[13px] text-primary-foreground/75 leading-relaxed">
+                {t(lang, "calc_cover_note")}
+              </p>
 
               <div className="space-y-3">
                 <a
