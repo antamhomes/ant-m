@@ -114,7 +114,7 @@ describe("garance výnosu", () => {
   it("je na webu popsaná v obou jazycích", () => {
     expect(cs.g_desc).toBeTruthy();
     expect(vi.g_desc).toBeTruthy();
-    expect(strip(cs.g_desc)).toMatch(/nájem/);
+    expect(strip(cs.g_desc)).toMatch(/nájem|nájmu/);
     expect(strip(cs.g_desc)).toMatch(/energie/);
     expect(strip(cs.faq18_a)).toMatch(/nájem/);
     expect(strip(cs.faq18_a)).toMatch(/energie/);
@@ -123,7 +123,7 @@ describe("garance výnosu", () => {
   it("hero teaser sedí s kartami portfolia (53/61 tis., Praha 1)", () => {
     expect(strip(cs.hero_extra)).toMatch(/53 000/);
     expect(strip(cs.hero_extra)).toMatch(/61 000/);
-    expect(strip(cs.hero_extra)).toMatch(/Praha 1/);
+    expect(strip(cs.hero_extra)).toMatch(/Praha 1|Praze 1/);
     expect(strip(vi.hero_extra)).toMatch(/53 000/);
     expect(strip(vi.hero_extra)).toMatch(/61 000/);
   });
@@ -137,12 +137,15 @@ describe("garance výnosu", () => {
     expect(strip(cs.g_num3_value)).toMatch(/50 000/);
   });
 
-  it("jedna pojmenovaná nabídka: hero, kalkulačka i garance vedou na stejný propočet", () => {
-    expect(cs.hero_cta).toBe(cs.calc_cta);
-    expect(cs.hero_cta).toBe(cs.g_cta);
+  it("jedna pojmenovaná nabídka: kalkulačka i garance vedou na stejný propočet", () => {
+    // Hero smí mít delší variantu („Spočítat výnos mého bytu"), zbytek webu drží
+    // jednu krátkou formulaci propočtu.
+    expect(cs.calc_cta).toBe(cs.g_cta);
+    expect(cs.hero_cta).toMatch(/[Ss]počítat/);
     expect(vi.hero_cta).toBe(vi.calc_cta);
     expect(vi.hero_cta).toBe(vi.g_cta);
   });
+
 
   it("nikde neslibuje garanci z kalkulačky", () => {
     // Kalkulačka je odhad. Garance vzniká až písemným ujednáním pro konkrétní byt.
