@@ -137,12 +137,15 @@ describe("garance výnosu", () => {
     expect(strip(cs.g_num3_value)).toMatch(/50 000/);
   });
 
-  it("jedna pojmenovaná nabídka: hero, kalkulačka i garance vedou na stejný propočet", () => {
-    expect(cs.hero_cta).toBe(cs.calc_cta);
-    expect(cs.hero_cta).toBe(cs.g_cta);
+  it("jedna pojmenovaná nabídka: kalkulačka i garance vedou na stejný propočet", () => {
+    // Hero smí mít delší variantu („Spočítat výnos mého bytu"), zbytek webu drží
+    // jednu krátkou formulaci propočtu.
+    expect(cs.calc_cta).toBe(cs.g_cta);
+    expect(cs.hero_cta).toMatch(/[Ss]počítat/);
     expect(vi.hero_cta).toBe(vi.calc_cta);
     expect(vi.hero_cta).toBe(vi.g_cta);
   });
+
 
   it("nikde neslibuje garanci z kalkulačky", () => {
     // Kalkulačka je odhad. Garance vzniká až písemným ujednáním pro konkrétní byt.
