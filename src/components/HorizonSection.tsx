@@ -105,7 +105,7 @@ const HorizonSection = () => {
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "hz_label")}</p>
           <h2 className="h-section-sm text-foreground">{t(lang, "hz_title")}</h2>
-          <p className="lead">{t(lang, "hz_desc")}</p>
+          {t(lang, "hz_desc") && <p className="lead">{t(lang, "hz_desc")}</p>}
         </Reveal>
 
         <Reveal delay={0.05} className="flex flex-wrap gap-2 justify-center mb-5">

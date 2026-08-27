@@ -24,7 +24,7 @@ const translations = {
     // Services — Co za vás řešíme (bento)
     services_label: "Správa od A do Z",
     services_title: "Co za vás řešíme",
-    services_desc: "Ceny, rezervace, hosty, úklid i běžný provoz řešíme za vás.",
+    services_desc: "Úspěšný byt dnes nestačí jen vystavit na Airbnb nebo Booking. Rozhoduje cena, prezentace, hodnocení, obsazenost a každodenní práce s nabídkou.",
     svc1_title: "Příprava bytu",
     svc1_desc: "Navrhneme potřebné úpravy a vybavení před spuštěním.",
     svc2_title: "Fotky a prezentace",
@@ -75,9 +75,9 @@ const translations = {
     process_cta: "Spočítat můj byt",
 
     // About — Kdo za tím stojí (REVIEW: nahradit vlastními slovy + fotkou)
-    about_label: "Antam Homes",
+    about_label: "Kdo za tím stojí",
     about_title: "Začali jsme na vlastních a rodinných bytech.",
-    about_p1: "První zkušenosti s krátkodobým pronájmem jsme sbírali na vlastních bytech a na bytech naší rodiny. Další apartmány jsme postupně přebírali od známých a na doporučení.",
+    about_p1: "První zkušenosti s krátkodobým pronájmem jsme získali na vlastních bytech a bytech naší rodiny. Postupně jsme začali přebírat další apartmány od známých a majitelů na doporučení.",
     about_p2: "Není to náhoda. Úspěšný byt dnes nestačí jen vystavit na Airbnb nebo Booking. Rozhoduje správné nastavení ceny, prezentace, fotografie, hodnocení, rychlost komunikace, práce s obsazeností i desítky malých rozhodnutí během celého roku.",
     about_p3: "Právě v tom je naše výhoda. Trh se neustále mění a my s ním. Víme, co funguje, sledujeme výsledky každý den a průběžně upravujeme způsob, jakým je každý byt nabízen a řízen, abychom si udrželi náskok před ostatními nabídkami.",
     about_p4: "Dnes se staráme o 11 apartmánů v Praze a okolí a máme přes 520 hodnocení hostů na Airbnb a Booking.com.",
@@ -86,7 +86,7 @@ const translations = {
     about_stat1_label: "bytů ve správě · 8/2026",
     about_stat2_value: "520+",
     about_stat2_label: "hodnocení od hostů",
-    about_quote: "",
+    about_quote: "Každý byt bereme jako samostatný byznys. Sledujeme jeho ceny, obsazenost a výsledky a podle nich průběžně upravujeme, jak ho vedeme.",
 
     // Garance výnosu
     g_label: "Garance",
@@ -174,9 +174,9 @@ const translations = {
     // Owner report
     report_label: "Přehled",
     report_title: "Měsíční přehled",
-    report_desc: "Vidíte tržby, rezervace, náklady a částku pro vás. Peníze posíláme do 15. dne následujícího měsíce.",
+    report_desc: "Majitel má vědět, co se v bytě děje.",
     report_multi: "Máte bytů víc? Každý má vlastní vyúčtování.",
-    report_text: "",
+    report_text: "Vidíte tržby, rezervace, náklady a částku pro vás. Peníze posíláme do 15. dne následujícího měsíce.",
     report_row_reservations: "Rezervace",
     report_row_occupancy: "Obsazenost",
     report_row_revenue: "Tržby za ubytování",
@@ -262,7 +262,7 @@ const translations = {
     // Horizont — dlouhodobě vs krátkodobě
     hz_label: "Za pět let",
     hz_title: "Krátkodobý vs. dlouhodobý pronájem",
-    hz_desc: "Krátkodobý pronájem začíná v mínusu, byt je potřeba připravit.",
+    hz_desc: "",
     hz_legend_str: "Krátkodobě s\u00a0Antam Homes",
     hz_legend_ltr: "Dlouhodobý nájem",
     hz_furn_airbnb: "už vybavený pro hosty",
@@ -358,7 +358,7 @@ const translations = {
 
     // Fit — pro koho ano / ne
     fit_label: "Posouzení bytu",
-    fit_title: "Pošlete nám svůj byt",
+    fit_title: "Podíváme se na váš byt",
     fit_yes_title: "Co posoudíme",
     fit_yes1: "Lokalitu a poptávku",
     fit_yes2: "Dispozici a kapacitu",
