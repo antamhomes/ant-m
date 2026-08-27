@@ -114,16 +114,22 @@ describe("garance výnosu", () => {
   it("je na webu popsaná v obou jazycích", () => {
     expect(cs.g_desc).toBeTruthy();
     expect(vi.g_desc).toBeTruthy();
-    expect(strip(cs.g_desc)).toMatch(/nájem|nájmu/);
+    expect(strip(cs.g_desc)).toMatch(/nájem/);
     expect(strip(cs.g_desc)).toMatch(/energie/);
     expect(strip(cs.faq18_a)).toMatch(/nájem/);
     expect(strip(cs.faq18_a)).toMatch(/energie/);
   });
 
-  it("hero teaser sedí s kartami portfolia (53/61 tis., Praha 1)", () => {
-    expect(strip(cs.hero_extra)).toMatch(/53 000/);
-    expect(strip(cs.hero_extra)).toMatch(/61 000/);
-    expect(strip(cs.hero_extra)).toMatch(/Praha 1|Praze 1/);
+  it("české hero neukazuje čísla bez kontextu", () => {
+    // Copy pass 28. 8. 2026: proof patří do Portfolia, kde je u čísla konkrétní
+    // byt, lokalita a násobek nájmu. V heru zůstala headline, jedna věta a jedno
+    // tlačítko. Kdyby se do hera vrátilo číslo, patří k němu i ten kontext.
+    expect(strip(cs.hero_extra)).toBe("");
+    expect(strip(cs.hero_desc)).not.toMatch(/\d{2} \d{3}/);
+    expect(strip(cs.hero_desc).split(" ").length).toBeLessThanOrEqual(18);
+  });
+
+  it("vietnamské hero teaser drží a sedí s kartami portfolia (53/61 tis.)", () => {
     expect(strip(vi.hero_extra)).toMatch(/53 000/);
     expect(strip(vi.hero_extra)).toMatch(/61 000/);
   });
@@ -137,15 +143,21 @@ describe("garance výnosu", () => {
     expect(strip(cs.g_num3_value)).toMatch(/50 000/);
   });
 
-  it("jedna pojmenovaná nabídka: kalkulačka i garance vedou na stejný propočet", () => {
-    // Hero smí mít delší variantu („Spočítat výnos mého bytu"), zbytek webu drží
-    // jednu krátkou formulaci propočtu.
-    expect(cs.calc_cta).toBe(cs.g_cta);
-    expect(cs.hero_cta).toMatch(/[Ss]počítat/);
+  it("jedna pojmenovaná nabídka: hero, kalkulačka i garance mají stejné CTA", () => {
+    expect(cs.hero_cta).toBe(cs.calc_cta);
+    expect(cs.hero_cta).toBe(cs.g_cta);
+    expect(cs.hero_cta).toBe(cs.process_cta);
+    expect(cs.hero_cta).toBe(cs.mobile_cta);
     expect(vi.hero_cta).toBe(vi.calc_cta);
     expect(vi.hero_cta).toBe(vi.g_cta);
   });
 
+  it("české hero má jediné tlačítko a vede na kalkulačku", () => {
+    // HeroSection čte prázdné hero_cta2 jako „jedno CTA" a přepne cíl na
+    // #kalkulacka. Vietnamská verze druhé tlačítko má a míří na formulář.
+    expect(cs.hero_cta2).toBe("");
+    expect(vi.hero_cta2).not.toBe("");
+  });
 
   it("nikde neslibuje garanci z kalkulačky", () => {
     // Kalkulačka je odhad. Garance vzniká až písemným ujednáním pro konkrétní byt.
