@@ -97,15 +97,15 @@ const HeroSection = () => {
           className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center items-center"
         >
           <a
-            href="#kalkulacka"
-            onClick={() => trackEvent("cta_click", { location: "hero", target: "calculator" })}
+            href="#kontakt"
+            onClick={() => trackEvent("cta_click", { location: "hero", target: "contact" })}
             className="btn btn-primary-inverse px-8 py-4"
           >
             {t(lang, "hero_cta")}
           </a>
           <a
-            href="#kontakt"
-            onClick={() => trackEvent("cta_click", { location: "hero", target: "contact" })}
+            href="#kalkulacka"
+            onClick={() => trackEvent("cta_click", { location: "hero", target: "calculator" })}
             className="btn btn-secondary-inverse px-8 py-4"
           >
             {t(lang, "hero_cta2")}
@@ -113,10 +113,11 @@ const HeroSection = () => {
           </a>
         </div>
 
-        {/* Trust line under the CTAs: three facts, no adjectives. */}
+        {/* Proof teaser under the CTAs: one checkable fact, no adjectives.
+            The numbers must match the portfolio cards one scroll below. */}
         <p
           {...enter(10, 1.0, 0.6)}
-          className="mt-5 sm:mt-6 font-body text-[13px] sm:text-sm tracking-wide text-[rgba(232,222,208,0.75)]"
+          className="mt-5 sm:mt-6 font-body text-[13px] sm:text-sm tracking-wide text-[rgba(232,222,208,0.78)] tnum max-w-md mx-auto"
         >
           {t(lang, "hero_extra")}
         </p>

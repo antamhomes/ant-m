@@ -25,8 +25,8 @@ describe("odměna za správu", () => {
   });
 
   it("je 25 % všude v české i vietnamské kopii", () => {
-    expect(strip(cs.price_figure)).toBe("25 %");
-    expect(strip(vi.price_figure)).toBe("25%");
+    expect(strip(cs.pr1_price)).toMatch(/25 %/);
+    expect(strip(vi.pr1_price)).toMatch(/25 %/);
     for (const key of ["calc_net_sub", "calc_excluded_note", "faq5_a", "faq9_a", "report_row_costs"]) {
       expect(strip(cs[key]), `cs.${key}`).toMatch(/25\s?%/);
       expect(strip(vi[key]), `vi.${key}`).toMatch(/25\s?%/);
@@ -53,8 +53,8 @@ describe("odměna za správu", () => {
   it("je konečná a netvrdí, že se k ní účtuje DPH", () => {
     // Jako identifikovaná osoba Antam DPH z odměny neúčtuje; čl. 8.2 smlouvy
     // mluví o konečné ceně. „Včetně DPH" popisuje něco, co se neděje.
-    expect(strip(cs.price_sub)).toMatch(/[Kk]onečná/);
-    expect(strip(cs.price_sub)).not.toMatch(/včetně DPH/i);
+    expect(strip(cs.pr1_note)).toMatch(/[Kk]onečná/);
+    expect(strip(cs.pr1_note)).not.toMatch(/včetně DPH/i);
     expect(strip(cs.faq5_a)).not.toMatch(/konečná včetně DPH/i);
   });
 });
@@ -92,10 +92,27 @@ describe("ceník", () => {
 
 describe("garance výnosu", () => {
   it("je na webu popsaná v obou jazycích", () => {
-    expect(cs.price_garance).toBeTruthy();
-    expect(vi.price_garance).toBeTruthy();
+    expect(cs.g_desc).toBeTruthy();
+    expect(vi.g_desc).toBeTruthy();
+    expect(strip(cs.g_desc)).toMatch(/nájem/);
+    expect(strip(cs.g_desc)).toMatch(/energie/);
     expect(strip(cs.faq18_a)).toMatch(/nájem/);
     expect(strip(cs.faq18_a)).toMatch(/energie/);
+  });
+
+  it("hero teaser sedí s kartami portfolia (61/68 tis., Praha 1)", () => {
+    expect(strip(cs.hero_extra)).toMatch(/61 000/);
+    expect(strip(cs.hero_extra)).toMatch(/68 000/);
+    expect(strip(cs.hero_extra)).toMatch(/Praha 1/);
+    expect(strip(vi.hero_extra)).toMatch(/61 000/);
+    expect(strip(vi.hero_extra)).toMatch(/68 000/);
+  });
+
+  it("jedna pojmenovaná nabídka: hero, kalkulačka i garance vedou na stejný propočet", () => {
+    expect(cs.hero_cta).toBe(cs.calc_cta);
+    expect(cs.hero_cta).toBe(cs.g_cta);
+    expect(vi.hero_cta).toBe(vi.calc_cta);
+    expect(vi.hero_cta).toBe(vi.g_cta);
   });
 
   it("nikde neslibuje garanci z kalkulačky", () => {

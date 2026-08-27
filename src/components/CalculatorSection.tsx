@@ -411,6 +411,12 @@ const CalculatorSection = () => {
                 {t(lang, "calc_energy_note")}
               </p>
 
+              {/* Bridge: the estimate above is free market math; the number Antam
+                  signs is a different product, computed per flat within 24 hours. */}
+              <p className="font-body text-[13px] text-primary-foreground/75 leading-relaxed border-t border-primary-foreground/10 pt-4">
+                {t(lang, "calc_bridge")}
+              </p>
+
               <div className="space-y-3">
                 <a
                   href="#kontakt"

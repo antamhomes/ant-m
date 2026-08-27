@@ -6,7 +6,7 @@ import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
 
 const VI_TITLE = "Quản lý cho thuê ngắn hạn & Airbnb tại Praha | antam homes";
 const VI_DESC =
-  "Dịch vụ quản lý căn hộ cho thuê ngắn hạn tại Praha — chuẩn bị listing, lo cho khách, dọn dẹp, định giá và báo cáo rõ ràng cho chủ nhà. Thu nhập tốt hơn, ít lo hơn.";
+  "Quản lý cho thuê ngắn hạn (Airbnb, Booking) tại Praha: lo khách, dọn dẹp, đặt giá, bảng kê hằng tháng cho chủ nhà. Căn nào nhận cũng có mức tối thiểu ghi trong hợp đồng.";
 const SITE = "https://www.antamhomes.com";
 
 import type { Plugin } from "vite";

@@ -23,17 +23,17 @@ type Item = { src: string; name: string; loc: string; guests: number; stats?: St
 
 /** The apartments shown publicly (owner's choice); capacities from Hospitable.
  *  byt-1…7 are Lovable assets; 402/405 (Praha 1, Čelakovského sady) are small webp files in public/portfolio.
- *  Order: the big loft first, then the two Praha 1 flagships, the Praha 4 cluster, Mladá Boleslav, Mozart last. */
+ *  Order: measured results first (the section pays off the hero claim), longest window leading; flats without a full season follow with their honest badge. */
 const items: Item[] = [
-  { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", guests: 13, newSince: "7/2026" },
   { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", guests: 8, stats: { owner: 68000, occupancy: 96, ratio: 2.4 } },
   { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", guests: 8, stats: { owner: 61000, occupancy: 95, ratio: 2.2 } },
   { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 4", guests: 6, stats: { owner: 45000, occupancy: 83, since: "4/2026", ratio: 1.7 } },
+  { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", guests: 8, stats: { owner: 32000, occupancy: 93, since: "4/2026" } },
+  { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", guests: 4, stats: { owner: 31000, occupancy: 94, since: "2/2026", ratio: 1.7 } },
+  { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", guests: 13, newSince: "7/2026" },
   { src: byt1.url, name: "Secret Garden Studio\u00a0I", loc: "Praha 4", guests: 4, newSince: "7/2026" },
   { src: byt2.url, name: "Secret Garden Studio\u00a0II", loc: "Praha 4", guests: 4, newSince: "7/2026" },
-  { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", guests: 8, stats: { owner: 32000, occupancy: 93, since: "4/2026" } },
   { src: byt6.url, name: "Klement apartment", loc: "Mladá Boleslav", guests: 8, newSince: "8/2026" },
-  { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", guests: 4, stats: { owner: 31000, occupancy: 94, since: "2/2026", ratio: 1.7 } },
 ];
 
 const fmtCzk = (n: number) => n.toLocaleString("cs-CZ").replace(/\s/g, "\u00a0");
@@ -54,9 +54,9 @@ const reviews = {
 
 const copy = {
   cs: {
-    eyebrow: "Portfolio",
-    title: "Byty v naší péči",
-    desc: "Apartmány, které pro majitele připravujeme, fotíme a denně spravujeme.",
+    eyebrow: "Výsledky",
+    title: "Co byty v naší správě vydělávají majitelům",
+    desc: "Skutečná čísla z měsíčních vyúčtování, ne odhady.",
     guests: (n: number) => `až ${n} host${n === 4 ? "é" : "ů"}`,
     soonTitle: "Připravujeme",
     soonDesc: "Kvalita je pro nás důležitější než počet. Proto nové byty do portfolia zařazujeme postupně.\n",
@@ -75,9 +75,9 @@ const copy = {
     statNote: (d: string) => `Částky pro majitele vycházejí ze skutečných výsledků bytů, přepočtených na aktuální odměnu 25\u00a0%: po provizi Airbnb a Booking.com včetně DPH z ní, bez úklidových poplatků a po naší odměně, tedy to, co by majitel dostal při dnešních podmínkách; energie hradí majitel. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. Nájem podle cenové mapy Bohemian Estates (11/2025). Minulé výsledky nejsou zárukou budoucích.`,
   },
   vi: {
-    eyebrow: "Căn hộ",
-    title: "Những căn hộ Antam đang quản lý",
-    desc: "Antam chuẩn bị, chụp ảnh và trông nom mỗi ngày cho chủ nhà.",
+    eyebrow: "Kết quả thực tế",
+    title: "Những căn Antam lo, chủ nhà nhận được bao nhiêu",
+    desc: "Số liệu thật từ bảng kê hằng tháng, không phải ước tính.",
     guests: (n: number) => `tối đa ${n} khách`,
     soonTitle: "Sắp có thêm",
     soonDesc: "Để đảm bảo chất lượng cho từng căn, Antam chủ động giới hạn số lượng căn hộ nhận thêm.\n",

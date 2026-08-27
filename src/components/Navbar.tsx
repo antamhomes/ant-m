@@ -8,6 +8,7 @@ import { useSplashDone } from "@/hooks/use-splash-done";
 const NAV_LINKS: { href: string; key: TranslationKey }[] = [
   { href: "#kalkulacka", key: "nav_calculator" },
   { href: "#portfolio", key: "nav_portfolio" },
+  { href: "#cenik", key: "nav_pricing" },
   { href: "#jak-zacina", key: "nav_howItWorks" },
   { href: "#kdo-jsme", key: "nav_about" },
   { href: "#faq", key: "nav_faq" },

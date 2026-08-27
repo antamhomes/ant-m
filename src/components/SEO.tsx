@@ -12,11 +12,11 @@ const META: Record<PageKey, { cs: { title: string; desc: string }; vi: { title: 
     pathVi: "/vn",
     cs: {
       title: "Správa krátkodobých pronájmů a Airbnb v Praze | Antam Homes",
-      desc: "Kompletní správa krátkodobého pronájmu v Praze: příprava nabídky, hosté, úklid, dynamické ceny a přehledné reporty pro majitele. Více výnosu, méně starostí.",
+      desc: "Správa krátkodobého pronájmu v Praze: hosté, úklid, ceny i vyúčtování. Ke každému přijatému bytu písemné roční minimum. Odměna 25 % z čistého výnosu.",
     },
     vi: {
       title: "Quản lý cho thuê ngắn hạn & Airbnb tại Praha | Antam Homes",
-      desc: "Quản lý căn hộ cho thuê ngắn hạn (Airbnb, Booking) tại Praha: chuẩn bị nhà, lo khách, dọn dẹp, đặt giá và bảng kê rõ ràng cho chủ nhà. Thu nhiều hơn, lo ít hơn.",
+      desc: "Quản lý cho thuê ngắn hạn (Airbnb, Booking) tại Praha: lo khách, dọn dẹp, đặt giá, bảng kê hằng tháng cho chủ nhà. Căn nào nhận cũng có mức tối thiểu ghi trong hợp đồng.",
     },
   },
 };
@@ -39,7 +39,7 @@ export const SEO = ({ page }: { page: PageKey }) => {
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: (["faq5", "faq9", "faq4", "faq6", "faq1", "faq11", "faq12", "faq10", "faq14", "faq3", "faq7", "faq13"] as const).map((k) => ({
+    mainEntity: (["faq18", "faq5", "faq9", "faq4", "faq6", "faq16", "faq1", "faq11", "faq12", "faq10", "faq14", "faq3", "faq7", "faq13"] as const).map((k) => ({
       "@type": "Question",
       name: t(lang, `${k}_q`),
       acceptedAnswer: { "@type": "Answer", text: t(lang, `${k}_a`) },

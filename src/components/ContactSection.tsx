@@ -25,6 +25,7 @@ const emptyForm = {
   size: "",
   status: "",
   contactPref: "",
+  units: "",
   energy: "",
   message: "",
   consent: false,
@@ -93,6 +94,12 @@ const ContactSection = () => {
     { value: "zalo", label: "Zalo" },
     { value: "email", label: "E-mail" },
   ];
+  // Better lead context at zero extra friction: how many flats the owner runs.
+  const unitsOptions: Option[] = [
+    { value: "1", label: t(lang, "contact_units_one") },
+    { value: "2-4", label: t(lang, "contact_units_few") },
+    { value: "5+", label: t(lang, "contact_units_many") },
+  ];
   const labelOf = (opts: Option[], v: string) => opts.find((o) => o.value === v)?.label ?? v;
   // If the owner wants to be contacted by e-mail, the e-mail field becomes mandatory.
   const emailRequired = formData.contactPref === "email";
@@ -116,9 +123,13 @@ const ContactSection = () => {
           status: labelOf(statusOptions, formData.status),
           contactPref: labelOf(prefOptions, formData.contactPref),
           language: lang === "cs" ? "čeština" : "Tiếng Việt",
-          // The e-mail template has fixed fields, so the energy answer rides
-          // inside the message body instead of a template key of its own.
-          message: [formData.message, formData.energy ? `Energie: ${formData.energy}` : ""]
+          // The e-mail template has fixed fields, so the energy and unit-count
+          // answers ride inside the message body instead of template keys.
+          message: [
+            formData.message,
+            formData.units ? `Počet bytů: ${labelOf(unitsOptions, formData.units)}` : "",
+            formData.energy ? `Energie: ${formData.energy}` : "",
+          ]
             .filter(Boolean)
             .join("\n"),
         },
@@ -134,7 +145,9 @@ const ContactSection = () => {
         status: labelOf(statusOptions, formData.status),
         contact_pref: labelOf(prefOptions, formData.contactPref),
         energy: formData.energy,
-        message: formData.message,
+        message: [formData.message, formData.units ? `Počet bytů: ${labelOf(unitsOptions, formData.units)}` : ""]
+          .filter(Boolean)
+          .join("\n"),
         lang,
       });
       trackEvent("lead_submit", { form: "contact", status: formData.status || "n/a" });
@@ -253,16 +266,28 @@ const ContactSection = () => {
                 </div>
               </div>
 
-              <div>
-                <label htmlFor="c-energy" className={labelCls}>
-                  {t(lang, "contact_energy")}{" "}
-                  <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
-                </label>
-                <input
-                  id="c-energy" type="text" inputMode="numeric" value={formData.energy}
-                  onChange={(e) => set("energy", e.target.value)} className={inputCls}
-                  placeholder={t(lang, "contact_energy_placeholder") as string}
-                />
+              <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-4 sm:gap-5">
+                <div>
+                  <label htmlFor="c-units" className={labelCls}>
+                    {t(lang, "contact_units")}{" "}
+                    <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
+                  </label>
+                  <SelectField
+                    id="c-units" value={formData.units} onChange={(v) => set("units", v)}
+                    placeholder={t(lang, "contact_units_placeholder") as string} options={unitsOptions}
+                  />
+                </div>
+                <div>
+                  <label htmlFor="c-energy" className={labelCls}>
+                    {t(lang, "contact_energy")}{" "}
+                    <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
+                  </label>
+                  <input
+                    id="c-energy" type="text" inputMode="numeric" value={formData.energy}
+                    onChange={(e) => set("energy", e.target.value)} className={inputCls}
+                    placeholder={t(lang, "contact_energy_placeholder") as string}
+                  />
+                </div>
               </div>
 
               <div>
@@ -305,6 +330,13 @@ const ContactSection = () => {
                 </p>
               )}
               <p className="font-body text-[13px] md:text-sm text-muted-foreground text-center">{t(lang, "contact_small")}</p>
+              {/* The no-form path: one tap to a call (VI copy mentions Zalo). */}
+              <p className="font-body text-[13px] md:text-sm text-muted-foreground text-center">
+                {t(lang, "contact_phone_line")}{" "}
+                <a href="tel:+420727952459" className="text-gold-deep font-medium whitespace-nowrap hover:text-primary transition-colors">
+                  +420&nbsp;727&nbsp;952&nbsp;459
+                </a>
+              </p>
             </>
           )}
         </Reveal>

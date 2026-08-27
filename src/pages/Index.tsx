@@ -2,22 +2,22 @@ import { lazy, Suspense, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import SEO from "@/components/SEO";
 import HeroSection from "@/components/HeroSection";
-import ForYouSection from "@/components/ForYouSection";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 // Below-the-fold sections are code-split so the first paint ships less JS.
-const WhyBetterSection = lazy(() => import("@/components/WhyBetterSection"));
-const PriceStrip = lazy(() => import("@/components/PriceStrip"));
-const CalculatorSection = lazy(() => import("@/components/CalculatorSection"));
-const HorizonSection = lazy(() => import("@/components/HorizonSection"));
-const PricingSection = lazy(() => import("@/components/PricingSection"));
 const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
+const CalculatorSection = lazy(() => import("@/components/CalculatorSection"));
+const GaranceSection = lazy(() => import("@/components/GaranceSection"));
+const PricingSection = lazy(() => import("@/components/PricingSection"));
+const HorizonSection = lazy(() => import("@/components/HorizonSection"));
 const ServicesSection = lazy(() => import("@/components/ServicesSection"));
-const ProcessSection = lazy(() => import("@/components/ProcessSection"));
 const OwnerReportSection = lazy(() => import("@/components/OwnerReportSection"));
+const FitSection = lazy(() => import("@/components/FitSection"));
 const AboutSection = lazy(() => import("@/components/AboutSection"));
-const FAQSection = lazy(() => import("@/components/FAQSection"));
+const ProcessSection = lazy(() => import("@/components/ProcessSection"));
 const ContactSection = lazy(() => import("@/components/ContactSection"));
+const FAQSection = lazy(() => import("@/components/FAQSection"));
+const FinalCtaSection = lazy(() => import("@/components/FinalCtaSection"));
 const Footer = lazy(() => import("@/components/Footer"));
 const StickyMobileCTA = lazy(() => import("@/components/StickyMobileCTA"));
 const CookieConsent = lazy(() => import("@/components/CookieConsent"));
@@ -56,20 +56,22 @@ const Index = () => {
       <Navbar />
       <main id="obsah">
         <HeroSection />
-        <ForYouSection />
-        {/* Each section has its own boundary, so a slow chunk never holds the others back. */}
-        <Suspense fallback={null}><WhyBetterSection /></Suspense>
-        <Suspense fallback={null}><PriceStrip /></Suspense>
-        <Suspense fallback={null}><CalculatorSection /></Suspense>
-        <Suspense fallback={null}><HorizonSection /></Suspense>
-        <Suspense fallback={null}><PricingSection /></Suspense>
+        {/* Question chain: claim → proof → my number → downside → price → long run
+            → what we do → visibility → fit → people → process → form → FAQ.
+            Each section has its own boundary, so a slow chunk never holds the others back. */}
         <Suspense fallback={null}><PortfolioSection /></Suspense>
+        <Suspense fallback={null}><CalculatorSection /></Suspense>
+        <Suspense fallback={null}><GaranceSection /></Suspense>
+        <Suspense fallback={null}><PricingSection /></Suspense>
+        <Suspense fallback={null}><HorizonSection /></Suspense>
         <Suspense fallback={null}><ServicesSection /></Suspense>
         <Suspense fallback={null}><OwnerReportSection /></Suspense>
-        <Suspense fallback={null}><ProcessSection /></Suspense>
+        <Suspense fallback={null}><FitSection /></Suspense>
         <Suspense fallback={null}><AboutSection /></Suspense>
-        <Suspense fallback={null}><FAQSection /></Suspense>
+        <Suspense fallback={null}><ProcessSection /></Suspense>
         <Suspense fallback={null}><ContactSection /></Suspense>
+        <Suspense fallback={null}><FAQSection /></Suspense>
+        <Suspense fallback={null}><FinalCtaSection /></Suspense>
         <ScrollToHash />
       </main>
       <Suspense fallback={null}><Footer /></Suspense>

@@ -47,6 +47,13 @@ const ServicesSection = () => {
             </Reveal>
           ))}
         </div>
+
+        {/* One systems sentence for the reader who prices operational risk. */}
+        <Reveal delay={0.15}>
+          <p className="mt-10 md:mt-12 font-body text-[13px] text-primary-foreground/55 text-center leading-relaxed max-w-xl mx-auto text-pretty">
+            {t(lang, "svc_systems")}
+          </p>
+        </Reveal>
       </div>
     </section>
   );
