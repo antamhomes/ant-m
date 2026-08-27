@@ -15,7 +15,7 @@ import { t } from "@/i18n/translations";
 /** Trimmed 27. 8. 2026: p1 (the edge) + p4 (origin + exact count) carry the section;
  *  p2/p3/p5 stay in translations but are not rendered — About should validate,
  *  not lecture. Owner testimonials get their place here once real ones exist. */
-const BODY_KEYS = ["about_p4"] as const;
+const BODY_KEYS = ["about_p2", "about_p4"] as const;
 const STAT_KEYS = [
   { value: "about_stat1_value", label: "about_stat1_label" },
   { value: "about_stat2_value", label: "about_stat2_label" },
