@@ -18,7 +18,7 @@ const ROWS: { k: "pr1" | "pr2" | "pr3" | "pr4" | "pr5"; accent?: boolean }[] = [
 const PricingSection = () => {
   const { lang } = useLanguage();
   return (
-    <section id="cenik" className="section bg-background scroll-mt-16">
+    <section id="cenik" className="section bg-muted/30 scroll-mt-16">
       <div className="container-narrow">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "pricing_label")}</p>

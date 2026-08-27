@@ -248,6 +248,8 @@ const translations = {
     hz_assume_3: "měsíčně pro majitele po provizi platforem, odměně Antam a po odečtení energií",
     hz_assume_4: "; v prvním roce počítáme 85 % kvůli rozjezdu nabídky. Uvedení do provozu",
     hz_assume_kit: "vybavení",
+    hz_assume_project: "řízení projektu",
+    hz_assume_toggle: "Z čeho výpočet vychází",
     hz_assume_5: "Počítáme i obnovu vybavení. U nájmu naopak nepočítáme neobsazenost mezi nájemníky ani provizi za zprostředkování, ačkoli v praxi bývají. Bez zdanění příjmu a bez růstu cen na obou stranách. Orientační výpočet, ne garance.",
 
     // Contact
@@ -588,6 +590,8 @@ const translations = {
     hz_assume_3: "mỗi tháng về tay chủ nhà sau phí nền tảng, phí Antam và sau khi trừ điện nước",
     hz_assume_4: "; năm đầu tính 85 % vì tin đăng cần thời gian chạy. Đưa nhà vào vận hành",
     hz_assume_kit: "đồ đạc",
+    hz_assume_project: "phí quản lý sửa sang",
+    hz_assume_toggle: "Con số này dựa trên gì",
     hz_assume_5: "Antam có tính cả tiền thay mới đồ đạc. Ngược lại, phía cho thuê dài hạn chưa trừ những tháng trống giữa hai người thuê hay phí môi giới, dù thực tế vẫn có. Chưa tính thuế thu nhập, chưa tính giá tăng ở cả hai bên. Con số tham khảo, không phải cam kết.",
 
     // Contact

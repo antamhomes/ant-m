@@ -4,7 +4,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import {
   DISTRICTS, ENERGY, LTR, ROOMS, LAUNCH_FEE, KIT_PER_ROOM, EMPTY_PER_ROOM,
-  RENEW_PER_ROOM_YEAR, YEAR_ONE_RAMP, ownerMonthly,
+  RENEW_PER_ROOM_YEAR, YEAR_ONE_RAMP, PROJECT_FEE, PROJECT_FEE_THRESHOLD, ownerMonthly,
   type LocationKey, type SizeKey,
 } from "@/lib/yield";
 
@@ -46,7 +46,10 @@ const HorizonSection = () => {
       furn === "prazdny" ? EMPTY_PER_ROOM * ROOMS[size]
       : furn === "najem" ? KIT_PER_ROOM * ROOMS[size]
       : 0;
-    const setup = LAUNCH_FEE + kit;
+    // Vybavení nad prahem je projekt, a ten nese odměnu za řízení podle ceníku.
+    // Bez ní by graf ukazoval nižší vstupní náklad, než jaký majiteli skutečně vyfakturujeme.
+    const projectFee = kit > PROJECT_FEE_THRESHOLD ? Math.round(kit * PROJECT_FEE) : 0;
+    const setup = LAUNCH_FEE + kit + projectFee;
     const lt = [0], str = [-setup];
     for (let i = 1; i <= MONTHS; i++) {
       lt.push(lt[i - 1] + rent);
@@ -57,7 +60,7 @@ const HorizonSection = () => {
       if (payback === null && str[i] >= 0) payback = i;
       if (cross === null && str[i] >= lt[i]) cross = i;
     }
-    return { lt, str, rent, y2, setup, kit, energy, renew, payback, cross };
+    return { lt, str, rent, y2, setup, kit, projectFee, energy, renew, payback, cross };
   }, [loc, size, furn]);
 
   const maxY = Math.max(d.lt[MONTHS], d.str[MONTHS]);
@@ -91,7 +94,7 @@ const HorizonSection = () => {
       d.payback
         ? `${d.payback} ${t(lang, d.payback === 1 ? "hz_months_one" : d.payback < 5 ? "hz_months_few" : "hz_months")}`
         : "—"],
-    [t(lang, "hz_stat_cross"), d.cross ? `${d.cross}.` : "—"],
+    [t(lang, "hz_stat_cross"), d.cross ? `${d.cross}. ${t(lang, "hz_month")}` : "—"],
     [t(lang, "hz_stat_gap"), `${gap >= 0 ? "+" : ""}${czk(gap)}`],
   ];
 
@@ -207,16 +210,22 @@ const HorizonSection = () => {
           ))}
         </Reveal>
 
-        <Reveal delay={0.15}>
-          <p className="font-body text-[12.5px] text-muted-foreground leading-relaxed mt-4 max-w-[78ch] mx-auto text-pretty">
+        <Reveal delay={0.15} className="mt-4 max-w-[78ch] mx-auto">
+          <details className="group">
+            <summary className="cursor-pointer font-body text-[13px] text-gold-deep underline underline-offset-4 decoration-gold/40 text-center list-none">
+              {t(lang, "hz_assume_toggle")}
+            </summary>
+          <p className="font-body text-[12.5px] text-muted-foreground leading-relaxed mt-3 text-pretty">
             {t(lang, "hz_assume_1")}{" "}
             <strong className="text-foreground/80 font-medium">{czk(d.rent)}</strong>{" "}
             {t(lang, "hz_assume_2")}{" "}
             <strong className="text-foreground/80 font-medium">{czk(d.y2)}</strong>{" "}
             {t(lang, "hz_assume_3")} ({czk(d.energy)}){t(lang, "hz_assume_4")}{" "}
-            {czk(LAUNCH_FEE)}{d.kit ? `, ${t(lang, "hz_assume_kit")} ${czk(d.kit)}` : ""}.{" "}
+            {czk(LAUNCH_FEE)}{d.kit ? `, ${t(lang, "hz_assume_kit")} ${czk(d.kit)}` : ""}
+            {d.projectFee ? `, ${t(lang, "hz_assume_project")} ${czk(d.projectFee)}` : ""}.{" "}
             {t(lang, "hz_assume_5")}
           </p>
+          </details>
         </Reveal>
       </div>
     </section>

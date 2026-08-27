@@ -71,6 +71,8 @@ export const KIT_PER_ROOM = 30000;    // dovybavení bytu zařízeného pro náj
 export const EMPTY_PER_ROOM = 100000; // kompletní vybavení prázdného bytu
 export const RENEW_PER_ROOM_YEAR = 4000;
 export const YEAR_ONE_RAMP = 0.85;    // nová nabídka nenajede hned na plný výkon
+export const PROJECT_FEE = 0.20;           // odměna za řízení projektu, z rozpočtu
+export const PROJECT_FEE_THRESHOLD = 30000;// pod tímto rozpočtem je řízení v ceně uvedení do provozu
 
 export const clampOccupancy = (v: number) => Math.max(0.5, Math.min(0.98, v));
 

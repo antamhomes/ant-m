@@ -62,12 +62,12 @@ const Index = () => {
         <Suspense fallback={null}><PriceStrip /></Suspense>
         <Suspense fallback={null}><CalculatorSection /></Suspense>
         <Suspense fallback={null}><HorizonSection /></Suspense>
+        <Suspense fallback={null}><PricingSection /></Suspense>
         <Suspense fallback={null}><PortfolioSection /></Suspense>
         <Suspense fallback={null}><ServicesSection /></Suspense>
         <Suspense fallback={null}><OwnerReportSection /></Suspense>
         <Suspense fallback={null}><ProcessSection /></Suspense>
         <Suspense fallback={null}><AboutSection /></Suspense>
-        <Suspense fallback={null}><PricingSection /></Suspense>
         <Suspense fallback={null}><FAQSection /></Suspense>
         <Suspense fallback={null}><ContactSection /></Suspense>
         <ScrollToHash />
