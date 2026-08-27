@@ -5,8 +5,8 @@ import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
 
 /**
- * Slim closing band after the FAQ: the brand line as a bookend, one sentence,
- * one button back to the form. For readers who researched all the way down.
+ * Slim closing band after the FAQ: one line, one sentence, one button back to
+ * the form. For readers who researched all the way down.
  */
 const FinalCtaSection = () => {
   const { lang } = useLanguage();
@@ -15,8 +15,7 @@ const FinalCtaSection = () => {
     <section className="bg-gradient-dark border-t border-gold/15">
       <Reveal className="container-narrow py-14 md:py-16 text-center">
         <h2 className="font-display text-2xl md:text-3xl font-medium text-primary-foreground leading-snug mb-3">
-          {t(lang, "hero_title1")}
-          {t(lang, "hero_title2")}
+          {t(lang, "final_title")}
         </h2>
         <p className="font-body text-[15px] md:text-base text-primary-foreground/70 mb-7 max-w-md mx-auto text-pretty">
           {t(lang, "final_desc")}

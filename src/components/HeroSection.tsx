@@ -13,6 +13,13 @@ const enter = (y: number, delay: number, duration = 0.7) =>
 
 const HeroSection = () => {
   const { lang } = useLanguage();
+  // Empty copy keys switch off hero elements per language. CZ runs a short hero:
+  // one sentence, one button straight to the calculator, no proof line (the
+  // numbers live in Portfolio with their context). VI keeps the two-step hero,
+  // where the primary button goes to the form and the secondary to the calculator.
+  const secondCta = t(lang, "hero_cta2");
+  const proof = t(lang, "hero_extra");
+  const primaryHref = secondCta ? "#kontakt" : "#kalkulacka";
   const ref = useRef<HTMLElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
   const ready = useSplashDone();
@@ -97,30 +104,36 @@ const HeroSection = () => {
           className="flex flex-col sm:flex-row gap-3 sm:gap-5 justify-center items-center"
         >
           <a
-            href="#kontakt"
-            onClick={() => trackEvent("cta_click", { location: "hero", target: "contact" })}
+            href={primaryHref}
+            onClick={() =>
+              trackEvent("cta_click", { location: "hero", target: secondCta ? "contact" : "calculator" })
+            }
             className="btn btn-primary-inverse px-8 py-4"
           >
             {t(lang, "hero_cta")}
           </a>
-          <a
-            href="#kalkulacka"
-            onClick={() => trackEvent("cta_click", { location: "hero", target: "calculator" })}
-            className="btn btn-secondary-inverse px-8 py-4"
-          >
-            {t(lang, "hero_cta2")}
-            <span className="text-gold" aria-hidden="true">→</span>
-          </a>
+          {secondCta && (
+            <a
+              href="#kalkulacka"
+              onClick={() => trackEvent("cta_click", { location: "hero", target: "calculator" })}
+              className="btn btn-secondary-inverse px-8 py-4"
+            >
+              {secondCta}
+              <span className="text-gold" aria-hidden="true">→</span>
+            </a>
+          )}
         </div>
 
         {/* Proof teaser under the CTAs: one checkable fact, no adjectives.
             The numbers must match the portfolio cards one scroll below. */}
-        <p
-          {...enter(10, 1.0, 0.6)}
-          className="mt-5 sm:mt-6 font-body text-[13px] sm:text-sm tracking-wide text-[rgba(232,222,208,0.78)] tnum max-w-md mx-auto"
-        >
-          {t(lang, "hero_extra")}
-        </p>
+        {proof && (
+          <p
+            {...enter(10, 1.0, 0.6)}
+            className="mt-5 sm:mt-6 font-body text-[13px] sm:text-sm tracking-wide text-[rgba(232,222,208,0.78)] tnum max-w-md mx-auto"
+          >
+            {proof}
+          </p>
+        )}
       </div>
 
       <div

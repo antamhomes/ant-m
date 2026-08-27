@@ -32,6 +32,12 @@ const PAIR = [
 
 const GaranceSection = () => {
   const { lang } = useLanguage();
+  // Empty copy keys switch parts of the section off per language: CZ carries the
+  // mechanics in the three steps, so the "why" quote and the income card of the
+  // pair are dropped and only the property protection stays.
+  const why = t(lang, "g_why");
+  const pairTitle = t(lang, "g_pair_title");
+  const pairs = PAIR.filter(({ label }) => t(lang, label));
 
   return (
     <section id="garance" className="section bg-background scroll-mt-16">
@@ -99,21 +105,25 @@ const GaranceSection = () => {
         </div>
 
         {/* Why Antam can afford this: incentive alignment, said once. */}
-        <Reveal delay={0.1} className="mt-8 md:mt-10 max-w-3xl mx-auto">
-          <p className="font-body text-[15px] text-foreground/85 leading-relaxed text-pretty border-l-2 border-gold/60 pl-4">
-            {t(lang, "g_why")}
-          </p>
-        </Reveal>
+        {why && (
+          <Reveal delay={0.1} className="mt-8 md:mt-10 max-w-3xl mx-auto">
+            <p className="font-body text-[15px] text-foreground/85 leading-relaxed text-pretty border-l-2 border-gold/60 pl-4">
+              {why}
+            </p>
+          </Reveal>
+        )}
 
         {/* The second protection. It sits inside this section on purpose: the owner
             should read one offer, not two. Scope and exclusions live in the FAQ
             and in the contract, never here. */}
         <Reveal delay={0.12} className="mt-10 md:mt-12 max-w-3xl mx-auto">
-          <p className="font-display text-lg md:text-xl text-foreground text-center text-pretty mb-5 md:mb-6">
-            {t(lang, "g_pair_title")}
-          </p>
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-5">
-            {PAIR.map(({ label, text }) => (
+          {pairTitle && (
+            <p className="font-display text-lg md:text-xl text-foreground text-center text-pretty mb-5 md:mb-6">
+              {pairTitle}
+            </p>
+          )}
+          <div className={`grid gap-4 sm:gap-5 ${pairs.length > 1 ? "sm:grid-cols-2" : ""}`}>
+            {pairs.map(({ label, text }) => (
               <div key={label} className="rounded-md border border-border bg-card px-5 py-5">
                 <p className="eyebrow mb-2">{t(lang, label)}</p>
                 <p className="font-body text-[14.5px] text-muted-foreground leading-relaxed text-pretty">

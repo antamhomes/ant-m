@@ -62,9 +62,11 @@ const AboutSection = () => {
                   </p>
                 );
               })}
-              <p className="font-display italic text-lg md:text-xl text-foreground/90 leading-relaxed border-l-2 border-gold/60 pl-4">
-                {t(lang, "about_quote")}
-              </p>
+              {t(lang, "about_quote") && (
+                <p className="font-display italic text-lg md:text-xl text-foreground/90 leading-relaxed border-l-2 border-gold/60 pl-4">
+                  {t(lang, "about_quote")}
+                </p>
+              )}
             </Reveal>
           </div>
         </div>

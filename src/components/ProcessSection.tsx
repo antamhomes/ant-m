@@ -20,7 +20,7 @@ const ProcessSection = () => {
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "process_label")}</p>
           <h2 className="h-section-sm text-primary-foreground">{t(lang, "process_title")}</h2>
-          <p className="lead lead-on-dark">{t(lang, "process_desc")}</p>
+          {t(lang, "process_desc") && <p className="lead lead-on-dark">{t(lang, "process_desc")}</p>}
         </Reveal>
 
         <ol className="relative grid grid-cols-1 md:grid-cols-4 gap-7 sm:gap-10 md:gap-8">
