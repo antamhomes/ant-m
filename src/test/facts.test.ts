@@ -126,10 +126,11 @@ describe("garance výnosu", () => {
 
   it("české hero neukazuje čísla bez kontextu", () => {
     // Copy pass 28. 8. 2026: proof patří do Portfolia, kde je u čísla konkrétní
-    // byt, lokalita a násobek nájmu. V heru zůstala headline, jedna věta a jedno
-    // tlačítko. Kdyby se do hera vrátilo číslo, patří k němu i ten kontext.
-    expect(strip(cs.hero_extra)).toBe("");
-    expect(strip(cs.hero_desc)).not.toMatch(/\d{2} \d{3}/);
+    // byt, lokalita a násobek nájmu. V heru je headline, jedna věta, jedno
+    // tlačítko a pod ním řádek o nezávaznosti. Částky v tisících sem nepatří.
+    for (const key of ["hero_desc", "hero_extra"] as const) {
+      expect(strip(cs[key]), `cs.${key}`).not.toMatch(/\d{2} \d{3}/);
+    }
     expect(strip(cs.hero_desc).split(" ").length).toBeLessThanOrEqual(18);
   });
 
