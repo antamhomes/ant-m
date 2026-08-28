@@ -1,13 +1,13 @@
 import { useState, useMemo, useEffect } from "react";
 import Reveal from "@/components/Reveal";
-import { Calculator, MapPin, Home, Plus, Check, ChevronDown, Share2, Pencil } from "lucide-react";
+import { Calculator, MapPin, Home, Users, Ruler, Plus, Check, ChevronDown, Share2, Pencil } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
 import {
-  DISTRICTS, BASE_ADR, LTR as LTR_TABLE, MGMT_FEE, PLATFORM_FEE, CLEANING_SHARE, DAYS,
-  ROOMS, annualDamageCover,
-  clampOccupancy, type LocationKey as LK, type SizeKey as SK,
+  DISTRICTS, MGMT_FEE, ROOMS, annualDamageCover, ownerMonthly, rentFor,
+  SIZE_PRESET, CALC_OCCUPANCY, ADR_MEASURED, MARKET_ADR, guestBand,
+  type LocationKey as LK, type SizeKey as SK,
 } from "@/lib/yield";
 
 type SizeKey = "1kk" | "2kk" | "3kk" | "4kk";
@@ -31,13 +31,13 @@ const locations: { value: LocationKey; label: string; multiplier: number; occupa
 // Úklidový poplatek hradí host v ceně rezervace a patří Antam Homes; do výnosu majitele nevstupuje,
 // ale platformy z něj počítají provizi, proto vstupuje do odpočtu provize níže.
 // Energie (elektřina, voda) hradí majitel a v odhadu nejsou zahrnuty.
-// ADR = benchmark ceny za noc po provizi platformy (Airbnb/Booking); hrubé tržby za ubytování
-// se z něj dopočítávají přes PLATFORM_FEE (viz výpočet).
-const sizes: { value: SizeKey; label: string; baseADR: number; guestsCs: string; guestsVi: string }[] = [
-  { value: "1kk", label: "1+kk", baseADR: BASE_ADR["1kk"], guestsCs: "2–4 hosté",  guestsVi: "2–4 khách" },
-  { value: "2kk", label: "2+kk", baseADR: BASE_ADR["2kk"], guestsCs: "6–8 hostů",  guestsVi: "6–8 khách" },
-  { value: "3kk", label: "3+kk", baseADR: BASE_ADR["3kk"], guestsCs: "8–10 hostů", guestsVi: "8–10 khách" },
-  { value: "4kk", label: "4+kk", baseADR: BASE_ADR["4kk"], guestsCs: "10–12 hostů", guestsVi: "10–12 khách" },
+// Dispozice je od 28. 8. 2026 jen popisek a přednastavení kapacity a plochy.
+// Do výpočtu nevstupuje: výnos z Airbnb řídí kapacita, nájem plocha.
+const sizes: { value: SizeKey; label: string; guestsCs: string; guestsVi: string }[] = [
+  { value: "1kk", label: "1+kk", guestsCs: "obvykle 4 hosté",  guestsVi: "thường 4 khách" },
+  { value: "2kk", label: "2+kk", guestsCs: "obvykle 6 hostů",  guestsVi: "thường 6 khách" },
+  { value: "3kk", label: "3+kk", guestsCs: "obvykle 8 hostů",  guestsVi: "thường 8 khách" },
+  { value: "4kk", label: "4+kk", guestsCs: "obvykle 10 hostů", guestsVi: "thường 10 khách" },
 ];
 
 // Extras jako % bonus na ADR
@@ -48,19 +48,23 @@ const extraKeys = [
   { id: "vyuziti",  labelKey: "calc_extra_wellness" as const, pct: 0.05, icon: "🧖" },
 ];
 
-// Dlouhodobý nájem (Kč/měs) — cenová mapa nájemného Bohemian Estates, 11/2025; 4+kk ≈ 1,3× 3+kk
-const ltrTable = LTR_TABLE;
+// Dlouhodobý nájem (Kč/měs) — Deloitte Rent Index Q2/2026 (úroveň Kč/m²)
+// a cenová mapa MF 15. 8. 2026 (rozdíl mezi dispozicemi). Viz lib/yield.
+
 
 type Season = "year" | "summer" | "winter" | "xmas";
 // Sezónní přirážky sladěné se skutečnými výsledky bytů v naší správě (8/2025–7/2026).
 // Při odměně 28 % vychází 2+kk Praha 1 rok ≈ 52 tis. pro majitele; měřená
 // skutečnost bytu 302 za 12 měsíců je 56,8 tis., tedy veřejné číslo zůstává pod ní (záměr).
 // Léto/Vánoce zvedají hlavně cenu, ne obsazenost (ta je i v lednu přes 80 %).
+// Přepočteno 28. 8. 2026: "year" je nově neutrální, protože kalibrace sedí
+// v lib/yield (tržní cena za noc × CALC_OCCUPANCY). Sezóny se od něj odchylují
+// ve stejném poměru jako dřív.
 const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
-  year:   { adr: 1.05, occDelta: 0.02 },
-  summer: { adr: 1.25, occDelta: 0.03 },
-  winter: { adr: 0.70, occDelta: 0.0 },
-  xmas:   { adr: 1.65, occDelta: 0.05 },
+  year:   { adr: 1.00, occDelta: 0.0 },
+  summer: { adr: 1.19, occDelta: 0.01 },
+  winter: { adr: 0.67, occDelta: -0.02 },
+  xmas:   { adr: 1.57, occDelta: 0.03 },
 };
 
 // Odměna, provize i dělení čte komponenta z lib/yield, aby se kalkulačka a graf
@@ -70,20 +74,31 @@ const seasonAdjust: Record<Season, { adr: number; occDelta: number }> = {
 
 const CalculatorSection = () => {
   const { lang } = useLanguage();
-  // A shared link (?byt=praha2-2kk-year) opens the calculator with the same setting.
+  // A shared link (?byt=praha2-2kk-year-6h-53m) opens the calculator with the same setting.
   const initial = useMemo(() => {
     if (typeof window === "undefined") return null;
     const raw = new URLSearchParams(window.location.search).get("byt");
     if (!raw) return null;
-    const [loc, sz, se] = raw.split("-");
+    // Formát: praha2-2kk-year[-6h-53m]. Starší odkazy bez kapacity a plochy
+    // dál fungují, chybějící hodnoty se doplní z dispozice.
+    const [loc, sz, se, g, a] = raw.split("-");
+    const num = (v: string | undefined, suffix: string) =>
+      v && v.endsWith(suffix) && Number.isFinite(+v.slice(0, -1)) ? +v.slice(0, -1) : null;
     return {
       location: locations.some((l) => l.value === loc) ? (loc as LocationKey) : null,
       size: sizes.some((x) => x.value === sz) ? (sz as SizeKey) : null,
       season: se && se in seasonAdjust ? (se as Season) : null,
+      guests: num(g, "h"),
+      m2: num(a, "m"),
     };
   }, []);
   const [location, setLocation] = useState<LocationKey>(initial?.location ?? "praha2");
   const [size, setSize] = useState<SizeKey>(initial?.size ?? "2kk");
+  // Kapacita řídí výnos z Airbnb, plocha dlouhodobý nájem. Dispozice obojí
+  // jen předvyplní; návštěvník to má přepsat podle svého bytu.
+  const [guests, setGuests] = useState<number>(initial?.guests ?? SIZE_PRESET[initial?.size ?? "2kk"].guests);
+  const [m2, setM2] = useState<number>(initial?.m2 ?? SIZE_PRESET[initial?.size ?? "2kk"].m2);
+  const pickSize = (v: SizeKey) => { setSize(v); setGuests(SIZE_PRESET[v].guests); setM2(SIZE_PRESET[v].m2); };
   const [selectedExtras, setSelectedExtras] = useState<string[]>([]);
   const [season, setSeason] = useState<Season>(initial?.season ?? "year");
   const [extrasOpen, setExtrasOpen] = useState(false);
@@ -94,7 +109,7 @@ const CalculatorSection = () => {
   }, [initial]);
 
   const shareResult = async () => {
-    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${size}-${season}#kalkulacka`;
+    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${size}-${season}-${guests}h-${m2}m#kalkulacka`;
     trackEvent("calc_share", { district: location, size, season });
     const title = "Antam Homes";
     try {
@@ -121,9 +136,8 @@ const CalculatorSection = () => {
   };
 
   const result = useMemo(() => {
-    const sizeData = sizes.find((s) => s.value === size);
     const locationData = locations.find((l) => l.value === location);
-    if (!sizeData || !locationData) {
+    if (!locationData) {
       return { adr: 0, occupancy: 0, gross: 0, platformFee: 0, mgmt: 0, net: 0, netYearAvg: 0, ltr: 0, ratio: 0 };
     }
     const extrasPct = extraKeys
@@ -133,28 +147,24 @@ const CalculatorSection = () => {
     // Výpočet podle smlouvy: z hrubých tržeb za ubytování se nejdřív odečte provize
     // platformy (počítá se z celé ceny rezervace včetně úklidu), zbytek (čistý
     // výnos) se dělí 72/28.
+    // Jediný zdroj výpočtu je lib/yield: tržní cena za noc pro dané pásmo
+    // kapacity × obsazenost × dny, minus provize platformy a naše odměna.
     const compute = (seasonKey: Season) => {
       const adj = seasonAdjust[seasonKey];
-      const adrNet = Math.round(sizeData.baseADR * locationData.multiplier * (1 + extrasPct) * adj.adr);
-      const occupancy = clampOccupancy(locationData.occupancy + adj.occDelta);
-      // Hrubé tržby za ubytování (před provizí platformy) z benchmarkového ADR.
-      const gross = Math.round((adrNet / (1 - PLATFORM_FEE)) * occupancy * DAYS);
-      // Odpočet = sazba provize × (tržby za ubytování + odhad úklidových poplatků).
-      const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE));
-      const netRevenue = gross - platformFee; // čistý výnos
-      const mgmt = Math.round(netRevenue * MGMT_FEE);
-      const net = netRevenue - mgmt;
-      return { adr: adrNet, occupancy, gross, platformFee, mgmt, net };
+      return ownerMonthly(location, guests, {
+        adrAdjust: adj.adr, occDelta: adj.occDelta, extrasPct,
+      });
     };
 
     const r = compute(season);
     // Roční průměr — vždy počítaný ze sezóny "year", nezávisle na výběru
     const netYearAvg = compute("year").net * 12;
 
-    const ltr = ltrTable[location][size];
+    // Nájem se řídí PLOCHOU, ne dispozicí: 2+kk může mít 45 i 90 m².
+    const ltr = rentFor(location, size, m2);
     const ratio = ltr > 0 ? r.net / ltr : 0;
     return { ...r, netYearAvg, ltr, ratio };
-  }, [location, size, selectedExtras, season]);
+  }, [location, size, guests, m2, selectedExtras, season]);
 
   return (
     <section id="kalkulacka" className="section bg-muted/30 scroll-mt-16">
@@ -208,7 +218,7 @@ const CalculatorSection = () => {
               </label>
               <div className="grid grid-cols-4 gap-2">
                 {sizes.map((s) => (
-                  <button key={s.value} type="button" onClick={() => setSize(s.value)}
+                  <button key={s.value} type="button" onClick={() => pickSize(s.value)}
                     className={`px-2 sm:px-3 py-3 min-w-0 rounded-sm text-sm font-body font-semibold transition-all border ${
                       size === s.value
                         ? "bg-primary text-primary-foreground border-primary"
@@ -218,6 +228,31 @@ const CalculatorSection = () => {
                     {s.label}
                   </button>
                 ))}
+              </div>
+            </div>
+
+            {/* Kapacita a plocha. Dispozice je jen předvyplní: 2+kk může mít
+                45 i 90 m², a to s nájmem hýbe dvojnásobně. */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label htmlFor="calc-guests" className="flex items-baseline justify-between gap-3 font-body text-sm font-semibold text-foreground mb-2">
+                  <span className="flex items-center gap-2"><Users className="w-4 h-4 text-gold" />{t(lang, "calc_guests")}</span>
+                  <span className="font-display text-lg text-gold-deep tnum">{guests}</span>
+                </label>
+                <input id="calc-guests" type="range" min={2} max={14} step={1} value={guests}
+                  onChange={(e) => setGuests(+e.target.value)}
+                  className="w-full accent-[hsl(var(--gold))]" />
+                <p className="mt-1.5 font-body text-[12.5px] text-muted-foreground leading-snug">{t(lang, "calc_guests_hint")}</p>
+              </div>
+              <div>
+                <label htmlFor="calc-m2" className="flex items-baseline justify-between gap-3 font-body text-sm font-semibold text-foreground mb-2">
+                  <span className="flex items-center gap-2"><Ruler className="w-4 h-4 text-gold" />{t(lang, "calc_area")}</span>
+                  <span className="font-display text-lg text-gold-deep tnum">{m2}&nbsp;m²</span>
+                </label>
+                <input id="calc-m2" type="range" min={18} max={140} step={1} value={m2}
+                  onChange={(e) => setM2(+e.target.value)}
+                  className="w-full accent-[hsl(var(--gold))]" />
+                <p className="mt-1.5 font-body text-[12.5px] text-muted-foreground leading-snug">{t(lang, "calc_area_hint")}</p>
               </div>
             </div>
 

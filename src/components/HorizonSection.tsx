@@ -6,6 +6,7 @@ import { t } from "@/i18n/translations";
 import {
   DISTRICTS, ENERGY, LTR, ROOMS, LAUNCH_FEE, KIT_PER_ROOM, EMPTY_PER_ROOM,
   RENEW_PER_ROOM_YEAR, YEAR_ONE_RAMP, PROJECT_FEE, PROJECT_FEE_THRESHOLD, ownerMonthly,
+  RENT_GROWTH, STR_GROWTH,
   type LocationKey, type SizeKey,
 } from "@/lib/yield";
 
@@ -51,10 +52,13 @@ const HorizonSection = () => {
     // Bez ní by graf ukazoval nižší vstupní náklad, než jaký majiteli skutečně vyfakturujeme.
     const projectFee = kit > PROJECT_FEE_THRESHOLD ? Math.round(kit * PROJECT_FEE) : 0;
     const setup = LAUNCH_FEE + kit + projectFee;
+    // Obojí roste, a nájem rychleji: 5 % proti 3 % ročně. Modelujeme to schválně
+    // v náš neprospěch, ať se nikdo nemůže chytit toho, že jsme si to nadsadili.
     const lt = [0], str = [-setup];
     for (let i = 1; i <= MONTHS; i++) {
-      lt.push(lt[i - 1] + rent);
-      str.push(str[i - 1] + (i <= 12 ? y1 : y2));
+      const year = Math.floor((i - 1) / 12);
+      lt.push(lt[i - 1] + rent * (1 + RENT_GROWTH) ** year);
+      str.push(str[i - 1] + (i <= 12 ? y1 : y2 * (1 + STR_GROWTH) ** year));
     }
     let payback: number | null = null, cross: number | null = null;
     for (let i = 1; i <= MONTHS; i++) {
@@ -209,6 +213,15 @@ const HorizonSection = () => {
               <p className="font-display text-[19px] md:text-[23px] mt-0.5 tnum">{v}</p>
             </li>
           ))}
+        </Reveal>
+
+        {/* Růst se počítá proti nám: nájem rychleji než krátkodobý pronájem.
+            Je to jediná věta na stránce, kterou konkurence neřekne, protože
+            by ji musela spočítat. */}
+        <Reveal delay={0.12} className="mt-4 max-w-[68ch] mx-auto">
+          <p className="font-body text-[13.5px] md:text-[15px] text-foreground leading-relaxed text-center text-pretty">
+            {t(lang, "hz_growth")}
+          </p>
         </Reveal>
 
         <Reveal delay={0.15} className="mt-4 max-w-[78ch] mx-auto">

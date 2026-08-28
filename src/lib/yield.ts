@@ -39,18 +39,50 @@ export const BASE_ADR: Record<SizeKey, number> = {
   "1kk": 1580, "2kk": 2150, "3kk": 2900, "4kk": 3900,
 };
 
-/** Dlouhodobý nájem, Kč/měs — cenová mapa nájemného Bohemian Estates, 11/2025 */
+/** Dlouhodobý nájem, Kč/měs — odvozeno z LTR_PER_M2 × MEDIAN_AREA × SIZE_COEF */
+/**
+ * Dlouhodobý nájem. Přestavěno 28. 8. 2026 ze dvou veřejných zdrojů:
+ *
+ * ÚROVEŇ (Kč/m²/měs) = Deloitte Rent Index Q2/2026, po městských částech.
+ * Měří inzeráty, které se skutečně pronajaly. Pražský průměr 462 Kč/m².
+ *
+ * TVAR (rozdíl mezi dispozicemi) = cenová mapa nájemního bydlení Ministerstva
+ * financí, vydání 15. 8. 2026. Menší byt má vyšší Kč/m². Poměr k 2+kk vyšel
+ * napříč katastry stabilní (Nové Město, Vinohrady, Žižkov, Smíchov):
+ * 1+kk 1,18× · 2+kk 1,00× · 3+kk 0,90× · 4+ 0,89×.
+ *
+ * PLOCHA = medián výměr nájemních bytů v Praze podle MF: 35 / 53 / 71 / 88 m².
+ *
+ * Dřív se citovala cenová mapa jednoho z konkurentů, což je jen přebalené
+ * starší vydání té samé mapy MF. Tohle jsou primární zdroje.
+ */
+export const LTR_PER_M2: Record<LocationKey, number> = {
+  praha1: 490, praha2: 482, praha3: 480, praha4: 443, praha5: 461,
+  praha6: 454, praha7: 493, praha8: 465, praha9: 468, praha10: 442,
+};
+/** Násobek Kč/m² podle dispozice, vztaženo k 2+kk (zdroj: cenová mapa MF). */
+export const SIZE_COEF: Record<SizeKey, number> = {
+  "1kk": 1.18, "2kk": 1.00, "3kk": 0.90, "4kk": 0.89,
+};
+/** Medián výměry nájemního bytu v Praze podle MF, v m². */
+export const MEDIAN_AREA: Record<SizeKey, number> = {
+  "1kk": 35, "2kk": 53, "3kk": 71, "4kk": 88,
+};
+/** Nájem konkrétní plochy v dané lokalitě. Kalkulačka i karty počítají odsud. */
+export const rentFor = (loc: LocationKey, size: SizeKey, m2 = MEDIAN_AREA[size]) =>
+  Math.round(m2 * LTR_PER_M2[loc] * SIZE_COEF[size]);
+
 export const LTR: Record<LocationKey, Record<SizeKey, number>> = {
-  praha1:  { "1kk": 23000, "2kk": 28000, "3kk": 32000, "4kk": 41500 },
-  praha2:  { "1kk": 21500, "2kk": 28000, "3kk": 32500, "4kk": 42500 },
-  praha3:  { "1kk": 20500, "2kk": 26500, "3kk": 31000, "4kk": 40500 },
-  praha4:  { "1kk": 18000, "2kk": 23000, "3kk": 26000, "4kk": 33500 },
-  praha5:  { "1kk": 18500, "2kk": 24500, "3kk": 28000, "4kk": 36000 },
-  praha6:  { "1kk": 19000, "2kk": 25500, "3kk": 30000, "4kk": 39000 },
-  praha7:  { "1kk": 20000, "2kk": 25500, "3kk": 30500, "4kk": 40000 },
-  praha8:  { "1kk": 16000, "2kk": 21500, "3kk": 24000, "4kk": 31000 },
-  praha9:  { "1kk": 18500, "2kk": 23500, "3kk": 29000, "4kk": 37500 },
-  praha10: { "1kk": 18000, "2kk": 23000, "3kk": 27500, "4kk": 35500 },
+  praha1:  { "1kk": 20000, "2kk": 26000, "3kk": 31500, "4kk": 38500 },
+  praha2:  { "1kk": 20000, "2kk": 25500, "3kk": 31000, "4kk": 38000 },
+  praha3:  { "1kk": 20000, "2kk": 25500, "3kk": 30500, "4kk": 37500 },
+  praha4:  { "1kk": 18500, "2kk": 23500, "3kk": 28500, "4kk": 34500 },
+  praha5:  { "1kk": 19000, "2kk": 24500, "3kk": 29500, "4kk": 36000 },
+  praha6:  { "1kk": 19000, "2kk": 24000, "3kk": 29000, "4kk": 35500 },
+  praha7:  { "1kk": 20500, "2kk": 26000, "3kk": 31500, "4kk": 38500 },
+  praha8:  { "1kk": 19000, "2kk": 24500, "3kk": 29500, "4kk": 36500 },
+  praha9:  { "1kk": 19500, "2kk": 25000, "3kk": 30000, "4kk": 36500 },
+  praha10: { "1kk": 18500, "2kk": 23500, "3kk": 28000, "4kk": 34500 },
 };
 
 /** Zálohy na energie, které u krátkodobého pronájmu hradí majitel (u nájmu nájemce) */
@@ -88,18 +120,63 @@ export const annualDamageCover = (rooms: number) =>
  * Karty v PortfolioSection musí ukazovat stejná čísla; hlídá to facts.test.ts.
  */
 export const OCCUPANCY_BY_FLAT: {
-  name: string; loc: string; occupancy: number; market: number; days: number;
+  name: string; loc: string; kat?: string; m2: number; occupancy: number; market: number; days: number;
 }[] = [
-  { name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1",        occupancy: 96, market: 78, days: 319 },
-  { name: "Modern Museum View\u00a0Apartment",  loc: "Praha 1",        occupancy: 94, market: 77, days: 318 },
-  { name: "Modern AC\u00a0Apartment",           loc: "Praha 3",        occupancy: 96, market: 75, days: 139 },
-  { name: "Moderní apartmán se\u00a0zahradou",  loc: "Praha 3",        occupancy: 85, market: 71, days: 54 },
-  { name: "Klement apartment s\u00a0terasou",   loc: "Mladá Boleslav", occupancy: 91, market: 72, days: 54 },
-  { name: "My Mozart studio",                loc: "Praha 5",        occupancy: 97, market: 74, days: 113 },
+  { name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", kat: "Nové Město",        m2: 52, occupancy: 96, market: 78, days: 319 },
+  { name: "Modern Museum View\u00a0Apartment",  loc: "Praha 1", kat: "Nové Město",        m2: 52, occupancy: 94, market: 77, days: 318 },
+  { name: "Modern AC\u00a0Apartment",           loc: "Praha 3", kat: "Žižkov",        m2: 55, occupancy: 96, market: 75, days: 139 },
+  { name: "Moderní apartmán se\u00a0zahradou",  loc: "Praha 3", kat: "Žižkov",        m2: 60, occupancy: 85, market: 71, days: 54 },
+  { name: "Klement apartment s\u00a0terasou",   loc: "Mladá Boleslav", kat: "Mladá Boleslav", m2: 85, occupancy: 91, market: 72, days: 54 },
+  { name: "My Mozart studio",                loc: "Praha 5", kat: "Smíchov",        m2: 40, occupancy: 97, market: 74, days: 113 },
 ];
 
 /** Vážený průměr naší obsazenosti: 1 240 obsazených nocí z 1 317 dní okna. */
 export const OCCUPANCY_OURS = 94;
+
+/**
+ * Cena za noc na trhu. Medián srovnatelných nabídek v okolí konkrétního bytu
+ * (PriceLabs, 28. 8. 2026). Sondy jsme dělali přes vlastní listingy, takže
+ * měřeno máme jen Prahu 1, 3 a 5. Ostatní čtvrti dostávají konzervativně
+ * úroveň Prahy 3, tedy nejnižší naměřenou; kalkulačka to u nich napíše.
+ *
+ * Pásmo se vybírá podle KAPACITY, ne podle dispozice: host na Airbnb filtruje
+ * podle počtu osob. 2+kk s osmi lůžky se srovnává s 2BR nabídkami, ne s 1BR.
+ *
+ * Ověřeno zpětně: cena za noc × skutečná obsazenost × (1 − provize) sedí
+ * na bytě 402 na 0,3 % a na bytě se zahradou na 0,8 % proti Hospitable.
+ */
+export type AdrBand = "1BR" | "2BR" | "3BR";
+const ADR_P3: Record<AdrBand, number> = { "1BR": 2037, "2BR": 2792, "3BR": 2910 };
+export const MARKET_ADR: Record<LocationKey, Record<AdrBand, number>> = {
+  praha1:  { "1BR": 2767, "2BR": 3775, "3BR": 6047 },
+  praha3:  ADR_P3,
+  praha5:  { "1BR": 2265, "2BR": 3011, "3BR": 3011 },
+  praha2: ADR_P3, praha4: ADR_P3, praha6: ADR_P3,
+  praha7: ADR_P3, praha8: ADR_P3, praha9: ADR_P3, praha10: ADR_P3,
+};
+/** Čtvrti, kde máme vlastní měření; u ostatních je číslo konzervativní náhrada. */
+export const ADR_MEASURED: LocationKey[] = ["praha1", "praha3", "praha5"];
+export const guestBand = (guests: number): AdrBand =>
+  guests <= 4 ? "1BR" : guests <= 8 ? "2BR" : "3BR";
+
+/**
+ * Obsazenost, se kterou počítá kalkulačka. Schválně pod tím, co byty reálně
+ * drží (94 %), aby veřejné číslo zůstalo pod skutečností. Kalkulačka to
+ * návštěvníkovi napíše a odkáže na karty, kde je naše obsazenost vidět.
+ *
+ * Proč 84 a ne 85: při 85 % model přestřelí byt se zahradou o 0,4 % a porušil
+ * by tím pravidlo, že vlastní portfolio musí veřejné číslo překonat. Byt se
+ * zahradou je nejtěsnější, drží tenhle strop. Hlídá to facts.test.ts.
+ */
+export const CALC_OCCUPANCY = 0.84;
+
+/** Kapacita a plocha, kterou dispozice předvyplní. Obojí jde přepsat. */
+export const SIZE_PRESET: Record<SizeKey, { m2: number; guests: number }> = {
+  "1kk": { m2: 35, guests: 4 },
+  "2kk": { m2: 53, guests: 6 },
+  "3kk": { m2: 71, guests: 8 },
+  "4kk": { m2: 88, guests: 10 },
+};
 
 export const MGMT_FEE = 0.28;      // odměna Antam Homes z čistého výnosu
 // Změřeno 27. 8. 2026 na 7 bytech (Hospitable, 12 měsíců): skutečná provize je
@@ -113,7 +190,7 @@ export const CLEANING_SHARE = 0.10;// podíl úklidových poplatků na tržbách
 // (od 28. 8. 2026 je odměna 28 %, na tomhle se nic nemění),
 // takže do výpočtu výnosu majitele NEVSTUPUJE. Zůstává tu jen pro interní propočty.
 export const VAT_RATE = 1.21;
-export const DAYS = 30;
+export const DAYS = 30.44;  // průměrná délka měsíce
 
 /** Uvedení do provozu, vybavení a obnova — vstupy pro graf horizontu */
 export const LAUNCH_FEE = 25000;
@@ -121,6 +198,21 @@ export const KIT_PER_ROOM = 30000;    // dovybavení bytu zařízeného pro náj
 export const EMPTY_PER_ROOM = 100000; // kompletní vybavení prázdného bytu
 export const RENEW_PER_ROOM_YEAR = 4000;
 export const YEAR_ONE_RAMP = 0.85;    // nová nabídka nenajede hned na plný výkon
+
+/**
+ * Roční růst pro pětiletý horizont. Schválně proti nám: nájmy v Praze rostou
+ * rychleji než krátkodobý pronájem.
+ *
+ * RENT_GROWTH 5 %: CEMAP +5,8 %, Sreality +5 %, RealityMIX +3,8 %, ČSÚ nájemné
+ * +6,1 %, Deloitte implikuje 7 až 8 %. Pět měření, střed pásma.
+ *
+ * STR_GROWTH 3 %: pražské hotely v korunách +3 až 4 % ADR. Čísla, která hlásí
+ * AirDNA a spol., jsou v dolarech a dolar za dva roky spadl vůči koruně o deset
+ * procent, takže v korunách je jejich růst nula. Nabídka navíc roste rychleji
+ * než poptávka (ČSÚ: přenocování v Praze +2,9 % za 1. pololetí 2026).
+ */
+export const RENT_GROWTH = 0.05;
+export const STR_GROWTH = 0.03;
 export const PROJECT_FEE = 0.20;           // odměna za řízení projektu, z rozpočtu
 export const PROJECT_FEE_THRESHOLD = 30000;// pod tímto rozpočtem je řízení v ceně uvedení do provozu
 
@@ -132,17 +224,34 @@ export const clampOccupancy = (v: number) => Math.max(0.5, Math.min(0.98, v));
  * neodečítá, hradí ji Antam ze své odměny.
  * Energie NEjsou odečteny — hradí je majitel zvlášť.
  */
+/**
+ * Výnos majitele za měsíc.
+ *
+ * Od 28. 8. 2026 nestojí na vlastní tabulce ADR, ale na tržní ceně za noc
+ * (MARKET_ADR) a pevné obsazenosti CALC_OCCUPANCY. Z hrubých tržeb se odečte
+ * provize platformy, zbytek se dělí podle MGMT_FEE. DPH z provize neodečítáme,
+ * hradí ji Antam ze své odměny. Energie majitel platí zvlášť a nejsou tu.
+ *
+ * guests řídí, s jakým pásmem nabídek se byt srovnává. Dispozice do výpočtu
+ * nevstupuje, jen předvyplňuje kapacitu přes SIZE_PRESET.
+ */
 export function ownerMonthly(
   location: LocationKey,
-  size: SizeKey,
-  { adrAdjust = 1.05, occDelta = 0.02, extrasPct = 0 } = {},
+  sizeOrGuests: SizeKey | number,
+  { adrAdjust = 1, occDelta = 0, extrasPct = 0 } = {},
 ) {
-  const d = DISTRICTS[location];
-  const adrNet = Math.round(BASE_ADR[size] * d.multiplier * (1 + extrasPct) * adrAdjust);
-  const occupancy = clampOccupancy(d.occupancy + occDelta);
-  const gross = Math.round((adrNet / (1 - PLATFORM_FEE)) * occupancy * DAYS);
-  const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE));
+  const guests = typeof sizeOrGuests === "number"
+    ? sizeOrGuests
+    : SIZE_PRESET[sizeOrGuests].guests;
+  const marketAdr = MARKET_ADR[location][guestBand(guests)];
+  const adrGross = Math.round(marketAdr * (1 + extrasPct) * adrAdjust);
+  const occupancy = clampOccupancy(CALC_OCCUPANCY + occDelta);
+  const gross = Math.round(adrGross * occupancy * DAYS);
+  const platformFee = Math.round(PLATFORM_FEE * gross);
   const netRevenue = gross - platformFee;
   const mgmt = Math.round(netRevenue * MGMT_FEE);
-  return { adr: adrNet, occupancy, gross, platformFee, netRevenue, mgmt, net: netRevenue - mgmt };
+  return {
+    adr: adrGross, occupancy, gross, platformFee, netRevenue, mgmt,
+    net: netRevenue - mgmt, guests, band: guestBand(guests),
+  };
 }

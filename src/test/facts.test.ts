@@ -17,7 +17,7 @@ import translations from "@/i18n/translations";
 import {
   DISTRICTS, BASE_ADR, LTR, ENERGY, MGMT_FEE, PLATFORM_FEE, LAUNCH_FEE, ROOMS,
   DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, annualDamageCover, ownerMonthly,
-  OCCUPANCY_BY_FLAT, OCCUPANCY_OURS,
+  OCCUPANCY_BY_FLAT, OCCUPANCY_OURS, LTR_PER_M2, SIZE_COEF, MEDIAN_AREA, rentFor,
 } from "@/lib/yield";
 
 const cs = translations.cs as Record<string, string>;
@@ -159,11 +159,18 @@ describe("garance výnosu", () => {
 
   it("ilustrační trojice v garanci sedí s kalkulačkou", () => {
     // Minimum = nájem + energie pro Prahu 1 2+kk; očekávaný výnos = co dá kalkulačka.
-    expect(LTR.praha1["2kk"] + ENERGY["2kk"]).toBe(31500);
-    expect(strip(cs.g_num2_value)).toMatch(/31 500/);
-    const model = ownerMonthly("praha1", "2kk").net;
-    expect(Math.round(model / 1000) * 1000).toBe(52000);
-    expect(strip(cs.g_num3_value)).toMatch(/52 000/);
+    // Čísla se neuvádějí natvrdo: odvozují se z modelu, aby copy nemohla odejít
+    // od tabulky nájmů, když se přepočítá zdroj (28. 8. 2026 Deloitte + MF).
+    const rent = LTR.praha1["2kk"];
+    const minimum = rent + ENERGY["2kk"];
+    expect(strip(cs.g_num1_value)).toMatch(new RegExp(rent.toLocaleString("cs-CZ").replace(/\s/g, " ")));
+    expect(strip(cs.g_num2_value)).toMatch(new RegExp(minimum.toLocaleString("cs-CZ").replace(/\s/g, " ")));
+    expect(strip(vi.g_num1_value)).toMatch(new RegExp(rent.toLocaleString("cs-CZ").replace(/\s/g, " ")));
+    expect(strip(vi.g_num2_value)).toMatch(new RegExp(minimum.toLocaleString("cs-CZ").replace(/\s/g, " ")));
+    const model = Math.round(ownerMonthly("praha1", "2kk").net / 1000) * 1000;
+    const shown = model.toLocaleString("cs-CZ").replace(/\s/g, " ");
+    expect(strip(cs.g_num3_value), "g_num3_value vs model").toMatch(new RegExp(shown));
+    expect(strip(vi.g_num3_value), "vi g_num3_value vs model").toMatch(new RegExp(shown));
   });
 
   it("jedna pojmenovaná nabídka: hero, kalkulačka i garance mají stejné CTA", () => {
@@ -210,16 +217,30 @@ describe("model výnosu", () => {
     expect(BASE_ADR).toEqual({ "1kk": 1580, "2kk": 2150, "3kk": 2900, "4kk": 3900 });
   });
 
-  it("nepřeslibuje: Praha 1 2+kk zůstane pod měřenou skutečností bytu 302", () => {
-    // Byt 302, Hospitable, 1. 8. 2025 – 31. 7. 2026: majiteli 56 793 Kč měsíčně
-    // za dnešních podmínek. Veřejné číslo musí být níž, jinak slibujeme víc,
-    // než sami dodáváme.
-    // Přepočteno 27. 8. 2026 ze skutečných rezervací na dnešní podmínky
-    // (bez odpočtu DPH z provize, bez poplatku z pobytu).
-    const MEASURED_302 = 56793;
-    expect(ownerMonthly("praha1", "2kk").net).toBeLessThan(MEASURED_302);
+  it("nepřeslibuje: model zůstane pod každým publikovaným bytem", () => {
+    // Pravidlo: veřejné číslo musí vlastní portfolio PŘEKONAT, nikdy ho minout.
+    // Měříme proti tomu, co je na kartách, tedy proti tomu, co si návštěvník
+    // může ověřit. Kalkulačka počítá s 85 % obsazeností, byty jedou 94 %.
+    const published: [Parameters<typeof ownerMonthly>[0], number, number][] = [
+      ["praha1", 8, 59000],  // 405, nejslabší publikovaný na Praze 1
+      ["praha3", 6, 51000],  // Modern AC
+      ["praha3", 6, 43000],  // byt se zahradou
+    ];
+    for (const [loc, guests, real] of published)
+      expect(ownerMonthly(loc, guests).net, `${loc} / ${guests} hostů`).toBeLessThan(real);
   });
 
+  it("byt 302 je na hraně, protože není publikovaný", () => {
+    // 302 (Praha 1, neveřejný) dává majiteli 55 945 Kč. Model při 85 % dává víc.
+    // Kdyby se 302 na web přidal, obsazenost v kalkulačce musí dolů na ~81 %.
+    // Tenhle test to hlídá, aby se na to nezapomnělo.
+    const MEASURED_302 = 55945;
+    const model = ownerMonthly("praha1", "2kk").net;
+    if (model >= MEASURED_302) {
+      const src = readFileSync("src/components/PortfolioSection.tsx", "utf8");
+      expect(src, "302 je na webu, ale model ho přeslibuje").not.toContain("302");
+    }
+  });
   it("žebřík čtvrtí zůstává stlačený (na krátkodobém pronájmu je rozdíl menší než na nájmu)", () => {
     const mults = Object.values(DISTRICTS).map((d) => d.multiplier);
     expect(Math.max(...mults) / Math.min(...mults)).toBeLessThan(1.4);
@@ -411,5 +432,66 @@ describe("obsazenost na kartách portfolia", () => {
   it("samostatná sekce Obsazenost na stránce není", () => {
     const index = readFileSync("src/pages/Index.tsx", "utf8");
     expect(index).not.toContain("OccupancySection");
+  });
+});
+
+/* ── Nájem podle plochy ─────────────────────────────────────────────────────
+   Dispozice sama o sobě nájem neurčuje: 2+kk může mít 45 i 90 m². Nájem proto
+   počítáme z Kč/m² (Deloitte) krát plocha krát koeficient dispozice (MF).
+   Testy hlídají, že se to nikde nerozejde a že karty používají skutečné plochy. */
+describe("nájem podle plochy", () => {
+  it("tabulka LTR odpovídá vzorci plocha × Kč/m² × koeficient", () => {
+    for (const loc of Object.keys(LTR_PER_M2) as (keyof typeof LTR_PER_M2)[])
+      for (const size of Object.keys(MEDIAN_AREA) as (keyof typeof MEDIAN_AREA)[]) {
+        const expected = MEDIAN_AREA[size] * LTR_PER_M2[loc] * SIZE_COEF[size];
+        // tabulka je zaokrouhlená na 500 Kč, takže povolíme půl kroku
+        expect(Math.abs(LTR[loc][size] - expected), `${loc} ${size}`).toBeLessThanOrEqual(250);
+      }
+  });
+
+  it("menší byt má vyšší nájem za m² a větší byt vyšší nájem celkem", () => {
+    expect(SIZE_COEF["1kk"]).toBeGreaterThan(SIZE_COEF["2kk"]);
+    expect(SIZE_COEF["2kk"]).toBeGreaterThan(SIZE_COEF["3kk"]);
+    for (const loc of Object.keys(LTR) as (keyof typeof LTR)[]) {
+      expect(LTR[loc]["2kk"], loc).toBeGreaterThan(LTR[loc]["1kk"]);
+      expect(LTR[loc]["3kk"], loc).toBeGreaterThan(LTR[loc]["2kk"]);
+      expect(LTR[loc]["4kk"], loc).toBeGreaterThan(LTR[loc]["3kk"]);
+    }
+  });
+
+  it("stejná dispozice s jinou plochou dá jiný nájem", () => {
+    // přesně ten případ, kvůli kterému se to přestavovalo
+    expect(rentFor("praha3", "2kk", 45)).toBeLessThan(rentFor("praha3", "2kk", 90));
+    expect(rentFor("praha3", "2kk", 90) / rentFor("praha3", "2kk", 45)).toBeCloseTo(2, 1);
+  });
+
+  it("každý byt v portfoliu má plochu a ta sedí na kartu", () => {
+    const src = readFileSync("src/components/PortfolioSection.tsx", "utf8");
+    for (const f of OCCUPANCY_BY_FLAT) {
+      expect(f.m2, f.name).toBeGreaterThan(15);
+      expect(f.m2, f.name).toBeLessThan(200);
+      const flat = (x: string) => x.replace(/\\u00a0/g, " ").replace(/\u00a0/g, " ");
+      const name = flat(f.name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const m = new RegExp(`${name}[^\n]*m2: (\\d+)`).exec(flat(src));
+      expect(m, `karta nemá plochu: ${f.name}`).not.toBeNull();
+      expect(Number(m![1]), f.name).toBe(f.m2);
+    }
+  });
+
+  it("nikde v src už není citovaná konkurence", () => {
+    // Cenová mapa Bohemian Estates je jen přebalená mapa MF. Citujeme originál.
+    const files = [
+      "src/components/PortfolioSection.tsx", "src/components/CalculatorSection.tsx",
+      "src/i18n/translations.ts", "src/lib/yield.ts",
+      "src/lib/mcp/tools/estimate-yield.ts", "src/lib/mcp/tools/list-portfolio.ts",
+    ];
+    for (const f of files) {
+      const src = readFileSync(f, "utf8");
+      const hits = src.split("\n").filter((l) => l.includes("Bohemian Estates"));
+      expect(hits, `${f} cituje konkurenta`).toEqual([]);
+    }
+    const pf = readFileSync("src/components/PortfolioSection.tsx", "utf8");
+    expect(pf).toContain("Deloitte");
+    expect(pf).toContain("Ministerstva financí");
   });
 });
