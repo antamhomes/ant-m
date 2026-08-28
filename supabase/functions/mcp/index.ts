@@ -146,7 +146,7 @@ var list_portfolio_default = defineTool2({
             return `${base}: owner receives ~${a.ownerMonthlyCzk.toLocaleString("en-US")} CZK/month after all fees, occupancy ${a.occupancyPct} % (${a.period})${a.vsLongTermRent ? `, ${a.vsLongTermRent}x long-term rent` : ""}`;
           }
           return `${base}: managed since ${a.managedSince}, ${a.note}`;
-        }).join("\n") + "\n\nOwner income = real results recalculated to the current 30 % Antam Homes fee: what the platform actually pays out, minus the cleaning fee; energy paid by owner. Past results are not a guarantee.\n\nComing soon: the portfolio is expanding to a total of 10 apartments across Prague. Guests have left over 520 reviews across Airbnb and Booking.com."
+        }).join("\n") + "\n\nOwner income = real results recalculated to the current 30 % Antam Homes fee: what the platform actually pays out, minus the cleaning fee and the local tourist tax; energy paid by owner. Past results are not a guarantee.\n\nComing soon: the portfolio is expanding to a total of 10 apartments across Prague. Guests have left over 520 reviews across Airbnb and Booking.com."
       }
     ],
     structuredContent: {

@@ -12,8 +12,9 @@ import byt7 from "@/assets/byt-7.jpg.asset.json";
 /** Results shown on the cards: owner's monthly income, rounded DOWN to thousands, plus occupancy.
  *  Method confirmed by the owner 28. 8. 2026: take what the platform actually pays out (already net
  *  of its own commission), subtract the cleaning fee, then apply the 70/30 split. Airbnb settles in
- *  CZK, Booking.com in EUR, converted at 25,00. VAT and the local tourist tax stay inside the base,
- *  because that money lands on the account with the rest; the footnote must not claim otherwise.
+ *  CZK, Booking.com in EUR, converted at 25,00. The local tourist tax was collected separately
+ *  online and is paid by the guest (owner, 28. 8. 2026); it is deliberately not mentioned in the
+ *  footnote, because it is not something the owner reading this has to care about.
  *  Recomputed 28. 8. 2026 from Hospitable and cross-checked against PriceLabs (six flats match to
  *  0,0 %, the rest within 0,9 %). Three "checkpoint voided" duplicates with zero revenue are
  *  excluded; they inflated night counts, not money.
@@ -68,8 +69,8 @@ const copy = {
     desc: "Výsledky z měsíčních vyúčtování.",
     guests: (n: number) => `až ${n} host${n === 4 ? "é" : "ů"}`,
     soonTitle: "Připravujeme",
-    soonDesc: "Nové byty přidáváme postupně.\n",
-    soonDescShort: "Nové byty přidáváme postupně.\n",
+    soonDesc: "Nové byty nabíráme postupně.\n",
+    soonDescShort: "Nové byty nabíráme postupně.\n",
     reviewsLabel: "Co říkají hosté",
     reviewsPre: "Přes ",
     reviewsNum: "520 hodnocení",
@@ -81,7 +82,7 @@ const copy = {
     statOcc: (o: number) => `obsazenost ${o}\u00a0%`,
     newBadge: (m: string) => `V naší správě od ${m}`,
     newNote: "Výsledky doplníme po první sezóně.",
-    statNote: (d: string) => `Částky pro majitele vycházejí ze skutečných rezervací, přepočtených na aktuální odměnu 30\u00a0%: tržby za ubytování po provizi Airbnb a Booking.com, bez úklidových poplatků, po naší odměně. Tedy to, co by majitel dostal při dnešních podmínkách; energie hradí majitel. Zaokrouhleno dolů na tisíce. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. Nájem podle cenové mapy Bohemian Estates (11/2025). Minulé výsledky nejsou zárukou budoucích.`,
+    statNote: (d: string) => `Částky pro majitele vycházejí ze skutečných rezervací, přepočtených na aktuální odměnu 30\u00a0%: tržby za ubytování po provizi Airbnb a Booking.com, bez úklidových poplatků, po naší odměně. Tedy to, co by majitel dostal při dnešních podmínkách; energie hradí majitel. Zaokrouhleno dolů na tisíce. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. U nových nabídek se výsledky během prvního roku provozu teprve ustalují. Nájem podle cenové mapy Bohemian Estates (11/2025). Minulé výsledky nejsou zárukou budoucích.`,
   },
   vi: {
     eyebrow: "Kết quả thực tế",

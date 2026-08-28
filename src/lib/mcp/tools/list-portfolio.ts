@@ -2,7 +2,8 @@ import { defineTool } from "@lovable.dev/mcp-js";
 
 // Owner income, method confirmed by the owner 28 Aug 2026: what the platform actually pays out
 // (already net of its own commission), minus the cleaning fee, then the 70/30 split. Airbnb
-// settles in CZK, Booking.com in EUR (converted at 25,00). Monthly average over the last 12 full
+// settles in CZK, Booking.com in EUR (converted at 25,00); the local tourist tax was collected
+// separately online and is not owner income. Monthly average over the last 12 full
 // months (to 31 Jul 2026) or since the first stay for newer flats. Recomputed 28 Aug 2026 from
 // Hospitable and cross-checked against PriceLabs; three "checkpoint voided" duplicate
 // reservations with zero revenue are excluded.
@@ -39,7 +40,7 @@ export default defineTool({
             return `${base}: managed since ${a.managedSince}, ${a.note}`;
           })
           .join("\n") +
-          "\n\nOwner income = real results recalculated to the current 30 % Antam Homes fee: what the platform actually pays out, minus the cleaning fee; energy paid by owner. Past results are not a guarantee." +
+          "\n\nOwner income = real results recalculated to the current 30 % Antam Homes fee: what the platform actually pays out, minus the cleaning fee and the local tourist tax; energy paid by owner. Past results are not a guarantee." +
           "\n\nComing soon: the portfolio is expanding to a total of 10 apartments across Prague. Guests have left over 520 reviews across Airbnb and Booking.com.",
       },
     ],

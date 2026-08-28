@@ -22,8 +22,8 @@ const translations = {
     hero_cta2: "",
 
     // Services — Co za vás řešíme (bento)
-    services_label: "Správa od A do Z",
-    services_title: "Co za vás řešíme",
+    services_label: "Co za vás řešíme",
+    services_title: "Už to dávno není jen „pronajmout byt“.",
     services_desc: "Úspěšný byt dnes nestačí jen vystavit na Airbnb nebo Booking. Rozhoduje cena, prezentace, hodnocení, obsazenost a každodenní práce s nabídkou.",
     svc1_title: "Příprava bytu",
     svc1_desc: "Navrhneme potřebné úpravy a vybavení před spuštěním.",
@@ -76,14 +76,14 @@ const translations = {
 
     // About — Kdo za tím stojí (REVIEW: nahradit vlastními slovy + fotkou)
     about_label: "Kdo za tím stojí",
-    about_title: "Začali jsme na vlastních a rodinných bytech.",
-    about_p1: "První zkušenosti s krátkodobým pronájmem jsme získali na vlastních bytech a bytech naší rodiny. Postupně jsme začali přebírat další apartmány od známých a majitelů na doporučení.",
-    about_p2: "Není to náhoda. Úspěšný byt dnes nestačí jen vystavit na Airbnb nebo Booking. Rozhoduje správné nastavení ceny, prezentace, fotografie, hodnocení, rychlost komunikace, práce s obsazeností i desítky malých rozhodnutí během celého roku.",
+    about_title: "Víme, co je potřeba, aby byt na dnešním trhu uspěl.",
+    about_p1: "Krátkodobým pronájmem se zabýváme každý den. Spravujeme byty různých velikostí, v různých lokalitách a pro různé typy hostů.",
+    about_p2: "Úspěšný byt dnes nestačí jen vystavit na Airbnb nebo Booking. Rozhoduje cena, prezentace, hodnocení, obsazenost a desítky malých rozhodnutí během celého roku.",
     about_p3: "Právě v tom je naše výhoda. Trh se neustále mění a my s ním. Víme, co funguje, sledujeme výsledky každý den a průběžně upravujeme způsob, jakým je každý byt nabízen a řízen, abychom si udrželi náskok před ostatními nabídkami.",
-    about_p4: "Dnes se staráme o 11 apartmánů v Praze a okolí a máme přes 520 hodnocení hostů na Airbnb a Booking.com.",
+    about_p4: "Začínali jsme na vlastních a rodinných bytech a postupně přebírali další apartmány od známých a majitelů na doporučení. Dnes máme za sebou přes 520 hodnocení hostů na Airbnb a Booking.com.",
     about_p5: "Neřešíme jen každodenní správu. Každý byt bereme jako samostatný byznys a neustále hledáme způsoby, jak zlepšovat jeho výsledky.",
-    about_stat1_value: "11",
-    about_stat1_label: "bytů ve správě · 8/2026",
+    about_stat1_value: "",
+    about_stat1_label: "",
     about_stat2_value: "520+",
     about_stat2_label: "hodnocení od hostů",
     about_quote: "Každý byt bereme jako samostatný byznys. Sledujeme jeho ceny, obsazenost a výsledky a podle nich průběžně upravujeme, jak ho vedeme.",
@@ -172,11 +172,11 @@ const translations = {
     calc_cover_note: "Podle velikosti bytu, potvrzené ve smlouvě.",
 
     // Owner report
-    report_label: "Přehled",
-    report_title: "Měsíční přehled",
-    report_desc: "Majitel má vědět, co se v bytě děje.",
+    report_label: "Přehled pro majitele",
+    report_title: "Majitel má vědět, co se v bytě děje.",
+    report_desc: "Vidíte tržby, rezervace, náklady a částku pro vás. Peníze posíláme do 15. dne následujícího měsíce.",
     report_multi: "Máte bytů víc? Každý má vlastní vyúčtování.",
-    report_text: "Vidíte tržby, rezervace, náklady a částku pro vás. Peníze posíláme do 15. dne následujícího měsíce.",
+    report_text: "",
     report_row_reservations: "Rezervace",
     report_row_occupancy: "Obsazenost",
     report_row_revenue: "Tržby za ubytování",

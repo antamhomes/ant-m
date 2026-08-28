@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import Reveal from "@/components/Reveal";
-import { t } from "@/i18n/translations";
+import { t, type TranslationKey } from "@/i18n/translations";
 
 /**
  * "Kdo za tím stojí" — an article-like block on a soft secondary surface:
@@ -12,10 +12,17 @@ import { t } from "@/i18n/translations";
  * make room for it (or bring back md:grid-cols-[minmax(0,320px)_1fr]).
  * CZ and VI copy are Vuong's approved words; do not rewrite them.
  */
-/** Trimmed 27. 8. 2026: p1 (the edge) + p4 (origin + exact count) carry the section;
- *  p2/p3/p5 stay in translations but are not rendered — About should validate,
- *  not lecture. Owner testimonials get their place here once real ones exist. */
-const BODY_KEYS = ["about_p4"] as const;
+/** 28. 8. 2026: CZ runs p1 (what we do daily) + p2 (what actually decides a flat's
+ *  result) + p4 (origin and the review count), closed by the quote. VI keeps the
+ *  shorter cut it already had; its own p2 is a different, longer paragraph and was
+ *  not part of this pass. p3/p5 stay in translations but are not rendered.
+ *  Owner testimonials get their place here once real ones exist. */
+const BODY_KEYS: Record<"cs" | "vi", readonly TranslationKey[]> = {
+  cs: ["about_p2", "about_p4"],
+  vi: ["about_p4"],
+};
+/** Stats with an empty value are skipped: the CZ page dropped the managed-flat
+ *  count (a weak proof next to the portfolio itself), the VI page still shows it. */
 const STAT_KEYS = [
   { value: "about_stat1_value", label: "about_stat1_label" },
   { value: "about_stat2_value", label: "about_stat2_label" },
@@ -36,7 +43,7 @@ const AboutSection = () => {
           <div className="grid md:grid-cols-[minmax(0,1fr)_190px] gap-7 md:gap-12 items-start">
             <Reveal delay={0.1} className="order-first md:order-last">
               <div className="flex md:flex-col gap-8 md:gap-7 border-y md:border-y-0 md:border-l border-gold/30 py-4 md:py-1 md:pl-6">
-                {STAT_KEYS.map(({ value, label }) => (
+                {STAT_KEYS.filter(({ value }) => t(lang, value)).map(({ value, label }) => (
                   <div key={value}>
                     <p className="font-display text-3xl md:text-4xl font-semibold text-gold-deep leading-none tnum">
                       {t(lang, value)}
@@ -53,7 +60,7 @@ const AboutSection = () => {
               <p className="font-body text-[17px] md:text-lg text-foreground leading-relaxed mb-5 text-pretty">
                 {t(lang, "about_p1")}
               </p>
-              {BODY_KEYS.map((key) => {
+              {BODY_KEYS[lang].map((key) => {
                 const text = t(lang, key);
                 if (!text) return null;
                 return (
