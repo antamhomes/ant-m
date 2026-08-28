@@ -92,7 +92,7 @@ const translations = {
     g_label: "Garance",
     g_title1: "Garance ",
     g_title2: "výnosu",
-    g_desc: "Po posouzení bytu stanovíme minimální roční výnos a uvedeme ho přímo ve smlouvě. Nejméně nájem, který by byt vydělal dlouhodobě, plus energie.",
+    g_desc: "Po posouzení bytu stanovíme minimální roční výnos a uvedeme ho přímo ve smlouvě.",
     g_num1_label: "Dlouhodobý nájem",
     g_num1_value: "28 000 Kč",
     g_num2_label: "Písemné minimum",
@@ -186,7 +186,7 @@ const translations = {
     report_row_net: "Vyplaceno majiteli",
     report_row_notes: "Poznámky k bytu",
     report_period: "Měsíční přehled pro majitele",
-    report_cta: "Chci takový přehled",
+    report_cta: "",
 
     // FAQ
     faq_label: "Na co se majitelé ptají",

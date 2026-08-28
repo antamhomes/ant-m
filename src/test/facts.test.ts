@@ -114,10 +114,14 @@ describe("garance výnosu", () => {
   it("je na webu popsaná v obou jazycích", () => {
     expect(cs.g_desc).toBeTruthy();
     expect(vi.g_desc).toBeTruthy();
-    expect(strip(cs.g_desc)).toMatch(/nájem/);
-    expect(strip(cs.g_desc)).toMatch(/energie/);
-    expect(strip(cs.faq18_a)).toMatch(/nájem/);
-    expect(strip(cs.faq18_a)).toMatch(/energie/);
+    // Definice minima (nájem + energie) se z českého leadu garance přesunula
+    // níž, do řádku ceníku a do FAQ. Test hlídá ten fakt, ne místo, kde stojí.
+    for (const key of ["pr6_note", "faq18_a"] as const) {
+      expect(strip(cs[key]), `cs.${key}`).toMatch(/nájem/);
+      expect(strip(cs[key]), `cs.${key}`).toMatch(/energie/);
+    }
+    expect(strip(vi.g_desc)).toMatch(/tiền thuê dài hạn/);
+    expect(strip(vi.g_desc)).toMatch(/điện nước/);
   });
 
   it("české hero neukazuje čísla bez kontextu", () => {

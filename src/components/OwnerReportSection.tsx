@@ -67,13 +67,17 @@ const OwnerReportSection = () => {
               </p>
             )}
             {/* Multi-property signal: one line, no "enterprise" theatre. */}
-            <p className="font-body text-[15px] text-muted-foreground leading-relaxed mb-8 text-pretty">
+            <p className={`font-body text-[15px] text-muted-foreground leading-relaxed text-pretty ${t(lang, "report_cta") ? "mb-8" : ""}`}>
               {t(lang, "report_multi")}
             </p>
-            <a href="#kontakt" className="btn btn-primary">
-              {t(lang, "report_cta")}
-              <ChevronRight className="w-4 h-4" />
-            </a>
+            {/* Přehled je důkaz transparentnosti, ne konverzní sekce. Prázdný
+                klíč tlačítko skryje; VI si svoje CTA drží. */}
+            {t(lang, "report_cta") && (
+              <a href="#kontakt" className="btn btn-primary">
+                {t(lang, "report_cta")}
+                <ChevronRight className="w-4 h-4" />
+              </a>
+            )}
           </Reveal>
         </div>
       </div>
