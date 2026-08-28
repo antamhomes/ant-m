@@ -31,7 +31,10 @@ type Item = { src: string; name: string; loc: string; guests: number; stats?: St
 const items: Item[] = [
   { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", guests: 8, stats: { owner: 61000, occupancy: 96, ratio: 2.2 } },
   { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", guests: 8, stats: { owner: 53000, occupancy: 95, ratio: 1.9 } },
-  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 4", guests: 6, stats: { owner: 42000, occupancy: 83, since: "4/2026", ratio: 1.6 } },
+  { src: "/portfolio/byt-modern-ac.webp", name: "Modern AC Apartment", loc: "Praha 3", guests: 6, stats: { owner: 49000, occupancy: 96, since: "2/2026", ratio: 1.8 } },
+  // Praha 3, ne Praha 4: potvrzeno majitelem 28. 8. 2026 i PSČ 130 00 v Hospitable.
+  // Násobek 1,6× platí dál: Praha 4 3+kk (26 000) a Praha 3 2+kk (26 500) vyjdou skoro stejně.
+  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 3", guests: 6, stats: { owner: 42000, occupancy: 83, since: "4/2026", ratio: 1.6 } },
   { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", guests: 8, stats: { owner: 30000, occupancy: 93, since: "4/2026" } },
   { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", guests: 4, stats: { owner: 31000, occupancy: 93, since: "2/2026", ratio: 1.7 } },
   { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", guests: 13, newSince: "7/2026" },
