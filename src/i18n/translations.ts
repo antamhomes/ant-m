@@ -422,7 +422,7 @@ const translations = {
     hero_title1: "Thu nhập tốt hơn. ",
     hero_title2: "Chủ nhà an tâm hơn.",
     hero_desc: "Quản lý cho thuê ngắn hạn tại Praha. Tối ưu lợi nhuận, trọn vẹn an tâm. Căn nào Antam nhận quản lý cũng có mức thu tối thiểu mỗi năm, ghi rõ trong hợp đồng.",
-    hero_extra: "Các căn Antam đang lo: chủ nhà nhận 53 000 và 61 000 Kč mỗi tháng · Praha 1 · trung bình 12 tháng",
+    hero_extra: "Các căn Antam đang lo: chủ nhà nhận 56 000 và 62 000 Kč mỗi tháng · Praha 1 · trung bình 12 tháng",
     hero_cta: "Nhờ Antam tính miễn phí",
     hero_cta2: "Tự tính thử trước",
 

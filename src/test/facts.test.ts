@@ -134,9 +134,22 @@ describe("garance výnosu", () => {
     expect(strip(cs.hero_desc).split(" ").length).toBeLessThanOrEqual(18);
   });
 
-  it("vietnamské hero teaser drží a sedí s kartami portfolia (53/61 tis.)", () => {
-    expect(strip(vi.hero_extra)).toMatch(/53 000/);
-    expect(strip(vi.hero_extra)).toMatch(/61 000/);
+  it("vietnamské hero teaser drží a sedí s kartami portfolia (56/62 tis.)", () => {
+    // Přepočet 28. 8. 2026: 405 vyšlo na 56 000 a 402 na 62 000. Kdyby se karty
+    // znovu přepočítaly, musí se s nimi posunout i tenhle teaser.
+    expect(strip(vi.hero_extra)).toMatch(/56 000/);
+    expect(strip(vi.hero_extra)).toMatch(/62 000/);
+  });
+
+  it("karty portfolia a MCP hlásí stejné částky", () => {
+    // Čísla žijí na dvou místech: v kartách a v list_portfolio pro MCP. Když se
+    // jedno přepočítá a druhé ne, chatbot začne tvrdit něco jiného než web.
+    const nums = (src: string, re: RegExp) =>
+      [...src.matchAll(re)].map((m) => Number(m[1])).sort((a, b) => a - b);
+    const cards = nums(readFileSync("src/components/PortfolioSection.tsx", "utf8"), /owner: (\d+)/g);
+    const mcp = nums(readFileSync("src/lib/mcp/tools/list-portfolio.ts", "utf8"), /ownerMonthlyCzk: (\d+)/g);
+    expect(cards.length).toBeGreaterThan(0);
+    expect(mcp).toEqual(cards);
   });
 
   it("ilustrační trojice v garanci sedí s kalkulačkou", () => {

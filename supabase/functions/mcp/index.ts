@@ -120,14 +120,15 @@ var estimate_yield_default = defineTool({
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var apartments = [
   { name: "Secret garden loft", location: "Praha 4", maxGuests: 13, managedSince: "2026-07", note: "new, results after the first season" },
-  { name: "Elegant Museum View Apartment (402)", location: "Praha 1", maxGuests: 8, ownerMonthlyCzk: 61e3, occupancyPct: 96, period: "12 months to 2026-07", vsLongTermRent: 2.2 },
-  { name: "Modern Museum View Apartment (405)", location: "Praha 1", maxGuests: 8, ownerMonthlyCzk: 53e3, occupancyPct: 95, period: "12 months to 2026-07", vsLongTermRent: 1.9 },
-  { name: "Modern\xED apartm\xE1n se zahradou", location: "Praha 4", maxGuests: 6, ownerMonthlyCzk: 42e3, occupancyPct: 83, period: "2026-04 to 2026-07", vsLongTermRent: 1.6 },
+  { name: "Elegant Museum View Apartment (402)", location: "Praha 1", maxGuests: 8, ownerMonthlyCzk: 62e3, occupancyPct: 96, period: "12 months to 2026-07", vsLongTermRent: 2.2 },
+  { name: "Modern Museum View Apartment (405)", location: "Praha 1", maxGuests: 8, ownerMonthlyCzk: 56e3, occupancyPct: 95, period: "12 months to 2026-07", vsLongTermRent: 2 },
+  { name: "Modern AC Apartment", location: "Praha 3", maxGuests: 6, ownerMonthlyCzk: 49e3, occupancyPct: 96, period: "2026-02 to 2026-07", vsLongTermRent: 1.8 },
+  { name: "Modern\xED apartm\xE1n se zahradou", location: "Praha 3", maxGuests: 6, ownerMonthlyCzk: 41e3, occupancyPct: 83, period: "2026-04 to 2026-07", vsLongTermRent: 1.5 },
   { name: "Secret garden studio I", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
   { name: "Secret garden studio II", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
-  { name: "Klement apartment s terasou", location: "Mlad\xE1 Boleslav", maxGuests: 8, ownerMonthlyCzk: 3e4, occupancyPct: 93, period: "2026-04 to 2026-07" },
+  { name: "Klement apartment s terasou", location: "Mlad\xE1 Boleslav", maxGuests: 8, ownerMonthlyCzk: 29e3, occupancyPct: 93, period: "2026-04 to 2026-07" },
   { name: "Klement apartment", location: "Mlad\xE1 Boleslav", maxGuests: 8, managedSince: "2026-08", note: "new, results after the first season" },
-  { name: "My Mozart studio", location: "Praha 5", maxGuests: 4, ownerMonthlyCzk: 31e3, occupancyPct: 93, period: "2026-02 to 2026-07", vsLongTermRent: 1.7 }
+  { name: "My Mozart studio", location: "Praha 5", maxGuests: 4, ownerMonthlyCzk: 29e3, occupancyPct: 94, period: "2026-02 to 2026-07", vsLongTermRent: 1.6 }
 ];
 var list_portfolio_default = defineTool2({
   name: "list_portfolio",
@@ -145,7 +146,7 @@ var list_portfolio_default = defineTool2({
             return `${base}: owner receives ~${a.ownerMonthlyCzk.toLocaleString("en-US")} CZK/month after all fees, occupancy ${a.occupancyPct} % (${a.period})${a.vsLongTermRent ? `, ${a.vsLongTermRent}x long-term rent` : ""}`;
           }
           return `${base}: managed since ${a.managedSince}, ${a.note}`;
-        }).join("\n") + "\n\nOwner income = real results recalculated to the current 30 % Antam Homes fee: room revenue after the Airbnb/Booking commission, without cleaning fees and without the local tourist tax; energy paid by owner. Past results are not a guarantee.\n\nComing soon: the portfolio is expanding to a total of 10 apartments across Prague. Guests have left over 520 reviews across Airbnb and Booking.com."
+        }).join("\n") + "\n\nOwner income = real results recalculated to the current 30 % Antam Homes fee: what the platform actually pays out, minus the cleaning fee; energy paid by owner. Past results are not a guarantee.\n\nComing soon: the portfolio is expanding to a total of 10 apartments across Prague. Guests have left over 520 reviews across Airbnb and Booking.com."
       }
     ],
     structuredContent: {
