@@ -17,6 +17,7 @@ import translations from "@/i18n/translations";
 import {
   DISTRICTS, BASE_ADR, LTR, ENERGY, MGMT_FEE, PLATFORM_FEE, LAUNCH_FEE, ROOMS,
   DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, annualDamageCover, ownerMonthly,
+  OCCUPANCY_BY_FLAT, OCCUPANCY_OURS,
 } from "@/lib/yield";
 
 const cs = translations.cs as Record<string, string>;
@@ -24,41 +25,45 @@ const vi = translations.vi as Record<string, string>;
 const strip = (s: string) => s.replace(/ /g, " ");
 
 describe("odměna za správu", () => {
-  it("je 30 % v modelu", () => {
-    expect(MGMT_FEE).toBe(0.30);
+  it("je 28 % v modelu", () => {
+    // Snížena z 30 % na 28 % dne 28. 8. 2026. Sazba žije jen tady a v MCP;
+    // kdyby se změnila znovu, musí se s ní přepočítat i karty portfolia.
+    expect(MGMT_FEE).toBe(0.28);
   });
 
-  it("je 30 % všude v české i vietnamské kopii", () => {
-    expect(strip(cs.pr1_price)).toMatch(/30 %/);
-    expect(strip(vi.pr1_price)).toMatch(/30 %/);
+  it("je 28 % všude v české i vietnamské kopii", () => {
+    expect(strip(cs.pr1_price)).toMatch(/28 %/);
+    expect(strip(vi.pr1_price)).toMatch(/28 %/);
     for (const key of ["calc_net_sub", "calc_excluded_note", "faq5_a", "faq9_a", "report_row_costs"]) {
-      expect(strip(cs[key]), `cs.${key}`).toMatch(/30\s?%/);
-      expect(strip(vi[key]), `vi.${key}`).toMatch(/30\s?%/);
+      expect(strip(cs[key]), `cs.${key}`).toMatch(/28\s?%/);
+      expect(strip(vi[key]), `vi.${key}`).toMatch(/28\s?%/);
     }
   });
 
-  it("nikde nezůstalo staré 25 %, 28 % ani dělení 75/25", () => {
+  it("nikde nezůstalo staré 25 %, 30 % ani dělení 75/25 a 70/30", () => {
     for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
       for (const [key, value] of Object.entries(dict)) {
         if (typeof value !== "string") continue;
         const v = strip(value);
-        // 25 000 Kč (uvedení do provozu) je jiné číslo a zůstává
+        // 25 000 Kč (uvedení do provozu) a 30 000 Kč (práh řízení projektu)
+        // jsou jiná čísla a zůstávají
         expect(v.replace(/25 000/g, ""), `${lang}.${key}`).not.toMatch(/25\s?%/);
-        expect(v, `${lang}.${key}`).not.toMatch(/28\s?%/);
+        expect(v.replace(/30 000/g, ""), `${lang}.${key}`).not.toMatch(/30\s?%/);
         expect(v, `${lang}.${key}`).not.toMatch(/75\s?\/\s?25/);
+        expect(v, `${lang}.${key}`).not.toMatch(/70\s?\/\s?30/);
       }
     }
   });
 
-  it("dělí čistý výnos 70/30", () => {
-    expect(strip(cs.calc_split_aria)).toBe("70 % majitel, 30 % Antam Homes");
-    expect(strip(vi.calc_split_aria)).toBe("70% chủ nhà, 30% Antam Homes");
-    expect(strip(cs.calc_method_note)).toMatch(/70\/30/);
-    expect(strip(vi.calc_method_note)).toMatch(/70\/30/);
+  it("dělí čistý výnos 72/28", () => {
+    expect(strip(cs.calc_split_aria)).toBe("72 % majitel, 28 % Antam Homes");
+    expect(strip(vi.calc_split_aria)).toBe("72% chủ nhà, 28% Antam Homes");
+    expect(strip(cs.calc_method_note)).toMatch(/72\/28/);
+    expect(strip(vi.calc_method_note)).toMatch(/72\/28/);
   });
 
   it("DPH z provize platformy nezatěžuje majitele: v modelu ani v kopii", () => {
-    // Od přechodu na 30 % ji hradí Antam ze své odměny. Kdyby se vrátila do
+    // Antam ji hradí ze své odměny. Kdyby se vrátila do
     // výpočtu, majitel by platil dvakrát: nižším podílem i vyšší sazbou.
     expect(strip(cs.calc_method_note)).toMatch(/ze své odměny|neodečítá|nevstupuje/);
     expect(strip(cs.pr1_note)).toMatch(/DPH z provize/);
@@ -134,11 +139,11 @@ describe("garance výnosu", () => {
     expect(strip(cs.hero_desc).split(" ").length).toBeLessThanOrEqual(18);
   });
 
-  it("vietnamské hero teaser drží a sedí s kartami portfolia (56/62 tis.)", () => {
-    // Přepočet 28. 8. 2026: 405 vyšlo na 56 000 a 402 na 62 000. Kdyby se karty
+  it("vietnamské hero teaser drží a sedí s kartami portfolia (58/64 tis.)", () => {
+    // Při odměně 28 % vychází 405 na 58 000 a 402 na 64 000. Kdyby se karty
     // znovu přepočítaly, musí se s nimi posunout i tenhle teaser.
-    expect(strip(vi.hero_extra)).toMatch(/56 000/);
-    expect(strip(vi.hero_extra)).toMatch(/62 000/);
+    expect(strip(vi.hero_extra)).toMatch(/58 000/);
+    expect(strip(vi.hero_extra)).toMatch(/64 000/);
   });
 
   it("karty portfolia a MCP hlásí stejné částky", () => {
@@ -157,8 +162,8 @@ describe("garance výnosu", () => {
     expect(LTR.praha1["2kk"] + ENERGY["2kk"]).toBe(31500);
     expect(strip(cs.g_num2_value)).toMatch(/31 500/);
     const model = ownerMonthly("praha1", "2kk").net;
-    expect(Math.round(model / 1000) * 1000).toBe(50000);
-    expect(strip(cs.g_num3_value)).toMatch(/50 000/);
+    expect(Math.round(model / 1000) * 1000).toBe(52000);
+    expect(strip(cs.g_num3_value)).toMatch(/52 000/);
   });
 
   it("jedna pojmenovaná nabídka: hero, kalkulačka i garance mají stejné CTA", () => {
@@ -210,7 +215,7 @@ describe("model výnosu", () => {
     // za dnešních podmínek. Veřejné číslo musí být níž, jinak slibujeme víc,
     // než sami dodáváme.
     // Přepočteno 27. 8. 2026 ze skutečných rezervací na dnešní podmínky
-    // (30 %, bez odpočtu DPH z provize, bez poplatku z pobytu).
+    // (bez odpočtu DPH z provize, bez poplatku z pobytu).
     const MEASURED_302 = 56793;
     expect(ownerMonthly("praha1", "2kk").net).toBeLessThan(MEASURED_302);
   });
@@ -330,14 +335,15 @@ describe("krytí drobných škod od hostů", () => {
 });
 
 describe("dělící pruh v ceníku", () => {
-  it("kreslí 70/30, ne staré 75/25", () => {
-    // Pruh byl v ceníku natvrdo 75/25, zatímco popisky vedle něj říkaly 70/30.
-    // Číslo v kopii hlídají testy výše; tenhle hlídá ten obrázek.
+  it("kreslí 72/28, ne starší poměry", () => {
+    // Pruh v ceníku už jednou zůstal na starém poměru, zatímco popisky vedle něj
+    // říkaly nový. Čísla v kopii hlídají testy výše; tenhle hlídá ten obrázek.
     const src = readFileSync("src/components/PricingSection.tsx", "utf8");
-    expect(src).toContain("w-[70%]");
-    expect(src).toContain("w-[30%]");
-    expect(src).not.toContain("w-[75%]");
-    expect(src).not.toContain("w-[25%]");
+    expect(src).toContain("w-[72%]");
+    expect(src).toContain("w-[28%]");
+    for (const stale of ["w-[75%]", "w-[25%]", "w-[70%]", "w-[30%]"]) {
+      expect(src, stale).not.toContain(stale);
+    }
   });
 });
 
@@ -354,5 +360,56 @@ describe("kopie v obou jazycích", () => {
         expect(value, `${lang}.${key}`).not.toMatch(/—/);
       }
     }
+  });
+});
+
+/* ── Obsazenost na kartách ──────────────────────────────────────────────────
+   Obsazenost žije na kartách portfolia, samostatnou sekci nemáme. Testy hlídají,
+   že se karty a lib/yield nerozejdou a že je u každého čísla i trh. Když spadnou,
+   protože se obsazenost přeměřila, oprav lib/yield i karty, ne test. */
+describe("obsazenost na kartách portfolia", () => {
+  const portfolio = readFileSync("src/components/PortfolioSection.tsx", "utf8");
+
+  it("karty ukazují stejnou obsazenost, jakou drží lib/yield", () => {
+    const flat = (x: string) => x.replace(/\\u00a0/g, " ").replace(/\u00a0/g, " ");
+    const src = flat(portfolio);
+    for (const f of OCCUPANCY_BY_FLAT) {
+      const name = flat(f.name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      const m = new RegExp(`${name}[^\n]*occupancy: (\\d+), market: (\\d+)`).exec(src);
+      expect(m, `karta chybí, nemá obsazenost nebo trh: ${f.name}`).not.toBeNull();
+      expect(Number(m![1]), `${f.name} obsazenost`).toBe(f.occupancy);
+      expect(Number(m![2]), `${f.name} trh`).toBe(f.market);
+    }
+  });
+
+  it("každý byt má rozumnou obsazenost a měřené okno", () => {
+    expect(OCCUPANCY_BY_FLAT.length).toBeGreaterThanOrEqual(6);
+    for (const f of OCCUPANCY_BY_FLAT) {
+      expect(f.occupancy, f.name).toBeGreaterThan(50);
+      expect(f.occupancy, f.name).toBeLessThanOrEqual(100);
+      expect(f.days, f.name).toBeGreaterThanOrEqual(45);
+    }
+  });
+
+  it("trh je pro každý byt jiný a každý byt ho překonává", () => {
+    expect(portfolio).toMatch(/statVsMarket\(item\.stats\.market\)/);
+    for (const f of OCCUPANCY_BY_FLAT) {
+      expect(f.market, `${f.name} trh`).toBeGreaterThan(0);
+      expect(f.market, `${f.name} trh`).toBeLessThan(f.occupancy);
+    }
+    // jedno společné číslo by bylo špatně: lokality se liší
+    expect(new Set(OCCUPANCY_BY_FLAT.map((f) => f.market)).size).toBeGreaterThan(1);
+  });
+
+  it("poznámka pod kartami vysvětluje, jak se obsazenost počítá", () => {
+    expect(portfolio).toContain("45 dní");
+    expect(portfolio).toContain("PriceLabs");
+    expect(portfolio).toContain("pro každý byt jiný");
+    expect(portfolio).not.toContain("—");
+  });
+
+  it("samostatná sekce Obsazenost na stránce není", () => {
+    const index = readFileSync("src/pages/Index.tsx", "utf8");
+    expect(index).not.toContain("OccupancySection");
   });
 });

@@ -10,7 +10,7 @@ import { t } from "@/i18n/translations";
 const ROWS: { k: "pr1" | "pr6" | "pr7" | "pr2" | "pr3" | "pr4" | "pr5"; accent?: boolean }[] = [
   { k: "pr1", accent: true },
   // Garance a krytí škod hned pod odměnou: jediné místo v ceníku, kde je vidět,
-  // co je v těch 30 % navíc. Obojí je v odměně, proto stojí vedle sebe.
+  // co je v těch 28 % navíc. Obojí je v odměně, proto stojí vedle sebe.
   { k: "pr6" },
   { k: "pr7" },
   { k: "pr2" },
@@ -48,12 +48,12 @@ const PricingSection = () => {
               </dt>
               <dd className="font-body text-[14.5px] text-muted-foreground leading-relaxed m-0">
                 {t(lang, `${k}_note` as const)}
-                {/* The 70/30 split, shown where the fee is defined (former PriceStrip). */}
+                {/* The 72/28 split, shown where the fee is defined (former PriceStrip). */}
                 {k === "pr1" && (
                   <span className="block mt-3" aria-label={t(lang, "calc_split_aria") as string}>
                     <span className="flex h-2 w-full max-w-sm overflow-hidden rounded-full bg-muted">
-                      <span className="block h-full w-[70%] bg-gold" />
-                      <span className="block h-full w-[30%] bg-charcoal/25" />
+                      <span className="block h-full w-[72%] bg-gold" />
+                      <span className="block h-full w-[28%] bg-charcoal/25" />
                     </span>
                     <span className="mt-1.5 flex max-w-sm items-baseline justify-between font-body text-[13px] tnum">
                       <strong className="font-semibold text-gold-deep">{t(lang, "pr1_split_owner")}</strong>

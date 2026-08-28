@@ -15,7 +15,7 @@ const groups: Group[] = [
     items: [
       { q: "faq18_q", a: "faq18_a" }, // garance výnosu
       { q: "faq5_q", a: "faq5_a" },   // kolik to stojí
-      { q: "faq17_q", a: "faq17_a" }, // proč je odměna 30 %
+      { q: "faq17_q", a: "faq17_a" }, // proč je odměna 28 %
       { q: "faq9_q", a: "faq9_a" },   // před / po provizi
       { q: "faq4_q", a: "faq4_a" },   // přehled + vyúčtování
       { q: "faq6_q", a: "faq6_a" },   // úklid a energie

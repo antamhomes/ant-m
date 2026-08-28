@@ -71,7 +71,37 @@ export const DAMAGE_COVER_MAX = 25000;
 export const annualDamageCover = (rooms: number) =>
   Math.min(Math.max(0, Math.round(rooms)) * DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX);
 
-export const MGMT_FEE = 0.30;      // odměna Antam Homes z čistého výnosu
+/**
+ * Obsazenost jednotlivých bytů proti jejich vlastnímu trhu. Přepočteno 28. 8. 2026.
+ *
+ * occupancy: z rezervací v Hospitable. Počítají se jen byty starší tří měsíců
+ * a okno začíná 46. dnem provozu, aby rozjezd nestahoval číslo dolů; konec okna
+ * 31. 7. 2026. obsazenost = obsazené noci v okně / dní okna.
+ *
+ * market: PriceLabs, srovnatelné byty ve STEJNÉ čtvrti, posledních 90 dní.
+ * Každá lokalita má svoje číslo, jedno společné by bylo špatně: Praha 1 jede
+ * 77 až 78 %, Praha 5 74 %, Praha 3 71 až 75 %, Mladá Boleslav 72 %. Okno
+ * trhu je kratší a padne do sezóny, takže je pro trh spíš příznivé; srovnání
+ * tím vychází konzervativně v náš neprospěch, což je správný směr.
+ *
+ * Byt 302 (Praha 1) měří 93 % proti trhu 78 %, ale publikovaný není.
+ * Karty v PortfolioSection musí ukazovat stejná čísla; hlídá to facts.test.ts.
+ */
+export const OCCUPANCY_BY_FLAT: {
+  name: string; loc: string; occupancy: number; market: number; days: number;
+}[] = [
+  { name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1",        occupancy: 96, market: 78, days: 319 },
+  { name: "Modern Museum View\u00a0Apartment",  loc: "Praha 1",        occupancy: 94, market: 77, days: 318 },
+  { name: "Modern AC\u00a0Apartment",           loc: "Praha 3",        occupancy: 96, market: 75, days: 139 },
+  { name: "Moderní apartmán se\u00a0zahradou",  loc: "Praha 3",        occupancy: 85, market: 71, days: 54 },
+  { name: "Klement apartment s\u00a0terasou",   loc: "Mladá Boleslav", occupancy: 91, market: 72, days: 54 },
+  { name: "My Mozart studio",                loc: "Praha 5",        occupancy: 97, market: 74, days: 113 },
+];
+
+/** Vážený průměr naší obsazenosti: 1 240 obsazených nocí z 1 317 dní okna. */
+export const OCCUPANCY_OURS = 94;
+
+export const MGMT_FEE = 0.28;      // odměna Antam Homes z čistého výnosu
 // Změřeno 27. 8. 2026 na 7 bytech (Hospitable, 12 měsíců): skutečná provize je
 // 17,3 až 20,6 % z ceny pokoje, podle listingu, ne podle platformy. Airbnb 15,4–20,7 %,
 // Booking 18,1–21,4 %. Jedna sazba to nikdy nevystihne; 0,17 je střed měřeného pásma.
@@ -79,7 +109,8 @@ export const MGMT_FEE = 0.30;      // odměna Antam Homes z čistého výnosu
 // v dopočtu hrubých tržeb a na výsledek má vliv pod 0,5 %.
 export const PLATFORM_FEE = 0.17;
 export const CLEANING_SHARE = 0.10;// podíl úklidových poplatků na tržbách (jen pro odpočet provize)
-// DPH z provize platformy. Od přechodu na odměnu 30 % ji nese Antam ze své odměny,
+// DPH z provize platformy nese Antam ze své odměny
+// (od 28. 8. 2026 je odměna 28 %, na tomhle se nic nemění),
 // takže do výpočtu výnosu majitele NEVSTUPUJE. Zůstává tu jen pro interní propočty.
 export const VAT_RATE = 1.21;
 export const DAYS = 30;
@@ -97,7 +128,7 @@ export const clampOccupancy = (v: number) => Math.max(0.5, Math.min(0.98, v));
 
 /**
  * Výnos majitele za měsíc: z hrubých tržeb se odečte provize platformy (počítá se
- * z celé ceny rezervace včetně úklidu), zbytek se dělí 70/30. DPH z provize se
+ * z celé ceny rezervace včetně úklidu), zbytek se dělí 72/28. DPH z provize se
  * neodečítá, hradí ji Antam ze své odměny.
  * Energie NEjsou odečteny — hradí je majitel zvlášť.
  */
