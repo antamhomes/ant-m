@@ -18,8 +18,8 @@ import { t, type TranslationKey } from "@/i18n/translations";
  *  not part of this pass. p3/p5 stay in translations but are not rendered.
  *  Owner testimonials get their place here once real ones exist. */
 const BODY_KEYS: Record<"cs" | "vi", readonly TranslationKey[]> = {
-  cs: ["about_p2", "about_p4"],
-  vi: ["about_p4"],
+  cs: ["about_p2", "about_p4", "about_scale"],
+  vi: ["about_p4", "about_scale"],
 };
 /** Stats with an empty value are skipped: the CZ page dropped the managed-flat
  *  count (a weak proof next to the portfolio itself), the VI page still shows it. */

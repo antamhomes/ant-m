@@ -1,5 +1,6 @@
 import { Sofa, Camera, MessageSquare, Sparkles, LineChart, FileBarChart } from "lucide-react";
 import Reveal, { stagger } from "@/components/Reveal";
+import ReviewsBlock from "@/components/ReviewsBlock";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t, type TranslationKey } from "@/i18n/translations";
 
@@ -54,6 +55,9 @@ const ServicesSection = () => {
             {t(lang, "svc_systems")}
           </p>
         </Reveal>
+
+        {/* Guest voices: the service quality an owner is really buying. */}
+        <ReviewsBlock />
       </div>
     </section>
   );
