@@ -165,15 +165,18 @@ html {
   .container-narrow { max-width: calc(56rem + 3rem); }
   .container-prose { max-width: calc(42rem + 3rem); }
 
-  .section-head { text-align: center; margin-bottom: 1.75rem; }
-  @media (min-width: 640px) { .section-head { margin-bottom: 2.5rem; } }
-  @media (min-width: 768px) { .section-head { margin-bottom: 3rem; } }
+  /* One distance from section head to first block, everywhere (patch 126);
+     sections must not add their own mt-* on the first block. */
+  .section-head { text-align: center; margin-bottom: 2.25rem; }
+  @media (min-width: 640px) { .section-head { margin-bottom: 2.75rem; } }
+  @media (min-width: 768px) { .section-head { margin-bottom: 3.5rem; } }
   .section-head .eyebrow { margin-bottom: 1.25rem; }
   .section-head .lead { margin-top: 1.25rem; }
 
-  /* Two heading tiers: .h-section for the sections that carry the argument
-     (Pro koho, Kalkulačka, Služby, srovnání, Kontakt), .h-section-sm for the
-     supporting ones (Portfolio, Přehled, Jak začíná, Kdo jsme, FAQ). */
+  /* Two heading tiers: .h-section only where the page changes gear
+     (Kalkulačka = your number, Kontakt = action); every other section uses
+     .h-section-sm so the page has one rhythm (patch 126). Backgrounds alternate
+     bg-background / bg-secondary; dark only Služby and the closing CTA + footer. */
   .h-section {
     font-family: var(--font-display);
     font-weight: 600;

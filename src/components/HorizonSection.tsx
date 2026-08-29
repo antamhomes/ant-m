@@ -1,5 +1,4 @@
 import { useMemo, useRef, useState } from "react";
-import { Eye, TrendingUp, CalendarCheck, Wallet, Check } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCalc, type Furn } from "@/contexts/CalcContext";
@@ -7,19 +6,14 @@ import { fiveYear, HORIZON_MONTHS as MONTHS } from "@/lib/horizon";
 import { t } from "@/i18n/translations";
 
 /**
- * Horizont: pětiletý graf (krátkodobě s Antam Homes vs dlouhodobý nájem) nad
- * srovnávacím žebříkem v ne-penězích (kontrola, výnos, flexibilita, platby).
+ * Horizont: pětiletý graf (krátkodobě s Antam Homes vs dlouhodobý nájem).
+ * Srovnávací žebřík (kontrola/výnos/flexibilita/platby) byl v patchi 126
+ * vyřazen: všechny čtyři body už na stránce jsou (portfolio, FAQ, kontakt).
  * Graf čte STEJNÝ stav jako kalkulačka (CalcContext: lokalita, hosté, plocha,
  * dispozice) a stejné funkce (lib/horizon → lib/yield), takže se čísla nikdy
  * nerozejdou; v kalkulačce zůstal jen teaser řádek, který sem vede.
  * Patch 124: graf se vrátil z kalkulačkové záložky sem, nad srovnání.
  */
-const LEDGER = [
-  { icon: Eye, title: "comp1_title", long: "comp1_long", short: "comp1_short" },
-  { icon: TrendingUp, title: "comp2_title", long: "comp2_long", short: "comp2_short" },
-  { icon: CalendarCheck, title: "comp3_title", long: "comp3_long", short: "comp3_short" },
-  { icon: Wallet, title: "comp4_title", long: "comp4_long", short: "comp4_short" },
-] as const;
 
 const W = 860, H = 360, PAD = { t: 20, r: 92, b: 32, l: 64 };
 
@@ -57,7 +51,7 @@ const FiveYearChart = () => {
   const locLabel = `Praha ${location.replace("praha", "")}`;
 
   return (
-    <Reveal delay={0.05} className="max-w-3xl mx-auto mt-8 rounded-md border border-border bg-card p-4 sm:p-6 space-y-4">
+    <Reveal delay={0.05} className="max-w-3xl mx-auto rounded-md border border-border bg-card p-4 sm:p-6 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <p className="font-body text-[13px] text-muted-foreground tnum">
           {locLabel} · {sizeLabel} · {guests}{lang === "vi" ? " khách" : " hostů"} · {m2} m²
@@ -171,7 +165,7 @@ const FiveYearChart = () => {
 const HorizonSection = () => {
   const { lang } = useLanguage();
   return (
-    <section id="horizont" className="section bg-secondary scroll-mt-16">
+    <section id="horizont" className="section bg-background scroll-mt-16">
       <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "whyBetter_label")}</p>
@@ -185,39 +179,6 @@ const HorizonSection = () => {
 
         <FiveYearChart />
 
-        <ul className="grid gap-3 max-w-2xl mx-auto mt-8 list-none m-0 p-0">
-          {LEDGER.map(({ icon: Icon, title, long, short }, i) => (
-            <Reveal as="li" key={title} delay={0.05 + i * 0.05} className="rounded-md border border-border bg-card overflow-hidden">
-              <div className="flex items-center gap-2 md:gap-2.5 px-4 pt-3.5 pb-3 border-b border-border">
-                <Icon className="w-4 h-4 md:w-5 md:h-5 text-gold shrink-0" strokeWidth={1.6} />
-                <h3 className="font-display text-[15px] font-semibold text-foreground leading-snug whitespace-nowrap">
-                  {t(lang, title)}
-                </h3>
-              </div>
-              <div className="grid grid-cols-[1fr_1.15fr] md:grid-cols-[1fr_1.12fr] items-start">
-                <div className="px-3 min-[360px]:px-3.5 md:px-5 pt-3 pb-3.5 md:pb-4">
-                  <p className="font-body text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.14em] md:tracking-[0.2em] leading-none whitespace-nowrap text-muted-foreground mb-2 md:mb-2.5">
-                    {t(lang, "longTerm_label")}
-                  </p>
-                  <p className="font-body text-[12px] min-[360px]:text-[13px] md:text-[15px] text-muted-foreground leading-normal md:leading-relaxed text-pretty">
-                    {t(lang, long)}
-                  </p>
-                </div>
-                <div className="px-3 min-[360px]:px-3.5 md:px-5 pt-3 pb-3.5 md:pb-4 bg-gold/[0.07] border-l border-gold/20 self-stretch">
-                  <p className="font-body text-[10px] md:text-[11px] font-semibold uppercase tracking-[0.14em] md:tracking-[0.2em] leading-none whitespace-nowrap text-gold-deep mb-2 md:mb-2.5">
-                    {t(lang, "shortTerm_label")}
-                  </p>
-                  <div className="flex items-start gap-1.5 md:gap-2">
-                    <Check className="w-3.5 h-3.5 md:w-4 md:h-4 mt-[0.35em] text-gold-deep shrink-0" strokeWidth={2.2} />
-                    <p className="font-body text-[12px] min-[360px]:text-[13px] md:text-[15px] text-foreground leading-normal md:leading-relaxed text-pretty">
-                      {t(lang, short)}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </Reveal>
-          ))}
-        </ul>
       </div>
     </section>
   );

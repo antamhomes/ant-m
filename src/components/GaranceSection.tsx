@@ -49,7 +49,7 @@ const GaranceSection = () => {
       <div className="container-narrow">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "g_label")}</p>
-          <h2 className="h-section text-foreground">
+          <h2 className="h-section-sm text-foreground">
             {t(lang, "g_title1")}
             <span className="text-gradient-gold">{t(lang, "g_title2")}</span>
           </h2>
@@ -59,7 +59,7 @@ const GaranceSection = () => {
         {/* Two numbers: long-term rent vs. the written minimum. The minimum is the
             floor the owner keeps either way, so it is the highlighted one. */}
         <Reveal delay={0.05}>
-          <div className="flex flex-col sm:flex-row items-stretch justify-center gap-2 sm:gap-0 max-w-2xl mx-auto">
+          <div className="flex flex-col sm:flex-row items-stretch justify-center gap-2 sm:gap-0 max-w-3xl mx-auto">
             {nums.map(({ label, value }, i) => (
               <div key={label} className="flex flex-col sm:flex-row items-center flex-1">
                 <div

@@ -74,7 +74,7 @@ const CalculatorSection = () => {
   const supported = result.r.supported;
 
   return (
-    <section id="kalkulacka" className="section bg-muted/30 scroll-mt-16">
+    <section id="kalkulacka" className="section bg-secondary scroll-mt-16">
       <div className="container-narrow">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "calc_label")}</p>
@@ -189,6 +189,11 @@ const CalculatorSection = () => {
                 ))}
               </div>
             </details>
+
+            {/* Jak se počítá dělení: pod vstupy, ať levý sloupec nekončí dřív než panel (patch 126). */}
+            <p className="font-body text-xs md:text-[13px] text-muted-foreground leading-relaxed border-t border-border/60 pt-4 text-pretty">
+              {t(lang, "calc_method_note")}
+            </p>
           </Reveal>
 
           <Reveal delay={0.1} className="flex items-start order-1 md:order-2 md:sticky md:top-24">
@@ -383,10 +388,7 @@ const CalculatorSection = () => {
           </Reveal>
         </div>
 
-        <div className="mt-6 sm:mt-8 max-w-2xl mx-auto border-t border-border/60 pt-4 sm:pt-5">
-          <p className="font-body text-xs md:text-[13px] text-foreground/80 text-center leading-relaxed mb-3 sm:mb-4">
-            {t(lang, "calc_method_note")}
-          </p>
+        <div className="mt-6 sm:mt-8 max-w-prose mx-auto border-t border-border/60 pt-4 sm:pt-5">
           <details className="sm:hidden group">
             <summary className="list-none cursor-pointer font-body text-xs text-muted-foreground text-center underline underline-offset-4 decoration-border [&::-webkit-details-marker]:hidden">
               {t(lang, "calc_disclaimer_toggle")}

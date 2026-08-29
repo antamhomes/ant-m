@@ -29,7 +29,7 @@ const MORE_ROWS: Row[] = [
 const PricingSection = () => {
   const { lang } = useLanguage();
   return (
-    <section id="cenik" className="section bg-muted/30 scroll-mt-16">
+    <section id="cenik" className="section bg-secondary scroll-mt-16">
       <div className="container-narrow">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "pricing_label")}</p>
@@ -71,20 +71,20 @@ const PricingSection = () => {
                     ))}
                   </span>
                 )}
-                {k === "pr1" && (
+                {k === "pr1" && t(lang, "pr1_flow_note") && (
                   <span className="block mb-3 font-body text-[14.5px] text-foreground">
                     {t(lang, "pr1_flow_note")}
                   </span>
                 )}
                 {/* Hodnotový stack: co je v odměně, s tržní cenou tam, kde má veřejný
                    zdroj (PriceLabs ceník, ceníky fotografů). Bez vymyšlených čísel. */}
-                {k === "pr1" && (
+                {k === "pr1" && t(lang, "pr1_stack_title") && (
                   <span className="block mb-3">
                     <span className="block font-body text-[13px] uppercase tracking-wide text-muted-foreground mb-1.5">
                       {t(lang, "pr1_stack_title")}
                     </span>
                     <span className="block max-w-sm">
-                      {([1, 2, 3, 4, 5, 6] as const).map((n) => (
+                      {([1, 2, 3, 4, 5, 6] as const).filter((n) => t(lang, `pr1_stack_${n}` as const)).map((n) => (
                         <span key={n} className="flex items-baseline gap-2 py-0.5">
                           <span aria-hidden="true" className="text-gold-deep">·</span>
                           <span>{t(lang, `pr1_stack_${n}` as const)}</span>

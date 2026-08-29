@@ -32,12 +32,12 @@ const AboutSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section id="kdo-jsme" className="section bg-secondary scroll-mt-16">
+    <section id="kdo-jsme" className="section bg-background scroll-mt-16">
       <div className="container-narrow">
         <div className="max-w-3xl mx-auto">
-          <Reveal>
-            <p className="eyebrow mb-5">{t(lang, "about_label")}</p>
-            <h2 className="h-section-sm text-foreground mb-6 md:mb-8">{t(lang, "about_title")}</h2>
+          <Reveal className="section-head">
+            <p className="eyebrow eyebrow-center">{t(lang, "about_label")}</p>
+            <h2 className="h-section-sm text-foreground">{t(lang, "about_title")}</h2>
           </Reveal>
 
           <div className="grid md:grid-cols-[minmax(0,1fr)_190px] gap-7 md:gap-12 items-start">

@@ -38,11 +38,11 @@ const ReviewsBlock = () => {
   const c = copy[lang];
 
   return (
-    <Reveal delay={0.1} className="mt-14 md:mt-16">
+    <Reveal delay={0.1} className="mt-12 md:mt-14 pt-10 md:pt-12 border-t border-gold/15">
+      {/* No second eyebrow inside the section (patch 126): one line of proof, then the quotes. */}
       <div className="text-center mb-6 md:mb-8">
-        <p className="eyebrow eyebrow-center">{c.label}</p>
         <p
-          className="font-display text-xl md:text-2xl font-semibold text-primary-foreground mt-3 mx-auto max-w-[24ch] md:max-w-none"
+          className="font-display text-xl md:text-2xl font-semibold text-primary-foreground mx-auto max-w-[24ch] md:max-w-none"
           style={{ textWrap: "balance" }}
         >
           {c.pre}

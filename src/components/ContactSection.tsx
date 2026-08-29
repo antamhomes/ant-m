@@ -165,7 +165,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="kontakt" className="section bg-secondary scroll-mt-16">
+    <section id="kontakt" className="section bg-background scroll-mt-16">
       <div className="container-prose md:max-w-[calc(46rem+3rem)]">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "contact_label")}</p>

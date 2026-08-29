@@ -15,12 +15,12 @@ const ProcessSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section id="jak-zacina" className="section bg-gradient-dark scroll-mt-16">
+    <section id="jak-zacina" className="section bg-secondary scroll-mt-16">
       <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "process_label")}</p>
-          <h2 className="h-section-sm text-primary-foreground">{t(lang, "process_title")}</h2>
-          {t(lang, "process_desc") && <p className="lead lead-on-dark">{t(lang, "process_desc")}</p>}
+          <h2 className="h-section-sm text-foreground">{t(lang, "process_title")}</h2>
+          {t(lang, "process_desc") && <p className="lead">{t(lang, "process_desc")}</p>}
         </Reveal>
 
         <ol className="relative grid grid-cols-1 md:grid-cols-4 gap-7 sm:gap-10 md:gap-8">
@@ -30,7 +30,7 @@ const ProcessSection = () => {
             className="hidden md:block absolute left-[12.5%] right-[12.5%] top-[22px] h-px bg-gradient-to-r from-gold/20 via-gold/70 to-gold/20"
           />
           {/* Mobile track */}
-          <div aria-hidden="true" className="md:hidden absolute left-[22px] top-3 bottom-3 w-px bg-primary-foreground/15" />
+          <div aria-hidden="true" className="md:hidden absolute left-[22px] top-3 bottom-3 w-px bg-border" />
 
           {numberLabels.map((num, index) => (
             <Reveal as="li"
@@ -38,13 +38,13 @@ const ProcessSection = () => {
               className="relative pl-16 md:pl-0 md:text-center"
             >
               {/* Number badge */}
-              <div className="absolute left-0 top-0 md:static md:mx-auto md:mb-6 w-11 h-11 rounded-full bg-charcoal border border-gold/60 ring-4 ring-charcoal flex items-center justify-center">
-                <span className="font-display text-base font-semibold text-gold tnum">{num}</span>
+              <div className="absolute left-0 top-0 md:static md:mx-auto md:mb-6 w-11 h-11 rounded-full bg-card border border-gold/60 ring-4 ring-secondary flex items-center justify-center">
+                <span className="font-display text-base font-semibold text-gold-deep tnum">{num}</span>
               </div>
-              <h3 className="font-display text-xl md:text-[1.35rem] font-semibold text-primary-foreground mb-2 leading-snug">
+              <h3 className="font-display text-xl md:text-[1.35rem] font-semibold text-foreground mb-2 leading-snug">
                 {t(lang, titleKeys[index])}
               </h3>
-              <p className="font-body text-[15px] md:text-base text-primary-foreground/70 leading-relaxed md:max-w-[26ch] md:mx-auto text-pretty">
+              <p className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed md:max-w-[26ch] md:mx-auto text-pretty">
                 {t(lang, descKeys[index])}
               </p>
             </Reveal>
@@ -52,13 +52,13 @@ const ProcessSection = () => {
         </ol>
 
         <Reveal delay={0.2} className="text-center mt-10 md:mt-16">
-          <a href="#kontakt" className="btn btn-primary-inverse">
+          <a href="#kontakt" className="btn btn-primary">
             {t(lang, "process_cta")}
             <ChevronRight className="w-4 h-4" />
           </a>
           {/* Sezónní důvod začít teď: prosincový faktor je reálně až 1,5× (SEASONS_BY_LOC),
               žádné odpočty ani umělý tlak. */}
-          <p className="font-body text-[13px] text-primary-foreground/60 mt-4 max-w-md mx-auto text-pretty">
+          <p className="font-body text-[13px] text-muted-foreground mt-4 max-w-md mx-auto text-pretty">
             {t(lang, "process_season")}
           </p>
         </Reveal>

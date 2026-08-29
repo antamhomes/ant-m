@@ -67,6 +67,7 @@ const copy = {
     soonDesc: "Každý byt nejdřív posoudíme, a\u00a0když unese písemné minimum, vezmeme ho. Napište nám a\u00a0do 24 hodin víte, jak je na\u00a0tom ten váš.",
     soonDescShort: "Každý byt nejdřív posoudíme. Napište nám a\u00a0do 24 hodin víte, jak je na\u00a0tom ten váš.",
     showAll: "Zobrazit všechny naše byty",
+    statNoteToggle: "Jak počítáme částky na kartách",
     showLess: "Zobrazit méně",
     statOwner: "majiteli měsíčně",
     barFlat: "tenhle byt",
@@ -83,10 +84,11 @@ const copy = {
     title: "Những căn Antam lo, chủ nhà nhận được bao nhiêu",
     desc: "Số liệu thật từ bảng kê hằng tháng, không phải ước tính.",
     guests: (n: number) => `tối đa ${n} khách`,
-    soonTitle: "Căn của bạn có thể ở đây",
+    soonTitle: "Căn của anh chị có thể ở đây",
     soonDesc: "Căn nào Antam cũng xem kỹ trước, gánh được mức cam kết thì mới nhận. Nhắn cho Antam, trong 24 giờ anh chị biết căn nhà mình thế nào.",
     soonDescShort: "Căn nào Antam cũng xem kỹ trước. Nhắn cho Antam, trong 24 giờ anh chị biết căn nhà mình thế nào.",
     showAll: "Xem tất cả các căn của Antam",
+    statNoteToggle: "Antam tính số trên thẻ thế nào",
     showLess: "Thu gọn",
     statOwner: "chủ nhà nhận / tháng",
     barFlat: "căn này",
@@ -234,11 +236,18 @@ const PortfolioSection = () => {
           </div>
         )}
 
-        {/* How the numbers on the cards are computed (kept short; the calculator disclaimer covers the rest). */}
+        {/* How the numbers on the cards are computed: full method, but behind a
+            toggle (patch 126), so the proof block is not followed by a 1 000-character
+            wall. Same pattern as the calculator's "Jak počítáme". */}
         <Reveal delay={0.05} className="mt-4 sm:mt-5">
-          <p className="font-body text-[11px] sm:text-xs text-muted-foreground/90 leading-relaxed text-pretty max-w-3xl mx-auto text-center">
-            {c.statNote(STATS_ASOF[lang])}
-          </p>
+          <details className="group max-w-prose mx-auto">
+            <summary className="list-none cursor-pointer font-body text-xs text-muted-foreground text-center underline underline-offset-4 decoration-border [&::-webkit-details-marker]:hidden">
+              {c.statNoteToggle}
+            </summary>
+            <p className="mt-3 font-body text-[11px] sm:text-xs text-muted-foreground/90 leading-relaxed text-pretty text-left sm:text-center">
+              {c.statNote(STATS_ASOF[lang])}
+            </p>
+          </details>
         </Reveal>
 
       </div>

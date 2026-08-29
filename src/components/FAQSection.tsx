@@ -53,7 +53,7 @@ const FAQSection = () => {
   const total = groups.reduce((n, g) => n + g.items.length, 0);
 
   return (
-    <section id="faq" className="section bg-background scroll-mt-16">
+    <section id="faq" className="section bg-secondary scroll-mt-16">
       <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "faq_label")}</p>

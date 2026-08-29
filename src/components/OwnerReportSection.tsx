@@ -11,6 +11,9 @@ const OwnerReportSection = () => {
      do 7/2026 z Hospitable, přepočteno na odměnu 30 %. Metoda: payout
      platforem minus úklid, zrušené rezervace vyloučené, EUR × 25,00;
      91 324 × 0,30 = 27 397; majiteli 63 927 (na kartě zaokrouhleno 64 000). */
+  // CZ has no side text and no CTA: the card sits centred and the multi-flat line
+  // goes under it. VI keeps its side column (report_text + report_cta).
+  const hasSide = !!(t(lang, "report_text") || t(lang, "report_cta"));
   const rows = [
     { icon: BedDouble, key: "report_row_occupancy" as const, value: "96\u00a0%" },
     { icon: FileBarChart, key: "report_row_base" as const, value: "91\u00a0324\u00a0Kč" },
@@ -19,7 +22,7 @@ const OwnerReportSection = () => {
   ];
 
   return (
-    <section className="section bg-background">
+    <section id="vyuctovani" className="section bg-secondary">
       <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "report_label")}</p>
@@ -27,7 +30,7 @@ const OwnerReportSection = () => {
           <p className="lead">{t(lang, "report_desc")}</p>
         </Reveal>
 
-        <div className="grid md:grid-cols-2 gap-7 sm:gap-10 md:gap-16 items-center max-w-5xl mx-auto">
+        <div className={hasSide ? "grid md:grid-cols-2 gap-7 sm:gap-10 md:gap-16 items-center max-w-5xl mx-auto" : "max-w-lg mx-auto space-y-5"}>
           <Reveal
             className="reveal-card bg-card border border-border rounded-md p-6 md:p-8 shadow-[0_30px_60px_-30px_hsl(var(--charcoal)/0.35)] will-change-transform"
           >
@@ -70,7 +73,7 @@ const OwnerReportSection = () => {
               </p>
             )}
             {/* Multi-property signal: one line, no "enterprise" theatre. */}
-            <p className={`font-body text-[15px] text-muted-foreground leading-relaxed text-pretty ${t(lang, "report_cta") ? "mb-8" : ""}`}>
+            <p className={`font-body text-[15px] text-muted-foreground leading-relaxed text-pretty ${t(lang, "report_cta") ? "mb-8" : ""} ${hasSide ? "" : "text-center"}`}>
               {t(lang, "report_multi")}
             </p>
             {/* Přehled je důkaz transparentnosti, ne konverzní sekce. Prázdný
