@@ -164,12 +164,13 @@ const CalculatorSection = () => {
               </div>
             </div>
 
-            <div>
-              <label className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
+            {/* Rok je výchozí rozhodnutí; sezónu si rozklikne, kdo ji chce. */}
+            <details className="group">
+              <summary className="list-none cursor-pointer inline-flex items-center gap-2 font-body text-sm font-semibold text-gold-deep underline underline-offset-4 decoration-gold/40 [&::-webkit-details-marker]:hidden">
                 <Calculator className="w-4 h-4 text-gold" />
-                {t(lang, "calc_season")}
-              </label>
-              <div className="grid grid-cols-2 gap-2">
+                {t(lang, "calc_season_toggle")}
+              </summary>
+              <div className="mt-3 grid grid-cols-2 gap-2">
                 {SEASON_KEYS.map((key) => (
                   <button key={key} type="button" onClick={() => setSeason(key)}
                     className={`flex flex-col px-3 py-3 rounded-sm font-body transition-all border text-left leading-tight ${
@@ -187,7 +188,7 @@ const CalculatorSection = () => {
                   </button>
                 ))}
               </div>
-            </div>
+            </details>
           </Reveal>
 
           <Reveal delay={0.1} className="flex items-start order-1 md:order-2 md:sticky md:top-24">
