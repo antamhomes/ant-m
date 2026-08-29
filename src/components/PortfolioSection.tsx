@@ -24,6 +24,8 @@ import byt7 from "@/assets/byt-7.jpg.asset.json";
  *  `ratio` = owner income vs. long-term rent for the flat's ACTUAL floor area
  *  (Deloitte Rent Index Q2/2026 for the Kč/m² level, MF price map 15. 8. 2026 for the
  *  size gradient). A 2+kk can be 45 or 90 m², so disposition alone was the wrong key.
+ *  Market (patch 119): ONE number per locality (PriceLabs, trailing 90 days, average across our
+ *  listings there); per-flat probes differed only by sampling noise (402: 77,5 vs 405: 77,2).
  *  Occupancy (recomputed 28. 8. 2026): share of booked nights over a window that starts on the
  *  46th day of operation, so the ramp-up weeks do not drag the number down. Only flats older than
  *  three months get one.
@@ -39,12 +41,12 @@ type Item = { src: string; name: string; loc: string; guests: number; m2?: numbe
  *  byt-1…7 are Lovable assets; 402/405 (Praha 1, Čelakovského sady) are small webp files in public/portfolio.
  *  Order: measured results first (the section pays off the hero claim), longest window leading; flats without a full season follow with their honest badge. */
 const items: Item[] = [
-  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 64000, occupancy: 96, market: 78, ratio: 2.5 } },
+  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 64000, occupancy: 96, market: 77, ratio: 2.5 } },
   { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 57000, occupancy: 94, market: 77, ratio: 2.2 } },
-  { src: "/portfolio/byt-modern-ac.webp", name: "Modern AC\u00a0Apartment", loc: "Praha 3", m2: 55, guests: 6, stats: { owner: 50000, occupancy: 96, market: 75, since: "2/2026", ratio: 1.9 } },
+  { src: "/portfolio/byt-modern-ac.webp", name: "Modern AC\u00a0Apartment", loc: "Praha 3", m2: 55, guests: 6, stats: { owner: 50000, occupancy: 96, market: 73, since: "2/2026", ratio: 1.9 } },
   // Praha 3, ne Praha 4: potvrzeno majitelem 28. 8. 2026 i PSČ 130 00 v Hospitable.
   // Násobek 1,6× platí dál: Praha 4 3+kk (26 000) a Praha 3 2+kk (26 500) vyjdou skoro stejně.
-  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 3", m2: 60, guests: 6, stats: { owner: 42000, occupancy: 85, market: 71, since: "4/2026", ratio: 1.5 } },
+  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 3", m2: 60, guests: 6, stats: { owner: 42000, occupancy: 85, market: 73, since: "4/2026", ratio: 1.5 } },
   { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", m2: 85, guests: 8, stats: { owner: 30000, occupancy: 91, market: 72, since: "4/2026", ratio: 1.4 } },
   { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", m2: 40, guests: 4, stats: { owner: 30000, occupancy: 97, market: 74, since: "2/2026", ratio: 1.4 } },
   { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", m2: 110, guests: 13, newSince: "7/2026" },
@@ -83,6 +85,8 @@ const copy = {
     reviewsNum: "520 hodnocení",
     reviewsPost: " na Airbnb a\u00a0Booking.com.",
     statOwner: "majiteli měsíčně",
+    barFlat: "tenhle byt",
+    barMarket: (loc: string) => `trh ${loc === "Mladá Boleslav" ? "MB" : loc}`,
     statPeriod12: "průměr 12 měsíců",
     statPeriodSince: (m: string) => `průměr od ${m}`,
     statRatio: (r: number) => `${r.toLocaleString("cs-CZ")}× dlouhodobý nájem`,
@@ -90,7 +94,7 @@ const copy = {
     statVsMarket: (m: number) => `trh ${m}\u00a0%`,
     newBadge: (m: string) => `V naší správě od ${m}`,
     newNote: "Výsledky doplníme po první sezóně.",
-    statNote: (d: string) => `Částky pro majitele vycházejí ze skutečných rezervací, přepočtených na aktuální odměnu 30\u00a0%: tržby za ubytování po provizi Airbnb a Booking.com, bez úklidových poplatků, po naší odměně. Tedy to, co by majitel dostal při dnešních podmínkách; energie hradí majitel. Zaokrouhleno na tisíce. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. Obsazenost počítáme u\u00a0bytů starších tří měsíců a\u00a0prvních 45 dní provozu do\u00a0ní nezapočítáváme, byt se\u00a0v\u00a0nich teprve rozjíždí. Údaj o\u00a0trhu je z\u00a0PriceLabs za\u00a0posledních 90 dní a\u00a0je pro každý byt jiný: srovnatelné byty v\u00a0jeho vlastní čtvrti. U\u00a0nových nabídek se výsledky během prvního roku provozu teprve ustalují. Dlouhodobý nájem počítáme z\u00a0Deloitte Rent\u00a0Index Q2/2026 podle skutečné plochy bytu; rozdíl mezi dispozicemi bereme z\u00a0cenové mapy nájemního bydlení Ministerstva financí (15.\u00a08.\u00a02026). Minulé výsledky nejsou zárukou budoucích.`,
+    statNote: (d: string) => `Částky pro majitele vycházejí ze skutečných rezervací, přepočtených na aktuální odměnu 30\u00a0%: tržby za ubytování po provizi Airbnb a Booking.com, bez úklidových poplatků, po naší odměně. Tedy to, co by majitel dostal při dnešních podmínkách; energie hradí majitel. Zaokrouhleno na tisíce. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. Obsazenost počítáme u\u00a0bytů starších tří měsíců a\u00a0prvních 45 dní provozu do\u00a0ní nezapočítáváme, byt se\u00a0v\u00a0nich teprve rozjíždí. Údaj o\u00a0trhu je z\u00a0PriceLabs za\u00a0posledních 90 dní a\u00a0platí pro lokalitu: průměrná obsazenost srovnatelných bytů v\u00a0okolí našich bytů v\u00a0dané lokalitě. Dva byty ve\u00a0stejné lokalitě proto ukazují stejné číslo trhu. U\u00a0nových nabídek se výsledky během prvního roku provozu teprve ustalují. Dlouhodobý nájem počítáme z\u00a0Deloitte Rent\u00a0Index Q2/2026 podle skutečné plochy bytu; rozdíl mezi dispozicemi bereme z\u00a0cenové mapy nájemního bydlení Ministerstva financí (15.\u00a08.\u00a02026). Minulé výsledky nejsou zárukou budoucích.`,
   },
   vi: {
     eyebrow: "Kết quả thực tế",
@@ -105,6 +109,8 @@ const copy = {
     reviewsNum: "520 đánh giá",
     reviewsPost: " của khách trên Airbnb và\u00a0Booking.com.",
     statOwner: "chủ nhà nhận / tháng",
+    barFlat: "căn này",
+    barMarket: (loc: string) => `khu ${loc === "Mladá Boleslav" ? "MB" : loc}`,
     statPeriod12: "trung bình 12 tháng",
     statPeriodSince: (m: string) => `trung bình từ ${m}`,
     statRatio: (r: number) => `gấp ${r.toLocaleString("vi-VN")} lần cho thuê dài hạn`,
@@ -112,7 +118,7 @@ const copy = {
     statVsMarket: (m: number) => `khu ${m}\u00a0%`,
     newBadge: (m: string) => `Antam lo từ ${m}`,
     newNote: "Số liệu sẽ có sau mùa đầu tiên.",
-    statNote: (d: string) => `Số tiền chủ nhà nhận dựa trên đặt phòng thật của từng căn, tính lại theo mức phí Antam hiện nay 30\u00a0%: tiền phòng sau khi trừ phí Airbnb và Booking.com, không tính phí dọn dẹp, sau phí của Antam. Tức là số tiền chủ nhà sẽ nhận với điều kiện hiện nay; điện nước chủ nhà lo. Làm tròn đến hàng nghìn. Trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Tỷ lệ lấp phòng chỉ tính cho căn đã quản lý trên ba tháng, 45 ngày đầu không tính vì nhà mới mở còn đang chạy đà. Số của khu lấy từ PriceLabs, 90 ngày gần nhất, và mỗi căn có số riêng: các căn tương tự ngay trong khu của căn đó. Tiền thuê dài hạn tính từ Deloitte Rent\u00a0Index Q2/2026 theo đúng diện tích từng căn; phần chênh giữa các loại nhà lấy từ bản đồ giá thuê của Bộ Tài chính (15.\u00a08.\u00a02026). Kết quả đã qua không phải là cam kết cho tương lai.`,
+    statNote: (d: string) => `Số tiền chủ nhà nhận dựa trên đặt phòng thật của từng căn, tính lại theo mức phí Antam hiện nay 30\u00a0%: tiền phòng sau khi trừ phí Airbnb và Booking.com, không tính phí dọn dẹp, sau phí của Antam. Tức là số tiền chủ nhà sẽ nhận với điều kiện hiện nay; điện nước chủ nhà lo. Làm tròn đến hàng nghìn. Trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Tỷ lệ lấp phòng chỉ tính cho căn đã quản lý trên ba tháng, 45 ngày đầu không tính vì nhà mới mở còn đang chạy đà. Số của khu lấy từ PriceLabs, 90 ngày gần nhất, tính chung cho từng khu vực: tỷ lệ lấp phòng trung bình của các căn tương tự quanh những căn Antam lo trong khu đó. Hai căn cùng khu vì vậy có cùng một số thị trường. Tiền thuê dài hạn tính từ Deloitte Rent\u00a0Index Q2/2026 theo đúng diện tích từng căn; phần chênh giữa các loại nhà lấy từ bản đồ giá thuê của Bộ Tài chính (15.\u00a08.\u00a02026). Kết quả đã qua không phải là cam kết cho tương lai.`,
   },
 };
 
@@ -165,9 +171,27 @@ const PortfolioSection = () => {
                   )}
                 </p>
                 {/* Real results: what the owner receives per month, plus occupancy. New flats get a note instead. */}
+                {/* K1 (vybráno 29. 8. 2026): obsazenost bytu proti trhu lokality
+                    jako dva pruhy = hlavní sdělení karty; částka pod nimi. */}
                 {item.stats && (
                   <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border">
-                    <p className="font-display text-base sm:text-2xl font-semibold text-foreground leading-none tnum">
+                    <div className="space-y-1 sm:space-y-1.5 tnum">
+                      <div className="flex items-center gap-1.5 sm:gap-2 font-body text-[10px] sm:text-[11.5px] leading-none">
+                        <span className="w-[58px] sm:w-[72px] shrink-0 text-muted-foreground">{c.barFlat}</span>
+                        <span className="block h-[6px] sm:h-[7px] flex-1 overflow-hidden rounded-full bg-muted">
+                          <span className="block h-full rounded-full bg-gold" style={{ width: `${item.stats.occupancy}%` }} />
+                        </span>
+                        <span className="w-[30px] sm:w-[36px] shrink-0 text-right font-semibold text-foreground">{item.stats.occupancy}&nbsp;%</span>
+                      </div>
+                      <div className="flex items-center gap-1.5 sm:gap-2 font-body text-[10px] sm:text-[11.5px] leading-none">
+                        <span className="w-[58px] sm:w-[72px] shrink-0 text-muted-foreground">{c.barMarket(item.loc)}</span>
+                        <span className="block h-[6px] sm:h-[7px] flex-1 overflow-hidden rounded-full bg-muted">
+                          <span className="block h-full rounded-full bg-charcoal/20" style={{ width: `${item.stats.market}%` }} />
+                        </span>
+                        <span className="w-[30px] sm:w-[36px] shrink-0 text-right text-muted-foreground">{item.stats.market}&nbsp;%</span>
+                      </div>
+                    </div>
+                    <p className="mt-2.5 font-display text-base sm:text-2xl font-semibold text-foreground leading-none tnum">
                       {fmtCzk(item.stats.owner)}&nbsp;Kč
                     </p>
                     <p className="mt-1 font-body text-[10px] sm:text-[11px] uppercase tracking-[0.12em] text-muted-foreground leading-tight">
@@ -176,9 +200,6 @@ const PortfolioSection = () => {
                     <p className="mt-2 font-body text-[10.5px] sm:text-xs text-muted-foreground leading-snug">
                       {item.stats.ratio ? <span className="text-gold-deep font-semibold">{c.statRatio(item.stats.ratio)}</span> : null}
                       {item.stats.ratio ? " · " : ""}
-                      {c.statOcc(item.stats.occupancy)}{" "}
-                      <span className="text-muted-foreground/70">({c.statVsMarket(item.stats.market)})</span>
-                      {" · "}
                       {item.stats.since ? c.statPeriodSince(item.stats.since) : c.statPeriod12}
                     </p>
                   </div>
