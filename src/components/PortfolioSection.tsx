@@ -225,7 +225,7 @@ const PortfolioSection = () => {
               onClick={() => setShowAll(true)}
               aria-expanded={false}
               aria-controls="portfolio-vsechny"
-              className="btn btn-outline"
+              className="btn btn-secondary"
             >
               {c.showAll}
               <ChevronDown className="w-4 h-4" aria-hidden="true" />
