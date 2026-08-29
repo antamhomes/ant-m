@@ -54,8 +54,8 @@ const extraKeys = [
 
 type Season = "year" | "summer" | "winter" | "xmas";
 // Sezónní přirážky sladěné se skutečnými výsledky bytů v naší správě (8/2025–7/2026).
-// Při odměně 28 % vychází 2+kk Praha 1 rok ≈ 52 tis. pro majitele; měřená
-// skutečnost bytu 302 za 12 měsíců je 56,8 tis., tedy veřejné číslo zůstává pod ní (záměr).
+// Při odměně 30 % vychází 2+kk Praha 1 rok ≈ 56 tis. pro majitele; nejslabší
+// publikovaná karta P1 (405) ukazuje 57 tis., takže veřejné číslo zůstává pod ní (záměr).
 // Léto/Vánoce zvedají hlavně cenu, ne obsazenost (ta je i v lednu přes 80 %).
 // Přepočteno 28. 8. 2026: "year" je nově neutrální, protože kalibrace sedí
 // v lib/yield (tržní cena za noc × CALC_OCCUPANCY). Sezóny se od něj odchylují
@@ -146,7 +146,7 @@ const CalculatorSection = () => {
 
     // Výpočet podle smlouvy: z hrubých tržeb za ubytování se nejdřív odečte provize
     // platformy (počítá se z celé ceny rezervace včetně úklidu), zbytek (čistý
-    // výnos) se dělí 72/28.
+    // výnos) se dělí 70/30.
     // Jediný zdroj výpočtu je lib/yield: tržní cena za noc pro dané pásmo
     // kapacity × obsazenost × dny, minus provize platformy a naše odměna.
     const compute = (seasonKey: Season) => {
@@ -396,23 +396,23 @@ const CalculatorSection = () => {
                 </p>
               </div>
 
-              {/* 72/28 split. Platform commission is deducted inside the math; the
+              {/* 70/30 split. Platform commission is deducted inside the math; the
                  sub-line and the note under the calculator say so, no scary number here. */}
               <div className="border-t border-primary-foreground/10 pt-4">
                 <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-2">
                   {t(lang, "calc_split_label")}
                 </p>
                 <div className="flex h-2 w-full overflow-hidden rounded-full bg-primary-foreground/10" role="img" aria-label={t(lang, "calc_split_aria")}>
-                  <span className="block h-full w-[72%] bg-gold" />
-                  <span className="block h-full w-[28%] bg-primary-foreground/25" />
+                  <span className="block h-full w-[70%] bg-gold" />
+                  <span className="block h-full w-[30%] bg-primary-foreground/25" />
                 </div>
                 <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 font-body text-[13px] tnum">
                   <span className="text-primary-foreground/85">
-                    <strong className="text-gold font-semibold">72 %</strong> {t(lang, "calc_split_owner")}{" "}
+                    <strong className="text-gold font-semibold">70 %</strong> {t(lang, "calc_split_owner")}{" "}
                     <span className="text-gold/90">= ~{(Math.round(result.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč</span>
                   </span>
                   <span className="text-primary-foreground/65 text-right">
-                    <strong className="font-semibold text-primary-foreground/80">28 %</strong> {t(lang, "calc_split_fee")}
+                    <strong className="font-semibold text-primary-foreground/80">30 %</strong> {t(lang, "calc_split_fee")}
                   </span>
                 </div>
               </div>

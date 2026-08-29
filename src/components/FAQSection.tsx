@@ -14,8 +14,8 @@ const groups: Group[] = [
     title: "faq_group_money",
     items: [
       { q: "faq18_q", a: "faq18_a" }, // garance výnosu
+      { q: "faq17_q", a: "faq17_a" }, // proč 30 %, když jinde 15 nebo 20 (hned za garancí)
       { q: "faq5_q", a: "faq5_a" },   // kolik to stojí
-      { q: "faq17_q", a: "faq17_a" }, // proč je odměna 28 %
       { q: "faq9_q", a: "faq9_a" },   // před / po provizi
       { q: "faq4_q", a: "faq4_a" },   // přehled + vyúčtování
       { q: "faq6_q", a: "faq6_a" },   // úklid a energie

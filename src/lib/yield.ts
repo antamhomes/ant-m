@@ -8,9 +8,10 @@
  * rozdíl než na nájmu, (2) obsazenost spravovaných bytů je 83–92 %, ne 68–85 %.
  *
  * Pravidlo pro tyto hodnoty: vlastní portfolio musí veřejné číslo PŘEKONAT.
- * Kontrola 27. 8. 2026 proti skutečným rezervacím: byt 302 vynesl majiteli za
- * 12 měsíců 56 793 Kč měsíčně, model pro Prahu 1 2+kk dává 48 tis., tedy 15 % pod
- * měřenou skutečností.
+ * Kontrola 28. 8. 2026 (odměna 30 %): model pro Prahu 1 2+kk dává 56 084 Kč,
+ * nejslabší publikovaná karta P1 (405) ukazuje 57 000 Kč. Polštář je těsný
+ * (1,6 %) a hlídá ho facts.test.ts; nepublikovaný byt 302 (54 391 Kč při 30 %)
+ * je pod modelem, proto na web nesmí bez snížení obsazenosti.
  *
  * Kalkulačka i graf horizontu čtou odsud, aby se nikdy nerozešly.
  */
@@ -178,7 +179,7 @@ export const SIZE_PRESET: Record<SizeKey, { m2: number; guests: number }> = {
   "4kk": { m2: 88, guests: 10 },
 };
 
-export const MGMT_FEE = 0.28;      // odměna Antam Homes z čistého výnosu
+export const MGMT_FEE = 0.30;      // odměna Antam Homes z čistého výnosu
 // Změřeno 27. 8. 2026 na 7 bytech (Hospitable, 12 měsíců): skutečná provize je
 // 17,3 až 20,6 % z ceny pokoje, podle listingu, ne podle platformy. Airbnb 15,4–20,7 %,
 // Booking 18,1–21,4 %. Jedna sazba to nikdy nevystihne; 0,17 je střed měřeného pásma.
@@ -187,7 +188,7 @@ export const MGMT_FEE = 0.28;      // odměna Antam Homes z čistého výnosu
 export const PLATFORM_FEE = 0.17;
 export const CLEANING_SHARE = 0.10;// podíl úklidových poplatků na tržbách (jen pro odpočet provize)
 // DPH z provize platformy nese Antam ze své odměny
-// (od 28. 8. 2026 je odměna 28 %, na tomhle se nic nemění),
+// (od 28. 8. 2026 je odměna 30 %, na tomhle se nic nemění),
 // takže do výpočtu výnosu majitele NEVSTUPUJE. Zůstává tu jen pro interní propočty.
 export const VAT_RATE = 1.21;
 export const DAYS = 30.44;  // průměrná délka měsíce
@@ -220,7 +221,7 @@ export const clampOccupancy = (v: number) => Math.max(0.5, Math.min(0.98, v));
 
 /**
  * Výnos majitele za měsíc: z hrubých tržeb se odečte provize platformy (počítá se
- * z celé ceny rezervace včetně úklidu), zbytek se dělí 72/28. DPH z provize se
+ * z celé ceny rezervace včetně úklidu), zbytek se dělí 70/30. DPH z provize se
  * neodečítá, hradí ji Antam ze své odměny.
  * Energie NEjsou odečteny — hradí je majitel zvlášť.
  */

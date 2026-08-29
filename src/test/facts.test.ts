@@ -25,41 +25,45 @@ const vi = translations.vi as Record<string, string>;
 const strip = (s: string) => s.replace(/ /g, " ");
 
 describe("odměna za správu", () => {
-  it("je 28 % v modelu", () => {
-    // Snížena z 30 % na 28 % dne 28. 8. 2026. Sazba žije jen tady a v MCP;
-    // kdyby se změnila znovu, musí se s ní přepočítat i karty portfolia.
-    expect(MGMT_FEE).toBe(0.28);
+  it("je 30 % v modelu", () => {
+    // Zvýšena z 28 % na 30 % dne 28. 8. 2026 (rozhodnutí majitele; konečná cena
+    // včetně DPH). Sazba žije jen tady a v MCP; kdyby se změnila znovu, musí se
+    // s ní přepočítat i karty portfolia.
+    expect(MGMT_FEE).toBe(0.30);
   });
 
-  it("je 28 % všude v české i vietnamské kopii", () => {
-    expect(strip(cs.pr1_price)).toMatch(/28 %/);
-    expect(strip(vi.pr1_price)).toMatch(/28 %/);
-    for (const key of ["calc_net_sub", "calc_excluded_note", "faq5_a", "faq9_a", "report_row_costs"]) {
-      expect(strip(cs[key]), `cs.${key}`).toMatch(/28\s?%/);
-      expect(strip(vi[key]), `vi.${key}`).toMatch(/28\s?%/);
+  it("je 30 % všude v české i vietnamské kopii", () => {
+    expect(strip(cs.pr1_price)).toMatch(/30 %/);
+    expect(strip(vi.pr1_price)).toMatch(/30 %/);
+    for (const key of ["calc_net_sub", "calc_excluded_note", "faq5_a", "faq9_a", "report_row_costs", "faq17_a"]) {
+      expect(strip(cs[key]), `cs.${key}`).toMatch(/30\s?%/);
+      expect(strip(vi[key]), `vi.${key}`).toMatch(/30\s?%/);
     }
   });
 
-  it("nikde nezůstalo staré 25 %, 30 % ani dělení 75/25 a 70/30", () => {
+  it("nikde nezůstalo staré 25 % a 28 % ani dělení 75/25 a 72/28", () => {
     for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
       for (const [key, value] of Object.entries(dict)) {
         if (typeof value !== "string") continue;
         const v = strip(value);
-        // 25 000 Kč (uvedení do provozu) a 30 000 Kč (práh řízení projektu)
-        // jsou jiná čísla a zůstávají
-        expect(v.replace(/25 000/g, ""), `${lang}.${key}`).not.toMatch(/25\s?%/);
-        expect(v.replace(/30 000/g, ""), `${lang}.${key}`).not.toMatch(/30\s?%/);
+        // 25 000 Kč (uvedení do provozu) je jiné číslo a zůstává.
+        // faq17_a smí 25 % zmínit: je to vědomá srovnávací matematika základů
+        // ("25 % z tržeb před provizí"), ne stará sazba.
+        if (key !== "faq17_a") {
+          expect(v.replace(/25 000/g, ""), `${lang}.${key}`).not.toMatch(/25\s?%/);
+        }
+        expect(v, `${lang}.${key}`).not.toMatch(/28\s?%/);
         expect(v, `${lang}.${key}`).not.toMatch(/75\s?\/\s?25/);
-        expect(v, `${lang}.${key}`).not.toMatch(/70\s?\/\s?30/);
+        expect(v, `${lang}.${key}`).not.toMatch(/72\s?\/\s?28/);
       }
     }
   });
 
-  it("dělí čistý výnos 72/28", () => {
-    expect(strip(cs.calc_split_aria)).toBe("72 % majitel, 28 % Antam Homes");
-    expect(strip(vi.calc_split_aria)).toBe("72% chủ nhà, 28% Antam Homes");
-    expect(strip(cs.calc_method_note)).toMatch(/72\/28/);
-    expect(strip(vi.calc_method_note)).toMatch(/72\/28/);
+  it("dělí čistý výnos 70/30", () => {
+    expect(strip(cs.calc_split_aria)).toBe("70 % majitel, 30 % Antam Homes");
+    expect(strip(vi.calc_split_aria)).toBe("70% chủ nhà, 30% Antam Homes");
+    expect(strip(cs.calc_method_note)).toMatch(/70\/30/);
+    expect(strip(vi.calc_method_note)).toMatch(/70\/30/);
   });
 
   it("DPH z provize platformy nezatěžuje majitele: v modelu ani v kopii", () => {
@@ -139,10 +143,10 @@ describe("garance výnosu", () => {
     expect(strip(cs.hero_desc).split(" ").length).toBeLessThanOrEqual(18);
   });
 
-  it("vietnamské hero teaser drží a sedí s kartami portfolia (58/64 tis.)", () => {
-    // Při odměně 28 % vychází 405 na 58 000 a 402 na 64 000. Kdyby se karty
-    // znovu přepočítaly, musí se s nimi posunout i tenhle teaser.
-    expect(strip(vi.hero_extra)).toMatch(/58 000/);
+  it("vietnamské hero teaser drží a sedí s kartami portfolia (57/64 tis.)", () => {
+    // Při odměně 30 % vychází 405 na 57 000 a 402 na 64 000 (zaokrouhleno
+    // na tisíce). Kdyby se karty znovu přepočítaly, musí se posunout i teaser.
+    expect(strip(vi.hero_extra)).toMatch(/57 000/);
     expect(strip(vi.hero_extra)).toMatch(/64 000/);
   });
 
@@ -220,21 +224,30 @@ describe("model výnosu", () => {
   it("nepřeslibuje: model zůstane pod každým publikovaným bytem", () => {
     // Pravidlo: veřejné číslo musí vlastní portfolio PŘEKONAT, nikdy ho minout.
     // Měříme proti tomu, co je na kartách, tedy proti tomu, co si návštěvník
-    // může ověřit. Kalkulačka počítá s 85 % obsazeností, byty jedou 94 %.
+    // může ověřit. Kalkulačka počítá s 84 % obsazeností, byty jedou 94 %.
     const published: [Parameters<typeof ownerMonthly>[0], number, number][] = [
-      ["praha1", 8, 59000],  // 405, nejslabší publikovaný na Praze 1
-      ["praha3", 6, 51000],  // Modern AC
-      ["praha3", 6, 43000],  // byt se zahradou
+      ["praha1", 8, 57000],  // 405, nejslabší publikovaný na Praze 1
+      ["praha3", 6, 50000],  // Modern AC
+      ["praha3", 6, 42000],  // byt se zahradou
     ];
     for (const [loc, guests, real] of published)
       expect(ownerMonthly(loc, guests).net, `${loc} / ${guests} hostů`).toBeLessThan(real);
   });
 
+  it("Mozart je vědomá výjimka z pravidla, dokud se nezdraží na trh", () => {
+    // Karta Mozartu (Praha 5, 4 hosté) ukazuje 30 000 Kč, model dává víc,
+    // protože Mozart jede ADR ~1 700 Kč proti tržnímu mediánu 2 265 Kč.
+    // Rozhodnutí majitele 28. 8. 2026: řeší se cenou Mozartu, ne modelem.
+    // Až tenhle test spadne (model <= karta), výjimka pominula: smaž ho
+    // a přesuň Mozarta do seznamu `published` výše.
+    expect(ownerMonthly("praha5", 4).net).toBeGreaterThan(30000);
+  });
+
   it("byt 302 je na hraně, protože není publikovaný", () => {
-    // 302 (Praha 1, neveřejný) dává majiteli 55 945 Kč. Model při 85 % dává víc.
-    // Kdyby se 302 na web přidal, obsazenost v kalkulačce musí dolů na ~81 %.
-    // Tenhle test to hlídá, aby se na to nezapomnělo.
-    const MEASURED_302 = 55945;
+    // 302 (Praha 1, neveřejný) dává majiteli při 30 % už jen 54 391 Kč
+    // (měřených 55 945 při 28 % krát 70/72). Model dává víc. Kdyby se 302
+    // na web přidal, obsazenost v kalkulačce musí dolů. Tenhle test to hlídá.
+    const MEASURED_302 = 54391;
     const model = ownerMonthly("praha1", "2kk").net;
     if (model >= MEASURED_302) {
       const src = readFileSync("src/components/PortfolioSection.tsx", "utf8");
@@ -360,9 +373,9 @@ describe("dělící pruh v ceníku", () => {
     // Pruh v ceníku už jednou zůstal na starém poměru, zatímco popisky vedle něj
     // říkaly nový. Čísla v kopii hlídají testy výše; tenhle hlídá ten obrázek.
     const src = readFileSync("src/components/PricingSection.tsx", "utf8");
-    expect(src).toContain("w-[72%]");
-    expect(src).toContain("w-[28%]");
-    for (const stale of ["w-[75%]", "w-[25%]", "w-[70%]", "w-[30%]"]) {
+    expect(src).toContain("w-[70%]");
+    expect(src).toContain("w-[30%]");
+    for (const stale of ["w-[75%]", "w-[25%]", "w-[72%]", "w-[28%]"]) {
       expect(src, stale).not.toContain(stale);
     }
   });
