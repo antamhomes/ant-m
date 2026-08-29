@@ -61,19 +61,27 @@ const ContactSection = () => {
   const [formData, setFormData] = useState(emptyForm);
   const set = (k: keyof typeof emptyForm, v: string | boolean) => setFormData((f) => ({ ...f, [k]: v }));
 
-  // The calculator CTA pre-fills district + layout so the owner doesn't type them twice.
+  // The calculator CTA pre-fills district + layout so the owner doesn't type them
+  // twice; guests + area land visibly (and editably) in the message field.
   useEffect(() => {
     const onPrefill = (e: Event) => {
-      const d = (e as CustomEvent<{ location?: string; size?: string }>).detail || {};
+      const d = (e as CustomEvent<{ location?: string; size?: string; guests?: number; m2?: number }>).detail || {};
+      const calcLine =
+        d.guests && d.m2
+          ? lang === "cs"
+            ? `Z kalkulačky: ${d.guests} hostů, ${d.m2} m².`
+            : `Theo phần tính thử: ${d.guests} khách, ${d.m2} m².`
+          : "";
       setFormData((f) => ({
         ...f,
         location: d.location && LOCATIONS.includes(d.location) ? d.location : f.location,
         size: d.size && SIZES.includes(d.size) ? d.size : f.size,
+        message: f.message || calcLine,
       }));
     };
     window.addEventListener("antam:prefill-contact", onPrefill);
     return () => window.removeEventListener("antam:prefill-contact", onPrefill);
-  }, []);
+  }, [lang]);
 
   const locationOptions: Option[] = [
     ...LOCATIONS.map((l) => ({ value: l, label: l })),

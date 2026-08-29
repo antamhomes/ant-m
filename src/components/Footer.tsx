@@ -118,6 +118,7 @@ const Footer = () => {
             </p>
             <p className="font-body text-[11px] text-primary-foreground/45 mt-1">
               {t(lang, "footer_rights")}
+              {t(lang, "footer_updated") ? ` · ${t(lang, "footer_updated")}` : ""}
             </p>
           </div>
           <nav aria-label={lang === "cs" ? "Jazyk" : "Ngôn ngữ"} className="flex justify-center md:justify-end gap-4 font-body text-xs">

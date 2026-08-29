@@ -11,9 +11,14 @@ const HOME_PATHS = new Set(["/", "/vn", "/vn/", "/index.html"]);
 const ALIASES: Record<string, string> = { "/cz": "/", "/cs": "/", "/vi": "/vn", "/cz/": "/", "/cs/": "/", "/vi/": "/vn" };
 
 const App = () => {
-  const path = window.location.pathname.toLowerCase();
+  // Při build-time prerenderu (entry-ssg) není window; cestu dodá globál.
+  const rawPath =
+    typeof window === "undefined"
+      ? ((globalThis as { __ANTAM_SSG_PATH__?: string }).__ANTAM_SSG_PATH__ ?? "/")
+      : window.location.pathname;
+  const path = rawPath.toLowerCase();
   const alias = ALIASES[path];
-  if (alias) {
+  if (alias && typeof window !== "undefined") {
     window.history.replaceState(null, "", alias + window.location.hash);
   }
   const isHome = Boolean(alias) || HOME_PATHS.has(path);

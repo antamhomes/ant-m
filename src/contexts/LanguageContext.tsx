@@ -27,7 +27,11 @@ export const langFromPath = (pathname: string): Language =>
  * history.pushState replaces a router library.
  */
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
-  const [pathname, setPathname] = useState(() => window.location.pathname);
+  const [pathname, setPathname] = useState(() =>
+    typeof window === "undefined"
+      ? ((globalThis as { __ANTAM_SSG_PATH__?: string }).__ANTAM_SSG_PATH__ ?? "/")
+      : window.location.pathname
+  );
 
   useEffect(() => {
     const onPop = () => setPathname(window.location.pathname);

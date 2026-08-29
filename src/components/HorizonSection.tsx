@@ -134,20 +134,32 @@ const FiveYearChart = () => {
         )}
       </div>
 
-      <ul className="grid grid-cols-2 sm:grid-cols-4 gap-px bg-border border border-border rounded-sm overflow-hidden list-none m-0 p-0">
-        {([
-          [t(lang, "hz_stat_invest"), czk(-d.setup)],
-          [t(lang, "hz_stat_payback"),
-            d.payback ? `${d.payback} ${t(lang, d.payback === 1 ? "hz_months_one" : d.payback < 5 ? "hz_months_few" : "hz_months")}` : "?"],
-          [t(lang, "hz_stat_cross"), d.cross ? `${d.cross}. ${t(lang, "hz_month")}` : "?"],
-          [t(lang, "hz_stat_gap"), `${d.gap >= 0 ? "+" : ""}${czk(d.gap)}`],
-        ] as [string, string][]).map(([k, v]) => (
-          <li key={k} className="bg-muted/40 px-3 py-2.5">
-            <p className="font-body text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground">{k}</p>
-            <p className="font-display text-[17px] mt-0.5 tnum text-foreground">{v}</p>
-          </li>
-        ))}
-      </ul>
+      {/* Hlavní sdělení sekce je jedno číslo: rozdíl za pět let. Zaokrouhlené na
+          tisíce (model s odhadovanými vstupy nemá co slibovat na korunu; přesné
+          průběžné hodnoty zůstávají v tooltipu grafu). Vstupy jsou druhotné. */}
+      <div className="border border-border rounded-sm overflow-hidden">
+        <div className="bg-muted/40 px-4 py-4 sm:py-5 text-center border-b border-border">
+          <p className="font-body text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+            {t(lang, "hz_stat_gap")}
+          </p>
+          <p className="font-display text-3xl sm:text-4xl font-semibold mt-1 tnum text-gradient-gold">
+            {d.gap >= 0 ? "+" : ""}{czk(Math.round(d.gap / 1000) * 1000)}
+          </p>
+        </div>
+        <ul className="grid grid-cols-3 gap-px bg-border list-none m-0 p-0">
+          {([
+            [t(lang, "hz_stat_invest"), czk(-d.setup)],
+            [t(lang, "hz_stat_payback"),
+              d.payback ? `${d.payback} ${t(lang, d.payback === 1 ? "hz_months_one" : d.payback < 5 ? "hz_months_few" : "hz_months")}` : "?"],
+            [t(lang, "hz_stat_cross"), d.cross ? `${d.cross}. ${t(lang, "hz_month")}` : "?"],
+          ] as [string, string][]).map(([k, v]) => (
+            <li key={k} className="bg-card px-3 py-2.5 min-w-0">
+              <p className="font-body text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground">{k}</p>
+              <p className="font-display text-[15px] sm:text-[17px] mt-0.5 tnum text-foreground/85">{v}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       {/* Proč se pětileté číslo liší od měsíčního: odečtené položky viditelně. */}
       <div className="font-body text-[12.5px] text-muted-foreground leading-relaxed tnum space-y-1">

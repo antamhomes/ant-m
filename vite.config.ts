@@ -6,10 +6,64 @@ import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
 
 const VI_TITLE = "Quản lý cho thuê ngắn hạn & Airbnb tại Praha | antam homes";
 const VI_DESC =
-  "Quản lý cho thuê ngắn hạn (Airbnb, Booking) tại Praha: lo khách, dọn dẹp, đặt giá, bảng kê hằng tháng cho chủ nhà. Căn nào nhận cũng có mức tối thiểu ghi trong hợp đồng.";
+  "Quản lý cho thuê ngắn hạn (Airbnb, Booking) tại Praha: Antam lo khách, dọn dẹp, giá và bảng kê. Căn nào nhận cũng có mức tối thiểu ghi trong hợp đồng.";
 const SITE = "https://www.antamhomes.com";
 
 import type { Plugin } from "vite";
+
+/**
+ * Po dokončení buildu vyrenderuje aplikaci (entry-ssg.tsx) do statického HTML
+ * obou jazyků a vloží ho do <div id="root"> + JSON-LD do <head>. Boti bez JS
+ * (GPTBot, PerplexityBot, ClaudeBot) tak čtou plný obsah; pro návštěvníka se
+ * nic nemění, React obsah při mountu nahradí pod brand splashem.
+ */
+function ssgPrerenderPlugin(): Plugin {
+  return {
+    name: "antam-ssg",
+    apply: "build",
+    enforce: "post",
+    async closeBundle() {
+      const [{ createServer }, fs] = await Promise.all([
+        import("vite"),
+        import("node:fs/promises"),
+      ]);
+      // Bez react-swc pluginu: TSX přeloží esbuild Vite samotného a v prod
+      // NODE_ENV sáhne po produkčním jsx-runtime (swc v serve módu tahal jsxDEV).
+      const server = await createServer({
+        configFile: false,
+        mode: "production",
+        logLevel: "error",
+        resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
+        server: { middlewareMode: true },
+        appType: "custom",
+      });
+      try {
+        const mod = await server.ssrLoadModule("/src/entry-ssg.tsx");
+        const safe = (data: unknown) => JSON.stringify(data).replace(/</g, "\\u003c");
+        const targets: Array<["dist/index.html" | "dist/vn/index.html", "/" | "/vn", "cs" | "vi"]> = [
+          ["dist/index.html", "/", "cs"],
+          ["dist/vn/index.html", "/vn", "vi"],
+        ];
+        for (const [file, route, lang] of targets) {
+          const html = await fs.readFile(file, "utf8");
+          const app: string = await mod.renderPage(route);
+          const ld =
+            `<script id="ld-faq" type="application/ld+json">${safe(mod.buildFaqJsonLd(lang))}</script>` +
+            `<script id="ld-business" type="application/ld+json">${safe(mod.buildBusinessJsonLd(lang))}</script>`;
+          const out = html
+            .replace('<div id="root"></div>', `<div id="root">${app}</div>`)
+            .replace("</head>", `${ld}</head>`);
+          if (out === html) throw new Error(`antam-ssg: injection anchors not found in ${file}`);
+          await fs.writeFile(file, out);
+          console.log(`antam-ssg: prerendered ${file} (${Math.round(app.length / 1024)} kB of content)`);
+        }
+      } finally {
+        await server.close();
+      }
+    },
+  };
+}
+
 
 function prerenderVnPlugin(): Plugin {
   return {
@@ -100,6 +154,7 @@ export default defineConfig(({ mode }) => ({
     react(),
     mode === "development" && componentTagger(),
     prerenderVnPlugin(),
+    ssgPrerenderPlugin(),
     mcpPlugin(),
   ].filter(Boolean),
   resolve: {

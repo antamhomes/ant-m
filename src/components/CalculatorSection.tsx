@@ -223,7 +223,7 @@ const CalculatorSection = () => {
                     onClick={() => {
                       trackEvent("cta_click", { location: "calculator_unsupported", target: "contact", district: location, size });
                       window.dispatchEvent(new CustomEvent("antam:prefill-contact", {
-                        detail: { location: locLabel(location), size: sizes.find((s) => s.value === size)?.label ?? "" },
+                        detail: { location: locLabel(location), size: sizes.find((s) => s.value === size)?.label ?? "", guests, m2 },
                       }));
                     }}
                     className="btn btn-primary-inverse w-full"
@@ -365,7 +365,7 @@ const CalculatorSection = () => {
                         trackEvent("cta_click", { location: "calculator", target: "contact", district: location, size });
                         window.dispatchEvent(
                           new CustomEvent("antam:prefill-contact", {
-                            detail: { location: locLabel(location), size: sizes.find((s) => s.value === size)?.label ?? "" },
+                            detail: { location: locLabel(location), size: sizes.find((s) => s.value === size)?.label ?? "", guests, m2 },
                           })
                         );
                       }}
@@ -388,18 +388,20 @@ const CalculatorSection = () => {
           </Reveal>
         </div>
 
-        <div className="mt-6 sm:mt-8 max-w-prose mx-auto border-t border-border/60 pt-4 sm:pt-5">
-          <details className="sm:hidden group">
-            <summary className="list-none cursor-pointer font-body text-xs text-muted-foreground text-center underline underline-offset-4 decoration-border [&::-webkit-details-marker]:hidden">
+        {/* Metodika za rozklikem na všech šířkách (brief 8/2026, bod 2); viditelná
+            zůstává jen krátká věta, bez které by odhad mohl mást. */}
+        <div className="mt-6 sm:mt-8 max-w-prose mx-auto border-t border-border/60 pt-4 sm:pt-5 space-y-2.5">
+          <p className="font-body text-xs md:text-[13px] text-foreground/75 text-center leading-relaxed">
+            {t(lang, "calc_disclaimer_short")}
+          </p>
+          <details className="group text-center">
+            <summary className="list-none cursor-pointer inline-block font-body text-xs text-muted-foreground underline underline-offset-4 decoration-border [&::-webkit-details-marker]:hidden">
               {t(lang, "calc_disclaimer_toggle")}
             </summary>
-            <p className="mt-3 font-body text-xs text-foreground/75 text-center leading-relaxed">
+            <p className="mt-3 font-body text-xs text-foreground/75 text-left leading-relaxed">
               {t(lang, "calc_disclaimer")}
             </p>
           </details>
-          <p className="hidden sm:block font-body text-xs md:text-[13px] text-foreground/75 text-center leading-relaxed">
-            {t(lang, "calc_disclaimer")}
-          </p>
         </div>
       </div>
     </section>

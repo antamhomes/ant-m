@@ -78,7 +78,10 @@ describe("odměna za správu", () => {
     // Antam ji hradí ze své odměny. Kdyby se vrátila do
     // výpočtu, majitel by platil dvakrát: nižším podílem i vyšší sazbou.
     expect(strip(cs.calc_method_note)).toMatch(/ze své odměny|neodečítá|nevstupuje/);
-    expect(strip(cs.pr1_note)).toMatch(/DPH z provize/);
+    // Věta „DPH z provize odvádíme my ze své odměny" žije od patche 126
+    // v poznámce kalkulačky (pr1_note nese příklad toku peněz). Fakt trvá,
+    // jen bydlí jinde; test hlídá fakt, ne místo.
+    expect(strip(cs.calc_method_note)).toMatch(/DPH z provize/);
   });
 
   it("provize v modelu odpovídá měřenému pásmu 17–21 %", () => {
@@ -97,6 +100,38 @@ describe("odměna za správu", () => {
 });
 
 describe("ceník", () => {
+  it("vzorový tok peněz v ceníku sedí matematicky (účet − úklid, 70/30)", () => {
+    // Vzor je 90 000 Kč na účtu (rozhodnutí majitele 29. 8. 2026). Test nehlídá
+    // konkrétní částku, ale aritmetiku: kdyby se vzor znovu měnil, musí sedět.
+    const num = (v: string) => Number(strip(v).replace(/[^0-9]/g, ""));
+    for (const dict of [cs, vi]) {
+      const bank = num(dict.pr1_flow1_v);
+      const cleaning = num(dict.pr1_flow2_v);
+      const owner = num(dict.pr1_flow4_v);
+      const fee = num(dict.pr1_flow5_v);
+      const net = bank - cleaning;
+      expect(bank).toBeGreaterThan(0);
+      expect(owner).toBe(Math.round(net * 0.7));
+      expect(fee).toBe(Math.round(net * 0.3));
+      expect(owner + fee).toBe(net);
+    }
+    expect(strip(cs.pr1_note)).toMatch(/90 000/);
+    expect(strip(vi.pr1_note)).toMatch(/90 000/);
+  });
+
+  it("stará doporučovací mechanika (15 000 zpět, 1 % z výnosu) zmizela", () => {
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      expect(strip(dict.pr8_note), `${lang}.pr8_note`).not.toMatch(/15 000/);
+      expect(strip(dict.pr8_price), `${lang}.pr8_price`).not.toMatch(/15 000/);
+      expect(strip(dict.pr8_note), `${lang}.pr8_note`).not.toMatch(/(^|[^\d])1 ?% /);
+    }
+    // Nová podoba: doporučený a PŘIJATÝ majitel = uvedení do provozu zdarma.
+    expect(strip(cs.pr8_note)).toMatch(/přijmeme do správy/);
+    expect(strip(cs.pr8_note)).toMatch(/zdarma/);
+    expect(strip(vi.pr8_note)).toMatch(/Antam nhận/);
+    expect(strip(vi.pr8_note)).toMatch(/hoàn lại/);
+  });
+
   it("uvedení do provozu stojí 25 000 Kč a stejné číslo je v kopii", () => {
     expect(LAUNCH_FEE).toBe(25000);
     expect(strip(cs.pr2_price)).toMatch(/25 000 Kč/);
@@ -184,6 +219,14 @@ describe("garance výnosu", () => {
     // zůstává prázdný (upside prodává portfolio a kalkulačka).
     expect(strip(cs.g_num3_value), "g_num3_value musí zůstat prázdné").toBe("");
     expect(strip(vi.g_num3_value), "vi g_num3_value musí zůstat prázdné").toBe("");
+    // Popisek pod dvojicí rozepisuje nájem + energie; musí sedět na model,
+    // jinak se vrátí drift „26 000 + ? = 29 500" z auditu 29. 8. 2026.
+    const rentRe = new RegExp(rent.toLocaleString("cs-CZ").replace(/\s/g, " "));
+    const energyRe = new RegExp(ENERGY["2kk"].toLocaleString("cs-CZ").replace(/\s/g, " "));
+    expect(strip(cs.g_num_note)).toMatch(rentRe);
+    expect(strip(cs.g_num_note)).toMatch(energyRe);
+    expect(strip(vi.g_num_note)).toMatch(rentRe);
+    expect(strip(vi.g_num_note)).toMatch(energyRe);
   });
 
   it("jedna pojmenovaná nabídka: hero, kalkulačka i garance mají stejné CTA", () => {
