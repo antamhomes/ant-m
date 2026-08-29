@@ -6,109 +6,190 @@
 import { defineMcp } from "npm:@lovable.dev/mcp-js@0.26.2";
 
 // src/lib/mcp/tools/estimate-yield.ts
-import { defineTool, ToolError } from "npm:@lovable.dev/mcp-js@0.26.2";
+import { defineTool } from "npm:@lovable.dev/mcp-js@0.26.2";
 import { z } from "npm:zod";
-var locations = {
-  praha1: { label: "Praha 1", multiplier: 1.35, occupancy: 0.85 },
-  praha2: { label: "Praha 2", multiplier: 1.25, occupancy: 0.83 },
-  praha3: { label: "Praha 3", multiplier: 1.05, occupancy: 0.8 },
-  praha4: { label: "Praha 4", multiplier: 0.8, occupancy: 0.72 },
-  praha5: { label: "Praha 5", multiplier: 1, occupancy: 0.78 },
-  praha6: { label: "Praha 6", multiplier: 0.95, occupancy: 0.76 },
-  praha7: { label: "Praha 7", multiplier: 1.15, occupancy: 0.83 },
-  praha8: { label: "Praha 8", multiplier: 0.85, occupancy: 0.74 },
-  praha9: { label: "Praha 9", multiplier: 0.7, occupancy: 0.68 },
-  praha10: { label: "Praha 10", multiplier: 0.8, occupancy: 0.73 }
+
+// src/lib/yield.ts
+var bandFor = (guests) => guests <= 4 ? "1BR" : guests <= 8 ? "2BR" : "3BR";
+var isMeasured = (loc) => loc === "praha1" || loc === "praha3" || loc === "praha4" || loc === "praha5";
+var MEASURED_ADR = {
+  praha1: { "1BR": 2678, "2BR": 3642 },
+  praha3: { "1BR": 1949, "2BR": 2774 },
+  praha4: { "1BR": 2047, "2BR": 2687, "3BR": 3882 },
+  praha5: { "1BR": 2304, "2BR": 3062 }
 };
-var sizes = {
-  "1kk": { label: "1+kk", baseADR: 1665, guests: "2\u20134" },
-  "2kk": { label: "2+kk", baseADR: 2250, guests: "6\u20138" },
-  "3kk": { label: "3+kk", baseADR: 3060, guests: "8\u201310" },
-  "4kk": { label: "4+kk", baseADR: 4140, guests: "10\u201312" }
+var MARKET_OCC = {
+  praha1: 77,
+  praha3: 73,
+  praha4: 68,
+  praha5: 74,
+  mb: 72
 };
-var extras = {
-  balkon: 0.04,
-  parking: 0.05,
-  klima: 0.03,
-  wellness: 0.05
+var SEASONS_BY_LOC = {
+  praha1: { summer: 1.049, winter: 0.789, xmas: 1.5 },
+  praha3: { summer: 1.006, winter: 0.906, xmas: 1.33 },
+  praha4: { summer: 1.023, winter: 0.897, xmas: 1.249 },
+  praha5: { summer: 1.039, winter: 0.829, xmas: 1.412 }
 };
-var seasons = {
-  year: { adr: 1.05, occDelta: 0.02 },
-  summer: { adr: 1.25, occDelta: 0.03 },
-  winter: { adr: 0.7, occDelta: 0 },
-  xmas: { adr: 1.65, occDelta: 0.05 }
+var LTR_PER_M2 = {
+  praha1: 490,
+  praha2: 482,
+  praha3: 480,
+  praha4: 443,
+  praha5: 461,
+  praha6: 454,
+  praha7: 493,
+  praha8: 465,
+  praha9: 468,
+  praha10: 442
 };
-var ltrTable = {
-  praha1: { "1kk": 23e3, "2kk": 28e3, "3kk": 32e3, "4kk": 41500 },
-  praha2: { "1kk": 21500, "2kk": 28e3, "3kk": 32500, "4kk": 42500 },
-  praha3: { "1kk": 20500, "2kk": 26500, "3kk": 31e3, "4kk": 40500 },
-  praha4: { "1kk": 18e3, "2kk": 23e3, "3kk": 26e3, "4kk": 33500 },
-  praha5: { "1kk": 18500, "2kk": 24500, "3kk": 28e3, "4kk": 36e3 },
-  praha6: { "1kk": 19e3, "2kk": 25500, "3kk": 3e4, "4kk": 39e3 },
-  praha7: { "1kk": 2e4, "2kk": 25500, "3kk": 30500, "4kk": 4e4 },
-  praha8: { "1kk": 16e3, "2kk": 21500, "3kk": 24e3, "4kk": 31e3 },
-  praha9: { "1kk": 18500, "2kk": 23500, "3kk": 29e3, "4kk": 37500 },
-  praha10: { "1kk": 18e3, "2kk": 23e3, "3kk": 27500, "4kk": 35500 }
+var SIZE_COEF = {
+  "1kk": 1.18,
+  "2kk": 1,
+  "3kk": 0.9,
+  "4kk": 0.89
 };
-var MGMT_FEE = 0.28;
+var MEDIAN_AREA = {
+  "1kk": 35,
+  "2kk": 53,
+  "3kk": 71,
+  "4kk": 88
+};
+var rentFor = (loc, size, m2 = MEDIAN_AREA[size]) => Math.round(m2 * LTR_PER_M2[loc] * SIZE_COEF[size]);
+var ROOMS = { "1kk": 1, "2kk": 2, "3kk": 3, "4kk": 4 };
+var DAMAGE_COVER_PER_ROOM = 5e3;
+var DAMAGE_COVER_MAX = 25e3;
+var annualDamageCover = (rooms) => Math.min(Math.max(0, Math.round(rooms)) * DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX);
+var OCCUPANCY_BY_FLAT = [
+  { name: "Elegant Museum View\xA0Apartment", loc: "Praha 1", kat: "Nov\xE9 M\u011Bsto", m2: 52, occupancy: 96, market: MARKET_OCC.praha1, days: 319 },
+  { name: "Modern Museum View\xA0Apartment", loc: "Praha 1", kat: "Nov\xE9 M\u011Bsto", m2: 52, occupancy: 94, market: MARKET_OCC.praha1, days: 318 },
+  { name: "Modern AC\xA0Apartment", loc: "Praha 3", kat: "\u017Di\u017Ekov", m2: 55, occupancy: 96, market: MARKET_OCC.praha3, days: 139 },
+  { name: "Modern\xED apartm\xE1n se\xA0zahradou", loc: "Praha 3", kat: "\u017Di\u017Ekov", m2: 60, occupancy: 85, market: MARKET_OCC.praha3, days: 54 },
+  { name: "Klement apartment s\xA0terasou", loc: "Mlad\xE1 Boleslav", kat: "Mlad\xE1 Boleslav", m2: 85, occupancy: 91, market: MARKET_OCC.mb, days: 54 },
+  { name: "My Mozart studio", loc: "Praha 5", kat: "Sm\xEDchov", m2: 40, occupancy: 97, market: MARKET_OCC.praha5, days: 113 }
+];
+var CALC_OCCUPANCY = 0.85;
+var SIZE_PRESET = {
+  "1kk": { m2: 35, guests: 4 },
+  "2kk": { m2: 53, guests: 6 },
+  "3kk": { m2: 71, guests: 8 },
+  "4kk": { m2: 88, guests: 10 }
+};
+var MGMT_FEE = 0.3;
 var PLATFORM_FEE = 0.17;
-var CLEANING_SHARE = 0.1;
-var DAYS = 30;
+var DAYS = 30.44;
+function ownerMonthly(location, sizeOrGuests, { season = "year" } = {}) {
+  const guests = typeof sizeOrGuests === "number" ? sizeOrGuests : SIZE_PRESET[sizeOrGuests].guests;
+  const band = bandFor(guests);
+  if (!isMeasured(location)) return { supported: false, band, guests };
+  const baseAdr = MEASURED_ADR[location][band];
+  if (!baseAdr) return { supported: false, band, guests };
+  const factor = season === "year" ? 1 : SEASONS_BY_LOC[location][season];
+  const adr = Math.round(baseAdr * factor);
+  const occupancy = CALC_OCCUPANCY;
+  const gross = Math.round(adr * occupancy * DAYS);
+  const platformFee = Math.round(PLATFORM_FEE * gross);
+  const netRevenue = gross - platformFee;
+  const mgmt = Math.round(netRevenue * MGMT_FEE);
+  return {
+    supported: true,
+    adr,
+    occupancy,
+    gross,
+    platformFee,
+    netRevenue,
+    mgmt,
+    net: netRevenue - mgmt,
+    guests,
+    band
+  };
+}
+
+// src/lib/mcp/tools/estimate-yield.ts
+var locations = {
+  praha1: "Praha 1",
+  praha2: "Praha 2",
+  praha3: "Praha 3",
+  praha4: "Praha 4",
+  praha5: "Praha 5",
+  praha6: "Praha 6",
+  praha7: "Praha 7",
+  praha8: "Praha 8",
+  praha9: "Praha 9",
+  praha10: "Praha 10"
+};
 var estimate_yield_default = defineTool({
   name: "estimate_rental_yield",
   title: "Estimate short-term rental yield",
-  description: "Estimate the monthly net income an apartment owner in Prague could earn with Antam Homes short-term rental management, and compare it to long-term rent. Same model as the calculator on the website.",
+  description: "Estimate the monthly net income an apartment owner in Prague could earn with Antam Homes short-term rental management, and compare it to long-term rent. Same model and same code as the calculator on the website. Numbers exist only for districts where Antam Homes manages apartments and sees real market data (Praha 1, 3, 4, 5); other districts get an individual assessment within 24 hours instead of a number.",
   inputSchema: {
     location: z.enum(["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9", "praha10"]).describe("Prague district of the apartment."),
-    size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout size (each is priced for its usual guest capacity: 1+kk 2\u20134, 2+kk 6\u20138, 3+kk 8\u201310, 4+kk 10\u201312 guests)."),
-    season: z.enum(["year", "summer", "winter", "xmas"]).optional().describe("Season to price for. Defaults to 'year' (yearly average)."),
-    extras: z.array(z.enum(["balkon", "parking", "klima", "wellness"])).optional().describe("Extra features that raise the nightly rate.")
+    size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout. It only presets the usual guest capacity (4/6/8/10) and floor area (35/53/71/88 m2); the estimate is driven by capacity for the Airbnb side and by floor area for the long-term rent comparison."),
+    guests: z.number().int().min(2).max(14).optional().describe("Guest capacity of the apartment. Overrides the layout preset."),
+    floorAreaM2: z.number().int().min(18).max(140).optional().describe("Floor area in m2. Overrides the layout preset; drives the long-term rent comparison."),
+    season: z.enum(["year", "summer", "winter", "xmas"]).optional().describe("Season to price for. Defaults to 'year' (yearly average). Seasonal factors come from realized monthly market data of the district; summer (Apr-Oct), winter (Nov-Mar excl. December) and December compose the year exactly.")
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: ({ location, size, season, extras: chosen }) => {
-    const loc = locations[location];
-    const sz = sizes[size];
-    if (!loc || !sz) throw new ToolError("Unknown location or size.");
-    const baseADR = sz.baseADR;
-    const extrasPct = (chosen ?? []).reduce((sum, e) => sum + (extras[e] ?? 0), 0);
-    const compute = (seasonKey2) => {
-      const adj = seasons[seasonKey2];
-      const adr = Math.round(baseADR * loc.multiplier * (1 + extrasPct) * adj.adr);
-      const occupancy = Math.max(0.5, Math.min(0.98, loc.occupancy + adj.occDelta));
-      const gross = Math.round(adr / (1 - PLATFORM_FEE) * occupancy * DAYS);
-      const platformFee = Math.round(PLATFORM_FEE * gross * (1 + CLEANING_SHARE));
-      const netRevenue = gross - platformFee;
-      const commission = Math.round(netRevenue * MGMT_FEE);
-      return { adr, occupancy, gross, platformFee, netRevenue, commission, net: netRevenue - commission };
-    };
+  handler: ({ location, size, guests: guestsIn, floorAreaM2, season }) => {
+    const label = locations[location];
+    const sz = size;
+    const guests = guestsIn ?? SIZE_PRESET[sz].guests;
+    const m2 = floorAreaM2 ?? SIZE_PRESET[sz].m2;
     const seasonKey = season ?? "year";
-    const r = compute(seasonKey);
-    const yearly = compute("year");
-    const longTermRent = ltrTable[location][size];
+    const r = ownerMonthly(location, guests, { season: seasonKey });
+    const longTermRent = rentFor(location, sz, m2);
+    if (!r.supported) {
+      const reason = isMeasured(location) ? `too few comparable listings for capacity band ${bandFor(guests)} in ${label}` : `Antam Homes has no own listings and therefore no market data in ${label}`;
+      return {
+        content: [
+          {
+            type: "text",
+            text: `${label}, ${sz} (${guests} guests): no published estimate (${reason}). Antam Homes only shows numbers where it manages apartments and sees realized market prices. Send the address and layout and you get an individual calculation for the specific apartment within 24 hours, free and non-binding. For context, the long-term rent benchmark for ${m2} m2 is ~${longTermRent.toLocaleString("cs-CZ")} CZK/month (Deloitte Rent Index Q2/2026).`
+          }
+        ],
+        structuredContent: {
+          currency: "CZK",
+          location: label,
+          size: sz,
+          guests,
+          floorAreaM2: m2,
+          supported: false,
+          reason,
+          longTermRentBenchmark: longTermRent,
+          note: "Estimates are published only for districts with own market data (Praha 1, 3, 4, 5). An individual assessment for any apartment is free and takes up to 24 hours."
+        }
+      };
+    }
+    const yearly = ownerMonthly(location, guests);
+    const yearlyNet = yearly.supported ? yearly.net : r.net;
     const result = {
       currency: "CZK",
-      location: loc.label,
-      size: sz.label,
-      guests: sz.guests,
+      location: label,
+      size: sz,
+      guests,
+      floorAreaM2: m2,
+      supported: true,
+      capacityBand: r.band,
       season: seasonKey,
       averageNightlyRate: r.adr,
-      occupancyRate: Math.round(r.occupancy * 100) / 100,
+      occupancyRate: CALC_OCCUPANCY,
       grossMonthlyRevenue: r.gross,
       platformCommission: r.platformFee,
+      platformCommissionRate: PLATFORM_FEE,
       netRevenueAfterPlatform: r.netRevenue,
-      managementCommission: r.commission,
+      managementCommission: r.mgmt,
       managementCommissionRate: MGMT_FEE,
       netMonthlyIncomeForOwner: r.net,
-      netYearlyAverage: yearly.net * 12,
+      netYearlyAverage: yearlyNet * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round(r.net / longTermRent * 10) / 10,
-      note: "Indicative estimate based on Prague market benchmarks. The Antam Homes fee is 28 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Platform commission is charged on the whole reservation price incl. the cleaning fee. Guests pay the cleaning fee separately; it covers cleaning and laundry and is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included."
+      note: "Nightly rate = realized prices of comparable listings around Antam Homes apartments in this district (PriceLabs, 12 closed months); occupancy assumed 85 %, which Antam Homes apartments hold or beat (85-97 % vs market 64-78 %). The Antam Homes fee is 30 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Guests pay the cleaning fee separately; it is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included."
     };
     return {
       content: [
         {
           type: "text",
-          text: `${loc.label}, ${sz.label} (${sz.guests} guests): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, platform commission ${result.platformCommission.toLocaleString("cs-CZ")} CZK, ADR ${result.averageNightlyRate} CZK, occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`
+          text: `${label}, ${sz} (${guests} guests, band ${r.band}): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, platform commission ${result.platformCommission.toLocaleString("cs-CZ")} CZK, realized market ADR ${result.averageNightlyRate} CZK, occupancy 85%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`
         }
       ],
       structuredContent: result
@@ -120,15 +201,15 @@ var estimate_yield_default = defineTool({
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var apartments = [
   { name: "Secret garden loft", location: "Praha 4", maxGuests: 13, managedSince: "2026-07", note: "new, results after the first season" },
-  { name: "Elegant Museum View Apartment (402)", location: "Praha 1", maxGuests: 8, ownerMonthlyCzk: 64e3, occupancyPct: 96, period: "12 months to 2026-07", vsLongTermRent: 2.3 },
-  { name: "Modern Museum View Apartment (405)", location: "Praha 1", maxGuests: 8, ownerMonthlyCzk: 58e3, occupancyPct: 95, period: "12 months to 2026-07", vsLongTermRent: 2.1 },
-  { name: "Modern AC Apartment", location: "Praha 3", maxGuests: 6, ownerMonthlyCzk: 51e3, occupancyPct: 96, period: "2026-02 to 2026-07", vsLongTermRent: 1.9 },
-  { name: "Modern\xED apartm\xE1n se zahradou", location: "Praha 3", maxGuests: 6, ownerMonthlyCzk: 42e3, occupancyPct: 83, period: "2026-04 to 2026-07", vsLongTermRent: 1.6 },
+  { name: "Elegant Museum View Apartment (402)", location: "Praha 1", maxGuests: 8, ownerMonthlyCzk: 64e3, occupancyPct: 96, period: "12 months to 2026-07", vsLongTermRent: 2.5 },
+  { name: "Modern Museum View Apartment (405)", location: "Praha 1", maxGuests: 8, ownerMonthlyCzk: 57e3, occupancyPct: 94, period: "12 months to 2026-07", vsLongTermRent: 2.2 },
+  { name: "Modern AC Apartment", location: "Praha 3", maxGuests: 6, ownerMonthlyCzk: 5e4, occupancyPct: 96, period: "2026-02 to 2026-07", vsLongTermRent: 1.9 },
+  { name: "Modern\xED apartm\xE1n se zahradou", location: "Praha 3", maxGuests: 6, ownerMonthlyCzk: 42e3, occupancyPct: 85, period: "2026-04 to 2026-07", vsLongTermRent: 1.5 },
   { name: "Secret garden studio I", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
   { name: "Secret garden studio II", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
-  { name: "Klement apartment s terasou", location: "Mlad\xE1 Boleslav", maxGuests: 8, ownerMonthlyCzk: 3e4, occupancyPct: 93, period: "2026-04 to 2026-07" },
+  { name: "Klement apartment s terasou", location: "Mlad\xE1 Boleslav", maxGuests: 8, ownerMonthlyCzk: 3e4, occupancyPct: 91, period: "2026-04 to 2026-07" },
   { name: "Klement apartment", location: "Mlad\xE1 Boleslav", maxGuests: 8, managedSince: "2026-08", note: "new, results after the first season" },
-  { name: "My Mozart studio", location: "Praha 5", maxGuests: 4, ownerMonthlyCzk: 29e3, occupancyPct: 94, period: "2026-02 to 2026-07", vsLongTermRent: 1.6 }
+  { name: "My Mozart studio", location: "Praha 5", maxGuests: 4, ownerMonthlyCzk: 3e4, occupancyPct: 97, period: "2026-02 to 2026-07", vsLongTermRent: 1.4 }
 ];
 var list_portfolio_default = defineTool2({
   name: "list_portfolio",
@@ -146,7 +227,7 @@ var list_portfolio_default = defineTool2({
             return `${base}: owner receives ~${a.ownerMonthlyCzk.toLocaleString("en-US")} CZK/month after all fees, occupancy ${a.occupancyPct} % (${a.period})${a.vsLongTermRent ? `, ${a.vsLongTermRent}x long-term rent` : ""}`;
           }
           return `${base}: managed since ${a.managedSince}, ${a.note}`;
-        }).join("\n") + "\n\nOwner income = real results recalculated to the current 28 % Antam Homes fee: what the platform actually pays out, minus the cleaning fee and the local tourist tax; energy paid by owner. Past results are not a guarantee.\n\nComing soon: the portfolio is expanding to a total of 10 apartments across Prague. Guests have left over 520 reviews across Airbnb and Booking.com."
+        }).join("\n") + "\n\nOwner income = real results recalculated to the current 30 % Antam Homes fee: what the platform actually pays out, minus the cleaning fee; energy paid by owner. Occupancy counts flats managed for more than three months and skips the first 45 days of operation. Long-term rent comes from the Deloitte Rent Index Q2/2026 applied to the flat\u2019s actual floor area. Past results are not a guarantee.\n\nComing soon: the portfolio is expanding to a total of 10 apartments across Prague. Guests have left over 520 reviews across Airbnb and Booking.com."
       }
     ],
     structuredContent: {
@@ -160,14 +241,6 @@ var list_portfolio_default = defineTool2({
 
 // src/lib/mcp/tools/get-services.ts
 import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.26.2";
-
-// src/lib/yield.ts
-var ROOMS = { "1kk": 1, "2kk": 2, "3kk": 3, "4kk": 4 };
-var DAMAGE_COVER_PER_ROOM = 5e3;
-var DAMAGE_COVER_MAX = 25e3;
-var annualDamageCover = (rooms) => Math.min(Math.max(0, Math.round(rooms)) * DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX);
-
-// src/lib/mcp/tools/get-services.ts
 var services = [
   { title: "P\u0159\xEDprava bytu a interi\xE9r", description: "Porad\xEDme, co host\xE9 v dan\xE9 lokalit\u011B hledaj\xED: uspo\u0159\xE1d\xE1n\xED, vybaven\xED, drobnosti, kter\xE9 rozhoduj\xED o hodnocen\xED. Bez zbyte\u010Dn\xFDch investic." },
   { title: "Fotky a prezentace", description: "Profesion\xE1ln\xED fotky, popis a nastaven\xED nab\xEDdky tak, aby byt vynikl mezi stovkami dal\u0161\xEDch." },
@@ -180,13 +253,13 @@ var faq = [
   { question: "Mus\xED b\xFDt byt u\u017E p\u0159ipraven\xFD?", answer: "Ne. Um\xEDme se pod\xEDvat i na byt p\u0159ed spu\u0161t\u011Bn\xEDm a \u0159\xEDct, co d\xE1v\xE1 smysl p\u0159ipravit." },
   { question: "Kolik je pot\u0159eba investovat do p\u0159\xEDpravy nemovitosti?", answer: "Z\xE1le\u017E\xED na stavu a vybaven\xED bytu. Uveden\xED do provozu stoj\xED 25 000 K\u010D: p\u0159\xEDprava bytu a nab\xEDdek, focen\xED, nastaven\xED cen a spu\u0161t\u011Bn\xED prodeje. Vybaven\xED se kupuje za po\u0159izovac\xED ceny s doklady, bez p\u0159ir\xE1\u017Eky; u projekt\u016F nad 30 000 K\u010D \xFA\u010Dtuje Antam Homes 20 % z rozpo\u010Dtu za \u0159\xEDzen\xED. U \xFApln\u011B pr\xE1zdn\xE9ho bytu po\u010D\xEDtejte orienta\u010Dn\u011B kolem 100 000 K\u010D na jeden pokoj; vybaven\xED z\u016Fst\xE1v\xE1 majitele." },
   { question: "M\u016F\u017Eu byt n\u011Bkdy vyu\u017E\xEDt pro sebe?", answer: "Byt si m\u016F\u017Eete kdykoli blokovat pro sebe nebo rodinu. U nejvyt\xED\u017Een\u011Bj\u0161\xEDch sv\xE1tk\u016F, jako jsou V\xE1noce, Silvestr a Velikonoce, se na term\xEDnu nejd\u0159\xEDv domluv\xEDme. U\u017E potvrzen\xE9 rezervace host\u016F z\u016Fst\xE1vaj\xED nedot\u010Den\xE9." },
-  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc zp\u011Btn\u011B p\u0159ehled na jednu stranu: obsazen\xE9 noci, v\xFDnos z jednotliv\xFDch platforem, provize platforem, odm\u011Bna 28 % a co se v byt\u011B \u0159e\u0161ilo, spolu s fakturou na odm\u011Bnu. Vy\xFA\u010Dtov\xE1n\xED i v\xFDplata prob\u011Bhnou do 15. dne n\xE1sleduj\xEDc\xEDho m\u011Bs\xEDce." },
-  { question: "Kolik spr\xE1va stoj\xED?", answer: "Na\u0161e odm\u011Bna je 28 % z \u010Dist\xE9ho v\xFDnosu: z toho, co p\u0159ijde od Airbnb a Booking.com, po ode\u010Dten\xED \xFAklidov\xE9ho poplatku. Je kone\u010Dn\xE1, nic dal\u0161\xEDho se nep\u0159i\u010D\xEDt\xE1, bez fixn\xEDch ani m\u011Bs\xED\u010Dn\xEDch poplatk\u016F, a je v n\xED i garance v\xFDnosu. Pokr\xFDv\xE1 tak\xE9 DPH z provize platformy, internet, hygienick\xE9 pot\u0159eby pro hosty a \u010Distic\xED prost\u0159edky. Drobn\xE9 opravy do 5 000 K\u010D vy\u0159\xEDd\xEDme sami a n\xE1klady strhneme z v\xFDnosu, dohromady nejv\xFD\u0161e 20 000 K\u010D za rok; v\u011Bt\u0161\xED opravy nejd\u0159\xEDv nahl\xE1s\xEDme majiteli." },
+  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc zp\u011Btn\u011B p\u0159ehled na jednu stranu: obsazen\xE9 noci, v\xFDnos z jednotliv\xFDch platforem, provize platforem, odm\u011Bna 30 % a co se v byt\u011B \u0159e\u0161ilo, spolu s fakturou na odm\u011Bnu. Vy\xFA\u010Dtov\xE1n\xED i v\xFDplata prob\u011Bhnou do 15. dne n\xE1sleduj\xEDc\xEDho m\u011Bs\xEDce." },
+  { question: "Kolik spr\xE1va stoj\xED?", answer: "Na\u0161e odm\u011Bna je 30 % z \u010Dist\xE9ho v\xFDnosu: z toho, co p\u0159ijde od Airbnb a Booking.com, po ode\u010Dten\xED \xFAklidov\xE9ho poplatku. Je kone\u010Dn\xE1, nic dal\u0161\xEDho se nep\u0159i\u010D\xEDt\xE1, bez fixn\xEDch ani m\u011Bs\xED\u010Dn\xEDch poplatk\u016F, a je v n\xED i garance v\xFDnosu. Pokr\xFDv\xE1 tak\xE9 DPH z provize platformy, internet, hygienick\xE9 pot\u0159eby pro hosty a \u010Distic\xED prost\u0159edky. Drobn\xE9 opravy do 5 000 K\u010D vy\u0159\xEDd\xEDme sami a n\xE1klady strhneme z v\xFDnosu, dohromady nejv\xFD\u0161e 20 000 K\u010D za rok; v\u011Bt\u0161\xED opravy nejd\u0159\xEDv nahl\xE1s\xEDme majiteli." },
   { question: "Co je Garance v\xFDnosu?", answer: "Ke ka\u017Ed\xE9mu bytu, kter\xFD Antam Homes vezme do spr\xE1vy, dostane majitel p\xEDsemn\xE9 ro\u010Dn\xED minimum: n\xE1jem, kter\xFD by byt vyd\u011Blal dlouhodob\u011B, plus energie. Kdy\u017E v\xFDnos za 12 m\u011Bs\xEDc\u016F z\u016Fstane pod minimem, rozd\xEDl se dorovn\xE1 z odm\u011Bn Antam Homes, nebo m\u016F\u017Ee majitel okam\u017Eit\u011B odej\xEDt; volba je jeho. Zp\u016Fsobilost bytu se ov\u011B\u0159uje zdarma p\u0159edem a byt, kter\xFD garanci neunese, Antam Homes do spr\xE1vy nevezme." },
-  { question: "Kdo plat\xED \xFAklid a energie?", answer: "Host plat\xED vedle ceny za ubytov\xE1n\xED i \xFAklidov\xFD poplatek; ten pokr\xFDv\xE1 \xFAklid a pr\xE1dlo a z\u016Fst\xE1v\xE1 cel\xFD Antam Homes, tak\u017Ee se z v\xFDnosu majitele na \xFAklid nic nestrh\xE1v\xE1 (ve vy\xFA\u010Dtov\xE1n\xED je samostatnou polo\u017Ekou). V\xFDnos, kter\xFD se d\u011Bl\xED 72/28, je to, co p\u0159ijde od platformy, po ode\u010Dten\xED \xFAklidov\xE9ho poplatku. Energie (elekt\u0159ina, voda) hrad\xED majitel." },
+  { question: "Kdo plat\xED \xFAklid a energie?", answer: "Host plat\xED vedle ceny za ubytov\xE1n\xED i \xFAklidov\xFD poplatek; ten pokr\xFDv\xE1 \xFAklid a pr\xE1dlo a z\u016Fst\xE1v\xE1 cel\xFD Antam Homes, tak\u017Ee se z v\xFDnosu majitele na \xFAklid nic nestrh\xE1v\xE1 (ve vy\xFA\u010Dtov\xE1n\xED je samostatnou polo\u017Ekou). V\xFDnos, kter\xFD se d\u011Bl\xED 70/30, je to, co p\u0159ijde od platformy, po ode\u010Dten\xED \xFAklidov\xE9ho poplatku. Energie (elekt\u0159ina, voda) hrad\xED majitel." },
   { question: "Kdo plat\xED DPH z provize platformy?", answer: "Antam Homes, ze sv\xE9 odm\u011Bny. Airbnb a Booking.com fakturuj\xED provizi ze zahrani\u010D\xED a \u010Desk\xE1 DPH z n\xED se odv\xE1d\xED u n\xE1s; do v\xFDnosu majitele nevstupuje a z jeho pod\xEDlu se nestrh\xE1v\xE1." },
   { question: "Jak dlouho spolupr\xE1ce trv\xE1 a jak ji ukon\u010D\xEDm?", answer: "Smlouva se uzav\xEDr\xE1 na 12 m\u011Bs\xEDc\u016F. Po nich pokra\u010Duje na dobu neur\u010Ditou a lze ji kdykoli ukon\u010Dit s v\xFDpov\u011Bdn\xED lh\u016Ftou 4 m\u011Bs\xEDce. Potvrzen\xE9 rezervace se b\u011Bhem v\xFDpov\u011Bdn\xED lh\u016Fty v\u017Edy dokon\u010D\xED." },
-  { question: "Je \u010D\xE1stka v kalkula\u010Dce p\u0159ed, nebo po provizi?", answer: "Po. V\u0161e ozna\u010Den\xE9 jako v\xFDnos pro majitele je u\u017E po ode\u010Dten\xED provize platformy i odm\u011Bny 28 %. Odm\u011Bna je kone\u010Dn\xE1; energie hrad\xED majitel zvl\xE1\u0161\u0165." },
+  { question: "Je \u010D\xE1stka v kalkula\u010Dce p\u0159ed, nebo po provizi?", answer: "Po. V\u0161e ozna\u010Den\xE9 jako v\xFDnos pro majitele je u\u017E po ode\u010Dten\xED provize platformy i odm\u011Bny 30 %. Odm\u011Bna je kone\u010Dn\xE1; energie hrad\xED majitel zvl\xE1\u0161\u0165." },
   { question: "Jak\xE9 povinnosti kr\xE1tkodob\xFD pron\xE1jem p\u0159in\xE1\u0161\xED a kdo je \u0159e\u0161\xED?", answer: "Evidence host\u016F, hl\xE1\u0161en\xED zahrani\u010Dn\xEDch host\u016F cizineck\xE9 policii, m\xEDstn\xED poplatek z pobytu a registrace v e-Turista, provozn\xED povinnosti kolem host\u016F \u0159e\u0161\xED Antam Homes. Zdan\u011Bn\xED p\u0159\xEDjmu z pron\xE1jmu z\u016Fst\xE1v\xE1 na majiteli; podklady dostane." },
   { question: "Co kdy\u017E host n\u011Bco poni\u010D\xED?", answer: "Byt se kontroluje po ka\u017Ed\xE9m pobytu. \u0160koda se zdokumentuje a nejd\u0159\xEDv vym\xE1h\xE1 po hostovi a p\u0159es platformu (Airbnb AirCover, \u0159e\u0161en\xED \u0161kod Booking.com). Co se tam nepoda\u0159\xED z\xEDskat, hrad\xED Antam Homes do ro\u010Dn\xEDho limitu podle velikosti bytu: 5 000 K\u010D u 1+kk, 10 000 K\u010D u 2+kk, 15 000 K\u010D u 3+kk, 20 000 K\u010D u 4+kk a 25 000 K\u010D u v\u011Bt\u0161\xEDch. Majitel se dozv\xED hned, v\u010Detn\u011B fotek. Kryt\xED se t\xFDk\xE1 \u0161kod zp\u016Fsoben\xFDch hostem; opot\u0159eben\xED, poruchy z v\u011Bku a z\xE1vady v dom\u011B jsou opravy a \xFAdr\u017Eba a z\u016Fst\xE1vaj\xED na majiteli (drobn\xE9 do 5 000 K\u010D se \u0159e\u0161\xED hned a strh\xE1vaj\xED z v\xFDnosu, nejv\xFD\u0161e 20 000 K\u010D za rok, v\u011Bt\u0161\xED po jeho souhlasu)." },
   { question: "Co na to soused\xE9 a SVJ?", answer: "Host\xE9 dost\xE1vaj\xED pravidla domu p\u0159edem, byt m\xE1 danou kapacitu (\u017E\xE1dn\xE9 party) a soused\xE9 maj\xED kontakt. Pokud stanovy SVJ kr\xE1tkodob\xE9 ubytov\xE1n\xED v\xFDslovn\u011B zakazuj\xED, Antam Homes to majiteli \u0159ekne p\u0159ed podpisem." },
@@ -217,7 +290,7 @@ A: ${f.answer}`)
     structuredContent: {
       services,
       faq,
-      managementCommissionRate: 0.28,
+      managementCommissionRate: 0.3,
       commissionBase: "net revenue = what the platform pays out for accommodation, without the cleaning fee, after deducting the Airbnb/Booking.com commission. The Czech VAT on that commission is paid by Antam Homes out of its own fee and is not deducted from the owner's share.",
       ownerContract: {
         initialTermMonths: 12,
