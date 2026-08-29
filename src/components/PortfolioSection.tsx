@@ -1,4 +1,5 @@
-import { MapPin, Users, Ruler, Quote, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { MapPin, Users, Ruler, Sparkles, ChevronDown } from "lucide-react";
 import Reveal, { stagger } from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { OCCUPANCY_BY_FLAT } from "@/lib/yield";
@@ -56,20 +57,6 @@ const items: Item[] = [
 
 const fmtCzk = (n: number) => n.toLocaleString("cs-CZ").replace(/\s/g, "\u00a0");
 
-/** Real guest reviews (Hospitable, 2026). Fragments are verbatim; translations are marked. */
-const reviews = {
-  cs: [
-    { text: "Dokonalá lokalita s výbornou dostupností, ale také velice příjemný hostitel, který na všechny zprávy reagoval bleskově rychle.", meta: "Airbnb · 5 ★ · srpen 2026" },
-    { text: "Doporučili jsme přidat zapékací mísu. Druhý den stála na stole i s odměrkou.", meta: "Booking.com · 9/10 · červenec 2026 · přeloženo" },
-    { text: "Komunikácia s hostiteľom bola bezproblémová a na všetkom sme sa\u00a0vedeli dohodnúť.", meta: "Booking.com · 10/10 · červen 2026" },
-  ],
-  vi: [
-    { text: "Vị trí hoàn hảo, đi lại thuận tiện, và chủ nhà rất dễ mến, trả lời mọi tin nhắn nhanh như chớp.", meta: "Airbnb · 5 ★ · 8/2026 · bản dịch" },
-    { text: "Bọn mình góp ý nên có khay nướng. Hôm sau đã thấy trên bàn, kèm cả cốc đong.", meta: "Booking.com · 9/10 · 7/2026 · bản dịch" },
-    { text: "Liên lạc với chủ nhà rất thuận lợi, mọi việc đều thỏa thuận được.", meta: "Booking.com · 10/10 · 6/2026 · bản dịch" },
-  ],
-};
-
 const copy = {
   cs: {
     eyebrow: "Výsledky",
@@ -79,10 +66,8 @@ const copy = {
     soonTitle: "Tady může být váš byt",
     soonDesc: "Každý byt nejdřív posoudíme, a\u00a0když unese písemné minimum, vezmeme ho. Napište nám a\u00a0do 24 hodin víte, jak je na\u00a0tom ten váš.",
     soonDescShort: "Každý byt nejdřív posoudíme. Napište nám a\u00a0do 24 hodin víte, jak je na\u00a0tom ten váš.",
-    reviewsLabel: "Co říkají hosté",
-    reviewsPre: "Přes ",
-    reviewsNum: "520 hodnocení",
-    reviewsPost: " na Airbnb a\u00a0Booking.com.",
+    showAll: "Zobrazit všechny naše byty",
+    showLess: "Zobrazit méně",
     statOwner: "majiteli měsíčně",
     barFlat: "tenhle byt",
     barMarket: (loc: string) => `trh ${loc === "Mladá Boleslav" ? "MB" : loc}`,
@@ -101,10 +86,8 @@ const copy = {
     soonTitle: "Căn của bạn có thể ở đây",
     soonDesc: "Căn nào Antam cũng xem kỹ trước, gánh được mức cam kết thì mới nhận. Nhắn cho Antam, trong 24 giờ anh chị biết căn nhà mình thế nào.",
     soonDescShort: "Căn nào Antam cũng xem kỹ trước. Nhắn cho Antam, trong 24 giờ anh chị biết căn nhà mình thế nào.",
-    reviewsLabel: "Khách nói gì",
-    reviewsPre: "Hơn ",
-    reviewsNum: "520 đánh giá",
-    reviewsPost: " của khách trên Airbnb và\u00a0Booking.com.",
+    showAll: "Xem tất cả các căn của Antam",
+    showLess: "Thu gọn",
     statOwner: "chủ nhà nhận / tháng",
     barFlat: "căn này",
     barMarket: (loc: string) => `khu ${loc === "Mladá Boleslav" ? "MB" : loc}`,
@@ -120,6 +103,9 @@ const copy = {
 const PortfolioSection = () => {
   const { lang } = useLanguage();
   const c = copy[lang];
+  // Only the three strongest results load the section; the rest is one tap away.
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? items : items.slice(0, 3);
 
   return (
     <section id="portfolio" className="section bg-background scroll-mt-16">
@@ -130,8 +116,8 @@ const PortfolioSection = () => {
           <p className="lead">{c.desc}</p>
         </Reveal>
 
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-6">
-          {items.map((item, i) => (
+        <div id="portfolio-vsechny" className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-6">
+          {visible.map((item, i) => (
             <Reveal as="figure"
               key={item.name} delay={stagger(i % 3, 0.08)}
               className="group overflow-hidden rounded-md border border-border bg-card shadow-[0_20px_45px_-30px_hsl(var(--charcoal)/0.4)]"
@@ -213,6 +199,7 @@ const PortfolioSection = () => {
             </Reveal>
           ))}
 
+          {showAll && (
           <Reveal
             as="a"
             delay={0.08}
@@ -228,7 +215,23 @@ const PortfolioSection = () => {
               <span className="hidden sm:inline">{c.soonDesc}</span>
             </p>
           </Reveal>
+          )}
         </div>
+
+        {!showAll && (
+          <div className="mt-6 sm:mt-8 flex justify-center">
+            <button
+              type="button"
+              onClick={() => setShowAll(true)}
+              aria-expanded={false}
+              aria-controls="portfolio-vsechny"
+              className="btn btn-outline"
+            >
+              {c.showAll}
+              <ChevronDown className="w-4 h-4" aria-hidden="true" />
+            </button>
+          </div>
+        )}
 
         {/* How the numbers on the cards are computed (kept short; the calculator disclaimer covers the rest). */}
         <Reveal delay={0.05} className="mt-4 sm:mt-5">
@@ -237,29 +240,6 @@ const PortfolioSection = () => {
           </p>
         </Reveal>
 
-        {/* Guest voices: the service quality an owner is really buying. */}
-        <Reveal delay={0.1} className="mt-14 md:mt-16">
-          <div className="text-center mb-6 md:mb-8">
-            <p className="eyebrow eyebrow-center">{c.reviewsLabel}</p>
-            <p className="font-display text-xl md:text-2xl font-semibold text-foreground mt-3 mx-auto max-w-[24ch] md:max-w-none" style={{ textWrap: "balance" }}>
-              {c.reviewsPre}
-              <span className="text-gradient-gold whitespace-nowrap">{c.reviewsNum}</span>
-              {c.reviewsPost}
-            </p>
-          </div>
-          {/* Phones: one row you swipe (snap), so three quotes don't cost three screens. */}
-          <div className="flex md:grid md:grid-cols-3 gap-3 md:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-6 px-6 md:mx-0 md:px-0 pb-2 md:pb-0 no-scrollbar">
-            {reviews[lang].map((r) => (
-              <blockquote key={r.meta} className="snap-start shrink-0 w-[82%] sm:w-[60%] md:w-auto rounded-md bg-card border border-border p-5 md:p-6">
-                <Quote className="w-5 h-5 text-gold mb-3" aria-hidden="true" />
-                <p className="font-body text-sm md:text-base text-foreground leading-relaxed text-pretty">
-                  „{r.text}“
-                </p>
-                <footer className="mt-3 font-body text-xs text-muted-foreground">{r.meta}</footer>
-              </blockquote>
-            ))}
-          </div>
-        </Reveal>
       </div>
     </section>
   );
