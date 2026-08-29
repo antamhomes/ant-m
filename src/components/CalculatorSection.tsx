@@ -1,24 +1,16 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect } from "react";
 import Reveal from "@/components/Reveal";
 import { Calculator, MapPin, Home, Users, Ruler, Share2, Pencil, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
-import {
-  ROOMS, ENERGY, annualDamageCover, ownerMonthly, rentFor,
-  SIZE_PRESET, LAUNCH_FEE, KIT_PER_ROOM, EMPTY_PER_ROOM, RENEW_PER_ROOM_YEAR,
-  YEAR_ONE_RAMP, PROJECT_FEE, PROJECT_FEE_THRESHOLD, RENT_GROWTH, STR_GROWTH,
-  type LocationKey, type SizeKey, type SeasonKey,
-} from "@/lib/yield";
+import { ROOMS, annualDamageCover, ownerMonthly, rentFor, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
+import { fiveYear } from "@/lib/horizon";
+import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/CalcContext";
 
 /** Lokalita v kalkulačce: pražské čtvrti + „jinde". U čtvrtí bez vlastních dat
  *  (P2, P6 až P10) a u „jinde" se panel výsledku přepne na posouzení
  *  do 24 hodin; ŽÁDNÉ číslo se neukazuje a nic se neopisuje z jiné čtvrti. */
-type CalcLoc = LocationKey | "jinde";
-const LOCATIONS: CalcLoc[] = [
-  "praha1", "praha2", "praha3", "praha4", "praha5",
-  "praha6", "praha7", "praha8", "praha9", "praha10", "jinde",
-];
 
 // Dispozice je jen rychlá předvolba kapacity a plochy (a vstup pro energie,
 // obnovu a tvar nájmu). Výnos řídí kapacita, nájem plocha.
@@ -33,45 +25,19 @@ const sizes: { value: SizeKey; label: string; guestsCs: string; guestsVi: string
 // lokality); tady jsou jen popisky. Léto + zima + prosinec skládají přesně rok.
 const SEASON_KEYS: SeasonKey[] = ["year", "summer", "winter", "xmas"];
 
-const MONTHS = 60;
-const W = 860, H = 360, PAD = { t: 20, r: 92, b: 32, l: 64 };
-type Furn = "airbnb" | "najem" | "prazdny";
 
 const CalculatorSection = () => {
   const { lang } = useLanguage();
   const locLabel = (l: CalcLoc) =>
     l === "jinde" ? t(lang, "calc_loc_other") : `Praha ${l.replace("praha", "")}`;
-  // Sdílený odkaz (?byt=praha2-2kk-year-6h-53m) otevře kalkulačku se stejným nastavením.
-  const initial = useMemo(() => {
-    if (typeof window === "undefined") return null;
-    const raw = new URLSearchParams(window.location.search).get("byt");
-    if (!raw) return null;
-    const [loc, sz, se, g, a] = raw.split("-");
-    const num = (v: string | undefined, suffix: string) =>
-      v && v.endsWith(suffix) && Number.isFinite(+v.slice(0, -1)) ? +v.slice(0, -1) : null;
-    return {
-      location: LOCATIONS.some((l) => l === loc) ? (loc as CalcLoc) : null,
-      size: sizes.some((x) => x.value === sz) ? (sz as SizeKey) : null,
-      season: se && SEASON_KEYS.includes(se as SeasonKey) ? (se as SeasonKey) : null,
-      guests: num(g, "h"),
-      m2: num(a, "m"),
-    };
-  }, []);
-  const [location, setLocation] = useState<CalcLoc>(initial?.location ?? "praha1");
-  const [size, setSize] = useState<SizeKey>(initial?.size ?? "2kk");
-  const [guests, setGuests] = useState<number>(initial?.guests ?? SIZE_PRESET[initial?.size ?? "2kk"].guests);
-  const [m2, setM2] = useState<number>(initial?.m2 ?? SIZE_PRESET[initial?.size ?? "2kk"].m2);
-  const pickSize = (v: SizeKey) => { setSize(v); setGuests(SIZE_PRESET[v].guests); setM2(SIZE_PRESET[v].m2); };
-  const [season, setSeason] = useState<SeasonKey>(initial?.season ?? "year");
-  const [tab, setTab] = useState<"month" | "fiveyears">("month");
-  const [furn, setFurn] = useState<Furn>("najem");
+  // Stav (lokalita, dispozice, hosté, plocha, sezóna, vybavení) žije v CalcContext,
+  // aby s ním počítal i pětiletý graf v sekci Horizont.
+  const { location, setLocation, size, pickSize, guests, setGuests, m2, setM2, season, setSeason, furn, fromShare } = useCalc();
   const [shared, setShared] = useState(false);
-  const [hover, setHover] = useState<number | null>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
-    if (initial) document.getElementById("kalkulacka")?.scrollIntoView({ block: "start" });
-  }, [initial]);
+    if (fromShare) document.getElementById("kalkulacka")?.scrollIntoView({ block: "start" });
+  }, [fromShare]);
 
   const shareResult = async () => {
     const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${size}-${season}-${guests}h-${m2}m#kalkulacka`;
@@ -99,62 +65,13 @@ const CalculatorSection = () => {
     return { r, year, ltr, ratio };
   }, [location, guests, size, m2, season]);
 
-  // Záložka Za 5 let: STEJNÝ stav a STEJNÉ funkce jako měsíční odhad.
-  // Od měsíčního čísla se odečítají energie a obnova vybavení; obojí je
-  // vypsané pod grafem, aby bylo vidět, proč se pětileté číslo liší.
-  const d = useMemo(() => {
-    if (!result.year.supported || location === "jinde") return null;
-    const net = result.year.net;
-    const energy = ENERGY[size];
-    const renew = (RENEW_PER_ROOM_YEAR * ROOMS[size]) / 12;
-    const y1 = net * YEAR_ONE_RAMP - energy - renew;
-    const y2 = net - energy - renew;
-    const rent = rentFor(location as LocationKey, size, m2);
-    const kit =
-      furn === "prazdny" ? EMPTY_PER_ROOM * ROOMS[size]
-      : furn === "najem" ? KIT_PER_ROOM * ROOMS[size]
-      : 0;
-    const projectFee = kit > PROJECT_FEE_THRESHOLD ? Math.round(kit * PROJECT_FEE) : 0;
-    const setup = LAUNCH_FEE + kit + projectFee;
-    const lt = [0], str = [-setup];
-    for (let i = 1; i <= MONTHS; i++) {
-      const yr = Math.floor((i - 1) / 12);
-      lt.push(lt[i - 1] + rent * (1 + RENT_GROWTH) ** yr);
-      str.push(str[i - 1] + (i <= 12 ? y1 : y2 * (1 + STR_GROWTH) ** yr));
-    }
-    let payback: number | null = null, cross: number | null = null;
-    for (let i = 1; i <= MONTHS; i++) {
-      if (payback === null && str[i] >= 0) payback = i;
-      if (cross === null && str[i] >= lt[i]) cross = i;
-    }
-    return { lt, str, rent, y2, setup, kit, projectFee, energy, renew, payback, cross, gap: str[MONTHS] - lt[MONTHS] };
-  }, [result.year, location, size, m2, furn]);
+  // Pětiletý rozdíl pro teaser; sám graf je v sekci Horizont (#horizont) a
+  // počítá ze stejného stavu přes lib/horizon.
+  const d = useMemo(() => fiveYear(location, guests, size, m2, furn), [location, guests, size, m2, furn]);
 
-  const czk = (n: number) => `${Math.round(n).toLocaleString("cs-CZ").replace(/ /g, " ")} Kč`;
   const short = (n: number) =>
     Math.abs(n) >= 1e6 ? `${(n / 1e6).toFixed(1).replace(".", ",")} mil.` : `${Math.round(n / 1000)} tis.`;
   const supported = result.r.supported;
-
-  const px = (i: number) => PAD.l + (W - PAD.l - PAD.r) * (i / MONTHS);
-  const maxY = d ? Math.max(d.lt[MONTHS], d.str[MONTHS]) : 1;
-  const minY = d ? Math.min(0, d.str[0]) : 0;
-  const py = (v: number) => PAD.t + (H - PAD.t - PAD.b) * (1 - (v - minY) / (maxY - minY));
-  const path = (a: number[]) => a.map((v, i) => `${i ? "L" : "M"}${px(i).toFixed(1)} ${py(v).toFixed(1)}`).join(" ");
-  const gridStep = maxY > 2.4e6 ? 1e6 : maxY > 1.2e6 ? 5e5 : 2.5e5;
-  const grid: number[] = [];
-  if (d) for (let v = Math.ceil(minY / gridStep) * gridStep; v <= maxY; v += gridStep) grid.push(v);
-  const onMove = (e: React.PointerEvent<SVGSVGElement>) => {
-    const r = svgRef.current?.getBoundingClientRect();
-    if (!r) return;
-    const sx = ((e.clientX - r.left) / r.width) * W;
-    setHover(Math.max(0, Math.min(MONTHS, Math.round((sx - PAD.l) / ((W - PAD.l - PAD.r) / MONTHS)))));
-  };
-
-  const chip = (active: boolean) =>
-    `px-3 py-1.5 rounded-sm border font-body text-[13px] transition-colors ${
-      active ? "bg-gold/15 text-gold font-semibold border-gold/50"
-             : "bg-primary-foreground/5 text-primary-foreground/70 border-primary-foreground/15 hover:border-gold/40"
-    }`;
 
   return (
     <section id="kalkulacka" className="section bg-muted/30 scroll-mt-16">
@@ -310,21 +227,7 @@ const CalculatorSection = () => {
                 </div>
               ) : (
                 <>
-                  {/* Záložky: Měsíčně / Za 5 let. Stejný vstup, stejné číslo. */}
-                  <div className="flex gap-1 rounded-sm bg-primary-foreground/10 p-1" role="tablist">
-                    {(["month", "fiveyears"] as const).map((tb) => (
-                      <button key={tb} type="button" role="tab" aria-selected={tab === tb}
-                        onClick={() => { setTab(tb); if (tb === "fiveyears") trackEvent("calc_tab_5y", { district: location }); }}
-                        className={`flex-1 px-3 py-2 rounded-sm font-body text-[13px] font-semibold transition-colors ${
-                          tab === tb ? "bg-card text-foreground" : "text-primary-foreground/70 hover:text-primary-foreground"
-                        }`}
-                      >
-                        {t(lang, tb === "month" ? "calc_tab_month" : "calc_tab_5y")}
-                      </button>
-                    ))}
-                  </div>
-
-                  {tab === "month" && result.r.supported && (
+                  {result.r.supported && (
                   <div className="space-y-4 sm:space-y-5">
                     <div>
                       <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
@@ -356,9 +259,9 @@ const CalculatorSection = () => {
                       </p>
                     </div>
 
-                    {/* Teaser na pětiletou záložku s konkrétním číslem. */}
+                    {/* Teaser s konkrétním pětiletým rozdílem; vede na graf v sekci Horizont. */}
                     {d && (
-                      <button type="button" onClick={() => setTab("fiveyears")}
+                      <a href="#horizont" onClick={() => trackEvent("calc_tab_5y", { district: location })}
                         className="flex w-full items-center justify-between gap-3 rounded-sm border border-gold/30 bg-gold/10 px-3.5 py-2.5 text-left font-body text-[13px] text-primary-foreground/90 transition-colors hover:bg-gold/15"
                       >
                         <span className="tnum">
@@ -367,7 +270,7 @@ const CalculatorSection = () => {
                           {t(lang, "calc_teaser_2")}
                         </span>
                         <ChevronRight className="w-4 h-4 shrink-0 text-gold" aria-hidden="true" />
-                      </button>
+                      </a>
                     )}
 
                     <div className="border-t border-primary-foreground/10 pt-4">
@@ -444,109 +347,6 @@ const CalculatorSection = () => {
                   </div>
                   )}
 
-                  {tab === "fiveyears" && d && (
-                  <div className="space-y-4">
-                    <div className="flex flex-wrap gap-2">
-                      {(["airbnb", "najem", "prazdny"] as Furn[]).map((f) => (
-                        <button key={f} type="button" onClick={() => setFurn(f)} aria-pressed={furn === f} className={chip(furn === f)}>
-                          {t(lang, `hz_furn_${f}` as const)}
-                        </button>
-                      ))}
-                    </div>
-
-                    <div className="rounded-sm bg-card p-3 relative">
-                      <div className="flex flex-wrap gap-x-5 gap-y-1 mb-1 font-body text-[12px] text-muted-foreground">
-                        <span className="flex items-center gap-1.5">
-                          <i aria-hidden="true" className="inline-block w-4 h-[3px] rounded-full bg-gold-deep" />
-                          {t(lang, "hz_legend_str")}
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <i aria-hidden="true" className="inline-block w-4 h-[3px] rounded-full bg-primary" />
-                          {t(lang, "hz_legend_ltr")}
-                        </span>
-                      </div>
-                      <svg
-                        ref={svgRef} viewBox={`0 0 ${W} ${H}`} className="w-full h-auto overflow-visible touch-pan-y"
-                        onPointerMove={onMove} onPointerLeave={() => setHover(null)}
-                        role="img" aria-label={t(lang, "hz_aria") as string}
-                      >
-                        {grid.map((v) => (
-                          <g key={v}>
-                            <line x1={PAD.l} x2={W - PAD.r} y1={py(v)} y2={py(v)} stroke="hsl(var(--border))" strokeWidth={1} opacity={0.6} />
-                            <text x={PAD.l - 8} y={py(v) + 4} textAnchor="end" className="fill-muted-foreground" style={{ fontSize: 11 }}>
-                              {v === 0 ? "0" : short(v)}
-                            </text>
-                          </g>
-                        ))}
-                        <line x1={PAD.l} x2={W - PAD.r} y1={py(0)} y2={py(0)} stroke="hsl(var(--border))" strokeWidth={1.5} />
-                        {[0, 1, 2, 3, 4, 5].map((yr) => (
-                          <text key={yr} x={px(yr * 12)} y={H - PAD.b + 17} textAnchor="middle" className="fill-muted-foreground" style={{ fontSize: 11 }}>
-                            {yr === 0 ? t(lang, "hz_start") : `${yr}. ${t(lang, "hz_year")}`}
-                          </text>
-                        ))}
-                        <path d={path(d.lt)} fill="none" stroke="hsl(var(--primary))" strokeWidth={2} strokeLinecap="round" />
-                        <path d={path(d.str)} fill="none" stroke="hsl(var(--gold-deep))" strokeWidth={2} strokeLinecap="round" />
-                        {d.payback && <circle cx={px(d.payback)} cy={py(0)} r={4.5} fill="hsl(var(--gold-deep))" stroke="hsl(var(--card))" strokeWidth={2} />}
-                        {d.cross && <circle cx={px(d.cross)} cy={py(d.lt[d.cross])} r={4.5} fill="hsl(var(--gold-deep))" stroke="hsl(var(--card))" strokeWidth={2} />}
-                        <text x={W - PAD.r + 8} y={py(d.str[MONTHS]) + 4} className="fill-gold-deep" style={{ fontSize: 12, fontWeight: 600 }}>{short(d.str[MONTHS])}</text>
-                        <text x={W - PAD.r + 8} y={py(d.lt[MONTHS]) + 4} className="fill-primary" style={{ fontSize: 12, fontWeight: 600 }}>{short(d.lt[MONTHS])}</text>
-                        {hover !== null && (
-                          <g>
-                            <line x1={px(hover)} x2={px(hover)} y1={PAD.t} y2={H - PAD.b} stroke="hsl(var(--muted-foreground))" strokeWidth={1} opacity={0.4} />
-                            <circle cx={px(hover)} cy={py(d.str[hover])} r={4} fill="hsl(var(--gold-deep))" stroke="hsl(var(--card))" strokeWidth={2} />
-                            <circle cx={px(hover)} cy={py(d.lt[hover])} r={4} fill="hsl(var(--primary))" stroke="hsl(var(--card))" strokeWidth={2} />
-                          </g>
-                        )}
-                      </svg>
-                      {hover !== null && (
-                        <div
-                          className="pointer-events-none absolute bg-card border border-border rounded-sm px-3 py-2 font-body text-[12.5px] shadow-lg min-w-[190px]"
-                          style={{
-                            left: `clamp(4px, ${(px(hover) / W) * 100}% - 95px, calc(100% - 200px))`,
-                            top: `${(Math.min(py(d.str[hover]), py(d.lt[hover])) / H) * 100}%`,
-                          }}
-                        >
-                          <strong className="font-semibold">
-                            {hover === 0 ? t(lang, "hz_start") : `${hover}. ${t(lang, "hz_month")}`}
-                          </strong>
-                          <div className="flex justify-between gap-4 mt-1"><span className="text-gold-deep">{t(lang, "hz_legend_str")}</span><span>{czk(d.str[hover])}</span></div>
-                          <div className="flex justify-between gap-4"><span className="text-primary">{t(lang, "hz_legend_ltr")}</span><span>{czk(d.lt[hover])}</span></div>
-                          <div className="flex justify-between gap-4 mt-1 pt-1 border-t border-border">
-                            <span>{t(lang, "hz_diff")}</span>
-                            <strong className={d.str[hover] - d.lt[hover] >= 0 ? "text-gold-deep" : "text-destructive"}>
-                              {d.str[hover] - d.lt[hover] >= 0 ? "+" : ""}{czk(d.str[hover] - d.lt[hover])}
-                            </strong>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-
-                    <ul className="grid grid-cols-2 gap-px bg-primary-foreground/10 border border-primary-foreground/10 rounded-sm overflow-hidden list-none m-0 p-0">
-                      {([
-                        [t(lang, "hz_stat_invest"), czk(-d.setup)],
-                        [t(lang, "hz_stat_payback"),
-                          d.payback ? `${d.payback} ${t(lang, d.payback === 1 ? "hz_months_one" : d.payback < 5 ? "hz_months_few" : "hz_months")}` : "?"],
-                        [t(lang, "hz_stat_cross"), d.cross ? `${d.cross}. ${t(lang, "hz_month")}` : "?"],
-                        [t(lang, "hz_stat_gap"), `${d.gap >= 0 ? "+" : ""}${czk(d.gap)}`],
-                      ] as [string, string][]).map(([k, v]) => (
-                        <li key={k} className="bg-primary-foreground/5 px-3 py-2.5">
-                          <p className="font-body text-[10.5px] uppercase tracking-[0.12em] text-primary-foreground/60">{k}</p>
-                          <p className="font-display text-[17px] mt-0.5 tnum text-primary-foreground">{v}</p>
-                        </li>
-                      ))}
-                    </ul>
-
-                    {/* Proč se pětileté číslo liší od měsíčního: odečtené položky viditelně. */}
-                    <div className="font-body text-[12.5px] text-primary-foreground/70 leading-relaxed tnum space-y-1">
-                      <p className="flex justify-between gap-3"><span>{t(lang, "calc_5y_energy")}</span><span>−{czk(d.energy)} / {t(lang, "hz_month")}</span></p>
-                      <p className="flex justify-between gap-3"><span>{t(lang, "calc_5y_renew")}</span><span>−{czk(d.renew)} / {t(lang, "hz_month")}</span></p>
-                      <p className="flex justify-between gap-3"><span>{t(lang, "calc_5y_rent")}</span><span>{czk(d.rent)} / {t(lang, "hz_month")}</span></p>
-                    </div>
-                    <p className="font-body text-[12px] text-primary-foreground/60 leading-relaxed border-t border-primary-foreground/10 pt-3">
-                      {t(lang, "hz_growth")} {t(lang, "hz_assume_5")}
-                    </p>
-                  </div>
-                  )}
 
                   <p className="font-body text-[13px] text-primary-foreground/75 leading-relaxed border-t border-primary-foreground/10 pt-4">
                     {t(lang, "calc_bridge")}

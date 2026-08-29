@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import SEO from "@/components/SEO";
 import HeroSection from "@/components/HeroSection";
+import { CalcProvider } from "@/contexts/CalcContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 // Below-the-fold sections are code-split so the first paint ships less JS.
@@ -55,6 +56,7 @@ const Index = () => {
       </a>
       <Navbar />
       <main id="obsah">
+        <CalcProvider>
         <HeroSection />
         {/* Question chain: claim → proof → my number → downside → price → long run
             → what we do → long run → visibility → fit → people → process → form → FAQ.
@@ -73,6 +75,7 @@ const Index = () => {
         <Suspense fallback={null}><FAQSection /></Suspense>
         <Suspense fallback={null}><FinalCtaSection /></Suspense>
         <ScrollToHash />
+        </CalcProvider>
       </main>
       <Suspense fallback={null}><Footer /></Suspense>
       <Suspense fallback={null}><StickyMobileCTA /></Suspense>
