@@ -21,6 +21,7 @@ const emptyForm = {
   name: "",
   phone: "",
   email: "",
+  street: "",
   location: "",
   size: "",
   status: "",
@@ -118,7 +119,8 @@ const ContactSection = () => {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
-          address: labelOf(locationOptions, formData.location),
+          // Ulice + čtvrť; web slibuje „pošlete adresu", tak ať ji má kam napsat.
+          address: [formData.street, labelOf(locationOptions, formData.location)].filter(Boolean).join(", "),
           size: labelOf(sizeOptions, formData.size),
           status: labelOf(statusOptions, formData.status),
           contactPref: labelOf(prefOptions, formData.contactPref),
@@ -140,7 +142,7 @@ const ContactSection = () => {
         name: formData.name,
         phone: formData.phone,
         email: formData.email,
-        location: labelOf(locationOptions, formData.location),
+        location: [formData.street, labelOf(locationOptions, formData.location)].filter(Boolean).join(", "),
         size: labelOf(sizeOptions, formData.size),
         status: labelOf(statusOptions, formData.status),
         contact_pref: labelOf(prefOptions, formData.contactPref),
@@ -242,7 +244,18 @@ const ContactSection = () => {
               </div>
 
               {/* The apartment */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-1">
+              <div className="pt-1">
+                <label htmlFor="c-street" className={labelCls}>
+                  {t(lang, "contact_street")}{" "}
+                  <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
+                </label>
+                <input
+                  id="c-street" type="text" autoComplete="street-address" value={formData.street}
+                  onChange={(e) => set("street", e.target.value)} className={inputCls}
+                  placeholder={t(lang, "contact_street_placeholder") as string}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div>
                   <label htmlFor="c-loc" className={labelCls}>{t(lang, "contact_address")}</label>
                   <SelectField
@@ -266,7 +279,12 @@ const ContactSection = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-4 sm:gap-5">
+              {/* Volitelné detaily za rozbalovákem: kratší formulář, stejná data. */}
+              <details className="group">
+                <summary className="list-none cursor-pointer font-body text-sm text-gold-deep underline underline-offset-4 decoration-gold/40 [&::-webkit-details-marker]:hidden">
+                  {t(lang, "contact_more")}
+                </summary>
+              <div className="mt-4 grid grid-cols-1 min-[360px]:grid-cols-2 gap-4 sm:gap-5">
                 <div>
                   <label htmlFor="c-units" className={labelCls}>
                     {t(lang, "contact_units")}{" "}
@@ -289,6 +307,7 @@ const ContactSection = () => {
                   />
                 </div>
               </div>
+              </details>
 
               <div>
                 <label htmlFor="c-msg" className={labelCls}>

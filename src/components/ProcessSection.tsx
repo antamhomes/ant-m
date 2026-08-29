@@ -56,6 +56,11 @@ const ProcessSection = () => {
             {t(lang, "process_cta")}
             <ChevronRight className="w-4 h-4" />
           </a>
+          {/* Sezónní důvod začít teď: prosincový faktor je reálně až 1,5× (SEASONS_BY_LOC),
+              žádné odpočty ani umělý tlak. */}
+          <p className="font-body text-[13px] text-primary-foreground/60 mt-4 max-w-md mx-auto text-pretty">
+            {t(lang, "process_season")}
+          </p>
         </Reveal>
       </div>
     </section>

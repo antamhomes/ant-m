@@ -405,6 +405,17 @@ const CalculatorSection = () => {
                           {t(lang, "calc_vs_ltr")}
                         </p>
                       )}
+                      {/* Hormozi: ztráta je konkrétnější než zisk. Rozdíl měsíčně,
+                          jen když model dává víc než nájem; žádné nové číslo, jen odečet. */}
+                      {result.r.supported && result.ratio > 1 && (
+                        <p className="font-body text-[13px] text-primary-foreground/70 mt-1.5 tnum">
+                          {t(lang, "calc_loss_1")}{" "}
+                          <strong className="font-semibold text-primary-foreground/90">
+                            ~{(Math.round((result.r.net - result.ltr) / 1000) * 1000).toLocaleString("cs-CZ")}
+                          </strong>{" "}
+                          {t(lang, "calc_loss_2")}
+                        </p>
+                      )}
                     </div>
 
                     {/* Krytí menších škod: počítá se z téže dispozice jako odhad.

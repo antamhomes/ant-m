@@ -7,7 +7,7 @@ import { t } from "@/i18n/translations";
  * Existuje proto, že "žádné vstupní poplatky" přestalo platit ve chvíli,
  * kdy má Uvedení do provozu svou cenu. Radši to říct dřív než na schůzce.
  */
-const ROWS: { k: "pr1" | "pr6" | "pr7" | "pr2" | "pr3" | "pr4" | "pr5"; accent?: boolean }[] = [
+const ROWS: { k: "pr1" | "pr6" | "pr7" | "pr2" | "pr3" | "pr4" | "pr5" | "pr8"; accent?: boolean }[] = [
   { k: "pr1", accent: true },
   // Garance a krytí škod hned pod odměnou: jediné místo v ceníku, kde je vidět,
   // co je v těch 30 % navíc. Obojí je v odměně, proto stojí vedle sebe.
@@ -17,6 +17,7 @@ const ROWS: { k: "pr1" | "pr6" | "pr7" | "pr2" | "pr3" | "pr4" | "pr5"; accent?:
   { k: "pr3" },
   { k: "pr4" },
   { k: "pr5" },
+  { k: "pr8" },
 ];
 
 const PricingSection = () => {
@@ -67,6 +68,23 @@ const PricingSection = () => {
                 {k === "pr1" && (
                   <span className="block mb-3 font-body text-[14.5px] text-foreground">
                     {t(lang, "pr1_flow_note")}
+                  </span>
+                )}
+                {/* Hodnotový stack: co je v odměně, s tržní cenou tam, kde má veřejný
+                   zdroj (PriceLabs ceník, ceníky fotografů). Bez vymyšlených čísel. */}
+                {k === "pr1" && (
+                  <span className="block mb-3">
+                    <span className="block font-body text-[13px] uppercase tracking-wide text-muted-foreground mb-1.5">
+                      {t(lang, "pr1_stack_title")}
+                    </span>
+                    <span className="block max-w-sm">
+                      {([1, 2, 3, 4, 5, 6] as const).map((n) => (
+                        <span key={n} className="flex items-baseline gap-2 py-0.5">
+                          <span aria-hidden="true" className="text-gold-deep">·</span>
+                          <span>{t(lang, `pr1_stack_${n}` as const)}</span>
+                        </span>
+                      ))}
+                    </span>
                   </span>
                 )}
                 {t(lang, `${k}_note` as const)}

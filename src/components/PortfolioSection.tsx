@@ -34,7 +34,6 @@ import byt7 from "@/assets/byt-7.jpg.asset.json";
 const STATS_ASOF = { cs: "31. 7. 2026", vi: "31/7/2026" };
 
 type Stats = { owner: number; occupancy: number; market: number; since?: string; ratio?: number };
-type WithArea = { m2?: number };
 type Item = { src: string; name: string; loc: string; guests: number; m2?: number; stats?: Stats; newSince?: string };
 
 /** The apartments shown publicly (owner's choice); capacities from Hospitable.
@@ -90,8 +89,6 @@ const copy = {
     statPeriod12: "průměr 12 měsíců",
     statPeriodSince: (m: string) => `průměr od ${m}`,
     statRatio: (r: number) => `${r.toLocaleString("cs-CZ")}× dlouhodobý nájem`,
-    statOcc: (o: number) => `obsazenost ${o}\u00a0%`,
-    statVsMarket: (m: number) => `trh ${m}\u00a0%`,
     newBadge: (m: string) => `V naší správě od ${m}`,
     newNote: "Výsledky doplníme po první sezóně.",
     statNote: (d: string) => `Částky pro majitele vycházejí ze skutečných rezervací, přepočtených na aktuální odměnu 30\u00a0%: tržby za ubytování po provizi Airbnb a Booking.com, bez úklidových poplatků, po naší odměně. Tedy to, co by majitel dostal při dnešních podmínkách; energie hradí majitel. Zaokrouhleno na tisíce. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. Obsazenost počítáme u\u00a0bytů starších tří měsíců a\u00a0prvních 45 dní provozu do\u00a0ní nezapočítáváme, byt se\u00a0v\u00a0nich teprve rozjíždí. Údaj o\u00a0trhu je z\u00a0PriceLabs za\u00a0posledních 90 dní a\u00a0platí pro lokalitu: průměrná obsazenost srovnatelných bytů v\u00a0okolí našich bytů v\u00a0dané lokalitě. Dva byty ve\u00a0stejné lokalitě proto ukazují stejné číslo trhu. U\u00a0nových nabídek se výsledky během prvního roku provozu teprve ustalují. Dlouhodobý nájem počítáme z\u00a0Deloitte Rent\u00a0Index Q2/2026 podle skutečné plochy bytu; rozdíl mezi dispozicemi bereme z\u00a0cenové mapy nájemního bydlení Ministerstva financí (15.\u00a08.\u00a02026). Minulé výsledky nejsou zárukou budoucích.`,
@@ -114,8 +111,6 @@ const copy = {
     statPeriod12: "trung bình 12 tháng",
     statPeriodSince: (m: string) => `trung bình từ ${m}`,
     statRatio: (r: number) => `gấp ${r.toLocaleString("vi-VN")} lần cho thuê dài hạn`,
-    statOcc: (o: number) => `lấp phòng ${o}\u00a0%`,
-    statVsMarket: (m: number) => `khu ${m}\u00a0%`,
     newBadge: (m: string) => `Antam lo từ ${m}`,
     newNote: "Số liệu sẽ có sau mùa đầu tiên.",
     statNote: (d: string) => `Số tiền chủ nhà nhận dựa trên đặt phòng thật của từng căn, tính lại theo mức phí Antam hiện nay 30\u00a0%: tiền phòng sau khi trừ phí Airbnb và Booking.com, không tính phí dọn dẹp, sau phí của Antam. Tức là số tiền chủ nhà sẽ nhận với điều kiện hiện nay; điện nước chủ nhà lo. Làm tròn đến hàng nghìn. Trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Tỷ lệ lấp phòng chỉ tính cho căn đã quản lý trên ba tháng, 45 ngày đầu không tính vì nhà mới mở còn đang chạy đà. Số của khu lấy từ PriceLabs, 90 ngày gần nhất, tính chung cho từng khu vực: tỷ lệ lấp phòng trung bình của các căn tương tự quanh những căn Antam lo trong khu đó. Hai căn cùng khu vì vậy có cùng một số thị trường. Tiền thuê dài hạn tính từ Deloitte Rent\u00a0Index Q2/2026 theo đúng diện tích từng căn; phần chênh giữa các loại nhà lấy từ bản đồ giá thuê của Bộ Tài chính (15.\u00a08.\u00a02026). Kết quả đã qua không phải là cam kết cho tương lai.`,

@@ -39,7 +39,7 @@ export const SEO = ({ page }: { page: PageKey }) => {
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: (["faq18", "faq5", "faq9", "faq4", "faq6", "faq16", "faq1", "faq11", "faq12", "faq10", "faq14", "faq3", "faq7", "faq13"] as const).map((k) => ({
+    mainEntity: (["faq18", "faq17", "faq5", "faq9", "faq4", "faq6", "faq16", "faq1", "faq11", "faq12", "faq10", "faq14", "faq15", "faq3", "faq7", "faq13"] as const).map((k) => ({
       "@type": "Question",
       name: t(lang, `${k}_q`),
       acceptedAnswer: { "@type": "Answer", text: t(lang, `${k}_a`) },
