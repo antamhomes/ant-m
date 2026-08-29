@@ -48,11 +48,11 @@ const PricingSection = () => {
                 </span>
               </dt>
               <dd className="font-body text-[14.5px] text-muted-foreground leading-relaxed m-0">
-                {/* První řádek nevysvětluje definici, ale ukazuje tok peněz: pět zastávek
-                   ze vzorového vyúčtování (stejná čísla má sekce Přehled pro majitele). */}
+                {/* První řádek nevysvětluje definici, ale ukazuje tok peněz: zastávky ze vzorového
+                   vyúčtování; řádek s prázdným textem se přeskočí (CZ má čtyři, VI pět). */}
                 {k === "pr1" && (
                   <span className="block mb-3 max-w-sm rounded-sm border border-border bg-muted/40 px-3.5 py-1 tnum">
-                    {([1, 2, 3, 4, 5] as const).map((n) => (
+                    {([1, 2, 3, 4, 5] as const).filter((n) => t(lang, `pr1_flow${n}` as const)).map((n) => (
                       <span
                         key={n}
                         className={`flex items-baseline justify-between gap-4 py-1.5 ${n > 1 ? "border-t border-border/70" : ""}`}

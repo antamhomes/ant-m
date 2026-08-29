@@ -1,5 +1,5 @@
 import Reveal from "@/components/Reveal";
-import { FileBarChart, ChevronRight, CalendarDays, Wallet, Receipt, BedDouble } from "lucide-react";
+import { FileBarChart, ChevronRight, Wallet, Receipt, BedDouble } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
@@ -7,13 +7,12 @@ import { t } from "@/i18n/translations";
 const OwnerReportSection = () => {
   const { lang } = useLanguage();
 
-  /* Case study místo vzoru: byt 402 (Praha 1), průměr 12 uzavřených měsíců
+  /* Skutečný byt místo vzoru (29. 8. 2026: řádek Rezervace odstraněn na Vuongovo přání): byt 402 (Praha 1), průměr 12 uzavřených měsíců
      do 7/2026 z Hospitable, přepočteno na odměnu 30 %. Metoda: payout
      platforem minus úklid, zrušené rezervace vyloučené, EUR × 25,00;
      91 324 × 0,30 = 27 397; majiteli 63 927 (na kartě zaokrouhleno 64 000). */
   const rows = [
     { icon: BedDouble, key: "report_row_occupancy" as const, value: "96\u00a0%" },
-    { icon: CalendarDays, key: "report_row_reservations" as const, value: lang === "vi" ? "152\u00a0/\u00a0năm" : "152\u00a0/\u00a0rok" },
     { icon: FileBarChart, key: "report_row_base" as const, value: "91\u00a0324\u00a0Kč" },
     { icon: Receipt, key: "report_row_costs" as const, value: "27\u00a0397\u00a0Kč" },
     { icon: Wallet, key: "report_row_net" as const, value: "63\u00a0927\u00a0Kč", highlight: true },
