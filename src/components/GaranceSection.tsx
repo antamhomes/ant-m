@@ -1,16 +1,19 @@
-import { ArrowRight, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Reveal, { stagger } from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
 
 /**
- * Garance výnosu — the section the funnel pivots on. It answers the question
- * the calculator just created ("nice estimate, what if it doesn't happen?"):
- * three numbers (rent → written minimum → expected), three steps, one honest
- * reason why Antam can afford it, and the second protection that completes the
- * offer: ordinary guest-caused damage. Mechanics stay in the contract; this is
- * the concept, not the addendum.
+ * Garance výnosu — risk reversal, not another forecast. Portfolio and the
+ * calculator already sell the upside; this section removes the downside of
+ * leaving a safe long-term rent: two numbers only (long-term rent vs. the
+ * written minimum with Antam), so the reader sees that even the contractual
+ * floor sits above what they are leaving. Then three steps and the second
+ * protection that completes the offer: ordinary guest-caused damage.
+ * Mechanics stay in the contract; this is the concept, not the addendum.
+ * The third "expected result" slot (g_num3_*) is intentionally empty and
+ * skipped; keep it that way.
  */
 const NUMS = [
   { label: "g_num1_label", value: "g_num1_value" },
@@ -38,6 +41,8 @@ const GaranceSection = () => {
   const why = t(lang, "g_why");
   const pairTitle = t(lang, "g_pair_title");
   const pairs = PAIR.filter(({ label }) => t(lang, label));
+  const nums = NUMS.filter(({ value }) => t(lang, value));
+  const last = nums.length - 1;
 
   return (
     <section id="garance" className="section bg-background scroll-mt-16">
@@ -51,15 +56,15 @@ const GaranceSection = () => {
           <p className="lead">{t(lang, "g_desc")}</p>
         </Reveal>
 
-        {/* Three numbers: rent → written minimum → expected. The minimum is the
-            floor the owner keeps either way; the expected number is why they call. */}
+        {/* Two numbers: long-term rent vs. the written minimum. The minimum is the
+            floor the owner keeps either way, so it is the highlighted one. */}
         <Reveal delay={0.05}>
-          <div className="flex flex-col sm:flex-row items-stretch justify-center gap-2 sm:gap-0 max-w-3xl mx-auto">
-            {NUMS.map(({ label, value }, i) => (
+          <div className="flex flex-col sm:flex-row items-stretch justify-center gap-2 sm:gap-0 max-w-2xl mx-auto">
+            {nums.map(({ label, value }, i) => (
               <div key={label} className="flex flex-col sm:flex-row items-center flex-1">
                 <div
                   className={`w-full text-center rounded-md border px-4 py-5 sm:py-6 ${
-                    i === 2
+                    i === last
                       ? "border-gold/50 bg-gold/[0.07]"
                       : "border-border bg-card"
                   }`}
@@ -69,17 +74,22 @@ const GaranceSection = () => {
                   </p>
                   <p
                     className={`font-display text-2xl md:text-[1.75rem] font-semibold leading-none tnum ${
-                      i === 2 ? "text-gold-deep" : i === 1 ? "text-foreground" : "text-muted-foreground"
+                      i === last ? "text-gold-deep" : "text-muted-foreground"
                     }`}
                   >
-                    {t(lang, value)}
+                    {t(lang, value)}{" "}
+                    <span className="font-body text-sm font-normal text-muted-foreground whitespace-nowrap">
+                      {t(lang, "calc_month_suffix")}
+                    </span>
                   </p>
                 </div>
-                {i < 2 && (
-                  <ArrowRight
-                    className="hidden sm:block w-5 h-5 text-gold mx-2 shrink-0"
+                {i < last && (
+                  <span
+                    className="font-body text-[11px] uppercase tracking-[0.14em] text-muted-foreground my-1 sm:my-0 sm:mx-3 shrink-0"
                     aria-hidden="true"
-                  />
+                  >
+                    vs.
+                  </span>
                 )}
               </div>
             ))}

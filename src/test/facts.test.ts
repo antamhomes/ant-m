@@ -169,7 +169,7 @@ describe("garance výnosu", () => {
     expect(mcp).toEqual(cards);
   });
 
-  it("ilustrační trojice v garanci sedí s kalkulačkou", () => {
+  it("ilustrační dvojice v garanci sedí s modelem nájmu a třetí slot je prázdný", () => {
     // Minimum = nájem + energie pro Prahu 1 2+kk; očekávaný výnos = co dá kalkulačka.
     // Čísla se neuvádějí natvrdo: odvozují se z modelu, aby copy nemohla odejít
     // od tabulky nájmů, když se přepočítá zdroj (28. 8. 2026 Deloitte + MF).
@@ -180,10 +180,10 @@ describe("garance výnosu", () => {
     expect(strip(cs.g_num2_value)).toMatch(new RegExp(minimum.toLocaleString("cs-CZ").replace(/\s/g, " ")));
     expect(strip(vi.g_num1_value)).toMatch(new RegExp(rent.toLocaleString("cs-CZ").replace(/\s/g, " ")));
     expect(strip(vi.g_num2_value)).toMatch(new RegExp(minimum.toLocaleString("cs-CZ").replace(/\s/g, " ")));
-    const model = Math.round(net(ownerMonthly("praha1", "2kk")) / 1000) * 1000;
-    const shown = model.toLocaleString("cs-CZ").replace(/\s/g, " ");
-    expect(strip(cs.g_num3_value), "g_num3_value vs model").toMatch(new RegExp(shown));
-    expect(strip(vi.g_num3_value), "vi g_num3_value vs model").toMatch(new RegExp(shown));
+    // Garance je risk reversal, ne další odhad: třetí slot „očekávaný výnos"
+    // zůstává prázdný (upside prodává portfolio a kalkulačka).
+    expect(strip(cs.g_num3_value), "g_num3_value musí zůstat prázdné").toBe("");
+    expect(strip(vi.g_num3_value), "vi g_num3_value musí zůstat prázdné").toBe("");
   });
 
   it("jedna pojmenovaná nabídka: hero, kalkulačka i garance mají stejné CTA", () => {
