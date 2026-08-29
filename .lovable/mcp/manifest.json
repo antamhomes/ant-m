@@ -15,7 +15,7 @@
       {
         "name": "estimate_rental_yield",
         "title": "Estimate short-term rental yield",
-        "description": "Estimate the monthly net income an apartment owner in Prague could earn with Antam Homes short-term rental management, and compare it to long-term rent. Same model as the calculator on the website.",
+        "description": "Estimate the monthly net income an apartment owner in Prague could earn with Antam Homes short-term rental management, and compare it to long-term rent. Same model and same code as the calculator on the website. Numbers exist only for districts where Antam Homes manages apartments and sees real market data (Praha 1, 3, 4, 5); other districts get an individual assessment within 24 hours instead of a number.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -48,7 +48,19 @@
                 "3kk",
                 "4kk"
               ],
-              "description": "Apartment layout size (each is priced for its usual guest capacity: 1+kk 2–4, 2+kk 6–8, 3+kk 8–10, 4+kk 10–12 guests)."
+              "description": "Apartment layout. It only presets the usual guest capacity (4/6/8/10) and floor area (35/53/71/88 m2); the estimate is driven by capacity for the Airbnb side and by floor area for the long-term rent comparison."
+            },
+            "guests": {
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 14,
+              "description": "Guest capacity of the apartment. Overrides the layout preset."
+            },
+            "floorAreaM2": {
+              "type": "integer",
+              "minimum": 18,
+              "maximum": 140,
+              "description": "Floor area in m2. Overrides the layout preset; drives the long-term rent comparison."
             },
             "season": {
               "type": "string",
@@ -58,20 +70,7 @@
                 "winter",
                 "xmas"
               ],
-              "description": "Season to price for. Defaults to 'year' (yearly average)."
-            },
-            "extras": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "enum": [
-                  "balkon",
-                  "parking",
-                  "klima",
-                  "wellness"
-                ]
-              },
-              "description": "Extra features that raise the nightly rate."
+              "description": "Season to price for. Defaults to 'year' (yearly average). Seasonal factors come from realized monthly market data of the district; summer (Apr-Oct), winter (Nov-Mar excl. December) and December compose the year exactly."
             }
           },
           "required": [
