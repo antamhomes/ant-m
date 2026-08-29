@@ -200,22 +200,23 @@ const PortfolioSection = () => {
           ))}
 
           {showAll && (
-          <Reveal
-            as="a"
-            delay={0.08}
-            href="#kontakt"
-            className="flex flex-col items-center justify-center text-center rounded-md border border-dashed border-gold/40 bg-gold/[0.04] px-4 sm:px-6 py-8 sm:py-10 min-h-[220px] transition-colors hover:border-gold/70 hover:bg-gold/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
-          >
-            <Sparkles className="w-6 h-6 text-gold mb-4" />
-            <h3 className="font-display text-xl font-semibold text-foreground mb-2">
-              {c.soonTitle}
-            </h3>
-            <p className="font-body text-sm text-muted-foreground max-w-[26ch] leading-relaxed">
-              <span className="sm:hidden">{c.soonDescShort}</span>
-              <span className="hidden sm:inline">{c.soonDesc}</span>
-            </p>
+          <Reveal delay={0.08} className="contents">
+            <a
+              href="#kontakt"
+              className="flex flex-col items-center justify-center text-center rounded-md border border-dashed border-gold/40 bg-gold/[0.04] px-4 sm:px-6 py-8 sm:py-10 min-h-[220px] transition-colors hover:border-gold/70 hover:bg-gold/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
+            >
+              <Sparkles className="w-6 h-6 text-gold mb-4" />
+              <h3 className="font-display text-xl font-semibold text-foreground mb-2">
+                {c.soonTitle}
+              </h3>
+              <p className="font-body text-sm text-muted-foreground max-w-[26ch] leading-relaxed">
+                <span className="sm:hidden">{c.soonDescShort}</span>
+                <span className="hidden sm:inline">{c.soonDesc}</span>
+              </p>
+            </a>
           </Reveal>
           )}
+
         </div>
 
         {!showAll && (
