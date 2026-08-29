@@ -7,12 +7,18 @@ import { t } from "@/i18n/translations";
  * Existuje proto, že "žádné vstupní poplatky" přestalo platit ve chvíli,
  * kdy má Uvedení do provozu svou cenu. Radši to říct dřív než na schůzce.
  */
-const ROWS: { k: "pr1" | "pr6" | "pr7" | "pr2" | "pr3" | "pr4" | "pr5" | "pr8"; accent?: boolean }[] = [
+type Row = { k: "pr1" | "pr6" | "pr7" | "pr2" | "pr3" | "pr4" | "pr5" | "pr8"; accent?: boolean };
+
+/** Jádro ekonomiky zůstává vidět: odměna 30 %, garance a krytí škod. */
+const CORE_ROWS: Row[] = [
   { k: "pr1", accent: true },
   // Garance a krytí škod hned pod odměnou: jediné místo v ceníku, kde je vidět,
   // co je v těch 30 % navíc. Obojí je v odměně, proto stojí vedle sebe.
   { k: "pr6" },
   { k: "pr7" },
+];
+/** Jednorázové a doplňkové položky za rozbalovákem. */
+const MORE_ROWS: Row[] = [
   { k: "pr2" },
   { k: "pr3" },
   { k: "pr4" },
@@ -32,7 +38,7 @@ const PricingSection = () => {
         </Reveal>
 
         <Reveal as="dl" delay={0.1} className="border border-border rounded-md overflow-hidden bg-card">
-          {ROWS.map(({ k, accent }, i) => (
+          {CORE_ROWS.map(({ k, accent }, i) => (
             <div
               key={k}
               className={`flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 px-5 py-4 ${
@@ -104,6 +110,34 @@ const PricingSection = () => {
               </dd>
             </div>
           ))}
+        </Reveal>
+
+        <Reveal delay={0.12} className="mt-4">
+          <details className="group">
+            <summary className="list-none cursor-pointer font-body text-sm text-gold-deep underline underline-offset-4 decoration-gold/40 [&::-webkit-details-marker]:hidden">
+              {t(lang, "pricing_more")}
+            </summary>
+            <dl className="mt-4 border border-border rounded-md overflow-hidden bg-card">
+              {MORE_ROWS.map(({ k }, i) => (
+                <div
+                  key={k}
+                  className={`flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 px-5 py-4 ${
+                    i ? "border-t border-border" : ""
+                  }`}
+                >
+                  <dt className="sm:w-[38%] shrink-0">
+                    <span className="font-display text-[17px] text-foreground">{t(lang, `${k}_name` as const)}</span>
+                    <span className="block font-body text-[15px] text-foreground mt-0.5 tnum">
+                      {t(lang, `${k}_price` as const)}
+                    </span>
+                  </dt>
+                  <dd className="font-body text-[14.5px] text-muted-foreground leading-relaxed m-0">
+                    {t(lang, `${k}_note` as const)}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </details>
         </Reveal>
 
         <Reveal delay={0.15}>

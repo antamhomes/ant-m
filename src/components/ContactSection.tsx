@@ -99,7 +99,8 @@ const ContactSection = () => {
   const unitsOptions: Option[] = [
     { value: "1", label: t(lang, "contact_units_one") },
     { value: "2-4", label: t(lang, "contact_units_few") },
-    { value: "5+", label: t(lang, "contact_units_many") },
+    { value: "5-9", label: t(lang, "contact_units_mid") },
+    { value: "10+", label: t(lang, "contact_units_many") },
   ];
   const labelOf = (opts: Option[], v: string) => opts.find((o) => o.value === v)?.label ?? v;
   // If the owner wants to be contacted by e-mail, the e-mail field becomes mandatory.
@@ -255,7 +256,7 @@ const ContactSection = () => {
                   placeholder={t(lang, "contact_street_placeholder") as string}
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div>
                   <label htmlFor="c-loc" className={labelCls}>{t(lang, "contact_address")}</label>
                   <SelectField
@@ -277,6 +278,13 @@ const ContactSection = () => {
                     placeholder={t(lang, "contact_status_placeholder") as string} options={statusOptions}
                   />
                 </div>
+                <div>
+                  <label htmlFor="c-units" className={labelCls}>{t(lang, "contact_units")}</label>
+                  <SelectField
+                    id="c-units" value={formData.units} onChange={(v) => set("units", v)}
+                    placeholder={t(lang, "contact_units_placeholder") as string} options={unitsOptions}
+                  />
+                </div>
               </div>
 
               {/* Volitelné detaily za rozbalovákem: kratší formulář, stejná data. */}
@@ -284,17 +292,7 @@ const ContactSection = () => {
                 <summary className="list-none cursor-pointer font-body text-sm text-gold-deep underline underline-offset-4 decoration-gold/40 [&::-webkit-details-marker]:hidden">
                   {t(lang, "contact_more")}
                 </summary>
-              <div className="mt-4 grid grid-cols-1 min-[360px]:grid-cols-2 gap-4 sm:gap-5">
-                <div>
-                  <label htmlFor="c-units" className={labelCls}>
-                    {t(lang, "contact_units")}{" "}
-                    <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
-                  </label>
-                  <SelectField
-                    id="c-units" value={formData.units} onChange={(v) => set("units", v)}
-                    placeholder={t(lang, "contact_units_placeholder") as string} options={unitsOptions}
-                  />
-                </div>
+              <div className="mt-4 grid grid-cols-1 gap-4 sm:gap-5">
                 <div>
                   <label htmlFor="c-energy" className={labelCls}>
                     {t(lang, "contact_energy")}{" "}
