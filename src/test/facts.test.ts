@@ -18,15 +18,19 @@ import {
   ENERGY, MGMT_FEE, PLATFORM_FEE, LAUNCH_FEE, ROOMS,
   DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, annualDamageCover, ownerMonthly,
   OCCUPANCY_BY_FLAT, LTR_PER_M2, SIZE_COEF, MEDIAN_AREA, rentFor,
-  MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured,
-  type MeasuredLocation,
+  MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor, antamOccupancy,
+  OCC_UPLIFT, OCC_CAP, marketOccPct, ratioFor, areaCoef, SIZE_PRESET,
+  type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
+import { fiveYear } from "@/lib/horizon";
 
 /** ownerMonthly vrací supported-flag; testy chtějí číslo, nebo spadnout. */
 const net = (r: ReturnType<typeof ownerMonthly>) => {
   if (!r.supported) throw new Error("ownerMonthly: unsupported combination in test");
-  return r.net;
+  return r.antam.net;
 };
+/** Dispozice, která spadne do daného pásma trhu. */
+const sizeOf = (band: string): SizeKey => band === "1BR" ? "2kk" : band === "2BR" ? "3kk" : "4kk";
 
 const cs = translations.cs as Record<string, string>;
 const vi = translations.vi as Record<string, string>;
@@ -290,20 +294,34 @@ describe("model výnosu", () => {
     expect(MARKET_STR.praha4["3BR"]).toBeUndefined();
   });
 
+  it("pásmo trhu dává dispozice (ložnice), ne počet hostů: tři vstupy", () => {
+    expect(bandFor("1kk")).toBe("1BR");
+    expect(bandFor("2kk")).toBe("1BR");
+    expect(bandFor("3kk")).toBe("2BR");
+    expect(bandFor("4kk")).toBe("3BR");
+    // předvolba dispozice nese jen plochu, žádné hosty
+    for (const k of ["1kk", "2kk", "3kk", "4kk"] as const) expect(Object.keys(SIZE_PRESET[k])).toEqual(["m2"]);
+    const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
+    expect(calc, "posuvník hostů se do kalkulačky nesmí vrátit").not.toContain("calc-guests");
+    expect(calc).toContain('id="calc-m2"');
+    // sdílený odkaz bez hostů
+    expect(calc).toContain("?byt=${location}-${size}-${season}-${m2}m#kalkulacka");
+  });
+
   it("čtvrti a pásma bez dostatečného vzorku žádné číslo nevracejí", () => {
     // Praha 10 čeká na doplnění dat (rate limit 30. 8.), "jinde" nikdy.
     for (const loc of ["praha10", "jinde"])
-      expect(ownerMonthly(loc, 6).supported, loc).toBe(false);
-    // změřené čtvrti pro 6 hostů (2BR) číslo mají, kromě P9 (vzorek 24)
+      expect(ownerMonthly(loc, "3kk").supported, loc).toBe(false);
+    // změřené čtvrti pro 3+kk (2BR) číslo mají, kromě P9 (vzorek 24)
     for (const loc of ["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8"])
-      expect(ownerMonthly(loc, 6).supported, loc).toBe(true);
-    expect(ownerMonthly("praha9", 6).supported).toBe(false);
+      expect(ownerMonthly(loc, "3kk").supported, loc).toBe(true);
+    expect(ownerMonthly("praha9", "3kk").supported).toBe(false);
     // 3BR jen tam, kde má trh vzorek: P1, P2, P5
-    expect(ownerMonthly("praha1", 10).supported).toBe(true);
-    expect(ownerMonthly("praha2", 10).supported).toBe(true);
-    expect(ownerMonthly("praha5", 10).supported).toBe(true);
-    expect(ownerMonthly("praha3", 10).supported).toBe(false);
-    expect(ownerMonthly("praha8", 10).supported).toBe(false);
+    expect(ownerMonthly("praha1", "4kk").supported).toBe(true);
+    expect(ownerMonthly("praha2", "4kk").supported).toBe(true);
+    expect(ownerMonthly("praha5", "4kk").supported).toBe(true);
+    expect(ownerMonthly("praha3", "4kk").supported).toBe(false);
+    expect(ownerMonthly("praha8", "4kk").supported).toBe(false);
   });
 
   it("sezóny každé čtvrti skládají přesně rok (7 léto + 4 zima + prosinec), ADR i RevPAR", () => {
@@ -318,19 +336,51 @@ describe("model výnosu", () => {
     }
   });
 
-  it("model je čistý tržní benchmark: bez paušálů a bez ručních korekcí", () => {
-    // Rozhodnutí majitele 30. 8. 2026 („kalkulačku přesně, nedívej se na moje
-    // čísla"): model ukazuje průměr trhu čtvrti, ne výkon portfolia. Staré
-    // pravidlo „model pod každou kartou" tím v jednotlivých buňkách padá
-    // (P1/2BR trh ~60 100 vs karta 405 s 57 000); kartu řeší majitel, ne model.
-    // Tenhle test hlídá, že se do modelu nevrátí ruční zásah:
+  it("průměr trhu je čistý tržní benchmark a číslo s Antam stojí na téže ceně za noc", () => {
+    // Rozhodnutí majitele 30. 8. 2026: kalkulačka ukazuje reálnou tržní cenu
+    // (průměr trhu čtvrti) A k tomu odhad s Antam Homes. Obě z téže ceny za
+    // noc; liší se jen obsazeností (trh × 1,15, strop 85 %, nikdy pod trhem).
+    expect(OCC_UPLIFT).toBe(1.15);
+    expect(OCC_CAP).toBe(0.85);
+    expect(antamOccupancy(0.70)).toBeCloseTo(0.805, 3);
+    expect(antamOccupancy(0.80)).toBe(0.85);
+    expect(antamOccupancy(0.90)).toBe(0.90);
     for (const [loc, bands] of Object.entries(MARKET_STR))
       for (const [band, cell] of Object.entries(bands)) {
-        const r = ownerMonthly(loc, band === "1BR" ? 4 : band === "2BR" ? 6 : 10);
+        const r = ownerMonthly(loc, sizeOf(band));
         if (!r.supported) throw new Error(`${loc} ${band} má data, ale model je nevrací`);
-        // gross přesně z tržního RevPAR, žádný jiný vstup
-        expect(r.gross, `${loc} ${band}`).toBe(Math.round(cell.revpar * 30.44));
+        expect(r.band).toBe(band);
+        // průměr trhu: gross přesně z tržního RevPAR, žádný jiný vstup
+        expect(r.market.gross, `${loc} ${band}`).toBe(Math.round(cell.revpar * 30.44));
+        expect(r.adr).toBe(cell.adr);
+        // s Antam: táž cena × zvednutá obsazenost, nikdy pod trhem, nikdy nad 85 % (leda trh sám)
+        expect(r.antam.occupancy).toBeGreaterThanOrEqual(r.market.occupancy);
+        expect(r.antam.occupancy).toBeLessThanOrEqual(Math.max(OCC_CAP, r.market.occupancy));
+        expect(r.antam.gross).toBe(Math.round(r.adr * r.antam.occupancy * 30.44));
+        expect(r.antam.net).toBeGreaterThanOrEqual(r.market.net);
+        // obsazenost na trhu sedí s tím, co vidí karty (marketOccPct)
+        expect(Math.round(r.market.occupancy * 100)).toBe(marketOccPct(loc as MeasuredLocation, band as "1BR" | "2BR" | "3BR"));
       }
+    // byty v naší správě měří víc, než s čím model počítá (85 %)
+    for (const f of OCCUPANCY_BY_FLAT) expect(f.occupancy).toBeGreaterThanOrEqual(OCC_CAP * 100);
+  });
+
+  it("pětiletý graf počítá ze stejného čísla jako kalkulačka, obě křivky", () => {
+    for (const loc of ["praha1", "praha3", "praha5"] as const)
+      for (const size of ["2kk", "3kk"] as const) {
+        const r = ownerMonthly(loc, size);
+        const d = fiveYear(loc, size, MEDIAN_AREA[size], "airbnb");
+        if (!r.supported || !d) throw new Error(`${loc} ${size}`);
+        // 2. rok (po rozjezdu): měsíční přírůstek = net − energie − obnova
+        expect(d.str[24] - d.str[23]).toBeCloseTo((r.antam.net - d.energy - d.renew) * 1.03, 5);
+        expect(d.strMarket[24] - d.strMarket[23]).toBeCloseTo((r.market.net - d.energy - d.renew) * 1.03, 5);
+        expect(d.netMarket).toBe(r.market.net);
+        expect(d.rent).toBe(rentFor(loc, size));
+        expect(d.lt[12] - d.lt[11]).toBeCloseTo(d.rent, 5);
+      }
+    const hz = readFileSync("src/components/HorizonSection.tsx", "utf8");
+    expect(hz).toContain("d.strMarket");
+    expect(hz).toContain("fiveYear(location, size, m2, furn)");
   });
 
   it("byt 302 zůstává nepublikovaný, dokud tržní model dává víc než jeho měření", () => {
@@ -338,7 +388,7 @@ describe("model výnosu", () => {
     // P1/2BR dává víc (~60 100), takže 302 na web nepatří; jinak by karta
     // podstřelovala benchmark, který stránka sama ukazuje.
     const MEASURED_302 = 54391;
-    const model = net(ownerMonthly("praha1", "2kk"));
+    const model = net(ownerMonthly("praha1", "3kk")); // 302 má dvě ložnice
     if (model >= MEASURED_302) {
       const src = readFileSync("src/components/PortfolioSection.tsx", "utf8");
       expect(src, "302 je na webu, ale tržní model ho přeslibuje").not.toContain("302");
@@ -496,10 +546,10 @@ describe("obsazenost na kartách portfolia", () => {
     const src = flat(portfolio);
     for (const f of OCCUPANCY_BY_FLAT) {
       const name = flat(f.name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const m = new RegExp(`${name}[^\n]*occupancy: (\\d+), market: (\\d+)`).exec(src);
+      const m = new RegExp(`${name}[^\n]*occupancy: (\\d+), market: MARKET_OCC\\.(\\w+)`).exec(src);
       expect(m, `karta chybí, nemá obsazenost nebo trh: ${f.name}`).not.toBeNull();
       expect(Number(m![1]), `${f.name} obsazenost`).toBe(f.occupancy);
-      expect(Number(m![2]), `${f.name} trh`).toBe(f.market);
+      expect(MARKET_OCC[m![2] as keyof typeof MARKET_OCC], `${f.name} trh`).toBe(f.market);
     }
   });
 
@@ -524,16 +574,38 @@ describe("obsazenost na kartách portfolia", () => {
       byLoc.set(f.loc, (byLoc.get(f.loc) ?? new Set()).add(f.market));
     }
     for (const [loc, vals] of byLoc) expect(vals.size, `${loc} má víc čísel trhu`).toBe(1);
-    // lokality se mezi sebou liší (P1 vs P3)
-    expect(MARKET_OCC.praha1).not.toBe(MARKET_OCC.praha3);
     // a karty čtou z MARKET_OCC (pruhy K1)
     expect(portfolio).toMatch(/barMarket\(item\.loc\)/);
+    // trh na kartách = stejný dataset jako kalkulačka (celá čtvrť, 12 měsíců, pásmo ložnic bytu)
+    expect(MARKET_OCC.praha1).toBe(marketOccPct("praha1", "2BR"));
+    expect(MARKET_OCC.praha3).toBe(marketOccPct("praha3", "2BR"));
+    expect(MARKET_OCC.praha5).toBe(marketOccPct("praha5", "1BR"));
+    for (const f of OCCUPANCY_BY_FLAT) {
+      const key = f.loc.replace("Praha ", "praha");
+      if (isMeasured(key)) expect(f.market, `${f.name} trh`).toBe(marketOccPct(key, f.bedrooms >= 3 ? "3BR" : f.bedrooms === 2 ? "2BR" : "1BR"));
+    }
+  });
+
+  it("násobek nájmu na kartách se počítá z plochy a čtvrti bytu, ne z ruky", () => {
+    // Karty i MCP volají ratioFor; číslo v kódu není. Mladá Boleslav bez zdroje nájmu = bez násobku.
+    expect(portfolio).not.toMatch(/ratio: \d/);
+    expect(portfolio).toContain("ratioFor(");
+    const mcp = readFileSync("src/lib/mcp/tools/list-portfolio.ts", "utf8");
+    expect(mcp).not.toMatch(/vsLongTermRent: \d/);
+    expect(mcp).toContain("ratioFor(");
+    expect(ratioFor("Mladá Boleslav", 85, 30000)).toBeNull();
+    // 402: 64 000 / (52 m² × 490 × koef(52)) ≈ 2,5
+    expect(ratioFor("Praha 1", 52, 64000)).toBe(2.5);
+    expect(ratioFor("Praha 1", 52, 57000)).toBe(2.2);
+    expect(ratioFor("Praha 3", 55, 50000)).toBe(1.9);
+    expect(ratioFor("Praha 3", 60, 42000)).toBe(1.5);
+    expect(ratioFor("Praha 5", 40, 30000)).toBe(1.4);
   });
 
   it("poznámka pod kartami vysvětluje obsazenost i trh po lokalitách", () => {
     expect(portfolio).toContain("45 dní");
     expect(portfolio).toContain("PriceLabs");
-    expect(portfolio).toContain("platí pro lokalitu");
+    expect(portfolio).toContain("platí pro celou městskou část");
     expect(portfolio).not.toContain("—");
   });
 
@@ -558,10 +630,22 @@ describe("nájem podle plochy", () => {
     }
   });
 
+  it("koeficient Kč/m² jde po ploše: mediány MF sedí přesně, mezi nimi interpolace", () => {
+    for (const k of ["1kk", "2kk", "3kk", "4kk"] as const) expect(areaCoef(MEDIAN_AREA[k])).toBeCloseTo(SIZE_COEF[k], 6);
+    expect(areaCoef(44)).toBeCloseTo(1.09, 6);
+    expect(areaCoef(20)).toBe(SIZE_COEF["1kk"]);
+    expect(areaCoef(140)).toBe(SIZE_COEF["4kk"]);
+    // nálepka dispozice nájem nemění, jen plocha
+    expect(rentFor("praha1", "2kk", 52)).toBe(rentFor("praha1", "3kk", 52));
+  });
+
   it("stejná dispozice s jinou plochou dá jiný nájem", () => {
     // přesně ten případ, kvůli kterému se to přestavovalo
     expect(rentFor("praha3", "2kk", 45)).toBeLessThan(rentFor("praha3", "2kk", 90));
-    expect(rentFor("praha3", "2kk", 90) / rentFor("praha3", "2kk", 45)).toBeCloseTo(2, 1);
+    // 90 m² se pronajímá levněji za m² než 45 m² (koeficient po ploše), takže poměr je pod 2
+    const ratio = rentFor("praha3", "2kk", 90) / rentFor("praha3", "2kk", 45);
+    expect(ratio).toBeGreaterThan(1.5);
+    expect(ratio).toBeLessThan(2);
   });
 
   it("každý byt v portfoliu má plochu a ta sedí na kartu", () => {

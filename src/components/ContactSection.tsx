@@ -62,15 +62,15 @@ const ContactSection = () => {
   const set = (k: keyof typeof emptyForm, v: string | boolean) => setFormData((f) => ({ ...f, [k]: v }));
 
   // The calculator CTA pre-fills district + layout so the owner doesn't type them
-  // twice; guests + area land visibly (and editably) in the message field.
+  // twice; the floor area lands visibly (and editably) in the message field.
   useEffect(() => {
     const onPrefill = (e: Event) => {
-      const d = (e as CustomEvent<{ location?: string; size?: string; guests?: number; m2?: number }>).detail || {};
+      const d = (e as CustomEvent<{ location?: string; size?: string; m2?: number }>).detail || {};
       const calcLine =
-        d.guests && d.m2
+        d.m2
           ? lang === "cs"
-            ? `Z kalkulačky: ${d.guests} hostů, ${d.m2} m².`
-            : `Theo phần tính thử: ${d.guests} khách, ${d.m2} m².`
+            ? `Z kalkulačky: ${d.size ?? ""} ${d.m2} m².`.replace(":  ", ": ")
+            : `Theo phần tính thử: ${d.size ?? ""} ${d.m2} m².`.replace(":  ", ": ")
           : "";
       setFormData((f) => ({
         ...f,

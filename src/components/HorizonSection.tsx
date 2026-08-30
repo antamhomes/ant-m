@@ -9,9 +9,11 @@ import { t } from "@/i18n/translations";
  * Horizont: pětiletý graf (krátkodobě s Antam Homes vs dlouhodobý nájem).
  * Srovnávací žebřík (kontrola/výnos/flexibilita/platby) byl v patchi 126
  * vyřazen: všechny čtyři body už na stránce jsou (portfolio, FAQ, kontakt).
- * Graf čte STEJNÝ stav jako kalkulačka (CalcContext: lokalita, hosté, plocha,
- * dispozice) a stejné funkce (lib/horizon → lib/yield), takže se čísla nikdy
+ * Graf čte STEJNÝ stav jako kalkulačka (CalcContext: lokalita, dispozice,
+ * plocha) a stejné funkce (lib/horizon → lib/yield), takže se čísla nikdy
  * nerozejdou; v kalkulačce zůstal jen teaser řádek, který sem vede.
+ * Patch 127: třetí, tečkovaná křivka = průměr trhu (stejný byt při tržní
+ * obsazenosti), aby bylo vidět, kolik z rozdílu dělá obsazenost.
  * Patch 124: graf se vrátil z kalkulačkové záložky sem, nad srovnání.
  */
 
@@ -24,7 +26,7 @@ const DEFAULT_BOX = { w: 860, h: 360 };
 
 const FiveYearChart = () => {
   const { lang } = useLanguage();
-  const { location, size, guests, m2, furn, setFurn } = useCalc();
+  const { location, size, m2, furn, setFurn } = useCalc();
   const [hover, setHover] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
@@ -42,7 +44,7 @@ const FiveYearChart = () => {
   const { w: W, h: H } = box;
   const narrow = W < 480;
   const PAD = { t: 16, r: narrow ? 56 : 92, b: 30, l: narrow ? 50 : 64 };
-  const d = useMemo(() => fiveYear(location, guests, size, m2, furn), [location, guests, size, m2, furn]);
+  const d = useMemo(() => fiveYear(location, size, m2, furn), [location, size, m2, furn]);
   if (!d) return null;
 
   const czk = (n: number) => `${Math.round(n).toLocaleString("cs-CZ").replace(/ /g, "\u00a0")}\u00a0Kč`;
@@ -77,7 +79,7 @@ const FiveYearChart = () => {
     <Reveal delay={0.05} className="max-w-3xl mx-auto rounded-md border border-border bg-card p-4 sm:p-6 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <p className="font-body text-[13px] text-muted-foreground tnum">
-          {locLabel} · {sizeLabel} · {guests}{lang === "vi" ? " khách" : " hostů"} · {m2} m²
+          {locLabel} · {sizeLabel} · {m2} m²
           {" "}
           <a href="#kalkulacka-zadani" className="underline underline-offset-4 decoration-border hover:text-foreground">{t(lang, "calc_edit")}</a>
         </p>
@@ -99,6 +101,10 @@ const FiveYearChart = () => {
           <span className="flex items-center gap-1.5">
             <i aria-hidden="true" className="inline-block w-4 h-[3px] rounded-full bg-primary" />
             {t(lang, "hz_legend_ltr")}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <i aria-hidden="true" className="inline-block w-4 border-t-2 border-dotted border-gold-deep/70" />
+            {t(lang, "hz_legend_market")}
           </span>
         </div>
         <div ref={boxRef} className="aspect-[4/3] sm:aspect-[860/360]">
@@ -126,6 +132,7 @@ const FiveYearChart = () => {
             )
           ))}
           <path d={path(d.lt)} fill="none" stroke="hsl(var(--primary))" strokeWidth={2} strokeLinecap="round" />
+          <path d={path(d.strMarket)} fill="none" stroke="hsl(var(--gold-deep))" strokeWidth={1.5} strokeDasharray="2 4" strokeLinecap="round" opacity={0.7} />
           <path d={path(d.str)} fill="none" stroke="hsl(var(--gold-deep))" strokeWidth={2} strokeLinecap="round" />
           {d.payback && <circle cx={px(d.payback)} cy={py(0)} r={4.5} fill="hsl(var(--gold-deep))" stroke="hsl(var(--card))" strokeWidth={2} />}
           {d.cross && <circle cx={px(d.cross)} cy={py(d.lt[d.cross])} r={4.5} fill="hsl(var(--gold-deep))" stroke="hsl(var(--card))" strokeWidth={2} />}
@@ -153,6 +160,7 @@ const FiveYearChart = () => {
             </strong>
             <div className="flex justify-between gap-4 mt-1"><span className="text-gold-deep">{t(lang, "hz_legend_str")}</span><span>{czk(d.str[hover])}</span></div>
             <div className="flex justify-between gap-4"><span className="text-primary">{t(lang, "hz_legend_ltr")}</span><span>{czk(d.lt[hover])}</span></div>
+            <div className="flex justify-between gap-4 text-muted-foreground"><span>{t(lang, "hz_legend_market")}</span><span>{czk(d.strMarket[hover])}</span></div>
             <div className="flex justify-between gap-4 mt-1 pt-1 border-t border-border">
               <span>{t(lang, "hz_diff")}</span>
               <strong className={d.str[hover] - d.lt[hover] >= 0 ? "text-gold-deep" : "text-destructive"}>
@@ -193,6 +201,7 @@ const FiveYearChart = () => {
       {/* Proč se pětileté číslo liší od měsíčního: odečtené položky viditelně. */}
       <div className="font-body text-muted-foreground tnum space-y-1">
         {([
+          [t(lang, "calc_5y_market"), czk(d.netMarket)],
           [t(lang, "calc_5y_energy"), `−${czk(d.energy)}`],
           [t(lang, "calc_5y_renew"), `−${czk(d.renew)}`],
           [t(lang, "calc_5y_rent"), czk(d.rent)],

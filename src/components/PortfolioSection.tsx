@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MapPin, Users, Ruler, Sparkles, ChevronDown } from "lucide-react";
 import Reveal, { stagger } from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { OCCUPANCY_BY_FLAT } from "@/lib/yield";
+import { MARKET_OCC, ratioFor } from "@/lib/yield";
 import byt1 from "@/assets/byt-1.jpg.asset.json";
 import byt2 from "@/assets/byt-2.jpg.asset.json";
 import byt3 from "@/assets/byt-3.jpg.asset.json";
@@ -22,11 +22,13 @@ import byt7 from "@/assets/byt-7.jpg.asset.json";
  *  excluded; they inflated night counts, not money.
  *  Window: last 12 full months (1. 8. 2025 – 31. 7. 2026) or, for flats that joined later, from the
  *  first stay (`since`).
- *  `ratio` = owner income vs. long-term rent for the flat's ACTUAL floor area
- *  (Deloitte Rent Index Q2/2026 for the Kč/m² level, MF price map 15. 8. 2026 for the
- *  size gradient). A 2+kk can be 45 or 90 m², so disposition alone was the wrong key.
- *  Market (patch 119): ONE number per locality (PriceLabs, trailing 90 days, average across our
- *  listings there); per-flat probes differed only by sampling noise (402: 77,5 vs 405: 77,2).
+ *  `ratio` (patch 127) is COMPUTED, not typed: owner income / rentFor(district, actual m²),
+ *  the same function the calculator uses (Deloitte Rent Index Q2/2026 for the Kč/m² level,
+ *  MF price map 15. 8. 2026 for the size gradient, interpolated by floor area). Mladá Boleslav
+ *  has no rent source, so Klement shows no multiple (audit 28. 8., finding 5).
+ *  Market (patch 127): ONE source with the calculator (MARKET_OCC from the PriceLabs district
+ *  dataset, 12 months, bedroom band of the flat); the old 90-day comp-set probes are gone, so
+ *  the page no longer shows two different "market" numbers for one district.
  *  Occupancy (recomputed 28. 8. 2026): share of booked nights over a window that starts on the
  *  46th day of operation, so the ramp-up weeks do not drag the number down. Only flats older than
  *  three months get one.
@@ -34,21 +36,21 @@ import byt7 from "@/assets/byt-7.jpg.asset.json";
  *  Refresh monthly: STATS_ASOF + the numbers below. */
 const STATS_ASOF = { cs: "31. 7. 2026", vi: "31/7/2026" };
 
-type Stats = { owner: number; occupancy: number; market: number; since?: string; ratio?: number };
+type Stats = { owner: number; occupancy: number; market: number; since?: string };
 type Item = { src: string; name: string; loc: string; guests: number; m2?: number; stats?: Stats; newSince?: string };
+const ratioOf = (item: Item) => item.stats && item.m2 ? ratioFor(item.loc, item.m2, item.stats.owner) : null;
 
 /** The apartments shown publicly (owner's choice); capacities from Hospitable.
  *  byt-1…7 are Lovable assets; 402/405 (Praha 1, Čelakovského sady) are small webp files in public/portfolio.
  *  Order: measured results first (the section pays off the hero claim), longest window leading; flats without a full season follow with their honest badge. */
 const items: Item[] = [
-  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 64000, occupancy: 96, market: 77, ratio: 2.5 } },
-  { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 57000, occupancy: 94, market: 77, ratio: 2.2 } },
-  { src: "/portfolio/byt-modern-ac.webp", name: "Modern AC\u00a0Apartment", loc: "Praha 3", m2: 55, guests: 6, stats: { owner: 50000, occupancy: 96, market: 73, since: "2/2026", ratio: 1.9 } },
+  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 64000, occupancy: 96, market: MARKET_OCC.praha1 } },
+  { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 57000, occupancy: 94, market: MARKET_OCC.praha1 } },
+  { src: "/portfolio/byt-modern-ac.webp", name: "Modern AC\u00a0Apartment", loc: "Praha 3", m2: 55, guests: 6, stats: { owner: 50000, occupancy: 96, market: MARKET_OCC.praha3, since: "2/2026" } },
   // Praha 3, ne Praha 4: potvrzeno majitelem 28. 8. 2026 i PSČ 130 00 v Hospitable.
-  // Násobek 1,6× platí dál: Praha 4 3+kk (26 000) a Praha 3 2+kk (26 500) vyjdou skoro stejně.
-  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 3", m2: 60, guests: 6, stats: { owner: 42000, occupancy: 85, market: 73, since: "4/2026", ratio: 1.5 } },
-  { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", m2: 85, guests: 8, stats: { owner: 30000, occupancy: 91, market: 72, since: "4/2026", ratio: 1.4 } },
-  { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", m2: 40, guests: 4, stats: { owner: 30000, occupancy: 97, market: 74, since: "2/2026", ratio: 1.4 } },
+  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 3", m2: 60, guests: 6, stats: { owner: 42000, occupancy: 85, market: MARKET_OCC.praha3, since: "4/2026" } },
+  { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", m2: 85, guests: 8, stats: { owner: 30000, occupancy: 91, market: MARKET_OCC.mb, since: "4/2026" } },
+  { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", m2: 40, guests: 4, stats: { owner: 30000, occupancy: 97, market: MARKET_OCC.praha5, since: "2/2026" } },
   { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", m2: 110, guests: 13, newSince: "7/2026" },
   { src: byt1.url, name: "Secret Garden Studio\u00a0I", loc: "Praha 4", m2: 22, guests: 4, newSince: "7/2026" },
   { src: byt2.url, name: "Secret Garden Studio\u00a0II", loc: "Praha 4", m2: 22, guests: 4, newSince: "7/2026" },
@@ -77,7 +79,7 @@ const copy = {
     statRatio: (r: number) => `${r.toLocaleString("cs-CZ")}× dlouhodobý nájem`,
     newBadge: (m: string) => `V naší správě od ${m}`,
     newNote: "Výsledky doplníme po první sezóně.",
-    statNote: (d: string) => `Částky pro majitele vycházejí ze skutečných rezervací, přepočtených na aktuální odměnu 30\u00a0%: tržby za ubytování po provizi Airbnb a Booking.com, bez úklidových poplatků, po naší odměně. Tedy to, co by majitel dostal při dnešních podmínkách; energie hradí majitel. Zaokrouhleno na tisíce. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. Obsazenost počítáme u\u00a0bytů starších tří měsíců a\u00a0prvních 45 dní provozu do\u00a0ní nezapočítáváme, byt se\u00a0v\u00a0nich teprve rozjíždí. Údaj o\u00a0trhu je z\u00a0PriceLabs za\u00a0posledních 90 dní a\u00a0platí pro lokalitu: průměrná obsazenost srovnatelných bytů v\u00a0okolí našich bytů v\u00a0dané lokalitě. Dva byty ve\u00a0stejné lokalitě proto ukazují stejné číslo trhu. U\u00a0nových nabídek se výsledky během prvního roku provozu teprve ustalují. Dlouhodobý nájem počítáme z\u00a0Deloitte Rent\u00a0Index Q2/2026 podle skutečné plochy bytu; rozdíl mezi dispozicemi bereme z\u00a0cenové mapy nájemního bydlení Ministerstva financí (15.\u00a08.\u00a02026). Minulé výsledky nejsou zárukou budoucích.`,
+    statNote: (d: string) => `Částky pro majitele vycházejí ze skutečných rezervací, přepočtených na aktuální odměnu 30\u00a0%: tržby za ubytování po provizi Airbnb a Booking.com, bez úklidových poplatků, po naší odměně. Tedy to, co by majitel dostal při dnešních podmínkách; energie hradí majitel. Zaokrouhleno na tisíce. Průměr za posledních 12 měsíců, u novějších bytů od začátku správy, stav k\u00a0${d}. Obsazenost počítáme u\u00a0bytů starších tří měsíců a\u00a0prvních 45 dní provozu do\u00a0ní nezapočítáváme, byt se\u00a0v\u00a0nich teprve rozjíždí. Údaj o\u00a0trhu je z\u00a0PriceLabs za\u00a0stejných 12 měsíců a\u00a0platí pro celou městskou část a\u00a0velikost bytu (počet ložnic): průměrná obsazenost všech nabídek v\u00a0dané čtvrti, stejná data, ze kterých počítá kalkulačka. Dva byty ve\u00a0stejné čtvrti proto ukazují stejné číslo trhu. U\u00a0Mladé Boleslavi je to průměr srovnatelných bytů v\u00a0okolí za\u00a090 dní. U\u00a0nových nabídek se výsledky během prvního roku provozu teprve ustalují. Dlouhodobý nájem počítáme z\u00a0Deloitte Rent\u00a0Index Q2/2026 podle skutečné plochy bytu; že menší byt má vyšší nájem za\u00a0m², bereme z\u00a0cenové mapy nájemního bydlení Ministerstva financí (15.\u00a08.\u00a02026). Pro Mladou Boleslav index nájem nevede, proto tam násobek neuvádíme. Minulé výsledky nejsou zárukou budoucích.`,
   },
   vi: {
     eyebrow: "Kết quả thực tế",
@@ -98,7 +100,7 @@ const copy = {
     statRatio: (r: number) => `gấp ${r.toLocaleString("vi-VN")} lần cho thuê dài hạn`,
     newBadge: (m: string) => `Antam lo từ ${m}`,
     newNote: "Số liệu sẽ có sau mùa đầu tiên.",
-    statNote: (d: string) => `Số tiền chủ nhà nhận dựa trên đặt phòng thật của từng căn, tính lại theo mức phí Antam hiện nay 30%: tiền phòng sau khi trừ phí Airbnb và Booking.com, không tính phí dọn dẹp, sau phí của Antam. Tức là số tiền chủ nhà sẽ nhận với điều kiện hiện nay; điện nước chủ nhà lo. Làm tròn đến hàng nghìn. Trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Tỷ lệ lấp phòng chỉ tính cho căn đã quản lý trên ba tháng, 45 ngày đầu không tính vì nhà mới mở còn đang chạy đà. Số của khu lấy từ PriceLabs, 90 ngày gần nhất, tính chung cho từng khu vực: tỷ lệ lấp phòng trung bình của các căn tương tự quanh những căn Antam lo trong khu đó. Hai căn cùng khu vì vậy có cùng một số thị trường. Tiền thuê dài hạn tính từ Deloitte Rent\u00a0Index Q2/2026 theo đúng diện tích từng căn; phần chênh giữa các loại nhà lấy từ bản đồ giá thuê của Bộ Tài chính (15.\u00a08.\u00a02026). Kết quả đã qua không phải là cam kết cho tương lai.`,
+    statNote: (d: string) => `Số tiền chủ nhà nhận dựa trên đặt phòng thật của từng căn, tính lại theo mức phí Antam hiện nay 30%: tiền phòng sau khi trừ phí Airbnb và Booking.com, không tính phí dọn dẹp, sau phí của Antam. Tức là số tiền chủ nhà sẽ nhận với điều kiện hiện nay; điện nước chủ nhà lo. Làm tròn đến hàng nghìn. Trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Tỷ lệ lấp phòng chỉ tính cho căn đã quản lý trên ba tháng, 45 ngày đầu không tính vì nhà mới mở còn đang chạy đà. Số của khu lấy từ PriceLabs, cùng 12 tháng đó, tính cho cả quận và cỡ căn (số phòng ngủ): tỷ lệ lấp phòng trung bình của mọi căn trong quận, đúng số liệu mà phần tính thử dùng. Hai căn cùng quận vì vậy có cùng một số thị trường. Riêng Mladá Boleslav là trung bình các căn tương tự quanh đó trong 90 ngày. Tiền thuê dài hạn tính từ Deloitte Rent\u00a0Index Q2/2026 theo đúng diện tích từng căn; nhà nhỏ thuê đắt hơn trên mỗi m², phần đó lấy từ bản đồ giá thuê của Bộ Tài chính (15.\u00a08.\u00a02026). Mladá Boleslav không có trong index, nên căn đó Antam không ghi số lần. Kết quả đã qua không phải là cam kết cho tương lai.`,
   },
 };
 
@@ -165,9 +167,9 @@ const PortfolioSection = () => {
               <figcaption className={lead ? "px-4 py-4 sm:px-5 sm:py-4 sm:self-center" : "px-2.5 py-2.5 sm:px-5 sm:py-4"}>
                 {/* Below the photo the story continues in one line: the multiple of long-term rent.
                     Then the flat as context, then occupancy against the locality. */}
-                {item.stats?.ratio && (
+                {ratioOf(item) && (
                   <p className={`mb-1.5 sm:mb-2 font-body ${lead ? "text-sm" : "text-[11px]"} sm:text-sm font-semibold text-gold-deep leading-snug`}>
-                    {c.statRatio(item.stats.ratio)}
+                    {c.statRatio(ratioOf(item)!)}
                   </p>
                 )}
                 <h3 className={`font-display ${lead ? "text-base" : "text-[13px]"} sm:text-base font-semibold text-foreground leading-snug text-balance`}>

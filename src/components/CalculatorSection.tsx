@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import Reveal from "@/components/Reveal";
-import { Calculator, MapPin, Home, Users, Ruler, Share2, Pencil, ChevronRight } from "lucide-react";
+import { Calculator, MapPin, Home, Ruler, Share2, Pencil, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
-import { ROOMS, annualDamageCover, ownerMonthly, rentFor, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
+import { ROOMS, BAND_LABEL, annualDamageCover, ownerMonthly, rentFor, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
 import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/CalcContext";
 
@@ -12,13 +12,13 @@ import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/C
  *  (P2, P6 až P10) a u „jinde" se panel výsledku přepne na posouzení
  *  do 24 hodin; ŽÁDNÉ číslo se neukazuje a nic se neopisuje z jiné čtvrti. */
 
-// Dispozice je jen rychlá předvolba kapacity a plochy (a vstup pro energie,
-// obnovu a tvar nájmu). Výnos řídí kapacita, nájem plocha.
-const sizes: { value: SizeKey; label: string; guestsCs: string; guestsVi: string }[] = [
-  { value: "1kk", label: "1+kk", guestsCs: "obvykle 4 hosté",  guestsVi: "thường 4 khách" },
-  { value: "2kk", label: "2+kk", guestsCs: "obvykle 6 hostů",  guestsVi: "thường 6 khách" },
-  { value: "3kk", label: "3+kk", guestsCs: "obvykle 8 hostů",  guestsVi: "thường 8 khách" },
-  { value: "4kk", label: "4+kk", guestsCs: "obvykle 10 hostů", guestsVi: "thường 10 khách" },
+// Tři vstupy (patch 127): lokalita, dispozice, plocha. Dispozice určuje pásmo
+// trhu (počet ložnic, jako PriceLabs) a energie/obnovu; plocha jen nájem.
+const sizes: { value: SizeKey; label: string }[] = [
+  { value: "1kk", label: "1+kk" },
+  { value: "2kk", label: "2+kk" },
+  { value: "3kk", label: "3+kk" },
+  { value: "4kk", label: "4+kk" },
 ];
 
 // Sezónní násobky žijí v lib/yield (SEASONS_BY_LOC, z realizovaných řad každé
@@ -30,9 +30,9 @@ const CalculatorSection = () => {
   const { lang } = useLanguage();
   const locLabel = (l: CalcLoc) =>
     l === "jinde" ? t(lang, "calc_loc_other") : `Praha ${l.replace("praha", "")}`;
-  // Stav (lokalita, dispozice, hosté, plocha, sezóna, vybavení) žije v CalcContext,
+  // Stav (lokalita, dispozice, plocha, sezóna, vybavení) žije v CalcContext,
   // aby s ním počítal i pětiletý graf v sekci Horizont.
-  const { location, setLocation, size, pickSize, guests, setGuests, m2, setM2, season, setSeason, furn, fromShare } = useCalc();
+  const { location, setLocation, size, pickSize, m2, setM2, season, setSeason, furn, fromShare } = useCalc();
   const [shared, setShared] = useState(false);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ const CalculatorSection = () => {
   }, [fromShare]);
 
   const shareResult = async () => {
-    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${size}-${season}-${guests}h-${m2}m#kalkulacka`;
+    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${size}-${season}-${m2}m#kalkulacka`;
     trackEvent("calc_share", { district: location, size, season });
     try {
       if (navigator.share) { await navigator.share({ title: "Antam Homes", url }); return; }
@@ -54,21 +54,20 @@ const CalculatorSection = () => {
     }
   };
 
-  // Jediný zdroj výpočtu je lib/yield: realizovaná tržní cena za noc pro
-  // lokalitu a kapacitní pásmo × sezóna, na tržním RevPAR čtvrti (v ceně je
-  // i tržní obsazenost), minus provize platformy, dělení 70/30. Nájem řídí
-  // PLOCHA (rentFor), ne dispozice sama.
+  // Jediný zdroj výpočtu je lib/yield: reálná tržní cena za noc pro čtvrť
+  // a pásmo ložnic × sezóna. Dvě čísla z téže ceny: průměr trhu (tržní
+  // obsazenost) a s Antam Homes (obsazenost zvednutá, strop 85 %); minus
+  // provize platformy, dělení 70/30. Nájem řídí PLOCHA (rentFor).
   const result = useMemo(() => {
-    const r = ownerMonthly(location, guests, { season });
-    const year = ownerMonthly(location, guests);
+    const r = ownerMonthly(location, size, { season });
     const ltr = location === "jinde" ? 0 : rentFor(location as LocationKey, size, m2);
-    const ratio = r.supported && ltr > 0 ? r.net / ltr : 0;
-    return { r, year, ltr, ratio };
-  }, [location, guests, size, m2, season]);
+    const ratio = r.supported && ltr > 0 ? r.antam.net / ltr : 0;
+    return { r, ltr, ratio };
+  }, [location, size, m2, season]);
 
   // Pětiletý rozdíl pro teaser; sám graf je v sekci Horizont (#horizont) a
   // počítá ze stejného stavu přes lib/horizon.
-  const d = useMemo(() => fiveYear(location, guests, size, m2, furn), [location, guests, size, m2, furn]);
+  const d = useMemo(() => fiveYear(location, size, m2, furn), [location, size, m2, furn]);
 
   // "mil." / "tis." are Czech; the Vietnamese page counts in "triệu" (million) and "nghìn".
   const short = (n: number) =>
@@ -145,20 +144,7 @@ const CalculatorSection = () => {
               </div>
             </div>
 
-            {/* The two sliders stack at every width: side by side, the Vietnamese label
-                ("Nhà ở được mấy khách") wrapped even on desktop and the tablet column cut
-                both labels; the input column has the vertical room, the result panel is taller. */}
             <div className="grid grid-cols-1 gap-6">
-              <div>
-                <label htmlFor="calc-guests" className="flex items-baseline justify-between gap-3 font-body text-sm font-semibold text-foreground mb-2">
-                  <span className="flex items-center gap-2"><Users className="w-4 h-4 text-gold" />{t(lang, "calc_guests")}</span>
-                  <span className="font-display text-lg text-gold-deep tnum">{guests}</span>
-                </label>
-                <input id="calc-guests" type="range" min={2} max={14} step={1} value={guests}
-                  onChange={(e) => setGuests(+e.target.value)}
-                  className="w-full accent-[hsl(var(--gold))]" />
-                <p className="mt-1.5 font-body text-[12.5px] text-muted-foreground leading-snug">{t(lang, "calc_guests_hint")}</p>
-              </div>
               <div>
                 <label htmlFor="calc-m2" className="flex items-baseline justify-between gap-3 font-body text-sm font-semibold text-foreground mb-2">
                   <span className="flex items-center gap-2"><Ruler className="w-4 h-4 text-gold" />{t(lang, "calc_area")}</span>
@@ -230,7 +216,7 @@ const CalculatorSection = () => {
                     onClick={() => {
                       trackEvent("cta_click", { location: "calculator_unsupported", target: "contact", district: location, size });
                       window.dispatchEvent(new CustomEvent("antam:prefill-contact", {
-                        detail: { location: locLabel(location), size: sizes.find((s) => s.value === size)?.label ?? "", guests, m2 },
+                        detail: { location: locLabel(location), size: sizes.find((s) => s.value === size)?.label ?? "", m2 },
                       }));
                     }}
                     className="btn btn-primary-inverse w-full"
@@ -251,7 +237,7 @@ const CalculatorSection = () => {
                       </p>
                       <p className="flex flex-wrap items-baseline gap-x-2 leading-tight tnum">
                         <span className="font-display text-[2.25rem] min-[360px]:text-[2.75rem] sm:text-5xl md:text-[3.25rem] font-bold text-gradient-gold-on-dark whitespace-nowrap">
-                          ~{(Math.round(result.r.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
+                          ~{(Math.round(result.r.antam.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
                         </span>
                         <span className="font-body text-sm font-normal text-primary-foreground/65 whitespace-nowrap">
                           {t(lang, "calc_month_suffix")}
@@ -261,6 +247,29 @@ const CalculatorSection = () => {
                       <p className="mt-2 font-body text-[13px] text-primary-foreground/75 leading-relaxed">
                         {t(lang, "calc_basis")}
                       </p>
+                      {/* Reálná tržní cena: stejná data, bez naší obsazenosti. Kdo si
+                          to ověří v PriceLabs nebo AirDNA, najde tahle čísla. */}
+                      <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 rounded-sm border border-primary-foreground/15 bg-primary-foreground/[0.05] px-3.5 py-3 font-body tnum">
+                        <div className="col-span-2 flex items-baseline justify-between gap-3">
+                          <dt className="text-[11px] uppercase tracking-[0.14em] text-primary-foreground/65">{t(lang, "calc_market_label")}</dt>
+                          <dd className="text-[11px] text-primary-foreground/50">{BAND_LABEL[result.r.band][lang]} · PriceLabs</dd>
+                        </div>
+                        <div>
+                          <dt className="text-[12px] text-primary-foreground/65 leading-snug">{t(lang, "calc_market_adr")}</dt>
+                          <dd className="font-display text-lg font-semibold text-primary-foreground/90">{result.r.adr.toLocaleString("cs-CZ")}&nbsp;Kč</dd>
+                        </div>
+                        <div>
+                          <dt className="text-[12px] text-primary-foreground/65 leading-snug">{t(lang, "calc_market_occ")}</dt>
+                          <dd className="font-display text-lg font-semibold text-primary-foreground/90">
+                            {Math.round(result.r.market.occupancy * 100)}{lang === "cs" ? "\u00a0%" : "%"}
+                            <span className="font-body text-[12px] font-normal text-primary-foreground/60"> → {t(lang, "calc_antam_occ")} {Math.round(result.r.antam.occupancy * 100)}{lang === "cs" ? "\u00a0%" : "%"}</span>
+                          </dd>
+                        </div>
+                        <div className="col-span-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 border-t border-primary-foreground/10 pt-2">
+                          <dt className="text-[12px] text-primary-foreground/75 leading-snug">{t(lang, "calc_market_net")}</dt>
+                          <dd className="font-display text-base font-semibold text-primary-foreground/85">~{(Math.round(result.r.market.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč {t(lang, "calc_month_suffix")}</dd>
+                        </div>
+                      </dl>
                       <p className="md:hidden mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
                         <span>{locLabel(location)}</span>
                         <span aria-hidden="true">·</span>
@@ -297,7 +306,7 @@ const CalculatorSection = () => {
                       <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 font-body text-[13px] tnum">
                         <span className="text-primary-foreground/85">
                           <strong className="text-gold font-semibold">{lang === "cs" ? "70\u00a0%" : "70%"}</strong> {t(lang, "calc_split_owner")}{" "}
-                          <span className="text-gold/90">= ~{(Math.round(result.r.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč</span>
+                          <span className="text-gold/90">= ~{(Math.round(result.r.antam.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </span>
                         <span className="text-primary-foreground/65 text-right">
                           <strong className="font-semibold text-primary-foreground/80">{lang === "cs" ? "30\u00a0%" : "30%"}</strong> {t(lang, "calc_split_fee")}
@@ -327,7 +336,7 @@ const CalculatorSection = () => {
                         <p className="font-body text-[13px] text-primary-foreground/70 mt-1.5 tnum">
                           {t(lang, "calc_loss_1")}{" "}
                           <strong className="font-semibold text-primary-foreground/90">
-                            ~{(Math.round((result.r.net - result.ltr) / 1000) * 1000).toLocaleString("cs-CZ")}
+                            ~{(Math.round((result.r.antam.net - result.ltr) / 1000) * 1000).toLocaleString("cs-CZ")}
                           </strong>{" "}
                           {t(lang, "calc_loss_2")}
                         </p>
@@ -372,7 +381,7 @@ const CalculatorSection = () => {
                         trackEvent("cta_click", { location: "calculator", target: "contact", district: location, size });
                         window.dispatchEvent(
                           new CustomEvent("antam:prefill-contact", {
-                            detail: { location: locLabel(location), size: sizes.find((s) => s.value === size)?.label ?? "", guests, m2 },
+                            detail: { location: locLabel(location), size: sizes.find((s) => s.value === size)?.label ?? "", m2 },
                           })
                         );
                       }}

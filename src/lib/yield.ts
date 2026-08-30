@@ -18,6 +18,15 @@
  * (P3/P4/P6/P7/P9 mají tenká pásma, viz poznámky v datech). Praha 10 čeká
  * na doplnění dat (rate limit 30. 8.), do té doby „posoudíme individuálně“.
  * Nikdy neopisovat čísla jedné čtvrti do jiné.
+ *
+ * Patch 127 (30. 8. 2026, tři vstupy): výsledek má DVĚ čísla ze stejných
+ * dat. „Průměr trhu“ = tržní RevPAR čtvrti (reálná tržní cena za noc ×
+ * tržní obsazenost). „S Antam Homes“ = táž tržní cena za noc × obsazenost
+ * trhu zvednutá o OCC_UPLIFT, nejvýš OCC_CAP (byty v naší správě měří 85
+ * až 97 % proti trhu 68 až 77 %, tedy ×1,25; násobek 1,15 je záměrně pod
+ * tím). Pásmo se bere z DISPOZICE (počet ložnic, stejně jako PriceLabs),
+ * ne z počtu hostů. Nájem se řídí jen plochou (koeficient MF interpolovaný
+ * podle m², ne podle nálepky dispozice).
  */
 
 export type SizeKey = "1kk" | "2kk" | "3kk" | "4kk";
@@ -25,10 +34,16 @@ export type LocationKey =
   | "praha1" | "praha2" | "praha3" | "praha4" | "praha5"
   | "praha6" | "praha7" | "praha8" | "praha9" | "praha10";
 
-/** Kapacitní pásmo: host na Airbnb filtruje podle počtu osob, ne dispozice. */
+/** Pásmo trhu podle počtu ložnic, stejně jako PriceLabs: 1+kk a 2+kk = jedna
+ *  ložnice (studio zvlášť trh nevede), 3+kk = dvě, 4+kk a víc = tři a víc. */
 export type Band = "1BR" | "2BR" | "3BR";
-export const bandFor = (guests: number): Band =>
-  guests <= 4 ? "1BR" : guests <= 8 ? "2BR" : "3BR";
+export const bandFor = (size: SizeKey): Band =>
+  size === "1kk" || size === "2kk" ? "1BR" : size === "3kk" ? "2BR" : "3BR";
+export const BAND_LABEL: Record<Band, { cs: string; vi: string }> = {
+  "1BR": { cs: "1 ložnice", vi: "1 phòng ngủ" },
+  "2BR": { cs: "2 ložnice", vi: "2 phòng ngủ" },
+  "3BR": { cs: "3+ ložnice", vi: "3+ phòng ngủ" },
+};
 
 /** Čtvrti, kde má trh dost velký vzorek na aspoň jedno pásmo. */
 export type MeasuredLocation =
@@ -58,15 +73,38 @@ export const MARKET_STR: Record<MeasuredLocation, Partial<Record<Band, { adr: nu
 };
 
 /**
- * Tržní obsazenost lokality (PriceLabs, posledních 90 dní, průměr přes naše
- * listingy v lokalitě). Jedno číslo na lokalitu, ne na byt: rozdíl 402 vs 405
- * (77,5 vs 77,2 %) je šum per-listing vzorku, ne vlastnost domu.
- * mb = Mladá Boleslav, jen pro karty portfolia; kalkulačka MB nenabízí.
+ * Obsazenost, se kterou počítá číslo „s Antam Homes“: tržní obsazenost
+ * čtvrti × OCC_UPLIFT, nejvýš OCC_CAP, nikdy pod trhem (v prosinci může trh
+ * sám být nad stropem). Byty v naší správě měří 85 až 97 % proti trhu své
+ * čtvrti 68 až 77 %, tj. ×1,25; 1,15 je záměrně pod tím.
  */
-export type CardMarketLocation = "praha1" | "praha3" | "praha4" | "praha5";
-export const MARKET_OCC: Record<CardMarketLocation | "mb", number> = {
-  praha1: 77, praha3: 73, praha4: 68, praha5: 74, mb: 72,
+export const OCC_UPLIFT = 1.15;
+export const OCC_CAP = 0.85;
+export const antamOccupancy = (marketOcc: number) =>
+  Math.max(marketOcc, Math.min(OCC_CAP, marketOcc * OCC_UPLIFT));
+
+/** Tržní obsazenost čtvrti a pásma v procentech (RevPAR / ADR z MARKET_STR),
+ *  totéž číslo, které kalkulačka ukazuje jako „obsazenost okolí“. */
+export const marketOccPct = (loc: MeasuredLocation, band: Band): number | null => {
+  const cell = MARKET_STR[loc][band];
+  return cell ? Math.round((cell.revpar / cell.adr) * 100) : null;
 };
+
+/**
+ * Trh na kartách portfolia: JEDEN zdroj s kalkulačkou (MARKET_STR, 12 měsíců,
+ * celá čtvrť, pásmo podle ložnic bytu). Dřív tu bylo 90denní okno comp setů
+ * kolem našich listingů (P1 77, P3 73, P5 74), takže stránka měla dvě různá
+ * čísla „trhu“ pro tutéž čtvrť. mb = Mladá Boleslav: čtvrťová data nemáme,
+ * zůstává PriceLabs comp set 90 dní; jen pro karty, kalkulačka MB nenabízí.
+ */
+export const MARKET_OCC = {
+  praha1: marketOccPct("praha1", "2BR")!,
+  praha3: marketOccPct("praha3", "2BR")!,
+  praha4: marketOccPct("praha4", "1BR")!,
+  praha5: marketOccPct("praha5", "1BR")!,
+  mb: 72,
+} as const;
+export type CardMarketLocation = "praha1" | "praha3" | "praha4" | "praha5";
 
 /**
  * Sezónní násobky ADR a RevPAR z tržních měsíčních řad každé čtvrti,
@@ -109,9 +147,41 @@ export const SIZE_COEF: Record<SizeKey, number> = {
 export const MEDIAN_AREA: Record<SizeKey, number> = {
   "1kk": 35, "2kk": 53, "3kk": 71, "4kk": 88,
 };
-/** Nájem konkrétní plochy v dané lokalitě. JEDINÁ funkce na nájem na webu. */
+/**
+ * Koeficient Kč/m² podle PLOCHY: lineární interpolace mezi mediány MF
+ * (35 m² → 1,18 · 53 → 1,00 · 71 → 0,90 · 88 → 0,89), mimo rozsah
+ * konstantní. Nálepka dispozice o nájmu nerozhoduje: 52 m² se dvěma
+ * ložnicemi (byty 402/405) se pronajme jako 52 m², ne jako „3+kk“.
+ */
+const AREA_COEF: [number, number][] = [
+  [MEDIAN_AREA["1kk"], SIZE_COEF["1kk"]], [MEDIAN_AREA["2kk"], SIZE_COEF["2kk"]],
+  [MEDIAN_AREA["3kk"], SIZE_COEF["3kk"]], [MEDIAN_AREA["4kk"], SIZE_COEF["4kk"]],
+];
+export const areaCoef = (m2: number) => {
+  if (m2 <= AREA_COEF[0][0]) return AREA_COEF[0][1];
+  for (let i = 1; i < AREA_COEF.length; i++) {
+    const [a0, c0] = AREA_COEF[i - 1], [a1, c1] = AREA_COEF[i];
+    if (m2 <= a1) return c0 + ((m2 - a0) / (a1 - a0)) * (c1 - c0);
+  }
+  return AREA_COEF[AREA_COEF.length - 1][1];
+};
+/** Nájem konkrétní plochy v dané lokalitě. JEDINÁ funkce na nájem na webu.
+ *  Dispozice jen dodá výchozí plochu, když m² chybí. */
 export const rentFor = (loc: LocationKey, size: SizeKey, m2 = MEDIAN_AREA[size]) =>
-  Math.round(m2 * LTR_PER_M2[loc] * SIZE_COEF[size]);
+  Math.round(m2 * LTR_PER_M2[loc] * areaCoef(m2));
+
+/** Lokalita karty („Praha 1“) → klíč nájmu; Mladá Boleslav nájemní data nemá. */
+export const locKeyOf = (loc: string): LocationKey | null => {
+  const m = /^Praha (\d+)$/.exec(loc);
+  return m ? (`praha${m[1]}` as LocationKey) : null;
+};
+/** Násobek dlouhodobého nájmu pro kartu: skutečná plocha a čtvrť bytu, na
+ *  desetiny. null tam, kde nájemní data nejsou (Mladá Boleslav). */
+export const ratioFor = (loc: string, m2: number, ownerMonthlyCzk: number): number | null => {
+  const key = locKeyOf(loc);
+  if (!key) return null;
+  return Math.round((ownerMonthlyCzk / rentFor(key, "2kk", m2)) * 10) / 10;
+};
 
 /** Zálohy na energie, které u krátkodobého pronájmu hradí majitel (u nájmu nájemce) */
 export const ENERGY: Record<SizeKey, number> = {
@@ -134,37 +204,32 @@ export const annualDamageCover = (rooms: number) =>
  * Obsazenost jednotlivých bytů proti trhu jejich lokality.
  * occupancy: z rezervací v Hospitable (byty starší tří měsíců, okno od 46. dne
  * provozu do 31. 7. 2026) — NAMĚŘENÁ ČÍSLA, nesahat.
- * market: MARKET_OCC lokality (PriceLabs, 90 dní), od patche 119 po lokalitách.
+ * market: MARKET_OCC lokality, od patche 127 z téhož datasetu jako kalkulačka
+ * (celá čtvrť, 12 měsíců, pásmo podle ložnic bytu); MB comp set 90 dní.
+ * bedrooms z Hospitable (30. 8. 2026).
  * Byt 302 (Praha 1) měří 93 % proti trhu 77 %, ale publikovaný není.
  * Karty v PortfolioSection musí ukazovat stejná čísla; hlídá to facts.test.ts.
  */
 export const OCCUPANCY_BY_FLAT: {
-  name: string; loc: string; kat?: string; m2: number; occupancy: number; market: number; days: number;
+  name: string; loc: string; kat?: string; m2: number; bedrooms: number; occupancy: number; market: number; days: number;
 }[] = [
-  { name: "Elegant Museum View Apartment", loc: "Praha 1", kat: "Nové Město",        m2: 52, occupancy: 96, market: MARKET_OCC.praha1, days: 319 },
-  { name: "Modern Museum View Apartment",  loc: "Praha 1", kat: "Nové Město",        m2: 52, occupancy: 94, market: MARKET_OCC.praha1, days: 318 },
-  { name: "Modern AC Apartment",           loc: "Praha 3", kat: "Žižkov",        m2: 55, occupancy: 96, market: MARKET_OCC.praha3, days: 139 },
-  { name: "Moderní apartmán se zahradou",  loc: "Praha 3", kat: "Žižkov",        m2: 60, occupancy: 85, market: MARKET_OCC.praha3, days: 54 },
-  { name: "Klement apartment s terasou",   loc: "Mladá Boleslav", kat: "Mladá Boleslav", m2: 85, occupancy: 91, market: MARKET_OCC.mb, days: 54 },
-  { name: "My Mozart studio",                loc: "Praha 5", kat: "Smíchov",        m2: 40, occupancy: 97, market: MARKET_OCC.praha5, days: 113 },
+  { name: "Elegant Museum View Apartment", loc: "Praha 1", kat: "Nové Město",        m2: 52, bedrooms: 2, occupancy: 96, market: MARKET_OCC.praha1, days: 319 },
+  { name: "Modern Museum View Apartment",  loc: "Praha 1", kat: "Nové Město",        m2: 52, bedrooms: 2, occupancy: 94, market: MARKET_OCC.praha1, days: 318 },
+  { name: "Modern AC Apartment",           loc: "Praha 3", kat: "Žižkov",        m2: 55, bedrooms: 2, occupancy: 96, market: MARKET_OCC.praha3, days: 139 },
+  { name: "Moderní apartmán se zahradou",  loc: "Praha 3", kat: "Žižkov",        m2: 60, bedrooms: 2, occupancy: 85, market: MARKET_OCC.praha3, days: 54 },
+  { name: "Klement apartment s terasou",   loc: "Mladá Boleslav", kat: "Mladá Boleslav", m2: 85, bedrooms: 2, occupancy: 91, market: MARKET_OCC.mb, days: 54 },
+  { name: "My Mozart studio",                loc: "Praha 5", kat: "Smíchov",        m2: 40, bedrooms: 1, occupancy: 97, market: MARKET_OCC.praha5, days: 113 },
 ];
 
 /** Vážený průměr naší obsazenosti: 1 240 obsazených nocí z 1 317 dní okna. */
 export const OCCUPANCY_OURS = 94;
 
-/**
- * Obsazenost v kalkulačce od 30. 8. 2026 NENÍ paušál: každá buňka čtvrť ×
- * pásmo nese tržní průměr své čtvrti (RevPAR / ADR, viz MARKET_STR), takže
- * výsledek je obhajitelný benchmark trhu. Že byty v naší správě jedou nad
- * trhem (85 až 97 %), říkají karty Portfolia, ne kalkulačka.
- */
-
-/** Kapacita a plocha, kterou dispozice předvyplní. Obojí jde přepsat. */
-export const SIZE_PRESET: Record<SizeKey, { m2: number; guests: number }> = {
-  "1kk": { m2: 35, guests: 4 },
-  "2kk": { m2: 53, guests: 6 },
-  "3kk": { m2: 71, guests: 8 },
-  "4kk": { m2: 88, guests: 10 },
+/** Plocha, kterou dispozice předvyplní (medián MF); posuvník ji přepíše. */
+export const SIZE_PRESET: Record<SizeKey, { m2: number }> = {
+  "1kk": { m2: MEDIAN_AREA["1kk"] },
+  "2kk": { m2: MEDIAN_AREA["2kk"] },
+  "3kk": { m2: MEDIAN_AREA["3kk"] },
+  "4kk": { m2: MEDIAN_AREA["4kk"] },
 };
 
 export const MGMT_FEE = 0.30;      // odměna Antam Homes z čistého výnosu
@@ -191,51 +256,63 @@ export const STR_GROWTH = 0.03;
 export const PROJECT_FEE = 0.20;           // odměna za řízení projektu, z rozpočtu
 export const PROJECT_FEE_THRESHOLD = 30000;// pod tímto rozpočtem je řízení v ceně uvedení do provozu
 
+/** Jedna varianta výsledku: obsazenost, hrubé tržby, provize, dělení. */
+export type Split = {
+  occupancy: number; gross: number; platformFee: number;
+  netRevenue: number; mgmt: number; net: number;
+};
 export type OwnerMonthly = {
   supported: true;
-  adr: number; occupancy: number; gross: number; platformFee: number;
-  netRevenue: number; mgmt: number; net: number; guests: number; band: Band;
-} | { supported: false; band: Band; guests: number };
+  band: Band;
+  /** reálná tržní cena za noc (realizované ADR čtvrti a pásma, × sezóna) */
+  adr: number;
+  /** průměr trhu: tržní RevPAR, tj. tržní cena × tržní obsazenost */
+  market: Split;
+  /** s Antam Homes: táž cena × antamOccupancy(tržní obsazenost) */
+  antam: Split;
+} | { supported: false; band: Band };
+
+const split = (gross: number, occupancy: number): Split => {
+  const platformFee = Math.round(PLATFORM_FEE * gross);
+  const netRevenue = gross - platformFee;
+  const mgmt = Math.round(netRevenue * MGMT_FEE);
+  return { occupancy, gross, platformFee, netRevenue, mgmt, net: netRevenue - mgmt };
+};
 
 /**
  * Výnos majitele za měsíc. JEDINÁ funkce na výnos na webu: kalkulačka,
- * záložka Za 5 let i MCP počítají odsud.
+ * pětiletý graf i MCP počítají odsud.
  *
- * Tržní RevPAR čtvrti a pásma × sezónní násobek RevPAR té čtvrti × dny
- * = hrubé tržby; z nich se odečte provize platformy (počítá se z celé ceny
- * rezervace včetně úklidu), zbytek se dělí 70/30. Zobrazené ADR nese
- * sezónní násobek ADR a obsazenost je z toho dopočtená (RevPAR / ADR),
- * takže vždy sedí na tržní průměr čtvrti. DPH z provize neodečítáme,
- * hradí ji Antam ze své odměny. Energie majitel platí zvlášť a nejsou tu.
+ * Vstup je dispozice (→ pásmo ložnic) a lokalita; plocha do výnosu nevstupuje.
+ * market.gross = tržní RevPAR × sezónní násobek RevPAR × dny (v RevPAR je
+ * i tržní obsazenost). antam.gross = tržní ADR × sezónní násobek ADR ×
+ * antamOccupancy(tržní obsazenost) × dny. Z hrubého se odečte provize
+ * platformy (počítá se z celé ceny rezervace včetně úklidu), zbytek se dělí
+ * 70/30. DPH z provize neodečítáme, hradí ji Antam ze své odměny. Energie
+ * majitel platí zvlášť a nejsou tu.
  *
  * Když pro čtvrť nebo pásmo tržní vzorek nestačí, vrací { supported: false }
  * a web ukáže „posoudíme individuálně“, nikdy cizí číslo.
  */
 export function ownerMonthly(
   location: string,
-  sizeOrGuests: SizeKey | number,
+  size: SizeKey,
   { season = "year" as SeasonKey } = {},
 ): OwnerMonthly {
-  const guests = typeof sizeOrGuests === "number"
-    ? sizeOrGuests
-    : SIZE_PRESET[sizeOrGuests].guests;
-  const band = bandFor(guests);
-  if (!isMeasured(location)) return { supported: false, band, guests };
+  const band = bandFor(size);
+  if (!isMeasured(location)) return { supported: false, band };
   const cell = MARKET_STR[location][band];
-  if (!cell) return { supported: false, band, guests };
+  if (!cell) return { supported: false, band };
   const f = season === "year"
     ? { adr: 1, revpar: 1 }
     : SEASONS_BY_LOC[location][season];
   const adr = Math.round(cell.adr * f.adr);
   const revpar = cell.revpar * f.revpar;
-  const occupancy = Math.round((revpar / adr) * 100) / 100;
-  const gross = Math.round(revpar * DAYS);
-  const platformFee = Math.round(PLATFORM_FEE * gross);
-  const netRevenue = gross - platformFee;
-  const mgmt = Math.round(netRevenue * MGMT_FEE);
+  const marketOcc = Math.round((revpar / adr) * 1000) / 1000;
+  const antamOcc = Math.round(antamOccupancy(marketOcc) * 1000) / 1000;
   return {
-    supported: true,
-    adr, occupancy, gross, platformFee, netRevenue, mgmt,
-    net: netRevenue - mgmt, guests, band,
+    supported: true, band, adr,
+    market: split(Math.round(revpar * DAYS), marketOcc),
+    antam: split(Math.round(adr * antamOcc * DAYS), antamOcc),
   };
 }
