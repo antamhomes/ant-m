@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Reveal from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { useCalc, type Furn } from "@/contexts/CalcContext";
+import { useCalc } from "@/contexts/CalcContext";
 import { fiveYear, HORIZON_MONTHS as MONTHS } from "@/lib/horizon";
 import { t } from "@/i18n/translations";
 
@@ -26,7 +26,7 @@ const DEFAULT_BOX = { w: 860, h: 360 };
 
 const FiveYearChart = () => {
   const { lang } = useLanguage();
-  const { location, size, furn, setFurn } = useCalc();
+  const { location, size } = useCalc();
   const [hover, setHover] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
@@ -44,7 +44,7 @@ const FiveYearChart = () => {
   const { w: W, h: H } = box;
   const narrow = W < 480;
   const PAD = { t: 16, r: narrow ? 56 : 92, b: 30, l: narrow ? 50 : 64 };
-  const d = useMemo(() => fiveYear(location, size, furn), [location, size, furn]);
+  const d = useMemo(() => fiveYear(location, size), [location, size]);
   if (!d) return null;
 
   const czk = (n: number) => `${Math.round(n).toLocaleString("cs-CZ").replace(/ /g, "\u00a0")}\u00a0Kč`;
@@ -67,11 +67,6 @@ const FiveYearChart = () => {
     const sx = ((e.clientX - r.left) / r.width) * W;
     setHover(Math.max(0, Math.min(MONTHS, Math.round((sx - PAD.l) / ((W - PAD.l - PAD.r) / MONTHS)))));
   };
-  const chip = (active: boolean) =>
-    `px-3 py-1.5 rounded-sm border font-body text-[13px] transition-colors ${
-      active ? "bg-gold/15 text-gold-deep font-semibold border-gold/50"
-             : "bg-card text-muted-foreground border-border hover:border-gold/50"
-    }`;
   const sizeLabel = size.replace("kk", "+kk");
   const locLabel = `Praha ${location.replace("praha", "")}`;
 
@@ -83,13 +78,7 @@ const FiveYearChart = () => {
           {" "}
           <a href="#kalkulacka-zadani" className="underline underline-offset-4 decoration-border hover:text-foreground">{t(lang, "calc_edit")}</a>
         </p>
-        <div className="flex flex-wrap gap-2">
-          {(["airbnb", "najem", "prazdny"] as Furn[]).map((f) => (
-            <button key={f} type="button" onClick={() => setFurn(f)} aria-pressed={furn === f} className={chip(furn === f)}>
-              {t(lang, `hz_furn_${f}` as const)}
-            </button>
-          ))}
-        </div>
+
       </div>
 
       <div className="relative">
@@ -214,7 +203,7 @@ const FiveYearChart = () => {
         ))}
       </div>
       <p className="font-body text-[12px] text-muted-foreground leading-relaxed border-t border-border pt-3">
-        {t(lang, "hz_growth")} {t(lang, "hz_assume_5")}
+        {t(lang, "hz_furnish_note")} {t(lang, "hz_growth")} {t(lang, "hz_assume_5")}
       </p>
     </Reveal>
   );

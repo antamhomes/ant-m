@@ -2,7 +2,7 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from "re
 import { type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
 
 /**
- * Sdílený stav kalkulačky (lokalita, dispozice, sezóna, vybavení).
+ * Sdílený stav kalkulačky (lokalita, dispozice, sezóna).
  * Dva vstupy (patch 142): kapacita jde z dispozice (guestsFor), nájem z typické
  * plochy dispozice v dané čtvrti (typicalArea); plocha není vstup.
  * Čte ho CalculatorSection (měsíční odhad) i HorizonSection (pětiletý graf),
@@ -10,7 +10,6 @@ import { type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
  * a čísla se nemůžou rozejít (audit 28. 8., nález 8).
  */
 export type CalcLoc = LocationKey | "jinde";
-export type Furn = "airbnb" | "najem" | "prazdny";
 
 export const CALC_LOCATIONS: CalcLoc[] = [
   "praha1", "praha2", "praha3", "praha4", "praha5",
@@ -23,7 +22,6 @@ type CalcState = {
   location: CalcLoc; setLocation: (v: CalcLoc) => void;
   size: SizeKey; pickSize: (v: SizeKey) => void;
   season: SeasonKey; setSeason: (v: SeasonKey) => void;
-  furn: Furn; setFurn: (v: Furn) => void;
   /** true, když stránka přišla ze sdíleného odkazu ?byt=… */
   fromShare: boolean;
 };
@@ -50,13 +48,12 @@ export const CalcProvider = ({ children }: { children: ReactNode }) => {
   const [location, setLocation] = useState<CalcLoc>(initial?.location ?? "praha1");
   const [size, setSize] = useState<SizeKey>(size0);
   const [season, setSeason] = useState<SeasonKey>(initial?.season ?? "year");
-  const [furn, setFurn] = useState<Furn>("najem");
   const pickSize = (v: SizeKey) => setSize(v);
 
   const value = useMemo<CalcState>(() => ({
     location, setLocation, size, pickSize,
-    season, setSeason, furn, setFurn, fromShare: initial !== null,
-  }), [location, size, season, furn, initial]);
+    season, setSeason, fromShare: initial !== null,
+  }), [location, size, season, initial]);
 
   return <CalcContext.Provider value={value}>{children}</CalcContext.Provider>;
 };

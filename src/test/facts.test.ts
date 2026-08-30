@@ -450,7 +450,7 @@ describe("model výnosu", () => {
     for (const loc of ["praha1", "praha3", "praha5"] as const)
       for (const size of ["2kk", "3kk"] as const) {
         const r = ownerMonthly(loc, size);
-        const d = fiveYear(loc, size, "airbnb");
+        const d = fiveYear(loc, size);
         if (!r.supported || !d) throw new Error(`${loc} ${size}`);
         // 2. rok (po rozjezdu): měsíční přírůstek = net − energie − obnova
         expect(d.str[24] - d.str[23]).toBeCloseTo((r.mid - d.energy - d.renew) * 1.03, 5);
@@ -460,13 +460,23 @@ describe("model výnosu", () => {
         expect(d.rent).toBe(rentFor(loc, size, typicalArea(loc, size), "furnished"));
         expect(d.lt[12] - d.lt[11]).toBeCloseTo(d.rent, 5);
       }
+    for (const loc of ["praha1", "praha4"] as const) {
+      const d = fiveYear(loc, "2kk");
+      if (!d) throw new Error(loc);
+      expect(d.setup).toBe(LAUNCH_FEE);
+      expect(d.rent).toBe(rentFor(loc, "2kk", typicalArea(loc, "2kk"), "furnished"));
+    }
     // teaser se ukazuje jen pro kladný pětiletý rozdíl
     const calcSrc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
     expect(calcSrc).toContain("d && d.gap > 0 && (");
     const hz = readFileSync("src/components/HorizonSection.tsx", "utf8");
     expect(hz).toContain("d.strMarket");
     expect(hz).toContain("d.strHigh");
-    expect(hz).toContain("fiveYear(location, size, furn)");
+    expect(hz).toContain("fiveYear(location, size)");
+    // graf počítá jen plně vybavený byt: bez přepínače vybavení, start = uvedení do provozu
+    expect(hz).not.toContain("setFurn");
+    expect(strip(cs.hz_furnish_note)).toContain("25 000");
+    expect(strip(vi.hz_furnish_note)).toContain("25 000");
   });
 
   it("byt 302 zůstává nepublikovaný, dokud tržní model dává víc než jeho měření", () => {
@@ -750,9 +760,9 @@ describe("nájem podle plochy (Sreality 8/2026)", () => {
     expect(FURN_RENT.none).toBeLessThan(1);
     expect(FURN_RENT.mix).toBe(1);
     expect(rentFor("praha1", "2kk", 53, "furnished")).toBeGreaterThan(rentFor("praha1", "2kk", 53, "none"));
-    // graf Za 5 let bere vybavenost z přepínače
+    // graf Za 5 let počítá zařízený byt (jediný scénář od 30. 8. 2026)
     const hz = readFileSync("src/lib/horizon.ts", "utf8");
-    expect(hz).toContain('furn === "prazdny" ? "none" : "furnished"');
+    expect(hz).toContain('"furnished"');
   });
 
   it("každý byt v portfoliu má plochu a ta sedí na kartu", () => {

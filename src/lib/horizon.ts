@@ -1,10 +1,10 @@
 import {
   ROOMS, ENERGY, ownerMonthly, rentFor, typicalArea,
-  LAUNCH_FEE, KIT_PER_ROOM, EMPTY_PER_ROOM, RENEW_PER_ROOM_YEAR,
-  YEAR_ONE_RAMP, PROJECT_FEE, PROJECT_FEE_THRESHOLD, RENT_GROWTH, STR_GROWTH,
+  LAUNCH_FEE, RENEW_PER_ROOM_YEAR,
+  YEAR_ONE_RAMP, RENT_GROWTH, STR_GROWTH,
   type LocationKey, type SizeKey,
 } from "@/lib/yield";
-import type { CalcLoc, Furn } from "@/contexts/CalcContext";
+import type { CalcLoc } from "@/contexts/CalcContext";
 
 export const HORIZON_MONTHS = 60;
 
@@ -16,8 +16,13 @@ export const HORIZON_MONTHS = 60;
  * Křivka `str` = střed rozpětí (hlavní číslo kalkulačky), `strMarket` a
  * `strHigh` = spodek (průměr trhu) a vršek (s Antam) téhož rozpětí; všechny
  * z téhož ownerMonthly, stejné energie, obnova i start. Graf kreslí pás.
+ *
+ * Rozhodnutí 30. 8. 2026: graf počítá JEN plně vybavený byt (připravený pro
+ * hosty). Start = uvedení do provozu 25 000 Kč; dovybavení se řeší v propočtu
+ * a v ceníku, přepínač vybavení z grafu zmizel. Nájem pro srovnání je proto
+ * za zařízený byt (Sreality faktor furnished).
  */
-export const fiveYear = (location: CalcLoc, size: SizeKey, furn: Furn) => {
+export const fiveYear = (location: CalcLoc, size: SizeKey) => {
   if (location === "jinde") return null;
   const year = ownerMonthly(location, size);
   if (!year.supported) return null;
@@ -32,17 +37,9 @@ export const fiveYear = (location: CalcLoc, size: SizeKey, furn: Furn) => {
   const m2y = netMarket - energy - renew;
   const h1 = netHigh * YEAR_ONE_RAMP - energy - renew;
   const h2 = netHigh - energy - renew;
-  // Nájem pro srovnání bere vybavenost z téhož přepínače jako náklady na
-  // vybavení: zařízený byt se dlouhodobě pronajme dráž (Sreality, ±10 %).
   const m2 = typicalArea(location, size);
-  const rent = rentFor(location as LocationKey, size, m2,
-    furn === "prazdny" ? "none" : "furnished");
-  const kit =
-    furn === "prazdny" ? EMPTY_PER_ROOM * ROOMS[size]
-    : furn === "najem" ? KIT_PER_ROOM * ROOMS[size]
-    : 0;
-  const projectFee = kit > PROJECT_FEE_THRESHOLD ? Math.round(kit * PROJECT_FEE) : 0;
-  const setup = LAUNCH_FEE + kit + projectFee;
+  const rent = rentFor(location as LocationKey, size, m2, "furnished");
+  const setup = LAUNCH_FEE;
   const lt = [0], str = [-setup], strMarket = [-setup], strHigh = [-setup];
   for (let i = 1; i <= HORIZON_MONTHS; i++) {
     const yr = Math.floor((i - 1) / 12);
@@ -56,7 +53,7 @@ export const fiveYear = (location: CalcLoc, size: SizeKey, furn: Furn) => {
     if (payback === null && str[i] >= 0) payback = i;
     if (cross === null && str[i] >= lt[i]) cross = i;
   }
-  return { lt, str, strMarket, strHigh, rent, m2, y2, net, netMarket, netHigh, guests: year.guests, setup, kit, projectFee, energy, renew, payback, cross, gap: str[HORIZON_MONTHS] - lt[HORIZON_MONTHS] };
+  return { lt, str, strMarket, strHigh, rent, m2, y2, net, netMarket, netHigh, guests: year.guests, setup, energy, renew, payback, cross, gap: str[HORIZON_MONTHS] - lt[HORIZON_MONTHS] };
 };
 
 export type FiveYear = NonNullable<ReturnType<typeof fiveYear>>;

@@ -36,7 +36,7 @@ const CalculatorSection = () => {
     l === "jinde" ? t(lang, "calc_loc_other") : `Praha ${l.replace("praha", "")}`;
   // Stav (lokalita, dispozice, plocha, sezóna, vybavení) žije v CalcContext,
   // aby s ním počítal i pětiletý graf v sekci Horizont.
-  const { location, setLocation, size, pickSize, season, setSeason, furn, fromShare } = useCalc();
+  const { location, setLocation, size, pickSize, season, setSeason, fromShare } = useCalc();
   const [shared, setShared] = useState(false);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const CalculatorSection = () => {
 
   // Pětiletý rozdíl pro teaser; sám graf je v sekci Horizont (#horizont) a
   // počítá ze stejného stavu přes lib/horizon.
-  const d = useMemo(() => fiveYear(location, size, furn), [location, size, furn]);
+  const d = useMemo(() => fiveYear(location, size), [location, size]);
 
   // "mil." / "tis." are Czech; the Vietnamese page counts in "triệu" (million) and "nghìn".
   const short = (n: number) =>
