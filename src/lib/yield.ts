@@ -34,11 +34,27 @@ export type LocationKey =
   | "praha1" | "praha2" | "praha3" | "praha4" | "praha5"
   | "praha6" | "praha7" | "praha8" | "praha9" | "praha10";
 
-/** Pásmo trhu podle počtu ložnic, stejně jako PriceLabs: 1+kk a 2+kk = jedna
- *  ložnice (studio zvlášť trh nevede), 3+kk = dvě, 4+kk a víc = tři a víc. */
+/**
+ * O výdělku rozhoduje, kolik hostů se vejde (rozhodnutí 30. 8. 2026). Majitel
+ * to ale nezadává: kapacita se odvodí z dispozice a plochy tak, jak Antam
+ * byty reálně listuje (ložnice × 2 + rozkládací gauč v obýváku): 1+kk 4,
+ * 2+kk 6, 3+kk 8, 4+kk 10. Každých plných 20 m² nad typickou plochu dispozice
+ * (medián MF) přidá 2 hosty, nejvýš +2. Přesná kapacita se určí při prohlídce.
+ */
+/** Medián výměry nájemního bytu v Praze podle MF, v m². */
+export const MEDIAN_AREA: Record<SizeKey, number> = {
+  "1kk": 35, "2kk": 53, "3kk": 71, "4kk": 88,
+};
+export const BASE_GUESTS: Record<SizeKey, number> = { "1kk": 4, "2kk": 6, "3kk": 8, "4kk": 10 };
+export const guestsFor = (size: SizeKey, m2: number) =>
+  Math.min(BASE_GUESTS[size] + 2, BASE_GUESTS[size] + 2 * Math.floor(Math.max(0, m2 - MEDIAN_AREA[size]) / 20));
+
+/** Pásmo trhu podle kapacity: host na Airbnb filtruje podle počtu osob. Na
+ *  PriceLabs biny podle ložnic to sedí tak, jak Antam listuje (2+kk s gaučem
+ *  = dvě ložnice): do 4 hostů = 1BR, 5 až 8 = 2BR, 9 a víc = 3BR. */
 export type Band = "1BR" | "2BR" | "3BR";
-export const bandFor = (size: SizeKey): Band =>
-  size === "1kk" || size === "2kk" ? "1BR" : size === "3kk" ? "2BR" : "3BR";
+export const bandFor = (guests: number): Band =>
+  guests <= 4 ? "1BR" : guests <= 8 ? "2BR" : "3BR";
 export const BAND_LABEL: Record<Band, { cs: string; vi: string }> = {
   "1BR": { cs: "1 ložnice", vi: "1 phòng ngủ" },
   "2BR": { cs: "2 ložnice", vi: "2 phòng ngủ" },
@@ -166,10 +182,6 @@ export const LTR_PER_M2: Record<LocationKey, number> = {
 export const SIZE_COEF: Record<SizeKey, number> = {
   "1kk": 1.18, "2kk": 1.00, "3kk": 0.90, "4kk": 0.89,
 };
-/** Medián výměry nájemního bytu v Praze podle MF, v m². */
-export const MEDIAN_AREA: Record<SizeKey, number> = {
-  "1kk": 35, "2kk": 53, "3kk": 71, "4kk": 88,
-};
 /**
  * Koeficient Kč/m² podle PLOCHY: lineární interpolace mezi mediány MF
  * (35 m² → 1,18 · 53 → 1,00 · 71 → 0,90 · 88 → 0,89), mimo rozsah
@@ -247,15 +259,6 @@ export const OCCUPANCY_BY_FLAT: {
 /** Vážený průměr naší obsazenosti: 1 240 obsazených nocí z 1 317 dní okna. */
 export const OCCUPANCY_OURS = 94;
 
-/**
- * S jakou plochou počítáme u každé dispozice (rozhodnutí 30. 8. 2026: žádný
- * posuvník, napsat „od – do“ a nájem spočítat pro typickou plochu uprostřed,
- * tj. medián MF). Přesná plocha bytu se řeší v propočtu do 24 hodin.
- */
-export const SIZE_AREA: Record<SizeKey, [number, number]> = {
-  "1kk": [25, 45], "2kk": [43, 63], "3kk": [60, 82], "4kk": [76, 100],
-};
-
 /** Plocha, kterou dispozice předvyplní (medián MF); posuvník ji přepíše. */
 export const SIZE_PRESET: Record<SizeKey, { m2: number }> = {
   "1kk": { m2: MEDIAN_AREA["1kk"] },
@@ -304,7 +307,11 @@ export type OwnerMonthly = {
   antam: Split;
   /** true = pásmo dopočítané z menšího pásma čtvrti × celoměstský poměr */
   derived: boolean;
-} | { supported: false; band: Band };
+  /** s kolika hosty počítáme (guestsFor) */
+  guests: number;
+  /** rozpětí pro majitele: spodek = průměr trhu, vršek = s Antam, střed pro dělení a násobek */
+  low: number; high: number; mid: number;
+} | { supported: false; band: Band; guests: number };
 
 const split = (gross: number, occupancy: number): Split => {
   const platformFee = Math.round(PLATFORM_FEE * gross);
@@ -317,7 +324,10 @@ const split = (gross: number, occupancy: number): Split => {
  * Výnos majitele za měsíc. JEDINÁ funkce na výnos na webu: kalkulačka,
  * pětiletý graf i MCP počítají odsud.
  *
- * Vstup je dispozice (→ pásmo ložnic) a lokalita; plocha do výnosu nevstupuje.
+ * Vstup je lokalita, dispozice a plocha; z dispozice a plochy se odvodí
+ * kapacita (guestsFor) a z ní pásmo trhu (bandFor). Výsledek je ROZPĚTÍ:
+ * spodek = průměr trhu čtvrti, vršek = s Antam; na vlastních bytech leží
+ * skutečnost mezi −5 a +22 % od průměru trhu (test „backtest“).
  * market.gross = tržní RevPAR × sezónní násobek RevPAR × dny (v RevPAR je
  * i tržní obsazenost). antam.gross = tržní ADR × sezónní násobek ADR ×
  * antamOccupancy(tržní obsazenost) × dny. Z hrubého se odečte provize
@@ -331,12 +341,13 @@ const split = (gross: number, occupancy: number): Split => {
 export function ownerMonthly(
   location: string,
   size: SizeKey,
-  { season = "year" as SeasonKey } = {},
+  { season = "year" as SeasonKey, m2 = MEDIAN_AREA[size] } = {},
 ): OwnerMonthly {
-  const band = bandFor(size);
-  if (!isMeasured(location)) return { supported: false, band };
+  const guests = guestsFor(size, m2);
+  const band = bandFor(guests);
+  if (!isMeasured(location)) return { supported: false, band, guests };
   const cell = marketCell(location, band);
-  if (!cell) return { supported: false, band };
+  if (!cell) return { supported: false, band, guests };
   const f = season === "year"
     ? { adr: 1, revpar: 1 }
     : SEASONS_BY_LOC[location][season];
@@ -344,9 +355,10 @@ export function ownerMonthly(
   const revpar = cell.revpar * f.revpar;
   const marketOcc = Math.round((revpar / adr) * 1000) / 1000;
   const antamOcc = Math.round(antamOccupancy(marketOcc) * 1000) / 1000;
+  const market = split(Math.round(revpar * DAYS), marketOcc);
+  const antam = split(Math.round(adr * antamOcc * DAYS), antamOcc);
   return {
-    supported: true, band, adr, derived: cell.derived,
-    market: split(Math.round(revpar * DAYS), marketOcc),
-    antam: split(Math.round(adr * antamOcc * DAYS), antamOcc),
+    supported: true, band, adr, derived: cell.derived, guests, market, antam,
+    low: market.net, high: antam.net, mid: Math.round((market.net + antam.net) / 2),
   };
 }

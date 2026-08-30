@@ -19,7 +19,7 @@ import {
   DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, annualDamageCover, ownerMonthly,
   OCCUPANCY_BY_FLAT, LTR_PER_M2, SIZE_COEF, MEDIAN_AREA, rentFor,
   MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor, antamOccupancy,
-  OCC_UPLIFT, OCC_CAP, marketOccPct, ratioFor, areaCoef, SIZE_PRESET, SIZE_AREA, SIZE_RATIO, marketCell,
+  OCC_UPLIFT, OCC_CAP, marketOccPct, ratioFor, areaCoef, SIZE_PRESET, SIZE_RATIO, marketCell, guestsFor, BASE_GUESTS,
   type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
@@ -30,7 +30,7 @@ const net = (r: ReturnType<typeof ownerMonthly>) => {
   return r.antam.net;
 };
 /** Dispozice, která spadne do daného pásma trhu. */
-const sizeOf = (band: string): SizeKey => band === "1BR" ? "2kk" : band === "2BR" ? "3kk" : "4kk";
+const sizeOf = (band: string): SizeKey => band === "1BR" ? "1kk" : band === "2BR" ? "2kk" : "4kk";
 
 const cs = translations.cs as Record<string, string>;
 const vi = translations.vi as Record<string, string>;
@@ -294,31 +294,57 @@ describe("model výnosu", () => {
     expect(MARKET_STR.praha4["3BR"]).toBeUndefined();
   });
 
-  it("pásmo trhu dává dispozice (ložnice), ne počet hostů: dva vstupy", () => {
-    expect(bandFor("1kk")).toBe("1BR");
-    expect(bandFor("2kk")).toBe("1BR");
-    expect(bandFor("3kk")).toBe("2BR");
-    expect(bandFor("4kk")).toBe("3BR");
-    // předvolba dispozice nese jen plochu, žádné hosty
-    for (const k of ["1kk", "2kk", "3kk", "4kk"] as const) expect(Object.keys(SIZE_PRESET[k])).toEqual(["m2"]);
+  it("kapacitu majitel nezadává: odvodí se z dispozice a plochy a určí pásmo trhu (tři vstupy)", () => {
+    expect(BASE_GUESTS).toEqual({ "1kk": 4, "2kk": 6, "3kk": 8, "4kk": 10 });
+    // typická plocha = základ; každých plných 20 m² navíc +2, nejvýš +2
+    expect(guestsFor("2kk", 53)).toBe(6);
+    expect(guestsFor("2kk", 72)).toBe(6);
+    expect(guestsFor("2kk", 73)).toBe(8);
+    expect(guestsFor("2kk", 100)).toBe(8);
+    expect(guestsFor("1kk", 22)).toBe(4);
+    expect(guestsFor("3kk", 91)).toBe(10);
+    expect(guestsFor("4kk", 140)).toBe(12);
+    expect(bandFor(4)).toBe("1BR");
+    expect(bandFor(5)).toBe("2BR");
+    expect(bandFor(8)).toBe("2BR");
+    expect(bandFor(9)).toBe("3BR");
+    // 2+kk s gaučem = 6 hostů = na Airbnb dvě ložnice (tak Antam listuje AC i zahradu)
+    const r = ownerMonthly("praha3", "2kk");
+    expect(r.supported && r.band).toBe("2BR");
+    expect(r.supported && r.guests).toBe(6);
+    // plocha přidá hosty a tím pásmo: 3+kk 100 m² = 10 hostů = 3BR
+    const big = ownerMonthly("praha1", "3kk", { m2: 100 });
+    expect(big.supported && big.band).toBe("3BR");
     const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
     expect(calc, "posuvník hostů se do kalkulačky nesmí vrátit").not.toContain("calc-guests");
-  });
-
-  it("plocha se nezadává: každá dispozice má rozsah od–do a nájem pro typickou plochu uprostřed", () => {
-    for (const k of ["1kk", "2kk", "3kk", "4kk"] as const) {
-      const [lo, hi] = SIZE_AREA[k];
-      expect(lo).toBeLessThan(MEDIAN_AREA[k]);
-      expect(hi).toBeGreaterThan(MEDIAN_AREA[k]);
-      expect(SIZE_PRESET[k].m2).toBe(MEDIAN_AREA[k]);
-    }
-    const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
-    expect(calc).not.toContain('id="calc-m2"');
-    expect(calc).toContain("SIZE_AREA[size]");
-    expect(calc).toContain("?byt=${location}-${size}-${season}#kalkulacka");
-    for (const k of ["calc_area_range_1", "calc_area_range_4", "calc_derived_note"]) {
+    expect(calc).toContain('id="calc-m2"');
+    expect(calc).toContain("result.r.guests");
+    expect(calc).toContain("?byt=${location}-${size}-${season}-${m2}m#kalkulacka");
+    for (const k of ["calc_guests_1", "calc_guests_2", "calc_range_to", "calc_derived_note"]) {
       expect(strip(cs[k]).length).toBeGreaterThan(0);
       expect(strip(vi[k]).length).toBeGreaterThan(0);
+    }
+  });
+
+  it("výsledek je rozpětí (průměr trhu až s Antam) a publikované karty do něj padají", () => {
+    // Backtest: skutečné karty proti pásmu čtvrti pro jejich kapacitu. Hlídá,
+    // že rozpětí je poctivé: spodek nesmí přestřelit žádnou kartu o víc než
+    // 10 % a vršek nesmí být pod žádnou kartou o víc než 20 %.
+    const cards: [string, SizeKey, number, number, number][] = [
+      ["praha1", "3kk", 52, 64000, 8], // 402
+      ["praha1", "3kk", 52, 57000, 8], // 405
+      ["praha3", "2kk", 55, 50000, 6], // Modern AC
+      ["praha3", "2kk", 60, 42000, 6], // zahrada
+      ["praha5", "1kk", 40, 30000, 4], // Mozart
+    ];
+    for (const [loc, size, m2, owner, guests] of cards) {
+      const r = ownerMonthly(loc, size, { m2 });
+      if (!r.supported) throw new Error(loc);
+      expect(r.guests, `${loc} ${size} ${m2}`).toBe(guests);
+      expect(r.low).toBeLessThanOrEqual(r.mid);
+      expect(r.mid).toBeLessThanOrEqual(r.high);
+      expect(owner / r.low, `${loc} ${size} karta/spodek`).toBeGreaterThan(0.9);
+      expect(owner / r.high, `${loc} ${size} karta/vršek`).toBeGreaterThan(0.8);
     }
   });
 
@@ -409,14 +435,16 @@ describe("model výnosu", () => {
         const d = fiveYear(loc, size, MEDIAN_AREA[size], "airbnb");
         if (!r.supported || !d) throw new Error(`${loc} ${size}`);
         // 2. rok (po rozjezdu): měsíční přírůstek = net − energie − obnova
-        expect(d.str[24] - d.str[23]).toBeCloseTo((r.antam.net - d.energy - d.renew) * 1.03, 5);
-        expect(d.strMarket[24] - d.strMarket[23]).toBeCloseTo((r.market.net - d.energy - d.renew) * 1.03, 5);
+        expect(d.str[24] - d.str[23]).toBeCloseTo((r.mid - d.energy - d.renew) * 1.03, 5);
+        expect(d.strMarket[24] - d.strMarket[23]).toBeCloseTo((r.low - d.energy - d.renew) * 1.03, 5);
+        expect(d.strHigh[24] - d.strHigh[23]).toBeCloseTo((r.high - d.energy - d.renew) * 1.03, 5);
         expect(d.netMarket).toBe(r.market.net);
         expect(d.rent).toBe(rentFor(loc, size));
         expect(d.lt[12] - d.lt[11]).toBeCloseTo(d.rent, 5);
       }
     const hz = readFileSync("src/components/HorizonSection.tsx", "utf8");
     expect(hz).toContain("d.strMarket");
+    expect(hz).toContain("d.strHigh");
     expect(hz).toContain("fiveYear(location, size, m2, furn)");
   });
 
@@ -425,7 +453,7 @@ describe("model výnosu", () => {
     // P1/2BR dává víc (~60 100), takže 302 na web nepatří; jinak by karta
     // podstřelovala benchmark, který stránka sama ukazuje.
     const MEASURED_302 = 54391;
-    const model = net(ownerMonthly("praha1", "3kk")); // 302 má dvě ložnice
+    const model = net(ownerMonthly("praha1", "3kk", { m2: 52 })); // 302: 52 m², 8 hostů
     if (model >= MEASURED_302) {
       const src = readFileSync("src/components/PortfolioSection.tsx", "utf8");
       expect(src, "302 je na webu, ale tržní model ho přeslibuje").not.toContain("302");

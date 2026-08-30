@@ -10,7 +10,15 @@ import { defineTool } from "npm:@lovable.dev/mcp-js@0.26.2";
 import { z } from "npm:zod";
 
 // src/lib/yield.ts
-var bandFor = (size) => size === "1kk" || size === "2kk" ? "1BR" : size === "3kk" ? "2BR" : "3BR";
+var MEDIAN_AREA = {
+  "1kk": 35,
+  "2kk": 53,
+  "3kk": 71,
+  "4kk": 88
+};
+var BASE_GUESTS = { "1kk": 4, "2kk": 6, "3kk": 8, "4kk": 10 };
+var guestsFor = (size, m2) => Math.min(BASE_GUESTS[size] + 2, BASE_GUESTS[size] + 2 * Math.floor(Math.max(0, m2 - MEDIAN_AREA[size]) / 20));
+var bandFor = (guests) => guests <= 4 ? "1BR" : guests <= 8 ? "2BR" : "3BR";
 var isMeasured = (loc) => loc in MARKET_STR;
 var MARKET_STR = {
   praha1: { "1BR": { adr: 2917, revpar: 2207.5, listings: 1675 }, "2BR": { adr: 4507, revpar: 3399.3, listings: 904 }, "3BR": { adr: 6576, revpar: 4924.8, listings: 320 } },
@@ -79,12 +87,6 @@ var SIZE_COEF = {
   "3kk": 0.9,
   "4kk": 0.89
 };
-var MEDIAN_AREA = {
-  "1kk": 35,
-  "2kk": 53,
-  "3kk": 71,
-  "4kk": 88
-};
 var AREA_COEF = [
   [MEDIAN_AREA["1kk"], SIZE_COEF["1kk"]],
   [MEDIAN_AREA["2kk"], SIZE_COEF["2kk"]],
@@ -136,23 +138,30 @@ var split = (gross, occupancy) => {
   const mgmt = Math.round(netRevenue * MGMT_FEE);
   return { occupancy, gross, platformFee, netRevenue, mgmt, net: netRevenue - mgmt };
 };
-function ownerMonthly(location, size, { season = "year" } = {}) {
-  const band = bandFor(size);
-  if (!isMeasured(location)) return { supported: false, band };
+function ownerMonthly(location, size, { season = "year", m2 = MEDIAN_AREA[size] } = {}) {
+  const guests = guestsFor(size, m2);
+  const band = bandFor(guests);
+  if (!isMeasured(location)) return { supported: false, band, guests };
   const cell = marketCell(location, band);
-  if (!cell) return { supported: false, band };
+  if (!cell) return { supported: false, band, guests };
   const f = season === "year" ? { adr: 1, revpar: 1 } : SEASONS_BY_LOC[location][season];
   const adr = Math.round(cell.adr * f.adr);
   const revpar = cell.revpar * f.revpar;
   const marketOcc = Math.round(revpar / adr * 1e3) / 1e3;
   const antamOcc = Math.round(antamOccupancy(marketOcc) * 1e3) / 1e3;
+  const market = split(Math.round(revpar * DAYS), marketOcc);
+  const antam = split(Math.round(adr * antamOcc * DAYS), antamOcc);
   return {
     supported: true,
     band,
     adr,
     derived: cell.derived,
-    market: split(Math.round(revpar * DAYS), marketOcc),
-    antam: split(Math.round(adr * antamOcc * DAYS), antamOcc)
+    guests,
+    market,
+    antam,
+    low: market.net,
+    high: antam.net,
+    mid: Math.round((market.net + antam.net) / 2)
   };
 }
 
@@ -176,8 +185,8 @@ var estimate_yield_default = defineTool({
   description: "Estimate the monthly net income an apartment owner in Prague could earn with Antam Homes short-term rental management, and compare it to long-term rent. Same model and same code as the calculator on the website: realized market prices of the whole district per bedroom count (PriceLabs, 12 closed months), shown twice: at the district's market occupancy and at the occupancy Antam Homes plans with. Districts or sizes with too small a market sample (and Praha 10 for now) get an individual assessment within 24 hours instead of a number.",
   inputSchema: {
     location: z.enum(["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9", "praha10"]).describe("Prague district of the apartment."),
-    size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout (Czech notation). Picks the market band by bedroom count: 1kk and 2kk = one bedroom, 3kk = two, 4kk = three or more. Also presets the floor area (35/53/71/88 m2)."),
-    floorAreaM2: z.number().int().min(18).max(140).optional().describe("Floor area in m2. Overrides the layout preset; drives only the long-term rent comparison."),
+    size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout (Czech notation). Guest capacity is derived from it the way Antam Homes lists flats (bedrooms x 2 + sofa bed): 1kk 4, 2kk 6, 3kk 8, 4kk 10 guests; every full 20 m2 above the typical area (35/53/71/88) adds 2 guests, at most +2. Capacity picks the market band: up to 4 guests = 1BR, 5-8 = 2BR, 9+ = 3BR."),
+    floorAreaM2: z.number().int().min(18).max(140).optional().describe("Floor area in m2. Overrides the layout preset; drives the long-term rent comparison and can add guest capacity."),
     season: z.enum(["year", "summer", "winter", "xmas"]).optional().describe("Season to price for. Defaults to 'year' (yearly average). Seasonal factors come from realized monthly market data of the district; summer (Apr-Oct), winter (Nov-Mar excl. December) and December compose the year exactly.")
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
@@ -186,15 +195,16 @@ var estimate_yield_default = defineTool({
     const sz = size;
     const m2 = floorAreaM2 ?? SIZE_PRESET[sz].m2;
     const seasonKey = season ?? "year";
-    const r = ownerMonthly(location, sz, { season: seasonKey });
+    const r = ownerMonthly(location, sz, { season: seasonKey, m2 });
     const longTermRent = rentFor(location, sz, m2);
+    const guests = guestsFor(sz, m2);
     if (!r.supported) {
-      const reason = isMeasured(location) ? `too few comparable listings in the ${bandFor(sz)} band in ${label}` : `no district market data for ${label} yet`;
+      const reason = isMeasured(location) ? `too few comparable listings in the ${r.band} band in ${label}` : `no district market data for ${label} yet`;
       return {
         content: [
           {
             type: "text",
-            text: `${label}, ${sz} (${m2} m2): no published estimate (${reason}). Antam Homes only shows numbers where the market sample is solid. Send the address and layout and you get an individual calculation for the specific apartment within 24 hours, free and non-binding. For context, the long-term rent benchmark for ${m2} m2 is ~${czk(longTermRent)} CZK/month (Deloitte Rent Index Q2/2026).`
+            text: `${label}, ${sz} (${m2} m2, assumed ${guests} guests): no published estimate (${reason}). Antam Homes only shows numbers where the market sample is solid. Send the address and layout and you get an individual calculation for the specific apartment within 24 hours, free and non-binding. For context, the long-term rent benchmark for ${m2} m2 is ~${czk(longTermRent)} CZK/month (Deloitte Rent Index Q2/2026).`
           }
         ],
         structuredContent: {
@@ -209,7 +219,7 @@ var estimate_yield_default = defineTool({
         }
       };
     }
-    const yearly = ownerMonthly(location, sz);
+    const yearly = ownerMonthly(location, sz, { m2 });
     const yearlyNet = yearly.supported ? yearly.antam.net : r.antam.net;
     const yearlyMarketNet = yearly.supported ? yearly.market.net : r.market.net;
     const result = {
@@ -218,9 +228,12 @@ var estimate_yield_default = defineTool({
       size: sz,
       floorAreaM2: m2,
       supported: true,
-      bedroomBand: r.band,
+      assumedGuests: guests,
+      marketBand: r.band,
+      bandDerivedFromSmallerFlats: r.derived,
       season: seasonKey,
       realizedMarketNightlyRate: r.adr,
+      ownerRangeMonthly: { low: r.low, high: r.high, mid: r.mid },
       marketAverage: {
         occupancyRate: r.market.occupancy,
         grossMonthlyRevenue: r.market.gross,
@@ -251,7 +264,7 @@ var estimate_yield_default = defineTool({
       content: [
         {
           type: "text",
-          text: `${label}, ${sz} (${r.band}, ${m2} m2): realized market rate ${czk(r.adr)} CZK/night. Market average (occupancy ${Math.round(r.market.occupancy * 100)} %): owner nets ~${czk(r.market.net)} CZK/month. With Antam Homes (occupancy ${Math.round(r.antam.occupancy * 100)} %): owner nets ~${czk(r.antam.net)} CZK/month (gross ${czk(r.antam.gross)} CZK, platform commission ${czk(r.antam.platformFee)} CZK, Antam Homes 30 % ${czk(r.antam.mgmt)} CZK). Long-term rent benchmark ~${czk(longTermRent)} CZK/month, roughly ${result.withAntamHomes.multipleVsLongTermRent}x (market average ${result.marketAverage.multipleVsLongTermRent}x).`
+          text: `${label}, ${sz}, ${m2} m2 (assumed ${guests} guests, band ${r.band}${r.derived ? ", derived from smaller flats" : ""}): owner range ~${czk(r.low)} to ${czk(r.high)} CZK/month. Realized market rate ${czk(r.adr)} CZK/night. Market average (occupancy ${Math.round(r.market.occupancy * 100)} %): owner nets ~${czk(r.market.net)} CZK/month. With Antam Homes (occupancy ${Math.round(r.antam.occupancy * 100)} %): owner nets ~${czk(r.antam.net)} CZK/month (gross ${czk(r.antam.gross)} CZK, platform commission ${czk(r.antam.platformFee)} CZK, Antam Homes 30 % ${czk(r.antam.mgmt)} CZK). Long-term rent benchmark ~${czk(longTermRent)} CZK/month, roughly ${result.withAntamHomes.multipleVsLongTermRent}x (market average ${result.marketAverage.multipleVsLongTermRent}x).`
         }
       ],
       structuredContent: result
