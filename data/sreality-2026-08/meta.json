@@ -1,0 +1,37 @@
+{
+ "source": "sreality.cz scrape 30. 8. 2026 (Vuong), 3 429 inzerátů Praha",
+ "filters": "rent_price_quality A/B (čistý base_rent bez poplatků); bez duplicit, short-term, serviced, pokojů, luxusních extrémů, rezervovaných; inzeráty ≤ 60 dnů (ležáky nadsazují ~8 %); dedup podle GPS+plocha+dispozice; 18–160 m², 150–1500 Kč/m²",
+ "n": 1354,
+ "n_by_district": {
+  "praha1": 60,
+  "praha10": 156,
+  "praha2": 95,
+  "praha3": 112,
+  "praha4": 206,
+  "praha5": 273,
+  "praha6": 104,
+  "praha7": 73,
+  "praha8": 119,
+  "praha9": 156
+ },
+ "model": "base_rent(m2, district) = m2 * exp(a_district) * m2^b; furn faktor z přepínače",
+ "slope_b": -0.2565,
+ "intercept_a": {
+  "praha1": 7.301,
+  "praha10": 7.115,
+  "praha2": 7.285,
+  "praha3": 7.238,
+  "praha4": 7.121,
+  "praha5": 7.152,
+  "praha6": 7.161,
+  "praha7": 7.273,
+  "praha8": 7.159,
+  "praha9": 7.154
+ },
+ "furn_factor": {
+  "furnished": 1.114,
+  "partly": 0.99,
+  "none": 0.938
+ },
+ "anchor": "Deloitte Rent Index Q2/2026 (Kč/m² po čtvrtích) drží test v pásmu ±12 %"
+}

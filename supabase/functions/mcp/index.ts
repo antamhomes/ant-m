@@ -69,39 +69,26 @@ var SEASONS_BY_LOC = {
   praha8: { summer: { adr: 1.036, revpar: 1.084 }, winter: { adr: 0.815, revpar: 0.697 }, xmas: { adr: 1.49, revpar: 1.624 } },
   praha9: { summer: { adr: 1.013, revpar: 1.067 }, winter: { adr: 0.922, revpar: 0.784 }, xmas: { adr: 1.219, revpar: 1.393 } }
 };
-var LTR_PER_M2 = {
-  praha1: 490,
-  praha2: 482,
-  praha3: 480,
-  praha4: 443,
-  praha5: 461,
-  praha6: 454,
-  praha7: 493,
-  praha8: 465,
-  praha9: 468,
-  praha10: 442
+var RENT_SLOPE = -0.2565;
+var RENT_INTERCEPT = {
+  praha1: 7.301,
+  praha2: 7.285,
+  praha3: 7.238,
+  praha4: 7.121,
+  praha5: 7.152,
+  praha6: 7.161,
+  praha7: 7.273,
+  praha8: 7.159,
+  praha9: 7.154,
+  praha10: 7.115
 };
-var SIZE_COEF = {
-  "1kk": 1.18,
-  "2kk": 1,
-  "3kk": 0.9,
-  "4kk": 0.89
+var FURN_RENT = {
+  furnished: 1.114,
+  partly: 0.99,
+  none: 0.938,
+  mix: 1
 };
-var AREA_COEF = [
-  [MEDIAN_AREA["1kk"], SIZE_COEF["1kk"]],
-  [MEDIAN_AREA["2kk"], SIZE_COEF["2kk"]],
-  [MEDIAN_AREA["3kk"], SIZE_COEF["3kk"]],
-  [MEDIAN_AREA["4kk"], SIZE_COEF["4kk"]]
-];
-var areaCoef = (m2) => {
-  if (m2 <= AREA_COEF[0][0]) return AREA_COEF[0][1];
-  for (let i = 1; i < AREA_COEF.length; i++) {
-    const [a0, c0] = AREA_COEF[i - 1], [a1, c1] = AREA_COEF[i];
-    if (m2 <= a1) return c0 + (m2 - a0) / (a1 - a0) * (c1 - c0);
-  }
-  return AREA_COEF[AREA_COEF.length - 1][1];
-};
-var rentFor = (loc, size, m2 = MEDIAN_AREA[size]) => Math.round(m2 * LTR_PER_M2[loc] * areaCoef(m2));
+var rentFor = (loc, size, m2 = MEDIAN_AREA[size], furn = "mix") => Math.round(m2 * Math.exp(RENT_INTERCEPT[loc]) * Math.pow(m2, RENT_SLOPE) * FURN_RENT[furn]);
 var locKeyOf = (loc) => {
   const m = /^Praha (\d+)$/.exec(loc);
   return m ? `praha${m[1]}` : null;
@@ -204,7 +191,7 @@ var estimate_yield_default = defineTool({
         content: [
           {
             type: "text",
-            text: `${label}, ${sz} (${m2} m2, assumed ${guests} guests): no published estimate (${reason}). Antam Homes only shows numbers where the market sample is solid. Send the address and layout and you get an individual calculation for the specific apartment within 24 hours, free and non-binding. For context, the long-term rent benchmark for ${m2} m2 is ~${czk(longTermRent)} CZK/month (Deloitte Rent Index Q2/2026).`
+            text: `${label}, ${sz} (${m2} m2, assumed ${guests} guests): no published estimate (${reason}). Antam Homes only shows numbers where the market sample is solid. Send the address and layout and you get an individual calculation for the specific apartment within 24 hours, free and non-binding. For context, the long-term rent benchmark for ${m2} m2 is ~${czk(longTermRent)} CZK/month (median of current Sreality listings, 8/2026).`
           }
         ],
         structuredContent: {
@@ -258,7 +245,7 @@ var estimate_yield_default = defineTool({
       platformCommissionRate: PLATFORM_FEE,
       managementCommissionRate: MGMT_FEE,
       longTermRentBenchmark: longTermRent,
-      note: "Nightly rate = realized market price of the whole district for this bedroom count (PriceLabs STR index, official district boundary, 12 closed months to 7/2026). marketAverage uses the district's market occupancy; withAntamHomes uses the same price at the occupancy Antam Homes plans with (market x 1.15, capped at 85 %). The Antam Homes fee is 30 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Guests pay the cleaning fee separately; it is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included. Long-term rent = Deloitte Rent Index Q2/2026 for the district applied to the floor area (MF price map size gradient)."
+      note: "Nightly rate = realized market price of the whole district for this bedroom count (PriceLabs STR index, official district boundary, 12 closed months to 7/2026). marketAverage uses the district's market occupancy; withAntamHomes uses the same price at the occupancy Antam Homes plans with (market x 1.15, capped at 85 %). The Antam Homes fee is 30 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Guests pay the cleaning fee separately; it is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included. Long-term rent = median of 1 300+ fresh Sreality listings (8/2026) by district and actual floor area, cross-checked against Deloitte Rent Index Q2/2026."
     };
     return {
       content: [

@@ -291,8 +291,11 @@ const CalculatorSection = () => {
                       </p>
                     </div>
 
-                    {/* Teaser s konkrétním pětiletým rozdílem; vede na graf v sekci Horizont. */}
-                    {d && (
+                    {/* Teaser s konkrétním pětiletým rozdílem; vede na graf v sekci
+                        Horizont. Jen když rozdíl vychází kladně: u velkých bytů mimo
+                        centrum může pětiletka po nákladech na vybavení vyjít pod nájmem
+                        a pak teaser nemá co slibovat (graf to ukáže poctivě). */}
+                    {d && d.gap > 0 && (
                       <a href="#horizont" onClick={() => trackEvent("calc_tab_5y", { district: location })}
                         className="flex w-full items-center justify-between gap-3 rounded-sm border border-gold/30 bg-gold/10 px-3.5 py-2.5 text-left font-body text-[13px] text-primary-foreground/90 transition-colors hover:bg-gold/15"
                       >

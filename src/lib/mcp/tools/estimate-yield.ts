@@ -58,7 +58,7 @@ export default defineTool({
         content: [
           {
             type: "text" as const,
-            text: `${label}, ${sz} (${m2} m2, assumed ${guests} guests): no published estimate (${reason}). Antam Homes only shows numbers where the market sample is solid. Send the address and layout and you get an individual calculation for the specific apartment within 24 hours, free and non-binding. For context, the long-term rent benchmark for ${m2} m2 is ~${czk(longTermRent)} CZK/month (Deloitte Rent Index Q2/2026).`,
+            text: `${label}, ${sz} (${m2} m2, assumed ${guests} guests): no published estimate (${reason}). Antam Homes only shows numbers where the market sample is solid. Send the address and layout and you get an individual calculation for the specific apartment within 24 hours, free and non-binding. For context, the long-term rent benchmark for ${m2} m2 is ~${czk(longTermRent)} CZK/month (median of current Sreality listings, 8/2026).`,
           },
         ],
         structuredContent: {
@@ -113,7 +113,7 @@ export default defineTool({
       platformCommissionRate: PLATFORM_FEE,
       managementCommissionRate: MGMT_FEE,
       longTermRentBenchmark: longTermRent,
-      note: "Nightly rate = realized market price of the whole district for this bedroom count (PriceLabs STR index, official district boundary, 12 closed months to 7/2026). marketAverage uses the district's market occupancy; withAntamHomes uses the same price at the occupancy Antam Homes plans with (market x 1.15, capped at 85 %). The Antam Homes fee is 30 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Guests pay the cleaning fee separately; it is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included. Long-term rent = Deloitte Rent Index Q2/2026 for the district applied to the floor area (MF price map size gradient).",
+      note: "Nightly rate = realized market price of the whole district for this bedroom count (PriceLabs STR index, official district boundary, 12 closed months to 7/2026). marketAverage uses the district's market occupancy; withAntamHomes uses the same price at the occupancy Antam Homes plans with (market x 1.15, capped at 85 %). The Antam Homes fee is 30 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Guests pay the cleaning fee separately; it is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included. Long-term rent = median of 1 300+ fresh Sreality listings (8/2026) by district and actual floor area, cross-checked against Deloitte Rent Index Q2/2026.",
     };
 
     return {

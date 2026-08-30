@@ -168,42 +168,31 @@ export const SEASONS_BY_LOC: Record<MeasuredLocation, { summer: SeasonFactor; wi
 export type SeasonKey = "year" | "summer" | "winter" | "xmas";
 
 /**
- * Dlouhodobý nájem. Přestavěno 28. 8. 2026 ze dvou veřejných zdrojů:
- * ÚROVEŇ (Kč/m²/měs) = Deloitte Rent Index Q2/2026 po městských částech
- * (pražský průměr 462 Kč/m²). TVAR = cenová mapa nájemního bydlení MF,
- * vydání 15. 8. 2026: menší byt má vyšší Kč/m².
- * PLOCHA = medián výměr nájemních bytů v Praze podle MF: 35/53/71/88 m².
+ * Dlouhodobý nájem. Přestavěno 30. 8. 2026 na ŽIVÁ TRŽNÍ DATA: 1354
+ * čerstvých pražských inzerátů ze Sreality (scrape 30. 8. 2026, čistý nájem
+ * bez poplatků, bez duplicit, short-term nabídek, pokojů a luxusních extrémů,
+ * jen inzeráty do 60 dnů, protože ležáky nadsazují medián o ~8 %; vyčištěný
+ * dataset a metodika: data/sreality-2026-08/). Deloitte Rent Index Q2/2026
+ * zůstává jako kotva v testu (±12 %), do výpočtu už nevstupuje.
+ *
+ * Tvar: Kč/m² klesá s plochou podle celopražské mocninné křivky (m2^b),
+ * úroveň drží čtvrť (exp(a)). Vybavenost hýbe nájmem o ±10 % (změřeno na
+ * témž vzorku); kalkulačka ukazuje střed trhu, graf Za 5 let bere faktor
+ * podle přepínače vybavení.
  */
-export const LTR_PER_M2: Record<LocationKey, number> = {
-  praha1: 490, praha2: 482, praha3: 480, praha4: 443, praha5: 461,
-  praha6: 454, praha7: 493, praha8: 465, praha9: 468, praha10: 442,
+export const RENT_SLOPE = -0.2565;
+export const RENT_INTERCEPT: Record<LocationKey, number> = {
+  praha1: 7.301, praha2: 7.285, praha3: 7.238, praha4: 7.121, praha5: 7.152,
+  praha6: 7.161, praha7: 7.273, praha8: 7.159, praha9: 7.154, praha10: 7.115,
 };
-/** Násobek Kč/m² podle dispozice, vztaženo k 2+kk (zdroj: cenová mapa MF). */
-export const SIZE_COEF: Record<SizeKey, number> = {
-  "1kk": 1.18, "2kk": 1.00, "3kk": 0.90, "4kk": 0.89,
-};
-/**
- * Koeficient Kč/m² podle PLOCHY: lineární interpolace mezi mediány MF
- * (35 m² → 1,18 · 53 → 1,00 · 71 → 0,90 · 88 → 0,89), mimo rozsah
- * konstantní. Nálepka dispozice o nájmu nerozhoduje: 52 m² se dvěma
- * ložnicemi (byty 402/405) se pronajme jako 52 m², ne jako „3+kk“.
- */
-const AREA_COEF: [number, number][] = [
-  [MEDIAN_AREA["1kk"], SIZE_COEF["1kk"]], [MEDIAN_AREA["2kk"], SIZE_COEF["2kk"]],
-  [MEDIAN_AREA["3kk"], SIZE_COEF["3kk"]], [MEDIAN_AREA["4kk"], SIZE_COEF["4kk"]],
-];
-export const areaCoef = (m2: number) => {
-  if (m2 <= AREA_COEF[0][0]) return AREA_COEF[0][1];
-  for (let i = 1; i < AREA_COEF.length; i++) {
-    const [a0, c0] = AREA_COEF[i - 1], [a1, c1] = AREA_COEF[i];
-    if (m2 <= a1) return c0 + ((m2 - a0) / (a1 - a0)) * (c1 - c0);
-  }
-  return AREA_COEF[AREA_COEF.length - 1][1];
+export type FurnRent = "furnished" | "partly" | "none" | "mix";
+export const FURN_RENT: Record<FurnRent, number> = {
+  furnished: 1.114, partly: 0.99, none: 0.938, mix: 1,
 };
 /** Nájem konkrétní plochy v dané lokalitě. JEDINÁ funkce na nájem na webu.
  *  Dispozice jen dodá výchozí plochu, když m² chybí. */
-export const rentFor = (loc: LocationKey, size: SizeKey, m2 = MEDIAN_AREA[size]) =>
-  Math.round(m2 * LTR_PER_M2[loc] * areaCoef(m2));
+export const rentFor = (loc: LocationKey, size: SizeKey, m2 = MEDIAN_AREA[size], furn: FurnRent = "mix") =>
+  Math.round(m2 * Math.exp(RENT_INTERCEPT[loc]) * Math.pow(m2, RENT_SLOPE) * FURN_RENT[furn]);
 
 /** Lokalita karty („Praha 1“) → klíč nájmu; Mladá Boleslav nájemní data nemá. */
 export const locKeyOf = (loc: string): LocationKey | null => {

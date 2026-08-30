@@ -32,7 +32,10 @@ export const fiveYear = (location: CalcLoc, size: SizeKey, m2: number, furn: Fur
   const m2y = netMarket - energy - renew;
   const h1 = netHigh * YEAR_ONE_RAMP - energy - renew;
   const h2 = netHigh - energy - renew;
-  const rent = rentFor(location as LocationKey, size, m2);
+  // Nájem pro srovnání bere vybavenost z téhož přepínače jako náklady na
+  // vybavení: zařízený byt se dlouhodobě pronajme dráž (Sreality, ±10 %).
+  const rent = rentFor(location as LocationKey, size, m2,
+    furn === "prazdny" ? "none" : "furnished");
   const kit =
     furn === "prazdny" ? EMPTY_PER_ROOM * ROOMS[size]
     : furn === "najem" ? KIT_PER_ROOM * ROOMS[size]

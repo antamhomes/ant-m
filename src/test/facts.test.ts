@@ -17,9 +17,10 @@ import translations from "@/i18n/translations";
 import {
   ENERGY, MGMT_FEE, PLATFORM_FEE, LAUNCH_FEE, ROOMS,
   DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, annualDamageCover, ownerMonthly,
-  OCCUPANCY_BY_FLAT, LTR_PER_M2, SIZE_COEF, MEDIAN_AREA, rentFor,
+  OCCUPANCY_BY_FLAT, MEDIAN_AREA, rentFor,
   MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor, antamOccupancy,
-  OCC_UPLIFT, OCC_CAP, marketOccPct, ratioFor, areaCoef, SIZE_PRESET, SIZE_RATIO, marketCell, guestsFor, BASE_GUESTS,
+  OCC_UPLIFT, OCC_CAP, marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, marketCell, guestsFor, BASE_GUESTS,
+  RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, type LocationKey,
   type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
@@ -439,9 +440,12 @@ describe("model výnosu", () => {
         expect(d.strMarket[24] - d.strMarket[23]).toBeCloseTo((r.low - d.energy - d.renew) * 1.03, 5);
         expect(d.strHigh[24] - d.strHigh[23]).toBeCloseTo((r.high - d.energy - d.renew) * 1.03, 5);
         expect(d.netMarket).toBe(r.market.net);
-        expect(d.rent).toBe(rentFor(loc, size));
+        expect(d.rent).toBe(rentFor(loc, size, MEDIAN_AREA[size], "furnished"));
         expect(d.lt[12] - d.lt[11]).toBeCloseTo(d.rent, 5);
       }
+    // teaser se ukazuje jen pro kladný pětiletý rozdíl
+    const calcSrc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
+    expect(calcSrc).toContain("d && d.gap > 0 && (");
     const hz = readFileSync("src/components/HorizonSection.tsx", "utf8");
     expect(hz).toContain("d.strMarket");
     expect(hz).toContain("d.strHigh");
@@ -460,9 +464,9 @@ describe("model výnosu", () => {
     }
   });
   it("nájem (rentFor) a energie pokrývají všechny čtvrti a dispozice", () => {
-    // Nájemní data (Deloitte + MF) pokrývají celou Prahu, i čtvrti, kde výnos
-    // nepočítáme; jediná funkce na nájem je rentFor.
-    for (const key of Object.keys(LTR_PER_M2) as (keyof typeof LTR_PER_M2)[]) {
+    // Nájemní data (Sreality) pokrývají celou Prahu včetně P10, i čtvrti, kde
+    // výnos nepočítáme; jediná funkce na nájem je rentFor.
+    for (const key of Object.keys(RENT_INTERCEPT) as (keyof typeof RENT_INTERCEPT)[]) {
       for (const size of ["1kk", "2kk", "3kk", "4kk"] as const) {
         expect(rentFor(key, size), `${key}.${size}`).toBeGreaterThan(0);
         expect(ENERGY[size]).toBeGreaterThan(0);
@@ -659,12 +663,12 @@ describe("obsazenost na kartách portfolia", () => {
     expect(mcp).not.toMatch(/vsLongTermRent: \d/);
     expect(mcp).toContain("ratioFor(");
     expect(ratioFor("Mladá Boleslav", 85, 30000)).toBeNull();
-    // 402: 64 000 / (52 m² × 490 × koef(52)) ≈ 2,5
-    expect(ratioFor("Praha 1", 52, 64000)).toBe(2.5);
-    expect(ratioFor("Praha 1", 52, 57000)).toBe(2.2);
-    expect(ratioFor("Praha 3", 55, 50000)).toBe(1.9);
-    expect(ratioFor("Praha 3", 60, 42000)).toBe(1.5);
-    expect(ratioFor("Praha 5", 40, 30000)).toBe(1.4);
+    // 402: 64 000 / rentFor(P1, 52 m²) ≈ 2,3 (Sreality křivka)
+    expect(ratioFor("Praha 1", 52, 64000)).toBe(2.3);
+    expect(ratioFor("Praha 1", 52, 57000)).toBe(2.0);
+    expect(ratioFor("Praha 3", 55, 50000)).toBe(1.8);
+    expect(ratioFor("Praha 3", 60, 42000)).toBe(1.4);
+    expect(ratioFor("Praha 5", 40, 30000)).toBe(1.5);
   });
 
   it("poznámka pod kartami vysvětluje obsazenost i trh po lokalitách", () => {
@@ -684,33 +688,52 @@ describe("obsazenost na kartách portfolia", () => {
    Dispozice sama o sobě nájem neurčuje: 2+kk může mít 45 i 90 m². Nájem proto
    počítáme z Kč/m² (Deloitte) krát plocha krát koeficient dispozice (MF).
    Testy hlídají, že se to nikde nerozejde a že karty používají skutečné plochy. */
-describe("nájem podle plochy", () => {
-  it("menší byt má vyšší nájem za m² a větší byt vyšší nájem celkem", () => {
-    expect(SIZE_COEF["1kk"]).toBeGreaterThan(SIZE_COEF["2kk"]);
-    expect(SIZE_COEF["2kk"]).toBeGreaterThan(SIZE_COEF["3kk"]);
-    for (const loc of Object.keys(LTR_PER_M2) as (keyof typeof LTR_PER_M2)[]) {
-      expect(rentFor(loc, "2kk"), loc).toBeGreaterThan(rentFor(loc, "1kk"));
-      expect(rentFor(loc, "3kk"), loc).toBeGreaterThan(rentFor(loc, "2kk"));
-      expect(rentFor(loc, "4kk"), loc).toBeGreaterThan(rentFor(loc, "3kk"));
+describe("nájem podle plochy (Sreality 8/2026)", () => {
+  const rows = readFileSync("data/sreality-2026-08/rents-clean.csv", "utf8").trim().split("\n").slice(1)
+    .map((l) => { const [district, , area, rent] = l.split(","); return { district, m2: +area, rent: +rent }; });
+
+  it("křivka sedí na vyčištěný dataset: sklon i úroveň čtvrtí se dají zreprodukovat", () => {
+    expect(rows.length).toBeGreaterThan(1200);
+    // úroveň čtvrti = medián log(Kč/m²) − b·log(m²); musí sedět na RENT_INTERCEPT
+    const byD = new Map<string, number[]>();
+    for (const r of rows) {
+      if (!(r.m2 >= 18 && r.rent > 0)) continue;
+      const res = Math.log(r.rent / r.m2) - RENT_SLOPE * Math.log(r.m2);
+      byD.set(r.district, [...(byD.get(r.district) ?? []), res]);
+    }
+    const med = (xs: number[]) => { const a = [...xs].sort((x, y) => x - y); return a.length % 2 ? a[(a.length - 1) / 2] : (a[a.length / 2 - 1] + a[a.length / 2]) / 2; };
+    for (const [d, val] of Object.entries(RENT_INTERCEPT)) {
+      const xs = byD.get(d);
+      expect(xs, d).toBeDefined();
+      expect(xs!.length, d).toBeGreaterThanOrEqual(50);
+      expect(Math.abs(med(xs!) - val), `${d} intercept`).toBeLessThan(0.005);
     }
   });
 
-  it("koeficient Kč/m² jde po ploše: mediány MF sedí přesně, mezi nimi interpolace", () => {
-    for (const k of ["1kk", "2kk", "3kk", "4kk"] as const) expect(areaCoef(MEDIAN_AREA[k])).toBeCloseTo(SIZE_COEF[k], 6);
-    expect(areaCoef(44)).toBeCloseTo(1.09, 6);
-    expect(areaCoef(20)).toBe(SIZE_COEF["1kk"]);
-    expect(areaCoef(140)).toBe(SIZE_COEF["4kk"]);
-    // nálepka dispozice nájem nemění, jen plocha
-    expect(rentFor("praha1", "2kk", 52)).toBe(rentFor("praha1", "3kk", 52));
+  it("Deloitte Rent Index Q2/2026 drží jako kotva: 53 m² v pásmu ±12 %", () => {
+    const DELOITTE: Record<LocationKey, number> = {
+      praha1: 490, praha2: 482, praha3: 480, praha4: 443, praha5: 461,
+      praha6: 454, praha7: 493, praha8: 465, praha9: 468, praha10: 442,
+    };
+    for (const [d, perM2] of Object.entries(DELOITTE) as [LocationKey, number][]) {
+      const ratio = rentFor(d, "2kk", 53) / (53 * perM2);
+      expect(ratio, d).toBeGreaterThan(0.88);
+      expect(ratio, d).toBeLessThan(1.12);
+    }
   });
 
-  it("stejná dispozice s jinou plochou dá jiný nájem", () => {
-    // přesně ten případ, kvůli kterému se to přestavovalo
-    expect(rentFor("praha3", "2kk", 45)).toBeLessThan(rentFor("praha3", "2kk", 90));
-    // 90 m² se pronajímá levněji za m² než 45 m² (koeficient po ploše), takže poměr je pod 2
-    const ratio = rentFor("praha3", "2kk", 90) / rentFor("praha3", "2kk", 45);
-    expect(ratio).toBeGreaterThan(1.5);
-    expect(ratio).toBeLessThan(2);
+  it("menší byt má vyšší nájem za m², větší byt vyšší nájem celkem; vybavenost ±", () => {
+    for (const d of Object.keys(RENT_INTERCEPT) as LocationKey[]) {
+      expect(rentFor(d, "2kk", 45) / 45).toBeGreaterThan(rentFor(d, "2kk", 90) / 90);
+      expect(rentFor(d, "2kk", 45)).toBeLessThan(rentFor(d, "2kk", 90));
+    }
+    expect(FURN_RENT.furnished).toBeGreaterThan(1);
+    expect(FURN_RENT.none).toBeLessThan(1);
+    expect(FURN_RENT.mix).toBe(1);
+    expect(rentFor("praha1", "2kk", 53, "furnished")).toBeGreaterThan(rentFor("praha1", "2kk", 53, "none"));
+    // graf Za 5 let bere vybavenost z přepínače
+    const hz = readFileSync("src/lib/horizon.ts", "utf8");
+    expect(hz).toContain('furn === "prazdny" ? "none" : "furnished"');
   });
 
   it("každý byt v portfoliu má plochu a ta sedí na kartu", () => {
@@ -739,7 +762,7 @@ describe("nájem podle plochy", () => {
       expect(hits, `${f} cituje konkurenta`).toEqual([]);
     }
     const pf = readFileSync("src/components/PortfolioSection.tsx", "utf8");
+    expect(pf).toContain("Sreality");
     expect(pf).toContain("Deloitte");
-    expect(pf).toContain("Ministerstva financí");
   });
 });
