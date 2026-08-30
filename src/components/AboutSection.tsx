@@ -18,7 +18,7 @@ import { t, type TranslationKey } from "@/i18n/translations";
  *  not part of this pass. p3/p5 stay in translations but are not rendered.
  *  Owner testimonials get their place here once real ones exist. */
 const BODY_KEYS: Record<"cs" | "vi", readonly TranslationKey[]> = {
-  cs: ["about_p2", "about_p4", "about_scale"],
+  cs: ["about_p2", "about_p3", "about_p4", "about_p5"],
   vi: ["about_p4", "about_scale"],
 };
 /** Stats with an empty value are skipped: the CZ page dropped the managed-flat
@@ -70,9 +70,16 @@ const AboutSection = () => {
                 );
               })}
               {t(lang, "about_quote") && (
-                <p className="font-display italic text-lg md:text-xl text-foreground/90 leading-relaxed border-l-2 border-gold/60 pl-4">
-                  {t(lang, "about_quote")}
-                </p>
+                <div className="border-l-2 border-gold/60 pl-4">
+                  <p className="font-display italic text-lg md:text-xl text-foreground/90 leading-relaxed">
+                    {t(lang, "about_quote")}
+                  </p>
+                  {t(lang, "about_sign") && (
+                    <p className="mt-3 font-body text-[13px] uppercase tracking-[0.14em] text-muted-foreground">
+                      {t(lang, "about_sign")}
+                    </p>
+                  )}
+                </div>
               )}
             </Reveal>
           </div>

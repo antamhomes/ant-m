@@ -18,7 +18,7 @@ import {
   ENERGY, MGMT_FEE, PLATFORM_FEE, LAUNCH_FEE, ROOMS,
   DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, annualDamageCover, ownerMonthly,
   OCCUPANCY_BY_FLAT, LTR_PER_M2, SIZE_COEF, MEDIAN_AREA, rentFor,
-  MEASURED_ADR, MARKET_OCC, SEASONS_BY_LOC, CALC_OCCUPANCY, isMeasured,
+  MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured,
   type MeasuredLocation,
 } from "@/lib/yield";
 
@@ -266,62 +266,82 @@ describe("výplata a vyúčtování", () => {
 });
 
 describe("model výnosu", () => {
-  it("drží kotvy realizovaného trhu z PriceLabs (29. 8. 2026)", () => {
-    // 12 uzavřených měsíců 8/2025 až 7/2026, market_history comp setů našich
-    // listingů. Když se přeměří, přepočítej MEASURED_ADR i odvozená pásma.
-    expect(MEASURED_ADR.praha1["2BR"]).toBe(3642);
-    expect(MEASURED_ADR.praha3["2BR"]).toBe(2774);
-    expect(MEASURED_ADR.praha4["3BR"]).toBe(3882);
-    expect(MEASURED_ADR.praha5["1BR"]).toBe(2304);
-    expect(CALC_OCCUPANCY).toBe(0.85); // rozhodnutí majitele 29. 8. 2026
+  it("drží tržní data čtvrtí z PriceLabs (30. 8. 2026) a sedí na uložený dataset", () => {
+    // Zdroj pravdy: data/pricelabs-2026-08/*.json (STR index, oficiální
+    // hranice čtvrtí, 8/2025 až 7/2026). Konstanty v yield.ts jsou z nich
+    // vygenerované; tenhle test hlídá, že se nerozejdou.
+    for (const [loc, bands] of Object.entries(MARKET_STR)) {
+      const raw = JSON.parse(readFileSync(`data/pricelabs-2026-08/${loc}.json`, "utf8"));
+      for (const [band, cell] of Object.entries(bands)) {
+        const r = raw[band];
+        expect(cell.adr, `${loc} ${band} adr`).toBe(Math.round(r.annual.adr));
+        const revparMean = r.revpar.reduce((a: number, b: number) => a + b, 0) / 12;
+        expect(Math.abs(cell.revpar - revparMean), `${loc} ${band} revpar`).toBeLessThan(0.06);
+        // obsazenost implikovaná modelem = tržní průměr čtvrti (RevPAR/ADR)
+        expect(cell.revpar / cell.adr).toBeGreaterThan(0.5);
+        expect(cell.revpar / cell.adr).toBeLessThan(0.85);
+        // buňky jen se solidním vzorkem
+        expect(cell.listings, `${loc} ${band} vzorek`).toBeGreaterThanOrEqual(50);
+      }
+    }
+    // tenké buňky zůstávají venku (P3 3BR: 46 nabídek, P9 2BR: 24, P4 3BR: 6)
+    expect(MARKET_STR.praha3["3BR"]).toBeUndefined();
+    expect(MARKET_STR.praha9["2BR"]).toBeUndefined();
+    expect(MARKET_STR.praha4["3BR"]).toBeUndefined();
   });
 
-  it("čtvrti bez vlastních dat žádné číslo nevracejí (nic se neopisuje)", () => {
-    for (const loc of ["praha2", "praha6", "praha7", "praha8", "praha9", "praha10", "jinde"])
+  it("čtvrti a pásma bez dostatečného vzorku žádné číslo nevracejí", () => {
+    // Praha 10 čeká na doplnění dat (rate limit 30. 8.), "jinde" nikdy.
+    for (const loc of ["praha10", "jinde"])
       expect(ownerMonthly(loc, 6).supported, loc).toBe(false);
-    // a nepodložené kapacitní pásmo taky ne (P1 pro 9+ hostů: 6 komp)
-    expect(ownerMonthly("praha1", 10).supported).toBe(false);
+    // změřené čtvrti pro 6 hostů (2BR) číslo mají, kromě P9 (vzorek 24)
+    for (const loc of ["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8"])
+      expect(ownerMonthly(loc, 6).supported, loc).toBe(true);
+    expect(ownerMonthly("praha9", 6).supported).toBe(false);
+    // 3BR jen tam, kde má trh vzorek: P1, P2, P5
+    expect(ownerMonthly("praha1", 10).supported).toBe(true);
+    expect(ownerMonthly("praha2", 10).supported).toBe(true);
+    expect(ownerMonthly("praha5", 10).supported).toBe(true);
     expect(ownerMonthly("praha3", 10).supported).toBe(false);
+    expect(ownerMonthly("praha8", 10).supported).toBe(false);
   });
 
-  it("sezóny každé lokality skládají přesně rok (7 léto + 4 zima + prosinec)", () => {
+  it("sezóny každé čtvrti skládají přesně rok (7 léto + 4 zima + prosinec), ADR i RevPAR", () => {
     for (const loc of Object.keys(SEASONS_BY_LOC) as MeasuredLocation[]) {
       const f = SEASONS_BY_LOC[loc];
-      expect(Math.abs((7 * f.summer + 4 * f.winter + 1 * f.xmas) / 12 - 1), loc).toBeLessThan(0.005);
+      for (const k of ["adr", "revpar"] as const)
+        expect(Math.abs((7 * f.summer[k] + 4 * f.winter[k] + 1 * f.xmas[k]) / 12 - 1), `${loc} ${k}`).toBeLessThan(0.005);
+      // zima nese propad obsazenosti: RevPAR padá hlouběji než ADR
+      expect(f.winter.revpar, loc).toBeLessThan(f.winter.adr);
+      // prosinec je vždy nejsilnější
+      expect(f.xmas.revpar, loc).toBeGreaterThan(f.summer.revpar);
     }
   });
 
-  it("nepřeslibuje: model zůstane pod každým publikovaným bytem", () => {
-    // Pravidlo: veřejné číslo musí vlastní portfolio PŘEKONAT, nikdy ho minout.
-    // Měříme proti tomu, co je na kartách, tedy proti tomu, co si návštěvník
-    // může ověřit. Kalkulačka počítá s 84 % obsazeností, byty jedou 94 %.
-    const published: [string, number, number][] = [
-      ["praha1", 8, 57000],  // 405, nejslabší publikovaný na Praze 1
-      ["praha3", 6, 50000],  // Modern AC
-      ["praha3", 6, 42000],  // byt se zahradou (nejtěsnější: model ~41 700)
-    ];
-    for (const [loc, guests, real] of published)
-      expect(net(ownerMonthly(loc, guests)), `${loc} / ${guests} hostů`).toBeLessThan(real);
+  it("model je čistý tržní benchmark: bez paušálů a bez ručních korekcí", () => {
+    // Rozhodnutí majitele 30. 8. 2026 („kalkulačku přesně, nedívej se na moje
+    // čísla"): model ukazuje průměr trhu čtvrti, ne výkon portfolia. Staré
+    // pravidlo „model pod každou kartou" tím v jednotlivých buňkách padá
+    // (P1/2BR trh ~60 100 vs karta 405 s 57 000); kartu řeší majitel, ne model.
+    // Tenhle test hlídá, že se do modelu nevrátí ruční zásah:
+    for (const [loc, bands] of Object.entries(MARKET_STR))
+      for (const [band, cell] of Object.entries(bands)) {
+        const r = ownerMonthly(loc, band === "1BR" ? 4 : band === "2BR" ? 6 : 10);
+        if (!r.supported) throw new Error(`${loc} ${band} má data, ale model je nevrací`);
+        // gross přesně z tržního RevPAR, žádný jiný vstup
+        expect(r.gross, `${loc} ${band}`).toBe(Math.round(cell.revpar * 30.44));
+      }
   });
 
-  it("Mozart je vědomá výjimka z pravidla, dokud se nezdraží na trh", () => {
-    // Karta Mozartu (Praha 5, 4 hosté) ukazuje 30 000 Kč, model dává víc,
-    // protože Mozart jede ADR ~1 700 Kč proti tržnímu mediánu 2 265 Kč.
-    // Rozhodnutí majitele 28. 8. 2026: řeší se cenou Mozartu, ne modelem.
-    // Až tenhle test spadne (model <= karta), výjimka pominula: smaž ho
-    // a přesuň Mozarta do seznamu `published` výše.
-    expect(net(ownerMonthly("praha5", 4))).toBeGreaterThan(30000);
-  });
-
-  it("byt 302 je na hraně, protože není publikovaný", () => {
-    // 302 (Praha 1, neveřejný) dává majiteli při 30 % už jen 54 391 Kč
-    // (měřených 55 945 při 28 % krát 70/72). Model dává víc. Kdyby se 302
-    // na web přidal, obsazenost v kalkulačce musí dolů. Tenhle test to hlídá.
+  it("byt 302 zůstává nepublikovaný, dokud tržní model dává víc než jeho měření", () => {
+    // 302 (Praha 1, neveřejný) dává majiteli při 30 % 54 391 Kč. Tržní model
+    // P1/2BR dává víc (~60 100), takže 302 na web nepatří; jinak by karta
+    // podstřelovala benchmark, který stránka sama ukazuje.
     const MEASURED_302 = 54391;
     const model = net(ownerMonthly("praha1", "2kk"));
     if (model >= MEASURED_302) {
       const src = readFileSync("src/components/PortfolioSection.tsx", "utf8");
-      expect(src, "302 je na webu, ale model ho přeslibuje").not.toContain("302");
+      expect(src, "302 je na webu, ale tržní model ho přeslibuje").not.toContain("302");
     }
   });
   it("nájem (rentFor) a energie pokrývají všechny čtvrti a dispozice", () => {

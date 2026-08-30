@@ -55,8 +55,9 @@ const CalculatorSection = () => {
   };
 
   // Jediný zdroj výpočtu je lib/yield: realizovaná tržní cena za noc pro
-  // lokalitu a kapacitní pásmo × sezóna × obsazenost 85 %, minus provize
-  // platformy, dělení 70/30. Nájem řídí PLOCHA (rentFor), ne dispozice sama.
+  // lokalitu a kapacitní pásmo × sezóna, na tržním RevPAR čtvrti (v ceně je
+  // i tržní obsazenost), minus provize platformy, dělení 70/30. Nájem řídí
+  // PLOCHA (rentFor), ne dispozice sama.
   const result = useMemo(() => {
     const r = ownerMonthly(location, guests, { season });
     const year = ownerMonthly(location, guests);

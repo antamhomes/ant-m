@@ -11,12 +11,17 @@ import { z } from "npm:zod";
 
 // src/lib/yield.ts
 var bandFor = (guests) => guests <= 4 ? "1BR" : guests <= 8 ? "2BR" : "3BR";
-var isMeasured = (loc) => loc === "praha1" || loc === "praha3" || loc === "praha4" || loc === "praha5";
-var MEASURED_ADR = {
-  praha1: { "1BR": 2678, "2BR": 3642 },
-  praha3: { "1BR": 1949, "2BR": 2774 },
-  praha4: { "1BR": 2047, "2BR": 2687, "3BR": 3882 },
-  praha5: { "1BR": 2304, "2BR": 3062 }
+var isMeasured = (loc) => loc in MARKET_STR;
+var MARKET_STR = {
+  praha1: { "1BR": { adr: 2917, revpar: 2207.5, listings: 1675 }, "2BR": { adr: 4507, revpar: 3399.3, listings: 904 }, "3BR": { adr: 6576, revpar: 4924.8, listings: 320 } },
+  praha2: { "1BR": { adr: 2419, revpar: 1739.9, listings: 920 }, "2BR": { adr: 3748, revpar: 2831.4, listings: 361 }, "3BR": { adr: 5874, revpar: 4278.2, listings: 128 } },
+  praha3: { "1BR": { adr: 2130, revpar: 1568.9, listings: 626 }, "2BR": { adr: 3085, revpar: 2303.5, listings: 179 } },
+  praha4: { "1BR": { adr: 1810, revpar: 1254, listings: 184 }, "2BR": { adr: 2539, revpar: 1697, listings: 69 } },
+  praha5: { "1BR": { adr: 2259, revpar: 1579.7, listings: 452 }, "2BR": { adr: 3378, revpar: 2363.4, listings: 183 }, "3BR": { adr: 5599, revpar: 3710.5, listings: 74 } },
+  praha6: { "1BR": { adr: 1873, revpar: 1286.6, listings: 154 }, "2BR": { adr: 2913, revpar: 1878.9, listings: 83 } },
+  praha7: { "1BR": { adr: 2105, revpar: 1507, listings: 215 }, "2BR": { adr: 3336, revpar: 2087.1, listings: 98 } },
+  praha8: { "1BR": { adr: 2532, revpar: 1902.3, listings: 350 }, "2BR": { adr: 3654, revpar: 2508, listings: 92 } },
+  praha9: { "1BR": { adr: 2065, revpar: 1363.9, listings: 76 } }
 };
 var MARKET_OCC = {
   praha1: 77,
@@ -26,10 +31,15 @@ var MARKET_OCC = {
   mb: 72
 };
 var SEASONS_BY_LOC = {
-  praha1: { summer: 1.049, winter: 0.789, xmas: 1.5 },
-  praha3: { summer: 1.006, winter: 0.906, xmas: 1.33 },
-  praha4: { summer: 1.023, winter: 0.897, xmas: 1.249 },
-  praha5: { summer: 1.039, winter: 0.829, xmas: 1.412 }
+  praha1: { summer: { adr: 1.053, revpar: 1.092 }, winter: { adr: 0.798, revpar: 0.69 }, xmas: { adr: 1.437, revpar: 1.599 } },
+  praha2: { summer: { adr: 1.045, revpar: 1.09 }, winter: { adr: 0.809, revpar: 0.691 }, xmas: { adr: 1.448, revpar: 1.603 } },
+  praha3: { summer: { adr: 1.04, revpar: 1.086 }, winter: { adr: 0.824, revpar: 0.713 }, xmas: { adr: 1.427, revpar: 1.544 } },
+  praha4: { summer: { adr: 1.034, revpar: 1.093 }, winter: { adr: 0.856, revpar: 0.714 }, xmas: { adr: 1.338, revpar: 1.491 } },
+  praha5: { summer: { adr: 1.047, revpar: 1.11 }, winter: { adr: 0.82, revpar: 0.678 }, xmas: { adr: 1.389, revpar: 1.521 } },
+  praha6: { summer: { adr: 1.031, revpar: 1.11 }, winter: { adr: 0.892, revpar: 0.727 }, xmas: { adr: 1.215, revpar: 1.322 } },
+  praha7: { summer: { adr: 1.021, revpar: 1.089 }, winter: { adr: 0.861, revpar: 0.707 }, xmas: { adr: 1.408, revpar: 1.548 } },
+  praha8: { summer: { adr: 1.036, revpar: 1.084 }, winter: { adr: 0.815, revpar: 0.697 }, xmas: { adr: 1.49, revpar: 1.624 } },
+  praha9: { summer: { adr: 1.013, revpar: 1.067 }, winter: { adr: 0.922, revpar: 0.784 }, xmas: { adr: 1.219, revpar: 1.393 } }
 };
 var LTR_PER_M2 = {
   praha1: 490,
@@ -68,7 +78,6 @@ var OCCUPANCY_BY_FLAT = [
   { name: "Klement apartment s\xA0terasou", loc: "Mlad\xE1 Boleslav", kat: "Mlad\xE1 Boleslav", m2: 85, occupancy: 91, market: MARKET_OCC.mb, days: 54 },
   { name: "My Mozart studio", loc: "Praha 5", kat: "Sm\xEDchov", m2: 40, occupancy: 97, market: MARKET_OCC.praha5, days: 113 }
 ];
-var CALC_OCCUPANCY = 0.85;
 var SIZE_PRESET = {
   "1kk": { m2: 35, guests: 4 },
   "2kk": { m2: 53, guests: 6 },
@@ -82,12 +91,13 @@ function ownerMonthly(location, sizeOrGuests, { season = "year" } = {}) {
   const guests = typeof sizeOrGuests === "number" ? sizeOrGuests : SIZE_PRESET[sizeOrGuests].guests;
   const band = bandFor(guests);
   if (!isMeasured(location)) return { supported: false, band, guests };
-  const baseAdr = MEASURED_ADR[location][band];
-  if (!baseAdr) return { supported: false, band, guests };
-  const factor = season === "year" ? 1 : SEASONS_BY_LOC[location][season];
-  const adr = Math.round(baseAdr * factor);
-  const occupancy = CALC_OCCUPANCY;
-  const gross = Math.round(adr * occupancy * DAYS);
+  const cell = MARKET_STR[location][band];
+  if (!cell) return { supported: false, band, guests };
+  const f = season === "year" ? { adr: 1, revpar: 1 } : SEASONS_BY_LOC[location][season];
+  const adr = Math.round(cell.adr * f.adr);
+  const revpar = cell.revpar * f.revpar;
+  const occupancy = Math.round(revpar / adr * 100) / 100;
+  const gross = Math.round(revpar * DAYS);
   const platformFee = Math.round(PLATFORM_FEE * gross);
   const netRevenue = gross - platformFee;
   const mgmt = Math.round(netRevenue * MGMT_FEE);
@@ -172,7 +182,7 @@ var estimate_yield_default = defineTool({
       capacityBand: r.band,
       season: seasonKey,
       averageNightlyRate: r.adr,
-      occupancyRate: CALC_OCCUPANCY,
+      occupancyRate: r.occupancy,
       grossMonthlyRevenue: r.gross,
       platformCommission: r.platformFee,
       platformCommissionRate: PLATFORM_FEE,
@@ -183,13 +193,13 @@ var estimate_yield_default = defineTool({
       netYearlyAverage: yearlyNet * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round(r.net / longTermRent * 10) / 10,
-      note: "Nightly rate = realized prices of comparable listings around Antam Homes apartments in this district (PriceLabs, 12 closed months); occupancy assumed 85 %, which Antam Homes apartments hold or beat (85-97 % vs market 64-78 %). The Antam Homes fee is 30 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Guests pay the cleaning fee separately; it is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included."
+      note: "Nightly rate and occupancy = market data of the whole district per apartment size (PriceLabs STR index, official district boundary, 12 closed months to 7/2026); occupancy is the district market average for that apartment size; apartments under Antam Homes management have been running above their district market (85-97 %). The Antam Homes fee is 30 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Guests pay the cleaning fee separately; it is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included."
     };
     return {
       content: [
         {
           type: "text",
-          text: `${label}, ${sz} (${guests} guests, band ${r.band}): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, platform commission ${result.platformCommission.toLocaleString("cs-CZ")} CZK, realized market ADR ${result.averageNightlyRate} CZK, occupancy 85%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`
+          text: `${label}, ${sz} (${guests} guests, band ${r.band}): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, platform commission ${result.platformCommission.toLocaleString("cs-CZ")} CZK, realized market ADR ${result.averageNightlyRate} CZK, market occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`
         }
       ],
       structuredContent: result

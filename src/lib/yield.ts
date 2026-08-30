@@ -1,23 +1,23 @@
 /**
  * One source of truth for every yield number on the site.
  *
- * Přestavěno 29. 8. 2026 (patch 119): model už nestojí na vlastní tabulce ADR,
- * ale na REALIZOVANÝCH tržních datech z PriceLabs (market_history okolí našich
- * listingů, 12 uzavřených měsíců 8/2025 až 7/2026):
+ * Přestavěno 30. 8. 2026: model stojí na TRŽNÍCH datech celých čtvrtí
+ * (PriceLabs STR index přes MCP market_research, oficiální hranice čtvrtí
+ * z OSM, 12 uzavřených měsíců 8/2025 až 7/2026, surová data v
+ * data/pricelabs-2026-08/). Už žádné comp sety vlastních listingů ani
+ * paušální obsazenost: kalkulačka říká, co dělá průměrný byt dané čtvrti
+ * a velikosti na trhu.
  *
- * ÚROVEŇ ceny za noc = průměr realizovaného tržního ADR srovnatelných bytů
- * v okolí našich listingů v dané lokalitě (ne inzerované ceny).
- * TVAR mezi kapacitními pásmy = poměry nabídkových mediánů podle počtu ložnic
- * (stejný vzor jako nájem: úroveň Deloitte, tvar cenové mapy MF).
- * SEZÓNY = z týchž měsíčních řad; 7×léto + 4×zima + 1×prosinec = 12×rok PŘESNĚ.
+ * ZÁKLAD výpočtu = roční RevPAR čtvrti a pásma (průměr měsíčních RevPAR,
+ * tedy průměr součinů ADR × obsazenost, ne součin průměrů; prosinec táhne).
+ * SEZÓNY = násobky RevPAR i ADR z týchž měsíčních řad, vážené počtem
+ * nabídek přes pásma; 7×léto + 4×zima + 1×prosinec = 12×rok PŘESNĚ.
+ * OBSAZENOST ve výsledku = RevPAR / ADR, tedy tržní průměr čtvrti.
  *
- * Data máme jen tam, kde máme vlastní listingy: Praha 1, 3, 4, 5 (a Mladá
- * Boleslav pro karty). Ostatní čtvrti kalkulačka nepočítá a říká to nahlas
- * (stav „posoudíme individuálně“). Nikdy neopisovat čísla jedné čtvrti do jiné.
- *
- * Pravidlo: vlastní portfolio musí veřejné číslo PŘEKONAT. Při obsazenosti 85 %
- * (rozhodnutí majitele 29. 8. 2026) model zůstává pod kartami P1 i P3; Mozart
- * je známá výjimka řešená cenou Mozartu, hlídá ji test.
+ * Buňku ukazujeme jen při průměrně ≥ 50 aktivních nabídkách a bez anomálií
+ * (P3/P4/P6/P7/P9 mají tenká pásma, viz poznámky v datech). Praha 10 čeká
+ * na doplnění dat (rate limit 30. 8.), do té doby „posoudíme individuálně“.
+ * Nikdy neopisovat čísla jedné čtvrti do jiné.
  */
 
 export type SizeKey = "1kk" | "2kk" | "3kk" | "4kk";
@@ -30,25 +30,31 @@ export type Band = "1BR" | "2BR" | "3BR";
 export const bandFor = (guests: number): Band =>
   guests <= 4 ? "1BR" : guests <= 8 ? "2BR" : "3BR";
 
-/** Lokality, kde máme vlastní listingy, a tedy skutečná tržní data. */
-export type MeasuredLocation = "praha1" | "praha3" | "praha4" | "praha5";
+/** Čtvrti, kde má trh dost velký vzorek na aspoň jedno pásmo. */
+export type MeasuredLocation =
+  | "praha1" | "praha2" | "praha3" | "praha4" | "praha5"
+  | "praha6" | "praha7" | "praha8" | "praha9";
 export const isMeasured = (loc: string): loc is MeasuredLocation =>
-  loc === "praha1" || loc === "praha3" || loc === "praha4" || loc === "praha5";
+  loc in MARKET_STR;
 
 /**
- * Realizované tržní ADR (Kč/noc, roční průměr 8/2025 až 7/2026) po pásmech.
- * Kotvy = market_history comp setů našich listingů (PriceLabs, 29. 8. 2026):
- * P1 2BR 3 642 (402+405), P3 2BR 2 774 (Modern AC + byt se zahradou),
- * P4 1BR 2 047 (SG Studio), P4 3BR 3 882 (SG Loft), P5 1BR 2 304 (Mozart).
- * Dopočtená pásma přes poměry nabídkových mediánů (P1 1BR/2BR 2789/3793 atd.).
- * Chybějící hodnota = vzorek pod ~25 srovnatelných nabídek (P1 3BR: 6 komp,
- * P3 3BR: 13), takové číslo NEukazujeme.
+ * Tržní data čtvrti po pásmech (PriceLabs STR index, 8/2025 až 7/2026,
+ * oficiální hranice čtvrti; zdroj: data/pricelabs-2026-08/*.json).
+ * adr = roční průměr realizovaného ADR (Kč/noc), revpar = průměr měsíčních
+ * RevPAR (Kč/noc na dostupnou noc), listings = průměr aktivních nabídek
+ * (velikost vzorku). Chybějící pásmo = vzorek pod ~50 nabídek nebo anomálie
+ * v řadě, takové číslo NEukazujeme (P1 3BR má 320 nabídek, P9 2BR jen 24).
  */
-export const MEASURED_ADR: Record<MeasuredLocation, Partial<Record<Band, number>>> = {
-  praha1: { "1BR": 2678, "2BR": 3642 },
-  praha3: { "1BR": 1949, "2BR": 2774 },
-  praha4: { "1BR": 2047, "2BR": 2687, "3BR": 3882 },
-  praha5: { "1BR": 2304, "2BR": 3062 },
+export const MARKET_STR: Record<MeasuredLocation, Partial<Record<Band, { adr: number; revpar: number; listings: number }>>> = {
+  praha1: { "1BR": { adr: 2917, revpar: 2207.5, listings: 1675 }, "2BR": { adr: 4507, revpar: 3399.3, listings: 904 }, "3BR": { adr: 6576, revpar: 4924.8, listings: 320 } },
+  praha2: { "1BR": { adr: 2419, revpar: 1739.9, listings: 920 },  "2BR": { adr: 3748, revpar: 2831.4, listings: 361 }, "3BR": { adr: 5874, revpar: 4278.2, listings: 128 } },
+  praha3: { "1BR": { adr: 2130, revpar: 1568.9, listings: 626 },  "2BR": { adr: 3085, revpar: 2303.5, listings: 179 } },
+  praha4: { "1BR": { adr: 1810, revpar: 1254.0, listings: 184 },  "2BR": { adr: 2539, revpar: 1697.0, listings: 69 } },
+  praha5: { "1BR": { adr: 2259, revpar: 1579.7, listings: 452 },  "2BR": { adr: 3378, revpar: 2363.4, listings: 183 }, "3BR": { adr: 5599, revpar: 3710.5, listings: 74 } },
+  praha6: { "1BR": { adr: 1873, revpar: 1286.6, listings: 154 },  "2BR": { adr: 2913, revpar: 1878.9, listings: 83 } },
+  praha7: { "1BR": { adr: 2105, revpar: 1507.0, listings: 215 },  "2BR": { adr: 3336, revpar: 2087.1, listings: 98 } },
+  praha8: { "1BR": { adr: 2532, revpar: 1902.3, listings: 350 },  "2BR": { adr: 3654, revpar: 2508.0, listings: 92 } },
+  praha9: { "1BR": { adr: 2065, revpar: 1363.9, listings: 76 } },
 };
 
 /**
@@ -57,21 +63,30 @@ export const MEASURED_ADR: Record<MeasuredLocation, Partial<Record<Band, number>
  * (77,5 vs 77,2 %) je šum per-listing vzorku, ne vlastnost domu.
  * mb = Mladá Boleslav, jen pro karty portfolia; kalkulačka MB nenabízí.
  */
-export const MARKET_OCC: Record<MeasuredLocation | "mb", number> = {
+export type CardMarketLocation = "praha1" | "praha3" | "praha4" | "praha5";
+export const MARKET_OCC: Record<CardMarketLocation | "mb", number> = {
   praha1: 77, praha3: 73, praha4: 68, praha5: 74, mb: 72,
 };
 
 /**
- * Sezónní násobky ADR z realizovaných měsíčních řad každé lokality.
- * léto = duben až říjen (7 měs.), zima = listopad až březen BEZ prosince
- * (4 měs.), Vánoce = prosinec. Vážený součet dává přesně roční průměr,
- * hlídá to facts.test.ts.
+ * Sezónní násobky ADR a RevPAR z tržních měsíčních řad každé čtvrti,
+ * vážené počtem nabídek přes spolehlivá pásma. léto = duben až říjen
+ * (7 měs.), zima = listopad až březen BEZ prosince (4 měs.), Vánoce =
+ * prosinec. Vážený součet dává přesně roční průměr, hlídá to facts.test.ts.
+ * RevPAR násobek řídí peníze (nese i sezónní obsazenost), ADR násobek
+ * jen zobrazenou cenu za noc.
  */
-export const SEASONS_BY_LOC: Record<MeasuredLocation, { summer: number; winter: number; xmas: number }> = {
-  praha1: { summer: 1.049, winter: 0.789, xmas: 1.500 },
-  praha3: { summer: 1.006, winter: 0.906, xmas: 1.330 },
-  praha4: { summer: 1.023, winter: 0.897, xmas: 1.249 },
-  praha5: { summer: 1.039, winter: 0.829, xmas: 1.412 },
+export type SeasonFactor = { adr: number; revpar: number };
+export const SEASONS_BY_LOC: Record<MeasuredLocation, { summer: SeasonFactor; winter: SeasonFactor; xmas: SeasonFactor }> = {
+  praha1: { summer: { adr: 1.053, revpar: 1.092 }, winter: { adr: 0.798, revpar: 0.690 }, xmas: { adr: 1.437, revpar: 1.599 } },
+  praha2: { summer: { adr: 1.045, revpar: 1.090 }, winter: { adr: 0.809, revpar: 0.691 }, xmas: { adr: 1.448, revpar: 1.603 } },
+  praha3: { summer: { adr: 1.040, revpar: 1.086 }, winter: { adr: 0.824, revpar: 0.713 }, xmas: { adr: 1.427, revpar: 1.544 } },
+  praha4: { summer: { adr: 1.034, revpar: 1.093 }, winter: { adr: 0.856, revpar: 0.714 }, xmas: { adr: 1.338, revpar: 1.491 } },
+  praha5: { summer: { adr: 1.047, revpar: 1.110 }, winter: { adr: 0.820, revpar: 0.678 }, xmas: { adr: 1.389, revpar: 1.521 } },
+  praha6: { summer: { adr: 1.031, revpar: 1.110 }, winter: { adr: 0.892, revpar: 0.727 }, xmas: { adr: 1.215, revpar: 1.322 } },
+  praha7: { summer: { adr: 1.021, revpar: 1.089 }, winter: { adr: 0.861, revpar: 0.707 }, xmas: { adr: 1.408, revpar: 1.548 } },
+  praha8: { summer: { adr: 1.036, revpar: 1.084 }, winter: { adr: 0.815, revpar: 0.697 }, xmas: { adr: 1.490, revpar: 1.624 } },
+  praha9: { summer: { adr: 1.013, revpar: 1.067 }, winter: { adr: 0.922, revpar: 0.784 }, xmas: { adr: 1.219, revpar: 1.393 } },
 };
 export type SeasonKey = "year" | "summer" | "winter" | "xmas";
 
@@ -138,12 +153,11 @@ export const OCCUPANCY_BY_FLAT: {
 export const OCCUPANCY_OURS = 94;
 
 /**
- * Obsazenost, se kterou počítá kalkulačka: 85 % (rozhodnutí majitele
- * 29. 8. 2026). Trh v našich lokalitách jede 64 až 78 %, naše byty 85 až 97 %;
- * 85 % je spodek toho, co spravované byty drží. Věta u výsledku to říká.
- * Mozart (34 636 model vs 30 000 karta) je známá výjimka, hlídá ji test.
+ * Obsazenost v kalkulačce od 30. 8. 2026 NENÍ paušál: každá buňka čtvrť ×
+ * pásmo nese tržní průměr své čtvrti (RevPAR / ADR, viz MARKET_STR), takže
+ * výsledek je obhajitelný benchmark trhu. Že byty v naší správě jedou nad
+ * trhem (85 až 97 %), říkají karty Portfolia, ne kalkulačka.
  */
-export const CALC_OCCUPANCY = 0.85;
 
 /** Kapacita a plocha, kterou dispozice předvyplní. Obojí jde přepsat. */
 export const SIZE_PRESET: Record<SizeKey, { m2: number; guests: number }> = {
@@ -187,13 +201,14 @@ export type OwnerMonthly = {
  * Výnos majitele za měsíc. JEDINÁ funkce na výnos na webu: kalkulačka,
  * záložka Za 5 let i MCP počítají odsud.
  *
- * Realizované tržní ADR lokality a pásma × sezónní násobek té lokality
- * × obsazenost 85 % × dny; z hrubých tržeb se odečte provize platformy
- * (počítá se z celé ceny rezervace včetně úklidu), zbytek se dělí 70/30.
- * DPH z provize neodečítáme, hradí ji Antam ze své odměny. Energie majitel
- * platí zvlášť a nejsou tu.
+ * Tržní RevPAR čtvrti a pásma × sezónní násobek RevPAR té čtvrti × dny
+ * = hrubé tržby; z nich se odečte provize platformy (počítá se z celé ceny
+ * rezervace včetně úklidu), zbytek se dělí 70/30. Zobrazené ADR nese
+ * sezónní násobek ADR a obsazenost je z toho dopočtená (RevPAR / ADR),
+ * takže vždy sedí na tržní průměr čtvrti. DPH z provize neodečítáme,
+ * hradí ji Antam ze své odměny. Energie majitel platí zvlášť a nejsou tu.
  *
- * Když pro lokalitu nebo pásmo data nemáme, vrací { supported: false }
+ * Když pro čtvrť nebo pásmo tržní vzorek nestačí, vrací { supported: false }
  * a web ukáže „posoudíme individuálně“, nikdy cizí číslo.
  */
 export function ownerMonthly(
@@ -206,12 +221,15 @@ export function ownerMonthly(
     : SIZE_PRESET[sizeOrGuests].guests;
   const band = bandFor(guests);
   if (!isMeasured(location)) return { supported: false, band, guests };
-  const baseAdr = MEASURED_ADR[location][band];
-  if (!baseAdr) return { supported: false, band, guests };
-  const factor = season === "year" ? 1 : SEASONS_BY_LOC[location][season];
-  const adr = Math.round(baseAdr * factor);
-  const occupancy = CALC_OCCUPANCY;
-  const gross = Math.round(adr * occupancy * DAYS);
+  const cell = MARKET_STR[location][band];
+  if (!cell) return { supported: false, band, guests };
+  const f = season === "year"
+    ? { adr: 1, revpar: 1 }
+    : SEASONS_BY_LOC[location][season];
+  const adr = Math.round(cell.adr * f.adr);
+  const revpar = cell.revpar * f.revpar;
+  const occupancy = Math.round((revpar / adr) * 100) / 100;
+  const gross = Math.round(revpar * DAYS);
   const platformFee = Math.round(PLATFORM_FEE * gross);
   const netRevenue = gross - platformFee;
   const mgmt = Math.round(netRevenue * MGMT_FEE);

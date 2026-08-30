@@ -2,16 +2,17 @@ import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import {
   ownerMonthly, rentFor, isMeasured, SIZE_PRESET, MGMT_FEE, PLATFORM_FEE,
-  CALC_OCCUPANCY, bandFor,
+  bandFor,
   type LocationKey, type SizeKey, type SeasonKey,
 } from "../../yield";
 
-// Od patche 119 tenhle nástroj NEMÁ vlastní kopii modelu: počítá stejnou
-// funkcí ownerMonthly z lib/yield jako kalkulačka na webu. Úroveň ceny za noc
-// = realizované tržní ADR okolí našich listingů (PriceLabs, 12 měsíců), tvar
-// mezi kapacitními pásmy z nabídkových mediánů, obsazenost 85 %. Lokality bez
-// vlastních dat (Praha 2, 6 až 10) vracejí supported: false a doporučení
-// individuálního posouzení; nikdy číslo jiné čtvrti.
+// Tenhle nástroj NEMÁ vlastní kopii modelu: počítá stejnou funkcí
+// ownerMonthly z lib/yield jako kalkulačka na webu. Od 30. 8. 2026 je základ
+// tržní RevPAR celé čtvrti po pásmech (PriceLabs STR index, oficiální hranice,
+// 12 uzavřených měsíců 8/2025 až 7/2026) a obsazenost je tržní průměr čtvrti
+// (RevPAR / ADR). Čtvrť či pásmo s malým vzorkem (a zatím Praha 10) vrací
+// supported: false a doporučení individuálního posouzení; nikdy číslo jiné
+// čtvrti.
 
 const locations: Record<string, string> = {
   praha1: "Praha 1", praha2: "Praha 2", praha3: "Praha 3", praha4: "Praha 4",
@@ -85,7 +86,7 @@ export default defineTool({
       capacityBand: r.band,
       season: seasonKey,
       averageNightlyRate: r.adr,
-      occupancyRate: CALC_OCCUPANCY,
+      occupancyRate: r.occupancy,
       grossMonthlyRevenue: r.gross,
       platformCommission: r.platformFee,
       platformCommissionRate: PLATFORM_FEE,
@@ -96,14 +97,14 @@ export default defineTool({
       netYearlyAverage: yearlyNet * 12,
       longTermRentBenchmark: longTermRent,
       multipleVsLongTermRent: Math.round((r.net / longTermRent) * 10) / 10,
-      note: "Nightly rate = realized prices of comparable listings around Antam Homes apartments in this district (PriceLabs, 12 closed months); occupancy assumed 85 %, which Antam Homes apartments hold or beat (85-97 % vs market 64-78 %). The Antam Homes fee is 30 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Guests pay the cleaning fee separately; it is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included.",
+      note: "Nightly rate and occupancy = market data of the whole district per apartment size (PriceLabs STR index, official district boundary, 12 closed months to 7/2026); occupancy is the district market average for that apartment size; apartments under Antam Homes management have been running above their district market (85-97 %). The Antam Homes fee is 30 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Guests pay the cleaning fee separately; it is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included.",
     };
 
     return {
       content: [
         {
           type: "text" as const,
-          text: `${label}, ${sz} (${guests} guests, band ${r.band}): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, platform commission ${result.platformCommission.toLocaleString("cs-CZ")} CZK, realized market ADR ${result.averageNightlyRate} CZK, occupancy 85%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`,
+          text: `${label}, ${sz} (${guests} guests, band ${r.band}): net ~${result.netMonthlyIncomeForOwner.toLocaleString("cs-CZ")} CZK/month for the owner (gross ${result.grossMonthlyRevenue.toLocaleString("cs-CZ")} CZK, platform commission ${result.platformCommission.toLocaleString("cs-CZ")} CZK, realized market ADR ${result.averageNightlyRate} CZK, market occupancy ${Math.round(r.occupancy * 100)}%). Long-term rent benchmark ~${longTermRent.toLocaleString("cs-CZ")} CZK, roughly ${result.multipleVsLongTermRent}x.`,
         },
       ],
       structuredContent: result,
