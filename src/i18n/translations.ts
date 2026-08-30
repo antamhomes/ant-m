@@ -114,7 +114,7 @@ const translations = {
     g_pair1_text: "",
     g_pair2_label: "Krytí menších škod",
     g_pair2_text: "Menší škody způsobené hosty řešíme za vás. Pokud je nezískáme zpět od hosta nebo platformy, kryjeme je podle velikosti bytu až\u00a0do 25\u00a0000 Kč ročně.",
-    g_small: "Minimum platí 12 měsíců od prvního hosta. Prvních 14 blokovaných nocí ročně na něj nemá vliv, u dalších se poměrně upraví. Krytí se týká škod způsobených hostem, ne opotřebení a běžných oprav. Podrobnosti určuje smlouva o správě a její příloha.",
+    g_small: "Minimum platí 12 měsíců od prvního hosta. Za prvních 14\u00a0nocí ročně, kdy si byt vezmete pro sebe, platíte jen úklid; minimum se ale poměrně snižuje za každou blokovanou noc. Krytí se týká škod způsobených hostem, ne opotřebení a běžných oprav. Podrobnosti určuje smlouva o správě a její příloha.",
     g_cta: "Spočítat můj byt",
 
 
@@ -215,7 +215,7 @@ const translations = {
     faq16_q: "Kolik je potřeba investovat do přípravy nemovitosti?",
     faq16_a: "Záleží na stavu bytu. Uvedení do provozu stojí 25\u00a0000\u00a0Kč: příprava bytu a nabídek, focení, nastavení cen a spuštění prodeje. Vybavení kupujeme za pořizovací ceny a doložíme doklady; u projektů nad 30\u00a0000\u00a0Kč účtujeme 20\u00a0% z rozpočtu za řízení. U prázdného bytu počítejte orientačně 100\u00a0000\u00a0Kč na pokoj. Vybavení zůstává vaše a seznam s cenami dostanete předem.",
     faq3_q: "Můžu byt někdy využít pro sebe?",
-    faq3_a: "Byt si můžete kdykoli blokovat pro sebe nebo rodinu. U nejvytíženějších svátků se na termínu nejdřív domluvíme. Potvrzené rezervace zůstávají nedotčené. Prvních 14 nocí v roce nemá na garanci vliv, u dalších se garantovaná částka poměrně upraví.",
+    faq3_a: "Byt si můžete kdykoli blokovat pro sebe nebo rodinu. U nejvytíženějších svátků se na termínu nejdřív domluvíme. Potvrzené rezervace zůstávají nedotčené. Prvních 14\u00a0nocí v roce máte bez naší odměny, platíte jen úklid. Garantovaná částka se za blokované noci poměrně snižuje, včetně těchto\u00a014.",
     faq4_q: "Jak budu vědět, co byt vydělává?",
     faq4_a: "Každý měsíc dostanete přehled na jednu stranu: obsazené noci, tržby, provize platforem, naši odměnu 30 % a co jsme v bytě řešili. K tomu fakturu na odměnu. Vyúčtování i peníze máte na účtu do 15. dne následujícího měsíce.",
     faq5_q: "Kolik správa stojí?",
@@ -521,7 +521,7 @@ const translations = {
     g_pair1_text: "",
     g_pair2_label: "Căn nhà",
     g_pair2_text: "Khách làm hỏng lặt vặt thì Antam lo, không đẩy sang chủ nhà. Phần không đòi được bên khách hay bên nền tảng thì Antam chịu, tối đa 25\u00a0000 Kč mỗi năm, tùy nhà to nhỏ. Mức của căn nhà mình, anh chị biết trước khi ký.",
-    g_small: "Mức cam kết tính cho 12 tháng kể từ khách đầu tiên. 14 đêm đầu anh chị giữ nhà trong năm không ảnh hưởng gì, từ đêm sau thì mức cam kết giảm theo tỷ lệ. Phần lo hỏng hóc là hỏng do khách, không phải đồ cũ hỏng hay sửa chữa thông thường. Chi tiết theo hợp đồng quản lý.",
+    g_small: "Mức cam kết tính cho 12 tháng kể từ khách đầu tiên. 14\u00a0đêm đầu trong năm anh chị về ở chỉ trả tiền dọn dẹp, không trả phí Antam; nhưng mức cam kết giảm theo tỷ lệ cho mọi đêm anh chị giữ nhà, kể cả 14\u00a0đêm đó. Phần lo hỏng hóc là hỏng do khách, không phải đồ cũ hỏng hay sửa chữa thông thường. Chi tiết theo hợp đồng quản lý.",
     g_cta: "Nhờ Antam tính miễn phí",
 
     // Assurance (contact)
@@ -621,7 +621,7 @@ const translations = {
     faq16_q: "Chuẩn bị nhà tốn khoảng bao\u00a0nhiêu?",
     faq16_a: "Tùy tình trạng nhà và những gì đã có sẵn. Phí khởi động là 25\u00a0000 Kč: chuẩn bị nhà, chụp ảnh, đăng tin và đặt giá. Đồ đạc Antam mua theo giá gốc, có hóa đơn đầy đủ, không cộng thêm gì; dự án lớn hơn 30\u00a0000 Kč thì Antam nhận 20% chi phí quản lý việc sửa sắm. Nhà trống hoàn toàn thì chủ nhà nên tính khoảng 100 000 Kč cho mỗi phòng. Đồ đạc vẫn là của chủ nhà, và Antam sẽ gửi trước danh sách cần mua gì, hết khoảng bao nhiêu.",
     faq3_q: "Muốn về ở thì sao?",
-    faq3_a: "Tất nhiên. Anh chị có thể giữ căn hộ cho mình bất\u00a0cứ\u00a0lúc\u00a0nào. Riêng các dịp cao điểm như Giáng sinh, giao thừa hay Phục sinh thì mình thống nhất trước với Antam. Những đặt phòng đã\u00a0nhận thì vẫn giữ\u00a0nguyên. 14 đêm đầu trong năm không ảnh hưởng gì đến cam kết, từ đêm sau thì mức cam kết chỉ giảm theo tỷ lệ.",
+    faq3_a: "Tất nhiên. Anh chị có thể giữ căn hộ cho mình bất\\u00a0cứ\\u00a0lúc\\u00a0nào. Riêng các dịp cao điểm như Giáng sinh, giao thừa hay Phục sinh thì mình thống nhất trước với Antam. Những đặt phòng đã\\u00a0nhận thì vẫn giữ\\u00a0nguyên. 14\u00a0đêm đầu trong năm anh chị chỉ trả tiền dọn dẹp, không trả phí Antam. Còn mức cam kết thì giảm theo tỷ lệ cho mọi đêm giữ nhà, kể cả 14\u00a0đêm đó.",
     faq4_q: "Làm sao biết nhà thu được bao nhiêu?",
     faq4_a: "Mỗi tháng Antam gửi một bảng kê gọn một trang: bao nhiêu đêm có khách, tiền phòng, phí nền tảng, phí 30% và Antam đã làm gì trong nhà. Kèm hóa đơn phí nên từng khoản đều rõ ràng. Bảng kê và tiền đều về trước ngày 15 tháng sau.",
     faq5_q: "Phí bao nhiêu?",
