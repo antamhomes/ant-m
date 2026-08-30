@@ -33,18 +33,13 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#sluzby" className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
+                <a href="#portfolio" className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
                   {t(lang, "footer_link_services")}
                 </a>
               </li>
               <li>
                 <a href="#kontakt" className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
                   {t(lang, "footer_link_contact")}
-                </a>
-              </li>
-              <li>
-                <a href="/portal" className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
-                  {t(lang, "footer_link_portal")}
                 </a>
               </li>
             </ul>

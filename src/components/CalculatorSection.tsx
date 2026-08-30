@@ -246,25 +246,12 @@ const CalculatorSection = () => {
                           {t(lang, "calc_derived_note")}
                         </p>
                       )}
-                      {/* Reálná tržní cena: stejná data, bez naší obsazenosti. Kdo si
-                          to ověří v PriceLabs nebo AirDNA, najde tahle čísla. */}
-                      <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 rounded-sm border border-primary-foreground/15 bg-primary-foreground/[0.05] px-3.5 py-3 font-body tnum">
-                        <div className="col-span-2 flex items-baseline justify-between gap-3">
-                          <dt className="text-[11px] uppercase tracking-[0.14em] text-primary-foreground/65">{t(lang, "calc_market_label")}</dt>
-                          <dd className="text-[11px] text-primary-foreground/50">{BAND_LABEL[result.r.band][lang]} · PriceLabs</dd>
-                        </div>
-                        <div>
-                          <dt className="text-[12px] text-primary-foreground/65 leading-snug">{t(lang, "calc_market_adr")}</dt>
-                          <dd className="font-display text-lg font-semibold text-primary-foreground/90">{result.r.adr.toLocaleString("cs-CZ")}&nbsp;Kč</dd>
-                        </div>
-                        <div>
-                          <dt className="text-[12px] text-primary-foreground/65 leading-snug">{t(lang, "calc_market_occ")}</dt>
-                          <dd className="font-display text-lg font-semibold text-primary-foreground/90">
-                            {Math.round(result.r.market.occupancy * 100)}{lang === "cs" ? "\u00a0%" : "%"}
-                            <span className="font-body text-[12px] font-normal text-primary-foreground/60"> → {t(lang, "calc_antam_occ")} {Math.round(result.r.antam.occupancy * 100)}{lang === "cs" ? "\u00a0%" : "%"}</span>
-                          </dd>
-                        </div>
-                      </dl>
+                      {/* Reálná cena za noc: jeden tichý řádek, ověřitelný proti
+                          PriceLabs/AirDNA. Obsazenost nese rozpětí a rozklik metodiky
+                          (box s „75 % → s námi 85 %“ zrušen 30. 8. 2026: cringe). */}
+                      <p className="mt-3 font-body text-[13px] text-primary-foreground/70 tnum">
+                        {t(lang, "calc_market_line")} ({BAND_LABEL[result.r.band][lang]}): {result.r.adr.toLocaleString("cs-CZ")}&nbsp;Kč&nbsp;·&nbsp;PriceLabs
+                      </p>
                       <p className="md:hidden mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
                         <span>{locLabel(location)}</span>
                         <span aria-hidden="true">·</span>

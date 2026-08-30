@@ -9,36 +9,31 @@ type Group = { title: TranslationKey; items: Item[] };
 
 // Grouped by what the owner is actually asking about. Order inside a group =
 // how often the question comes up.
+// Osm otázek, které jsou skutečné námitky investora (rozhodnutí 30. 8. 2026);
+// zbytek (jak fotíme, platformy, proč ne sám…) z webu zmizel, odpovědi na ně
+// nese schůzka a MCP. Klíče v translations zůstávají.
 const groups: Group[] = [
   {
     title: "faq_group_money",
     items: [
       { q: "faq18_q", a: "faq18_a" }, // garance výnosu
-      { q: "faq17_q", a: "faq17_a" }, // proč 30 %, když jinde 15 nebo 20 (hned za garancí)
-      { q: "faq5_q", a: "faq5_a" },   // kolik to stojí
-      { q: "faq9_q", a: "faq9_a" },   // před / po provizi
-      { q: "faq4_q", a: "faq4_a" },   // přehled + vyúčtování
+      { q: "faq4_q", a: "faq4_a" },   // přehled + vyúčtování (kdy chodí peníze)
       { q: "faq6_q", a: "faq6_a" },   // úklid a energie
     ],
   },
   {
     title: "faq_group_flat",
     items: [
-      { q: "faq1_q", a: "faq1_a" },   // musí být připravený
-      { q: "faq16_q", a: "faq16_a" }, // kolik stojí příprava
       { q: "faq11_q", a: "faq11_a" }, // škody
       { q: "faq12_q", a: "faq12_a" }, // sousedé / SVJ
-      { q: "faq10_q", a: "faq10_a" }, // povinnosti
+      { q: "faq10_q", a: "faq10_a" }, // povinnosti a daně
     ],
   },
   {
     title: "faq_group_coop",
     items: [
-      { q: "faq14_q", a: "faq14_a" }, // proč ne sám
-      { q: "faq15_q", a: "faq15_a" }, // jiné platformy / firmy
-      { q: "faq3_q", a: "faq3_a" },   // pro sebe
+      { q: "faq3_q", a: "faq3_a" },   // byt pro sebe
       { q: "faq7_q", a: "faq7_a" },   // doba / výpověď
-      { q: "faq13_q", a: "faq13_a" }, // pro koho ne
     ],
   },
 ];

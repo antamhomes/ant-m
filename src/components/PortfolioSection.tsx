@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MapPin, Users, Ruler, Sparkles, ChevronDown } from "lucide-react";
 import Reveal, { stagger } from "@/components/Reveal";
+import ReviewsBlock from "@/components/ReviewsBlock";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MARKET_OCC, ratioFor } from "@/lib/yield";
 import byt1 from "@/assets/byt-1.jpg.asset.json";
@@ -273,6 +274,12 @@ const PortfolioSection = () => {
               {c.statNote(STATS_ASOF[lang])}
             </p>
           </details>
+        </Reveal>
+
+        {/* Recenze hostů se přestěhovaly ze zrušené sekce Služby (patch 144):
+            social proof patří k výsledkům. */}
+        <Reveal delay={0.08} className="mt-10 sm:mt-12 border-t border-gold/15 pt-2">
+          <ReviewsBlock />
         </Reveal>
 
       </div>
