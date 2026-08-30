@@ -23,11 +23,24 @@ var MARKET_STR = {
   praha8: { "1BR": { adr: 2532, revpar: 1902.3, listings: 350 }, "2BR": { adr: 3654, revpar: 2508, listings: 92 } },
   praha9: { "1BR": { adr: 2065, revpar: 1363.9, listings: 76 } }
 };
+var SIZE_RATIO = {
+  "2BR/1BR": { adr: 1.525, revpar: 1.517 },
+  "3BR/2BR": { adr: 1.514, revpar: 1.481 }
+};
+var marketCell = (loc, band) => {
+  const own = MARKET_STR[loc][band];
+  if (own) return { ...own, derived: false };
+  if (band === "1BR") return null;
+  const lower = marketCell(loc, band === "3BR" ? "2BR" : "1BR");
+  if (!lower) return null;
+  const k = band === "3BR" ? SIZE_RATIO["3BR/2BR"] : SIZE_RATIO["2BR/1BR"];
+  return { adr: Math.round(lower.adr * k.adr), revpar: lower.revpar * k.revpar, listings: lower.listings, derived: true };
+};
 var OCC_UPLIFT = 1.15;
 var OCC_CAP = 0.85;
 var antamOccupancy = (marketOcc) => Math.max(marketOcc, Math.min(OCC_CAP, marketOcc * OCC_UPLIFT));
 var marketOccPct = (loc, band) => {
-  const cell = MARKET_STR[loc][band];
+  const cell = marketCell(loc, band);
   return cell ? Math.round(cell.revpar / cell.adr * 100) : null;
 };
 var MARKET_OCC = {
@@ -126,7 +139,7 @@ var split = (gross, occupancy) => {
 function ownerMonthly(location, size, { season = "year" } = {}) {
   const band = bandFor(size);
   if (!isMeasured(location)) return { supported: false, band };
-  const cell = MARKET_STR[location][band];
+  const cell = marketCell(location, band);
   if (!cell) return { supported: false, band };
   const f = season === "year" ? { adr: 1, revpar: 1 } : SEASONS_BY_LOC[location][season];
   const adr = Math.round(cell.adr * f.adr);
@@ -137,6 +150,7 @@ function ownerMonthly(location, size, { season = "year" } = {}) {
     supported: true,
     band,
     adr,
+    derived: cell.derived,
     market: split(Math.round(revpar * DAYS), marketOcc),
     antam: split(Math.round(adr * antamOcc * DAYS), antamOcc)
   };

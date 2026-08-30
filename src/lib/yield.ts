@@ -73,6 +73,29 @@ export const MARKET_STR: Record<MeasuredLocation, Partial<Record<Band, { adr: nu
 };
 
 /**
+ * Celoměstský poměr mezi pásmy (PriceLabs, tytéž řady, vážený počtem nabídek
+ * přes čtvrti se solidním vzorkem obou pásem): o ložnici víc = ×1,5 na ceně
+ * za noc i na RevPAR. Z toho se dopočítá pásmo, kde má čtvrť málo nabídek
+ * (P3/P4/P6/P7/P8 3BR, P9 2BR a 3BR); takové číslo nese derived: true a web
+ * to u něj napíše. Rozhodnutí 30. 8. 2026 („proč jen 2?“): odvozuje se
+ * z nejbližšího spolehlivého pásma, krok po kroku. Hlídá facts.test.ts.
+ */
+export const SIZE_RATIO = {
+  "2BR/1BR": { adr: 1.525, revpar: 1.517 },
+  "3BR/2BR": { adr: 1.514, revpar: 1.481 },
+} as const;
+export type MarketCell = { adr: number; revpar: number; listings: number; derived: boolean };
+export const marketCell = (loc: MeasuredLocation, band: Band): MarketCell | null => {
+  const own = MARKET_STR[loc][band];
+  if (own) return { ...own, derived: false };
+  if (band === "1BR") return null;
+  const lower = marketCell(loc, band === "3BR" ? "2BR" : "1BR");
+  if (!lower) return null;
+  const k = band === "3BR" ? SIZE_RATIO["3BR/2BR"] : SIZE_RATIO["2BR/1BR"];
+  return { adr: Math.round(lower.adr * k.adr), revpar: lower.revpar * k.revpar, listings: lower.listings, derived: true };
+};
+
+/**
  * Obsazenost, se kterou počítá číslo „s Antam Homes“: tržní obsazenost
  * čtvrti × OCC_UPLIFT, nejvýš OCC_CAP, nikdy pod trhem (v prosinci může trh
  * sám být nad stropem). Byty v naší správě měří 85 až 97 % proti trhu své
@@ -86,7 +109,7 @@ export const antamOccupancy = (marketOcc: number) =>
 /** Tržní obsazenost čtvrti a pásma v procentech (RevPAR / ADR z MARKET_STR),
  *  totéž číslo, které kalkulačka ukazuje jako „obsazenost okolí“. */
 export const marketOccPct = (loc: MeasuredLocation, band: Band): number | null => {
-  const cell = MARKET_STR[loc][band];
+  const cell = marketCell(loc, band);
   return cell ? Math.round((cell.revpar / cell.adr) * 100) : null;
 };
 
@@ -225,19 +248,12 @@ export const OCCUPANCY_BY_FLAT: {
 export const OCCUPANCY_OURS = 94;
 
 /**
- * Pásmo plochy, ve kterém dispozice ještě dává smysl (s překryvy, aby posuvník
- * nepřeskakoval tam a zpět). Když plocha z pásma vyjede, kalkulačka dispozici
- * přepne (rozhodnutí 30. 8. 2026: „plocha přepíná ložnice“), takže se s
- * plochou hne i cena za noc, ale jen tam, kde to trh opravdu měří (ložnice).
+ * S jakou plochou počítáme u každé dispozice (rozhodnutí 30. 8. 2026: žádný
+ * posuvník, napsat „od – do“ a nájem spočítat pro typickou plochu uprostřed,
+ * tj. medián MF). Přesná plocha bytu se řeší v propočtu do 24 hodin.
  */
 export const SIZE_AREA: Record<SizeKey, [number, number]> = {
-  "1kk": [18, 45], "2kk": [35, 62], "3kk": [50, 82], "4kk": [70, 140],
-};
-export const sizeForArea = (m2: number, current: SizeKey): SizeKey => {
-  const [lo, hi] = SIZE_AREA[current];
-  if (m2 >= lo && m2 <= hi) return current;
-  if (m2 < lo) return current === "4kk" ? sizeForArea(m2, "3kk") : current === "3kk" ? sizeForArea(m2, "2kk") : "1kk";
-  return current === "1kk" ? sizeForArea(m2, "2kk") : current === "2kk" ? sizeForArea(m2, "3kk") : "4kk";
+  "1kk": [25, 45], "2kk": [43, 63], "3kk": [60, 82], "4kk": [76, 100],
 };
 
 /** Plocha, kterou dispozice předvyplní (medián MF); posuvník ji přepíše. */
@@ -286,6 +302,8 @@ export type OwnerMonthly = {
   market: Split;
   /** s Antam Homes: táž cena × antamOccupancy(tržní obsazenost) */
   antam: Split;
+  /** true = pásmo dopočítané z menšího pásma čtvrti × celoměstský poměr */
+  derived: boolean;
 } | { supported: false; band: Band };
 
 const split = (gross: number, occupancy: number): Split => {
@@ -317,7 +335,7 @@ export function ownerMonthly(
 ): OwnerMonthly {
   const band = bandFor(size);
   if (!isMeasured(location)) return { supported: false, band };
-  const cell = MARKET_STR[location][band];
+  const cell = marketCell(location, band);
   if (!cell) return { supported: false, band };
   const f = season === "year"
     ? { adr: 1, revpar: 1 }
@@ -327,7 +345,7 @@ export function ownerMonthly(
   const marketOcc = Math.round((revpar / adr) * 1000) / 1000;
   const antamOcc = Math.round(antamOccupancy(marketOcc) * 1000) / 1000;
   return {
-    supported: true, band, adr,
+    supported: true, band, adr, derived: cell.derived,
     market: split(Math.round(revpar * DAYS), marketOcc),
     antam: split(Math.round(adr * antamOcc * DAYS), antamOcc),
   };

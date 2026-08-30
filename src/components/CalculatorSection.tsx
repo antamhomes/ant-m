@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import Reveal from "@/components/Reveal";
-import { Calculator, MapPin, Home, Ruler, Share2, Pencil, ChevronRight } from "lucide-react";
+import { Calculator, MapPin, Home, Share2, Pencil, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
-import { ROOMS, BAND_LABEL, annualDamageCover, ownerMonthly, rentFor, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
+import { ROOMS, BAND_LABEL, SIZE_AREA, annualDamageCover, ownerMonthly, rentFor, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
 import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/CalcContext";
 
@@ -12,8 +12,10 @@ import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/C
  *  (P2, P6 až P10) a u „jinde" se panel výsledku přepne na posouzení
  *  do 24 hodin; ŽÁDNÉ číslo se neukazuje a nic se neopisuje z jiné čtvrti. */
 
-// Tři vstupy (patch 127): lokalita, dispozice, plocha. Dispozice určuje pásmo
-// trhu (počet ložnic, jako PriceLabs) a energie/obnovu; plocha jen nájem.
+// Dva vstupy (patch 139): lokalita, dispozice. Dispozice určuje pásmo trhu
+// (počet ložnic, jako PriceLabs), energie a obnovu; plocha je typická plocha
+// dispozice, vypsaná jako „od – do“, nájem pro střed. Přesná plocha bytu
+// patří do propočtu do 24 hodin, ne do posuvníku.
 const sizes: { value: SizeKey; label: string }[] = [
   { value: "1kk", label: "1+kk" },
   { value: "2kk", label: "2+kk" },
@@ -32,7 +34,7 @@ const CalculatorSection = () => {
     l === "jinde" ? t(lang, "calc_loc_other") : `Praha ${l.replace("praha", "")}`;
   // Stav (lokalita, dispozice, plocha, sezóna, vybavení) žije v CalcContext,
   // aby s ním počítal i pětiletý graf v sekci Horizont.
-  const { location, setLocation, size, pickSize, m2, setM2, season, setSeason, furn, fromShare } = useCalc();
+  const { location, setLocation, size, pickSize, m2, season, setSeason, furn, fromShare } = useCalc();
   const [shared, setShared] = useState(false);
 
   useEffect(() => {
@@ -40,7 +42,7 @@ const CalculatorSection = () => {
   }, [fromShare]);
 
   const shareResult = async () => {
-    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${size}-${season}-${m2}m#kalkulacka`;
+    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${size}-${season}#kalkulacka`;
     trackEvent("calc_share", { district: location, size, season });
     try {
       if (navigator.share) { await navigator.share({ title: "Antam Homes", url }); return; }
@@ -142,19 +144,10 @@ const CalculatorSection = () => {
                   </button>
                 ))}
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-6">
-              <div>
-                <label htmlFor="calc-m2" className="flex items-baseline justify-between gap-3 font-body text-sm font-semibold text-foreground mb-2">
-                  <span className="flex items-center gap-2"><Ruler className="w-4 h-4 text-gold" />{t(lang, "calc_area")}</span>
-                  <span className="font-display text-lg text-gold-deep tnum">{m2}&nbsp;m²</span>
-                </label>
-                <input id="calc-m2" type="range" min={18} max={140} step={1} value={m2}
-                  onChange={(e) => setM2(+e.target.value)}
-                  className="w-full accent-[hsl(var(--gold))]" />
-                <p className="mt-1.5 font-body text-[12.5px] text-muted-foreground leading-snug">{t(lang, "calc_area_hint")}</p>
-              </div>
+              {/* S jakou plochou počítáme: od – do, nájem pro typickou plochu uprostřed. */}
+              <p className="mt-3 font-body text-[12.5px] text-muted-foreground leading-snug tnum">
+                {t(lang, "calc_area_range_1")} {SIZE_AREA[size][0]} {t(lang, "calc_area_range_2")} {SIZE_AREA[size][1]}&nbsp;m², {t(lang, "calc_area_range_3")} {m2}&nbsp;m². {t(lang, "calc_area_range_4")}
+              </p>
             </div>
 
             {/* Rok je výchozí rozhodnutí; sezónu si rozklikne, kdo ji chce. */}
@@ -247,6 +240,11 @@ const CalculatorSection = () => {
                       <p className="mt-2 font-body text-[13px] text-primary-foreground/75 leading-relaxed">
                         {t(lang, "calc_basis")}
                       </p>
+                      {result.r.derived && (
+                        <p className="mt-1.5 font-body text-[12px] text-primary-foreground/60 leading-relaxed">
+                          {t(lang, "calc_derived_note")}
+                        </p>
+                      )}
                       {/* Reálná tržní cena: stejná data, bez naší obsazenosti. Kdo si
                           to ověří v PriceLabs nebo AirDNA, najde tahle čísla. */}
                       <dl className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 rounded-sm border border-primary-foreground/15 bg-primary-foreground/[0.05] px-3.5 py-3 font-body tnum">
@@ -319,7 +317,8 @@ const CalculatorSection = () => {
                         {t(lang, "calc_ltr")}
                       </p>
                       <p className="font-display text-xl font-semibold text-primary-foreground/60 tnum">
-                        ~{(Math.round(result.ltr / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
+                        ~{(Math.round(result.ltr / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
+                        <span className="font-body text-[12px] font-normal text-primary-foreground/50">{t(lang, "calc_ltr_for")} {m2}&nbsp;m²</span>
                       </p>
                       {result.ratio > 0 && (
                         <p className="font-body text-[13px] text-primary-foreground/85 mt-2">

@@ -19,7 +19,7 @@ import {
   DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, annualDamageCover, ownerMonthly,
   OCCUPANCY_BY_FLAT, LTR_PER_M2, SIZE_COEF, MEDIAN_AREA, rentFor,
   MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor, antamOccupancy,
-  OCC_UPLIFT, OCC_CAP, marketOccPct, ratioFor, areaCoef, SIZE_PRESET, SIZE_AREA, sizeForArea,
+  OCC_UPLIFT, OCC_CAP, marketOccPct, ratioFor, areaCoef, SIZE_PRESET, SIZE_AREA, SIZE_RATIO, marketCell,
   type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
@@ -294,7 +294,7 @@ describe("model výnosu", () => {
     expect(MARKET_STR.praha4["3BR"]).toBeUndefined();
   });
 
-  it("pásmo trhu dává dispozice (ložnice), ne počet hostů: tři vstupy", () => {
+  it("pásmo trhu dává dispozice (ložnice), ne počet hostů: dva vstupy", () => {
     expect(bandFor("1kk")).toBe("1BR");
     expect(bandFor("2kk")).toBe("1BR");
     expect(bandFor("3kk")).toBe("2BR");
@@ -303,43 +303,62 @@ describe("model výnosu", () => {
     for (const k of ["1kk", "2kk", "3kk", "4kk"] as const) expect(Object.keys(SIZE_PRESET[k])).toEqual(["m2"]);
     const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
     expect(calc, "posuvník hostů se do kalkulačky nesmí vrátit").not.toContain("calc-guests");
-    expect(calc).toContain('id="calc-m2"');
-    // sdílený odkaz bez hostů
-    expect(calc).toContain("?byt=${location}-${size}-${season}-${m2}m#kalkulacka");
   });
 
-  it("plocha přepíná dispozici, když vyjede z jejího pásma; předvolby v pásmu leží", () => {
+  it("plocha se nezadává: každá dispozice má rozsah od–do a nájem pro typickou plochu uprostřed", () => {
     for (const k of ["1kk", "2kk", "3kk", "4kk"] as const) {
       const [lo, hi] = SIZE_AREA[k];
-      expect(SIZE_PRESET[k].m2).toBeGreaterThanOrEqual(lo);
-      expect(SIZE_PRESET[k].m2).toBeLessThanOrEqual(hi);
-      expect(sizeForArea(SIZE_PRESET[k].m2, k)).toBe(k);
+      expect(lo).toBeLessThan(MEDIAN_AREA[k]);
+      expect(hi).toBeGreaterThan(MEDIAN_AREA[k]);
+      expect(SIZE_PRESET[k].m2).toBe(MEDIAN_AREA[k]);
     }
-    // 52 m² se dvěma ložnicemi (402/405) zůstane 3+kk, dokud plocha nespadne pod 50
-    expect(sizeForArea(52, "3kk")).toBe("3kk");
-    expect(sizeForArea(48, "3kk")).toBe("2kk");
-    expect(sizeForArea(30, "3kk")).toBe("1kk");
-    expect(sizeForArea(65, "2kk")).toBe("3kk");
-    expect(sizeForArea(90, "2kk")).toBe("4kk");
-    expect(sizeForArea(140, "1kk")).toBe("4kk");
-    const ctx = readFileSync("src/contexts/CalcContext.tsx", "utf8");
-    expect(ctx).toContain("sizeForArea(v, s)");
+    const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
+    expect(calc).not.toContain('id="calc-m2"');
+    expect(calc).toContain("SIZE_AREA[size]");
+    expect(calc).toContain("?byt=${location}-${size}-${season}#kalkulacka");
+    for (const k of ["calc_area_range_1", "calc_area_range_4", "calc_derived_note"]) {
+      expect(strip(cs[k]).length).toBeGreaterThan(0);
+      expect(strip(vi[k]).length).toBeGreaterThan(0);
+    }
+  });
+
+  it("tenká pásma se dopočítají z nejbližšího spolehlivého pásma × celoměstský poměr a nesou derived", () => {
+    // poměr = vážený průměr přes čtvrti, kde mají obě pásma ≥ 50 nabídek (tytéž řady)
+    const w = (pairs: [number, number, number][]) => pairs.reduce((a, p) => a + p[0] * p[2], 0) / pairs.reduce((a, p) => a + p[2], 0);
+    const r21: [number, number, number][] = [], r32: [number, number, number][] = [];
+    for (const loc of Object.keys(MARKET_STR) as MeasuredLocation[]) {
+      const raw = JSON.parse(readFileSync(`data/pricelabs-2026-08/${loc}.json`, "utf8"));
+      const c = (b: string) => ({ adr: raw[b].annual.adr as number, rp: raw[b].revpar.reduce((a: number, x: number) => a + x, 0) / 12, n: raw[b].active_listings.reduce((a: number, x: number) => a + x, 0) / 12 });
+      const b1 = c("1BR"), b2 = c("2BR"), b3 = c("3BR");
+      if (b2.n >= 50) r21.push([b2.adr / b1.adr, b2.rp / b1.rp, b2.n]);
+      if (b3.n >= 50) r32.push([b3.adr / b2.adr, b3.rp / b2.rp, b3.n]);
+    }
+    expect(SIZE_RATIO["2BR/1BR"].adr).toBeCloseTo(w(r21), 2);
+    expect(SIZE_RATIO["2BR/1BR"].revpar).toBeCloseTo(w(r21.map((p) => [p[1], 0, p[2]])), 2);
+    expect(SIZE_RATIO["3BR/2BR"].adr).toBeCloseTo(w(r32), 2);
+    expect(SIZE_RATIO["3BR/2BR"].revpar).toBeCloseTo(w(r32.map((p) => [p[1], 0, p[2]])), 2);
+    // měřené buňky nejsou derived, dopočítané ano; P9 3BR jde přes dva kroky
+    expect(marketCell("praha1", "3BR")!.derived).toBe(false);
+    expect(marketCell("praha3", "3BR")!.derived).toBe(true);
+    expect(marketCell("praha3", "3BR")!.adr).toBe(Math.round(MARKET_STR.praha3["2BR"]!.adr * SIZE_RATIO["3BR/2BR"].adr));
+    expect(marketCell("praha9", "2BR")!.derived).toBe(true);
+    expect(marketCell("praha9", "3BR")!.adr).toBe(Math.round(Math.round(MARKET_STR.praha9["1BR"]!.adr * SIZE_RATIO["2BR/1BR"].adr) * SIZE_RATIO["3BR/2BR"].adr));
+    const r = ownerMonthly("praha4", "4kk");
+    expect(r.supported && r.derived).toBe(true);
+    const r1 = ownerMonthly("praha1", "2kk");
+    expect(r1.supported && r1.derived).toBe(false);
+    // a web to u odvozeného čísla napíše
+    expect(readFileSync("src/components/CalculatorSection.tsx", "utf8")).toContain("calc_derived_note");
   });
 
   it("čtvrti a pásma bez dostatečného vzorku žádné číslo nevracejí", () => {
     // Praha 10 čeká na doplnění dat (rate limit 30. 8.), "jinde" nikdy.
     for (const loc of ["praha10", "jinde"])
       expect(ownerMonthly(loc, "3kk").supported, loc).toBe(false);
-    // změřené čtvrti pro 3+kk (2BR) číslo mají, kromě P9 (vzorek 24)
-    for (const loc of ["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8"])
-      expect(ownerMonthly(loc, "3kk").supported, loc).toBe(true);
-    expect(ownerMonthly("praha9", "3kk").supported).toBe(false);
-    // 3BR jen tam, kde má trh vzorek: P1, P2, P5
-    expect(ownerMonthly("praha1", "4kk").supported).toBe(true);
-    expect(ownerMonthly("praha2", "4kk").supported).toBe(true);
-    expect(ownerMonthly("praha5", "4kk").supported).toBe(true);
-    expect(ownerMonthly("praha3", "4kk").supported).toBe(false);
-    expect(ownerMonthly("praha8", "4kk").supported).toBe(false);
+    // každá změřená čtvrť má číslo pro všechny dispozice (tenká pásma odvozená)
+    for (const loc of ["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9"])
+      for (const size of ["1kk", "2kk", "3kk", "4kk"] as const)
+        expect(ownerMonthly(loc, size).supported, `${loc} ${size}`).toBe(true);
   });
 
   it("sezóny každé čtvrti skládají přesně rok (7 léto + 4 zima + prosinec), ADR i RevPAR", () => {
