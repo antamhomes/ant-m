@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import Reveal from "@/components/Reveal";
-import { Calculator, MapPin, Home, Ruler, Users, Share2, Pencil, ChevronRight } from "lucide-react";
+import { Calculator, MapPin, Home, Users, Share2, Pencil, ChevronRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
-import { ROOMS, BAND_LABEL, annualDamageCover, ownerMonthly, rentFor, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
+import { BAND_LABEL, ownerMonthly, rentFor, typicalArea, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
 import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/CalcContext";
 
@@ -12,10 +12,12 @@ import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/C
  *  (P2, P6 až P10) a u „jinde" se panel výsledku přepne na posouzení
  *  do 24 hodin; ŽÁDNÉ číslo se neukazuje a nic se neopisuje z jiné čtvrti. */
 
-// Tři vstupy (patch 140): lokalita, dispozice, plocha. O výdělku rozhoduje
-// kapacita; tu majitel nezadává, odvodí se z dispozice a plochy (guestsFor)
-// a panel ji vypíše. Plocha řídí nájem plynule a může přidat hosty.
-// Výsledek je rozpětí: průměr trhu až s Antam; střed pro dělení a násobek.
+// Dva vstupy (patch 142): lokalita, dispozice. Kapacita jde z dispozice
+// (guestsFor), nájem z typické plochy dispozice v té čtvrti (typicalArea,
+// Sreality mediány) a panel obojí vypíše. Výsledek je rozpětí (průměr trhu
+// až s Antam), střed řídí násobek nájmu. Panel drží jen to podstatné;
+// metodika, dělení 70/30, energie a krytí škod žijí v rozkliku pod sekcí
+// a v Ceníku (rozhodnutí 30. 8. 2026: „jen info co je důležitý“).
 const sizes: { value: SizeKey; label: string }[] = [
   { value: "1kk", label: "1+kk" },
   { value: "2kk", label: "2+kk" },
@@ -34,7 +36,7 @@ const CalculatorSection = () => {
     l === "jinde" ? t(lang, "calc_loc_other") : `Praha ${l.replace("praha", "")}`;
   // Stav (lokalita, dispozice, plocha, sezóna, vybavení) žije v CalcContext,
   // aby s ním počítal i pětiletý graf v sekci Horizont.
-  const { location, setLocation, size, pickSize, m2, setM2, season, setSeason, furn, fromShare } = useCalc();
+  const { location, setLocation, size, pickSize, season, setSeason, furn, fromShare } = useCalc();
   const [shared, setShared] = useState(false);
 
   useEffect(() => {
@@ -42,7 +44,7 @@ const CalculatorSection = () => {
   }, [fromShare]);
 
   const shareResult = async () => {
-    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${size}-${season}-${m2}m#kalkulacka`;
+    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${size}-${season}#kalkulacka`;
     trackEvent("calc_share", { district: location, size, season });
     try {
       if (navigator.share) { await navigator.share({ title: "Antam Homes", url }); return; }
@@ -60,8 +62,9 @@ const CalculatorSection = () => {
   // a pásmo ložnic × sezóna. Dvě čísla z téže ceny: průměr trhu (tržní
   // obsazenost) a s Antam Homes (obsazenost zvednutá, strop 85 %); minus
   // provize platformy, dělení 70/30. Nájem řídí PLOCHA (rentFor).
+  const m2 = typicalArea(location, size);
   const result = useMemo(() => {
-    const r = ownerMonthly(location, size, { season, m2 });
+    const r = ownerMonthly(location, size, { season });
     const ltr = location === "jinde" ? 0 : rentFor(location as LocationKey, size, m2);
     const ratio = r.supported && ltr > 0 ? r.mid / ltr : 0;
     return { r, ltr, ratio };
@@ -69,7 +72,7 @@ const CalculatorSection = () => {
 
   // Pětiletý rozdíl pro teaser; sám graf je v sekci Horizont (#horizont) a
   // počítá ze stejného stavu přes lib/horizon.
-  const d = useMemo(() => fiveYear(location, size, m2, furn), [location, size, m2, furn]);
+  const d = useMemo(() => fiveYear(location, size, furn), [location, size, furn]);
 
   // "mil." / "tis." are Czech; the Vietnamese page counts in "triệu" (million) and "nghìn".
   const short = (n: number) =>
@@ -146,17 +149,6 @@ const CalculatorSection = () => {
               </div>
             </div>
 
-            <div>
-              <label htmlFor="calc-m2" className="flex items-baseline justify-between gap-3 font-body text-sm font-semibold text-foreground mb-2">
-                <span className="flex items-center gap-2"><Ruler className="w-4 h-4 text-gold" />{t(lang, "calc_area")}</span>
-                <span className="font-display text-lg text-gold-deep tnum">{m2}&nbsp;m²</span>
-              </label>
-              <input id="calc-m2" type="range" min={18} max={140} step={1} value={m2}
-                onChange={(e) => setM2(+e.target.value)}
-                className="w-full accent-[hsl(var(--gold))]" />
-              <p className="mt-1.5 font-body text-[12.5px] text-muted-foreground leading-snug">{t(lang, "calc_area_hint")}</p>
-            </div>
-
             {/* Rok je výchozí rozhodnutí; sezónu si rozklikne, kdo ji chce. */}
             <details className="group">
               <summary className="list-none cursor-pointer inline-flex items-center gap-2 font-body text-sm font-semibold text-gold-deep underline underline-offset-4 decoration-gold/40 [&::-webkit-details-marker]:hidden">
@@ -183,10 +175,6 @@ const CalculatorSection = () => {
               </div>
             </details>
 
-            {/* Jak se počítá dělení: pod vstupy, ať levý sloupec nekončí dřív než panel (patch 126). */}
-            <p className="font-body text-xs md:text-[13px] text-muted-foreground leading-relaxed border-t border-border/60 pt-4 text-pretty">
-              {t(lang, "calc_method_note")}
-            </p>
           </Reveal>
 
           <Reveal delay={0.1} className="flex items-start order-1 md:order-2 md:sticky md:top-24">
@@ -235,22 +223,23 @@ const CalculatorSection = () => {
                       <p className="font-body text-[12px] text-primary-foreground/60 -mt-0.5 mb-1">
                         {t(lang, "calc_net_sub")}
                       </p>
+                      {/* Jedno číslo se čte líp (rozhodnutí 30. 8. 2026): střed rozpětí
+                          jako hlavní číslo, rozpětí drobně pod ním. */}
                       <p className="flex flex-wrap items-baseline gap-x-2 leading-tight tnum">
-                        <span className="font-display text-[2rem] min-[360px]:text-[2.4rem] sm:text-[2.75rem] md:text-[3rem] font-bold text-gradient-gold-on-dark whitespace-nowrap">
-                          {Math.round(result.r.low / 1000)}&nbsp;{t(lang, "calc_range_to")}&nbsp;{Math.round(result.r.high / 1000)}&nbsp;tis.&nbsp;Kč
+                        <span className="font-display text-[2.25rem] min-[360px]:text-[2.75rem] sm:text-5xl md:text-[3.25rem] font-bold text-gradient-gold-on-dark whitespace-nowrap">
+                          ~{(Math.round(result.r.mid / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
                         </span>
                         <span className="font-body text-sm font-normal text-primary-foreground/65 whitespace-nowrap">
                           {t(lang, "calc_month_suffix")}
                         </span>
                       </p>
+                      <p className="mt-1 font-body text-[13px] text-primary-foreground/70 tnum">
+                        {t(lang, "calc_range_label")} {Math.round(result.r.low / 1000)}&nbsp;{t(lang, "calc_range_to")}&nbsp;{Math.round(result.r.high / 1000)}&nbsp;{lang === "cs" ? "tis." : "nghìn"}&nbsp;Kč
+                      </p>
                       {/* S kolika hosty počítáme: odvozeno z dispozice a plochy, ne zadáváno. */}
                       <p className="mt-2 flex items-center gap-1.5 font-body text-[13px] text-primary-foreground/85 tnum">
                         <Users className="w-3.5 h-3.5 text-gold" aria-hidden="true" />
                         {t(lang, "calc_guests_1")} {result.r.guests} {t(lang, "calc_guests_2")}
-                      </p>
-                      {/* Jedna věta: na čem číslo stojí a co není. */}
-                      <p className="mt-2 font-body text-[13px] text-primary-foreground/75 leading-relaxed">
-                        {t(lang, "calc_basis")}
                       </p>
                       {result.r.derived && (
                         <p className="mt-1.5 font-body text-[12px] text-primary-foreground/60 leading-relaxed">
@@ -274,10 +263,6 @@ const CalculatorSection = () => {
                             {Math.round(result.r.market.occupancy * 100)}{lang === "cs" ? "\u00a0%" : "%"}
                             <span className="font-body text-[12px] font-normal text-primary-foreground/60"> → {t(lang, "calc_antam_occ")} {Math.round(result.r.antam.occupancy * 100)}{lang === "cs" ? "\u00a0%" : "%"}</span>
                           </dd>
-                        </div>
-                        <div className="col-span-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 border-t border-primary-foreground/10 pt-2">
-                          <dt className="text-[12px] text-primary-foreground/75 leading-snug">{t(lang, "calc_market_net")}</dt>
-                          <dd className="font-display text-base font-semibold text-primary-foreground/85">~{(Math.round(result.r.market.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč {t(lang, "calc_month_suffix")}</dd>
                         </div>
                       </dl>
                       <p className="md:hidden mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
@@ -309,31 +294,12 @@ const CalculatorSection = () => {
                     )}
 
                     <div className="border-t border-primary-foreground/10 pt-4">
-                      <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-2">
-                        {t(lang, "calc_split_label")}
-                      </p>
-                      <div className="flex h-2 w-full overflow-hidden rounded-full bg-primary-foreground/10" role="img" aria-label={t(lang, "calc_split_aria")}>
-                        <span className="block h-full w-[70%] bg-gold" />
-                        <span className="block h-full w-[30%] bg-primary-foreground/25" />
-                      </div>
-                      <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 font-body text-[13px] tnum">
-                        <span className="text-primary-foreground/85">
-                          <strong className="text-gold font-semibold">{lang === "cs" ? "70\u00a0%" : "70%"}</strong> {t(lang, "calc_split_owner")}{" "}
-                          <span className="text-gold/90">= ~{(Math.round(result.r.mid / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč</span>
-                        </span>
-                        <span className="text-primary-foreground/65 text-right">
-                          <strong className="font-semibold text-primary-foreground/80">{lang === "cs" ? "30\u00a0%" : "30%"}</strong> {t(lang, "calc_split_fee")}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="border-t border-primary-foreground/10 pt-4">
                       <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
                         {t(lang, "calc_ltr")}
                       </p>
                       <p className="font-display text-xl font-semibold text-primary-foreground/60 tnum">
                         ~{(Math.round(result.ltr / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
-                        <span className="font-body text-[12px] font-normal text-primary-foreground/50">{t(lang, "calc_ltr_for")} {m2}&nbsp;m²</span>
+                        <span className="font-body text-[12px] font-normal text-primary-foreground/50">{t(lang, "calc_ltr_for")} {sizes.find((x) => x.value === size)?.label} {t(lang, "calc_rent_typical")} {m2}&nbsp;m² ({t(lang, "calc_rent_src")})</span>
                       </p>
                       {result.ratio > 0 && (
                         <p className="font-body text-[13px] text-primary-foreground/85 mt-2">
@@ -344,49 +310,14 @@ const CalculatorSection = () => {
                           {t(lang, "calc_vs_ltr")}
                         </p>
                       )}
-                      {/* Hormozi: ztráta je konkrétnější než zisk. Rozdíl měsíčně,
-                          jen když model dává víc než nájem; žádné nové číslo, jen odečet. */}
-                      {result.r.supported && result.ratio > 1 && (
-                        <p className="font-body text-[13px] text-primary-foreground/70 mt-1.5 tnum">
-                          {t(lang, "calc_loss_1")}{" "}
-                          <strong className="font-semibold text-primary-foreground/90">
-                            ~{(Math.round((result.r.mid - result.ltr) / 1000) * 1000).toLocaleString("cs-CZ")}
-                          </strong>{" "}
-                          {t(lang, "calc_loss_2")}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Krytí menších škod: počítá se z téže dispozice jako odhad.
-                        Pravidlo žije v lib/yield. */}
-                    <div className="border-t border-primary-foreground/10 pt-4">
-                      <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
-                        {t(lang, "calc_cover_label")}
-                      </p>
-                      <p className="font-display text-lg font-semibold text-primary-foreground/85 tnum">
-                        {annualDamageCover(ROOMS[size]).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
-                        <span className="font-body text-[13px] font-normal text-primary-foreground/60">
-                          {t(lang, "calc_cover_suffix")}
-                        </span>
-                      </p>
-                      <p className="mt-1 font-body text-[12px] text-primary-foreground/60 leading-relaxed">
-                        {t(lang, "calc_cover_note")}
-                      </p>
                     </div>
 
                     <p className="font-body text-[12px] text-primary-foreground/60 leading-relaxed border-t border-primary-foreground/10 pt-4">
-                      {t(lang, "calc_excluded_note")}
-                    </p>
-                    <p className="font-body text-[12px] text-primary-foreground/60 leading-relaxed">
-                      {t(lang, "calc_energy_note")}
+                      {t(lang, "calc_terms_note")}
                     </p>
                   </div>
                   )}
 
-
-                  <p className="font-body text-[13px] text-primary-foreground/75 leading-relaxed border-t border-primary-foreground/10 pt-4">
-                    {t(lang, "calc_bridge")}
-                  </p>
 
                   <div className="space-y-3">
                     <a

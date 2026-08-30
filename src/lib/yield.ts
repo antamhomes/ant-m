@@ -40,14 +40,15 @@ export type LocationKey =
  * byty reálně listuje (ložnice × 2 + rozkládací gauč v obýváku): 1+kk 4,
  * 2+kk 6, 3+kk 8, 4+kk 10. Každých plných 20 m² nad typickou plochu dispozice
  * (medián MF) přidá 2 hosty, nejvýš +2. Přesná kapacita se určí při prohlídce.
+ * Od patche 142 bez plošného bonusu: plocha už není vstup, kapacita jde čistě
+ * z dispozice a přesně se určí při prohlídce.
  */
 /** Medián výměry nájemního bytu v Praze podle MF, v m². */
 export const MEDIAN_AREA: Record<SizeKey, number> = {
   "1kk": 35, "2kk": 53, "3kk": 71, "4kk": 88,
 };
 export const BASE_GUESTS: Record<SizeKey, number> = { "1kk": 4, "2kk": 6, "3kk": 8, "4kk": 10 };
-export const guestsFor = (size: SizeKey, m2: number) =>
-  Math.min(BASE_GUESTS[size] + 2, BASE_GUESTS[size] + 2 * Math.floor(Math.max(0, m2 - MEDIAN_AREA[size]) / 20));
+export const guestsFor = (size: SizeKey) => BASE_GUESTS[size];
 
 /** Pásmo trhu podle kapacity: host na Airbnb filtruje podle počtu osob. Na
  *  PriceLabs biny podle ložnic to sedí tak, jak Antam listuje (2+kk s gaučem
@@ -185,6 +186,16 @@ export const RENT_INTERCEPT: Record<LocationKey, number> = {
   praha1: 7.301, praha2: 7.285, praha3: 7.238, praha4: 7.121, praha5: 7.152,
   praha6: 7.161, praha7: 7.273, praha8: 7.159, praha9: 7.154, praha10: 7.115,
 };
+/**
+ * Typická plocha dispozice V DANÉ ČTVRTI: medián čerstvých inzerátů (Sreality
+ * 8/2026); buňky pod 8 inzerátů berou celopražský medián dispozice. 2+kk
+ * v Praze 1 bývá 65 m², v Praze 9 53 m², a nájem se počítá pro tuhle plochu.
+ * Plocha není vstup kalkulačky (rozhodnutí 30. 8. 2026: „slider může pryč“).
+ */
+export const TYPICAL_AREA: Record<LocationKey, Record<SizeKey, number>> = {"praha1": {"1kk": 34, "2kk": 65, "3kk": 91, "4kk": 124}, "praha2": {"1kk": 41, "2kk": 52, "3kk": 94, "4kk": 123}, "praha3": {"1kk": 40, "2kk": 55, "3kk": 87, "4kk": 115}, "praha4": {"1kk": 32, "2kk": 50, "3kk": 79, "4kk": 84}, "praha5": {"1kk": 35, "2kk": 53, "3kk": 80, "4kk": 118}, "praha6": {"1kk": 35, "2kk": 53, "3kk": 91, "4kk": 113}, "praha7": {"1kk": 35, "2kk": 59, "3kk": 80, "4kk": 115}, "praha8": {"1kk": 34, "2kk": 53, "3kk": 80, "4kk": 115}, "praha9": {"1kk": 35, "2kk": 53, "3kk": 72, "4kk": 115}, "praha10": {"1kk": 33, "2kk": 54, "3kk": 83, "4kk": 115}};
+export const typicalArea = (loc: string, size: SizeKey): number =>
+  (TYPICAL_AREA as Record<string, Record<SizeKey, number>>)[loc]?.[size] ?? MEDIAN_AREA[size];
+
 export type FurnRent = "furnished" | "partly" | "none" | "mix";
 export const FURN_RENT: Record<FurnRent, number> = {
   furnished: 1.114, partly: 0.99, none: 0.938, mix: 1,
@@ -330,9 +341,9 @@ const split = (gross: number, occupancy: number): Split => {
 export function ownerMonthly(
   location: string,
   size: SizeKey,
-  { season = "year" as SeasonKey, m2 = MEDIAN_AREA[size] } = {},
+  { season = "year" as SeasonKey } = {},
 ): OwnerMonthly {
-  const guests = guestsFor(size, m2);
+  const guests = guestsFor(size);
   const band = bandFor(guests);
   if (!isMeasured(location)) return { supported: false, band, guests };
   const cell = marketCell(location, band);

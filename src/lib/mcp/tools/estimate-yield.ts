@@ -1,7 +1,7 @@
 import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import {
-  ownerMonthly, rentFor, isMeasured, SIZE_PRESET, MGMT_FEE, PLATFORM_FEE,
+  ownerMonthly, rentFor, isMeasured, typicalArea, MGMT_FEE, PLATFORM_FEE,
   OCC_UPLIFT, OCC_CAP, guestsFor,
   type LocationKey, type SizeKey, type SeasonKey,
 } from "../../yield";
@@ -32,9 +32,9 @@ export default defineTool({
     location: z
       .enum(["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9", "praha10"])
       .describe("Prague district of the apartment."),
-    size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout (Czech notation). Guest capacity is derived from it the way Antam Homes lists flats (bedrooms x 2 + sofa bed): 1kk 4, 2kk 6, 3kk 8, 4kk 10 guests; every full 20 m2 above the typical area (35/53/71/88) adds 2 guests, at most +2. Capacity picks the market band: up to 4 guests = 1BR, 5-8 = 2BR, 9+ = 3BR."),
+    size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout (Czech notation). Guest capacity is derived from it the way Antam Homes lists flats (bedrooms x 2 + sofa bed): 1kk 4, 2kk 6, 3kk 8, 4kk 10 guests. Capacity picks the market band: up to 4 guests = 1BR, 5-8 = 2BR, 9+ = 3BR. Long-term rent uses the district-typical floor area of the layout (Sreality medians) unless floorAreaM2 is given."),
     floorAreaM2: z.number().int().min(18).max(140).optional()
-      .describe("Floor area in m2. Overrides the layout preset; drives the long-term rent comparison and can add guest capacity."),
+      .describe("Floor area in m2. Overrides the district-typical area of the layout; drives only the long-term rent comparison."),
     season: z
       .enum(["year", "summer", "winter", "xmas"])
       .optional()
@@ -44,11 +44,11 @@ export default defineTool({
   handler: ({ location, size, floorAreaM2, season }) => {
     const label = locations[location];
     const sz = size as SizeKey;
-    const m2 = floorAreaM2 ?? SIZE_PRESET[sz].m2;
+    const m2 = floorAreaM2 ?? typicalArea(location, sz);
     const seasonKey = (season ?? "year") as SeasonKey;
-    const r = ownerMonthly(location, sz, { season: seasonKey, m2 });
+    const r = ownerMonthly(location, sz, { season: seasonKey });
     const longTermRent = rentFor(location as LocationKey, sz, m2);
-    const guests = guestsFor(sz, m2);
+    const guests = guestsFor(sz);
 
     if (!r.supported) {
       const reason = isMeasured(location)
@@ -74,7 +74,7 @@ export default defineTool({
       };
     }
 
-    const yearly = ownerMonthly(location, sz, { m2 });
+    const yearly = ownerMonthly(location, sz);
     const yearlyNet = yearly.supported ? yearly.antam.net : r.antam.net;
     const yearlyMarketNet = yearly.supported ? yearly.market.net : r.market.net;
     const result = {

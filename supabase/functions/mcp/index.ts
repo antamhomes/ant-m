@@ -17,7 +17,7 @@ var MEDIAN_AREA = {
   "4kk": 88
 };
 var BASE_GUESTS = { "1kk": 4, "2kk": 6, "3kk": 8, "4kk": 10 };
-var guestsFor = (size, m2) => Math.min(BASE_GUESTS[size] + 2, BASE_GUESTS[size] + 2 * Math.floor(Math.max(0, m2 - MEDIAN_AREA[size]) / 20));
+var guestsFor = (size) => BASE_GUESTS[size];
 var bandFor = (guests) => guests <= 4 ? "1BR" : guests <= 8 ? "2BR" : "3BR";
 var isMeasured = (loc) => loc in MARKET_STR;
 var MARKET_STR = {
@@ -82,6 +82,8 @@ var RENT_INTERCEPT = {
   praha9: 7.154,
   praha10: 7.115
 };
+var TYPICAL_AREA = { "praha1": { "1kk": 34, "2kk": 65, "3kk": 91, "4kk": 124 }, "praha2": { "1kk": 41, "2kk": 52, "3kk": 94, "4kk": 123 }, "praha3": { "1kk": 40, "2kk": 55, "3kk": 87, "4kk": 115 }, "praha4": { "1kk": 32, "2kk": 50, "3kk": 79, "4kk": 84 }, "praha5": { "1kk": 35, "2kk": 53, "3kk": 80, "4kk": 118 }, "praha6": { "1kk": 35, "2kk": 53, "3kk": 91, "4kk": 113 }, "praha7": { "1kk": 35, "2kk": 59, "3kk": 80, "4kk": 115 }, "praha8": { "1kk": 34, "2kk": 53, "3kk": 80, "4kk": 115 }, "praha9": { "1kk": 35, "2kk": 53, "3kk": 72, "4kk": 115 }, "praha10": { "1kk": 33, "2kk": 54, "3kk": 83, "4kk": 115 } };
+var typicalArea = (loc, size) => TYPICAL_AREA[loc]?.[size] ?? MEDIAN_AREA[size];
 var FURN_RENT = {
   furnished: 1.114,
   partly: 0.99,
@@ -125,8 +127,8 @@ var split = (gross, occupancy) => {
   const mgmt = Math.round(netRevenue * MGMT_FEE);
   return { occupancy, gross, platformFee, netRevenue, mgmt, net: netRevenue - mgmt };
 };
-function ownerMonthly(location, size, { season = "year", m2 = MEDIAN_AREA[size] } = {}) {
-  const guests = guestsFor(size, m2);
+function ownerMonthly(location, size, { season = "year" } = {}) {
+  const guests = guestsFor(size);
   const band = bandFor(guests);
   if (!isMeasured(location)) return { supported: false, band, guests };
   const cell = marketCell(location, band);
@@ -172,19 +174,19 @@ var estimate_yield_default = defineTool({
   description: "Estimate the monthly net income an apartment owner in Prague could earn with Antam Homes short-term rental management, and compare it to long-term rent. Same model and same code as the calculator on the website: realized market prices of the whole district per bedroom count (PriceLabs, 12 closed months), shown twice: at the district's market occupancy and at the occupancy Antam Homes plans with. Districts or sizes with too small a market sample (and Praha 10 for now) get an individual assessment within 24 hours instead of a number.",
   inputSchema: {
     location: z.enum(["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9", "praha10"]).describe("Prague district of the apartment."),
-    size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout (Czech notation). Guest capacity is derived from it the way Antam Homes lists flats (bedrooms x 2 + sofa bed): 1kk 4, 2kk 6, 3kk 8, 4kk 10 guests; every full 20 m2 above the typical area (35/53/71/88) adds 2 guests, at most +2. Capacity picks the market band: up to 4 guests = 1BR, 5-8 = 2BR, 9+ = 3BR."),
-    floorAreaM2: z.number().int().min(18).max(140).optional().describe("Floor area in m2. Overrides the layout preset; drives the long-term rent comparison and can add guest capacity."),
+    size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout (Czech notation). Guest capacity is derived from it the way Antam Homes lists flats (bedrooms x 2 + sofa bed): 1kk 4, 2kk 6, 3kk 8, 4kk 10 guests. Capacity picks the market band: up to 4 guests = 1BR, 5-8 = 2BR, 9+ = 3BR. Long-term rent uses the district-typical floor area of the layout (Sreality medians) unless floorAreaM2 is given."),
+    floorAreaM2: z.number().int().min(18).max(140).optional().describe("Floor area in m2. Overrides the district-typical area of the layout; drives only the long-term rent comparison."),
     season: z.enum(["year", "summer", "winter", "xmas"]).optional().describe("Season to price for. Defaults to 'year' (yearly average). Seasonal factors come from realized monthly market data of the district; summer (Apr-Oct), winter (Nov-Mar excl. December) and December compose the year exactly.")
   },
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: ({ location, size, floorAreaM2, season }) => {
     const label = locations[location];
     const sz = size;
-    const m2 = floorAreaM2 ?? SIZE_PRESET[sz].m2;
+    const m2 = floorAreaM2 ?? typicalArea(location, sz);
     const seasonKey = season ?? "year";
-    const r = ownerMonthly(location, sz, { season: seasonKey, m2 });
+    const r = ownerMonthly(location, sz, { season: seasonKey });
     const longTermRent = rentFor(location, sz, m2);
-    const guests = guestsFor(sz, m2);
+    const guests = guestsFor(sz);
     if (!r.supported) {
       const reason = isMeasured(location) ? `too few comparable listings in the ${r.band} band in ${label}` : `no district market data for ${label} yet`;
       return {
@@ -206,7 +208,7 @@ var estimate_yield_default = defineTool({
         }
       };
     }
-    const yearly = ownerMonthly(location, sz, { m2 });
+    const yearly = ownerMonthly(location, sz);
     const yearlyNet = yearly.supported ? yearly.antam.net : r.antam.net;
     const yearlyMarketNet = yearly.supported ? yearly.market.net : r.market.net;
     const result = {

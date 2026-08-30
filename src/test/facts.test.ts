@@ -20,7 +20,7 @@ import {
   OCCUPANCY_BY_FLAT, MEDIAN_AREA, rentFor,
   MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor, antamOccupancy,
   OCC_UPLIFT, OCC_CAP, marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, marketCell, guestsFor, BASE_GUESTS,
-  RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, type LocationKey,
+  RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, TYPICAL_AREA, typicalArea, type LocationKey,
   type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
@@ -297,14 +297,7 @@ describe("model výnosu", () => {
 
   it("kapacitu majitel nezadává: odvodí se z dispozice a plochy a určí pásmo trhu (tři vstupy)", () => {
     expect(BASE_GUESTS).toEqual({ "1kk": 4, "2kk": 6, "3kk": 8, "4kk": 10 });
-    // typická plocha = základ; každých plných 20 m² navíc +2, nejvýš +2
-    expect(guestsFor("2kk", 53)).toBe(6);
-    expect(guestsFor("2kk", 72)).toBe(6);
-    expect(guestsFor("2kk", 73)).toBe(8);
-    expect(guestsFor("2kk", 100)).toBe(8);
-    expect(guestsFor("1kk", 22)).toBe(4);
-    expect(guestsFor("3kk", 91)).toBe(10);
-    expect(guestsFor("4kk", 140)).toBe(12);
+    for (const k of ["1kk", "2kk", "3kk", "4kk"] as const) expect(guestsFor(k)).toBe(BASE_GUESTS[k]);
     expect(bandFor(4)).toBe("1BR");
     expect(bandFor(5)).toBe("2BR");
     expect(bandFor(8)).toBe("2BR");
@@ -313,35 +306,59 @@ describe("model výnosu", () => {
     const r = ownerMonthly("praha3", "2kk");
     expect(r.supported && r.band).toBe("2BR");
     expect(r.supported && r.guests).toBe(6);
-    // plocha přidá hosty a tím pásmo: 3+kk 100 m² = 10 hostů = 3BR
-    const big = ownerMonthly("praha1", "3kk", { m2: 100 });
-    expect(big.supported && big.band).toBe("3BR");
     const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
     expect(calc, "posuvník hostů se do kalkulačky nesmí vrátit").not.toContain("calc-guests");
-    expect(calc).toContain('id="calc-m2"');
+    expect(calc, "posuvník plochy je pryč (patch 142)").not.toContain('id="calc-m2"');
     expect(calc).toContain("result.r.guests");
-    expect(calc).toContain("?byt=${location}-${size}-${season}-${m2}m#kalkulacka");
-    for (const k of ["calc_guests_1", "calc_guests_2", "calc_range_to", "calc_derived_note"]) {
+    expect(calc).toContain("?byt=${location}-${size}-${season}#kalkulacka");
+    for (const k of ["calc_guests_1", "calc_guests_2", "calc_range_to", "calc_range_label", "calc_derived_note", "calc_terms_note", "calc_rent_src"]) {
       expect(strip(cs[k]).length).toBeGreaterThan(0);
       expect(strip(vi[k]).length).toBeGreaterThan(0);
     }
+  });
+
+  it("nájem v kalkulačce jede na typické ploše dispozice v té čtvrti (Sreality mediány)", () => {
+    const rows = readFileSync("data/sreality-2026-08/rents-clean.csv", "utf8").trim().split("\n").slice(1)
+      .map((l) => { const [district, layout, area] = l.split(","); return { district, layout, m2: +area }; });
+    const MAP: Record<string, string> = { "1+kk": "1kk", "1+1": "1kk", "2+kk": "2kk", "2+1": "2kk", "3+kk": "3kk", "3+1": "3kk", "4+kk": "4kk", "4+1": "4kk" };
+    const med = (xs: number[]) => { const a = [...xs].sort((x, y) => x - y); return a.length % 2 ? a[(a.length - 1) / 2] : (a[a.length / 2 - 1] + a[a.length / 2]) / 2; };
+    const cityXs: Record<string, number[]> = {};
+    const distXs: Record<string, Record<string, number[]>> = {};
+    for (const r of rows) {
+      const k = MAP[r.layout]; if (!k) continue;
+      (cityXs[k] ??= []).push(r.m2);
+      ((distXs[r.district] ??= {})[k] ??= []).push(r.m2);
+    }
+    for (const [d, sizes] of Object.entries(TYPICAL_AREA)) {
+      for (const [k, v] of Object.entries(sizes)) {
+        const xs = distXs[d]?.[k] ?? [];
+        const expected = xs.length >= 8 ? med(xs) : med(cityXs[k]);
+        expect(v, `${d} ${k}`).toBe(Math.round(expected));
+      }
+    }
+    // kalkulačka i graf ji používají; „jinde" padá na celopražský medián MF
+    expect(typicalArea("praha1", "2kk")).toBe(65);
+    expect(typicalArea("jinde", "2kk")).toBe(MEDIAN_AREA["2kk"]);
+    const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
+    expect(calc).toContain("typicalArea(location, size)");
+    expect(readFileSync("src/lib/horizon.ts", "utf8")).toContain("typicalArea(location, size)");
   });
 
   it("výsledek je rozpětí (průměr trhu až s Antam) a publikované karty do něj padají", () => {
     // Backtest: skutečné karty proti pásmu čtvrti pro jejich kapacitu. Hlídá,
     // že rozpětí je poctivé: spodek nesmí přestřelit žádnou kartu o víc než
     // 10 % a vršek nesmí být pod žádnou kartou o víc než 20 %.
-    const cards: [string, SizeKey, number, number, number][] = [
-      ["praha1", "3kk", 52, 64000, 8], // 402
-      ["praha1", "3kk", 52, 57000, 8], // 405
-      ["praha3", "2kk", 55, 50000, 6], // Modern AC
-      ["praha3", "2kk", 60, 42000, 6], // zahrada
-      ["praha5", "1kk", 40, 30000, 4], // Mozart
+    const cards: [string, SizeKey, number, number][] = [
+      ["praha1", "3kk", 64000, 8], // 402
+      ["praha1", "3kk", 57000, 8], // 405
+      ["praha3", "2kk", 50000, 6], // Modern AC
+      ["praha3", "2kk", 42000, 6], // zahrada
+      ["praha5", "1kk", 30000, 4], // Mozart
     ];
-    for (const [loc, size, m2, owner, guests] of cards) {
-      const r = ownerMonthly(loc, size, { m2 });
+    for (const [loc, size, owner, guests] of cards) {
+      const r = ownerMonthly(loc, size);
       if (!r.supported) throw new Error(loc);
-      expect(r.guests, `${loc} ${size} ${m2}`).toBe(guests);
+      expect(r.guests, `${loc} ${size}`).toBe(guests);
       expect(r.low).toBeLessThanOrEqual(r.mid);
       expect(r.mid).toBeLessThanOrEqual(r.high);
       expect(owner / r.low, `${loc} ${size} karta/spodek`).toBeGreaterThan(0.9);
@@ -433,14 +450,14 @@ describe("model výnosu", () => {
     for (const loc of ["praha1", "praha3", "praha5"] as const)
       for (const size of ["2kk", "3kk"] as const) {
         const r = ownerMonthly(loc, size);
-        const d = fiveYear(loc, size, MEDIAN_AREA[size], "airbnb");
+        const d = fiveYear(loc, size, "airbnb");
         if (!r.supported || !d) throw new Error(`${loc} ${size}`);
         // 2. rok (po rozjezdu): měsíční přírůstek = net − energie − obnova
         expect(d.str[24] - d.str[23]).toBeCloseTo((r.mid - d.energy - d.renew) * 1.03, 5);
         expect(d.strMarket[24] - d.strMarket[23]).toBeCloseTo((r.low - d.energy - d.renew) * 1.03, 5);
         expect(d.strHigh[24] - d.strHigh[23]).toBeCloseTo((r.high - d.energy - d.renew) * 1.03, 5);
         expect(d.netMarket).toBe(r.market.net);
-        expect(d.rent).toBe(rentFor(loc, size, MEDIAN_AREA[size], "furnished"));
+        expect(d.rent).toBe(rentFor(loc, size, typicalArea(loc, size), "furnished"));
         expect(d.lt[12] - d.lt[11]).toBeCloseTo(d.rent, 5);
       }
     // teaser se ukazuje jen pro kladný pětiletý rozdíl
@@ -449,7 +466,7 @@ describe("model výnosu", () => {
     const hz = readFileSync("src/components/HorizonSection.tsx", "utf8");
     expect(hz).toContain("d.strMarket");
     expect(hz).toContain("d.strHigh");
-    expect(hz).toContain("fiveYear(location, size, m2, furn)");
+    expect(hz).toContain("fiveYear(location, size, furn)");
   });
 
   it("byt 302 zůstává nepublikovaný, dokud tržní model dává víc než jeho měření", () => {
@@ -457,7 +474,7 @@ describe("model výnosu", () => {
     // P1/2BR dává víc (~60 100), takže 302 na web nepatří; jinak by karta
     // podstřelovala benchmark, který stránka sama ukazuje.
     const MEASURED_302 = 54391;
-    const model = net(ownerMonthly("praha1", "3kk", { m2: 52 })); // 302: 52 m², 8 hostů
+    const model = net(ownerMonthly("praha1", "3kk")); // 302: 2 ložnice, 8 hostů
     if (model >= MEASURED_302) {
       const src = readFileSync("src/components/PortfolioSection.tsx", "utf8");
       expect(src, "302 je na webu, ale tržní model ho přeslibuje").not.toContain("302");
@@ -542,8 +559,10 @@ describe("krytí drobných škod od hostů", () => {
   });
 
   it("částku počítá jedno místo: lib/yield, ne komponenta ani MCP", () => {
+    // Z panelu kalkulačky krytí zmizelo (patch 142, „jen to důležité"); pravidlo
+    // žije v lib/yield a v kopii ho nese garance, ceník a FAQ (testy výš).
     const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
-    expect(calc).toContain("annualDamageCover(ROOMS[size])");
+    expect(calc).not.toContain("annualDamageCover");
     expect(calc).not.toContain("25000");
     expect(calc).not.toContain("5000");
     const mcp = readFileSync("src/lib/mcp/tools/get-services.ts", "utf8");

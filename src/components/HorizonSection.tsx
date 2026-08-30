@@ -26,7 +26,7 @@ const DEFAULT_BOX = { w: 860, h: 360 };
 
 const FiveYearChart = () => {
   const { lang } = useLanguage();
-  const { location, size, m2, furn, setFurn } = useCalc();
+  const { location, size, furn, setFurn } = useCalc();
   const [hover, setHover] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
@@ -44,7 +44,7 @@ const FiveYearChart = () => {
   const { w: W, h: H } = box;
   const narrow = W < 480;
   const PAD = { t: 16, r: narrow ? 56 : 92, b: 30, l: narrow ? 50 : 64 };
-  const d = useMemo(() => fiveYear(location, size, m2, furn), [location, size, m2, furn]);
+  const d = useMemo(() => fiveYear(location, size, furn), [location, size, furn]);
   if (!d) return null;
 
   const czk = (n: number) => `${Math.round(n).toLocaleString("cs-CZ").replace(/ /g, "\u00a0")}\u00a0Kč`;
@@ -79,7 +79,7 @@ const FiveYearChart = () => {
     <Reveal delay={0.05} className="max-w-3xl mx-auto rounded-md border border-border bg-card p-4 sm:p-6 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <p className="font-body text-[13px] text-muted-foreground tnum">
-          {locLabel} · {sizeLabel} · {m2} m² · {d.guests}{lang === "vi" ? " khách" : " hostů"}
+          {locLabel} · {sizeLabel} · ~{d.m2} m² · {d.guests}{lang === "vi" ? " khách" : " hostů"}
           {" "}
           <a href="#kalkulacka-zadani" className="underline underline-offset-4 decoration-border hover:text-foreground">{t(lang, "calc_edit")}</a>
         </p>
