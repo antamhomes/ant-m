@@ -14,9 +14,9 @@ const translations = {
 
     // Hero
     hero_subtitle: "Antam Homes · péče o byt a krátkodobý pronájem",
-    hero_title1: "Váš byt může vydělávat víc.",
-    hero_title2: "Nemusí vám přidávat práci.",
-    hero_desc: "Profesionálně řídíme krátkodobý pronájem v Praze: od cen a rezervací po hosty, úklid a provoz.",
+    hero_title1: "Váš byt. Naše péče. Váš zisk.",
+    hero_title2: "",
+    hero_desc: "Správa krátkodobých pronájmů v Praze.",
     hero_extra: "Podílíme se na výsledku · nezávazně · ozveme se do 24 hodin",
     hero_cta: "Spočítat můj byt",
     hero_cta2: "",
@@ -24,7 +24,7 @@ const translations = {
     // Services — Co za vás řešíme (bento)
     services_label: "Profesionální správa krátkodobých pronájmů",
     services_title: "Už to dávno není jen „pronajmout byt“.",
-    services_desc: "Vystavit byt na Airbnb umí každý. Stejný byt ve stejném domě vydělá jinak podle toho, kdo mu každý den nastavuje cenu a kdo odpovídá hostům.",
+    services_desc: "Stejný byt ve stejném domě může mít výrazně jiný výsledek podle toho, jak se každý den pracuje s cenou, dostupností, prezentací a provozem.",
     svc1_title: "Příprava bytu",
     svc1_desc: "Navrhneme potřebné úpravy a vybavení před spuštěním.",
     svc2_title: "Fotky a prezentace",
@@ -37,7 +37,7 @@ const translations = {
     svc5_desc: "Organizujeme úklid, prádlo, kontrolu bytu a drobné opravy.",
     svc6_title: "Vyúčtování",
     svc6_desc: "Každý měsíc vidíte rezervace, výnosy a náklady.",
-    svc_systems: "Provoz vedeme na Hospitable a PriceLabs, s vlastním týmem. Externí jsou jen řemeslníci.",
+    svc_systems: "",
 
     // WhyBetter — porovnání
     whyBetter_label: "Za 5 let",
@@ -151,7 +151,7 @@ const translations = {
     calc_net: "Odhad pro majitele",
     calc_tab_month: "Měsíčně",
     calc_tab_5y: "Za 5 let",
-    calc_basis: "Realizované ceny srovnatelných bytů v okolí bytů v naší správě (PriceLabs, 12 měsíců) a obsazenost 85 %, kterou naše byty drží nebo překonávají. Odhad, ne nabídka ani garance.",
+    calc_basis: "Realizované ceny srovnatelných bytů v okolí a 85% obsazenost. Odhad, ne nabídka ani garance.",
     calc_unsupported_title: "Pro tuhle lokalitu nemáme vlastní tržní data.",
     calc_unsupported_text: "Čísla ukazujeme jen tam, kde spravujeme byty a vidíme skutečné ceny okolí. Pošlete nám adresu a dispozici a do 24 hodin dostanete propočet pro svůj byt. Zdarma a nezávazně.",
     calc_loss_1: "Každý měsíc na dlouhodobém nájmu tenhle byt přichází o",
