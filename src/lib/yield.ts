@@ -224,6 +224,22 @@ export const OCCUPANCY_BY_FLAT: {
 /** Vážený průměr naší obsazenosti: 1 240 obsazených nocí z 1 317 dní okna. */
 export const OCCUPANCY_OURS = 94;
 
+/**
+ * Pásmo plochy, ve kterém dispozice ještě dává smysl (s překryvy, aby posuvník
+ * nepřeskakoval tam a zpět). Když plocha z pásma vyjede, kalkulačka dispozici
+ * přepne (rozhodnutí 30. 8. 2026: „plocha přepíná ložnice“), takže se s
+ * plochou hne i cena za noc, ale jen tam, kde to trh opravdu měří (ložnice).
+ */
+export const SIZE_AREA: Record<SizeKey, [number, number]> = {
+  "1kk": [18, 45], "2kk": [35, 62], "3kk": [50, 82], "4kk": [70, 140],
+};
+export const sizeForArea = (m2: number, current: SizeKey): SizeKey => {
+  const [lo, hi] = SIZE_AREA[current];
+  if (m2 >= lo && m2 <= hi) return current;
+  if (m2 < lo) return current === "4kk" ? sizeForArea(m2, "3kk") : current === "3kk" ? sizeForArea(m2, "2kk") : "1kk";
+  return current === "1kk" ? sizeForArea(m2, "2kk") : current === "2kk" ? sizeForArea(m2, "3kk") : "4kk";
+};
+
 /** Plocha, kterou dispozice předvyplní (medián MF); posuvník ji přepíše. */
 export const SIZE_PRESET: Record<SizeKey, { m2: number }> = {
   "1kk": { m2: MEDIAN_AREA["1kk"] },

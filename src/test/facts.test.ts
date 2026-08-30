@@ -19,7 +19,7 @@ import {
   DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, annualDamageCover, ownerMonthly,
   OCCUPANCY_BY_FLAT, LTR_PER_M2, SIZE_COEF, MEDIAN_AREA, rentFor,
   MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor, antamOccupancy,
-  OCC_UPLIFT, OCC_CAP, marketOccPct, ratioFor, areaCoef, SIZE_PRESET,
+  OCC_UPLIFT, OCC_CAP, marketOccPct, ratioFor, areaCoef, SIZE_PRESET, SIZE_AREA, sizeForArea,
   type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
@@ -306,6 +306,24 @@ describe("model výnosu", () => {
     expect(calc).toContain('id="calc-m2"');
     // sdílený odkaz bez hostů
     expect(calc).toContain("?byt=${location}-${size}-${season}-${m2}m#kalkulacka");
+  });
+
+  it("plocha přepíná dispozici, když vyjede z jejího pásma; předvolby v pásmu leží", () => {
+    for (const k of ["1kk", "2kk", "3kk", "4kk"] as const) {
+      const [lo, hi] = SIZE_AREA[k];
+      expect(SIZE_PRESET[k].m2).toBeGreaterThanOrEqual(lo);
+      expect(SIZE_PRESET[k].m2).toBeLessThanOrEqual(hi);
+      expect(sizeForArea(SIZE_PRESET[k].m2, k)).toBe(k);
+    }
+    // 52 m² se dvěma ložnicemi (402/405) zůstane 3+kk, dokud plocha nespadne pod 50
+    expect(sizeForArea(52, "3kk")).toBe("3kk");
+    expect(sizeForArea(48, "3kk")).toBe("2kk");
+    expect(sizeForArea(30, "3kk")).toBe("1kk");
+    expect(sizeForArea(65, "2kk")).toBe("3kk");
+    expect(sizeForArea(90, "2kk")).toBe("4kk");
+    expect(sizeForArea(140, "1kk")).toBe("4kk");
+    const ctx = readFileSync("src/contexts/CalcContext.tsx", "utf8");
+    expect(ctx).toContain("sizeForArea(v, s)");
   });
 
   it("čtvrti a pásma bez dostatečného vzorku žádné číslo nevracejí", () => {

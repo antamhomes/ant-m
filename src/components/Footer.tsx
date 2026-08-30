@@ -42,6 +42,11 @@ const Footer = () => {
                   {t(lang, "footer_link_contact")}
                 </a>
               </li>
+              <li>
+                <a href="/portal" className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
+                  {t(lang, "footer_link_portal")}
+                </a>
+              </li>
             </ul>
           </div>
 

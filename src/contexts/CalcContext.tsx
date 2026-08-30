@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
-import { SIZE_PRESET, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
+import { SIZE_PRESET, sizeForArea, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
 
 /**
  * Sdílený stav kalkulačky (lokalita, dispozice, plocha, sezóna, vybavení).
@@ -53,7 +53,9 @@ export const CalcProvider = ({ children }: { children: ReactNode }) => {
   const size0 = initial?.size ?? "2kk";
   const [location, setLocation] = useState<CalcLoc>(initial?.location ?? "praha1");
   const [size, setSize] = useState<SizeKey>(size0);
-  const [m2, setM2] = useState<number>(initial?.m2 ?? SIZE_PRESET[size0].m2);
+  const [m2, setM2State] = useState<number>(initial?.m2 ?? SIZE_PRESET[size0].m2);
+  // Posuvník plochy přepne dispozici, když plocha vyjede z jejího pásma (lib/yield SIZE_AREA).
+  const setM2 = (v: number) => { setM2State(v); setSize((s) => sizeForArea(v, s)); };
   const [season, setSeason] = useState<SeasonKey>(initial?.season ?? "year");
   const [furn, setFurn] = useState<Furn>("najem");
   const pickSize = (v: SizeKey) => { setSize(v); setM2(SIZE_PRESET[v].m2); };
