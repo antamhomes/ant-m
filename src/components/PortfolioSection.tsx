@@ -70,7 +70,7 @@ const copy = {
     statNoteToggle: "Jak počítáme částky na kartách",
     showLess: "Zobrazit méně",
     statOwner: "majiteli měsíčně",
-    barFlat: "tenhle byt",
+    statOcc: "obsazenost",
     barMarket: (loc: string) => `trh ${loc === "Mladá Boleslav" ? "MB" : loc}`,
     statPeriod12: "průměr 12 měsíců",
     statPeriodSince: (m: string) => `průměr od ${m}`,
@@ -91,14 +91,14 @@ const copy = {
     statNoteToggle: "Antam tính số trên thẻ thế nào",
     showLess: "Thu gọn",
     statOwner: "chủ nhà nhận / tháng",
-    barFlat: "căn này",
+    statOcc: "lấp phòng",
     barMarket: (loc: string) => `khu ${loc === "Mladá Boleslav" ? "MB" : loc}`,
     statPeriod12: "trung bình 12 tháng",
     statPeriodSince: (m: string) => `trung bình từ ${m}`,
     statRatio: (r: number) => `gấp ${r.toLocaleString("vi-VN")} lần cho thuê dài hạn`,
     newBadge: (m: string) => `Antam lo từ ${m}`,
     newNote: "Số liệu sẽ có sau mùa đầu tiên.",
-    statNote: (d: string) => `Số tiền chủ nhà nhận dựa trên đặt phòng thật của từng căn, tính lại theo mức phí Antam hiện nay 30\u00a0%: tiền phòng sau khi trừ phí Airbnb và Booking.com, không tính phí dọn dẹp, sau phí của Antam. Tức là số tiền chủ nhà sẽ nhận với điều kiện hiện nay; điện nước chủ nhà lo. Làm tròn đến hàng nghìn. Trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Tỷ lệ lấp phòng chỉ tính cho căn đã quản lý trên ba tháng, 45 ngày đầu không tính vì nhà mới mở còn đang chạy đà. Số của khu lấy từ PriceLabs, 90 ngày gần nhất, tính chung cho từng khu vực: tỷ lệ lấp phòng trung bình của các căn tương tự quanh những căn Antam lo trong khu đó. Hai căn cùng khu vì vậy có cùng một số thị trường. Tiền thuê dài hạn tính từ Deloitte Rent\u00a0Index Q2/2026 theo đúng diện tích từng căn; phần chênh giữa các loại nhà lấy từ bản đồ giá thuê của Bộ Tài chính (15.\u00a08.\u00a02026). Kết quả đã qua không phải là cam kết cho tương lai.`,
+    statNote: (d: string) => `Số tiền chủ nhà nhận dựa trên đặt phòng thật của từng căn, tính lại theo mức phí Antam hiện nay 30%: tiền phòng sau khi trừ phí Airbnb và Booking.com, không tính phí dọn dẹp, sau phí của Antam. Tức là số tiền chủ nhà sẽ nhận với điều kiện hiện nay; điện nước chủ nhà lo. Làm tròn đến hàng nghìn. Trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Tỷ lệ lấp phòng chỉ tính cho căn đã quản lý trên ba tháng, 45 ngày đầu không tính vì nhà mới mở còn đang chạy đà. Số của khu lấy từ PriceLabs, 90 ngày gần nhất, tính chung cho từng khu vực: tỷ lệ lấp phòng trung bình của các căn tương tự quanh những căn Antam lo trong khu đó. Hai căn cùng khu vì vậy có cùng một số thị trường. Tiền thuê dài hạn tính từ Deloitte Rent\u00a0Index Q2/2026 theo đúng diện tích từng căn; phần chênh giữa các loại nhà lấy từ bản đồ giá thuê của Bộ Tài chính (15.\u00a08.\u00a02026). Kết quả đã qua không phải là cam kết cho tương lai.`,
   },
 };
 
@@ -119,12 +119,22 @@ const PortfolioSection = () => {
         </Reveal>
 
         <div id="portfolio-vsechny" className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-6">
-          {visible.map((item, i) => (
+          {visible.map((item, i) => {
+            /* K3 (29. 8. 2026), composition under 1024 px: the strongest result leads as a
+               full-width card (phone: photo above the numbers; tablet: photo left, numbers
+               right), the rest pair up. With 1 + 2 or 1 + 10 cards no card is ever left
+               orphaned in a two-column grid. From lg the three-column grid is unchanged. */
+            const lead = i === 0;
+            return (
             <Reveal as="figure"
               key={item.name} delay={stagger(i % 3, 0.08)}
-              className="group overflow-hidden rounded-md border border-border bg-card shadow-[0_20px_45px_-30px_hsl(var(--charcoal)/0.4)]"
+              className={`group overflow-hidden rounded-md border border-border bg-card shadow-[0_20px_45px_-30px_hsl(var(--charcoal)/0.4)] ${
+                lead ? "col-span-2 lg:col-span-1 sm:grid sm:grid-cols-2 lg:block" : ""
+              }`}
             >
-              <div className="aspect-[4/3] overflow-hidden bg-secondary">
+              <div className={`relative overflow-hidden bg-secondary ${
+                lead ? "aspect-[4/3] sm:aspect-auto sm:h-full sm:min-h-[300px] lg:aspect-[4/3] lg:h-auto lg:min-h-0" : "aspect-[4/3]"
+              }`}>
                 <img
                   src={item.src}
                   alt={`${item.name}, ${item.loc}`}
@@ -132,9 +142,35 @@ const PortfolioSection = () => {
                   decoding="async"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                 />
+                {/* K2 (29. 8. 2026): the owner's monthly result sits on the photo, lower left,
+                    over a gradient that touches only the bottom half. The top of the photo stays
+                    untouched, the number is the first thing the eye lands on. */}
+                {item.stats && (
+                  <>
+                    <div
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] bg-[linear-gradient(to_top,rgba(14,13,11,0.82)_0%,rgba(14,13,11,0.55)_38%,rgba(14,13,11,0.18)_72%,rgba(14,13,11,0)_100%)]"
+                    />
+                    <p className={`absolute ${lead ? "left-4 bottom-3.5" : "left-2.5 bottom-2"} sm:left-5 sm:bottom-4 pr-2.5 sm:pr-5 tnum`}>
+                      <span className={`block font-display ${lead ? "text-[32px]" : "text-[18px]"} sm:text-[30px] lg:text-[32px] font-semibold text-white leading-none tracking-[-0.01em] [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]`}>
+                        {fmtCzk(item.stats.owner)}&nbsp;Kč
+                      </span>
+                      <span className={`mt-1 sm:mt-1.5 block font-body uppercase ${lead ? "text-[11px] tracking-[0.14em]" : "text-[8px] tracking-[0.1em]"} sm:text-[11px] sm:tracking-[0.14em] text-white/85 leading-tight`}>
+                        {c.statOwner}
+                      </span>
+                    </p>
+                  </>
+                )}
               </div>
-              <figcaption className="px-2.5 py-2.5 sm:px-5 sm:py-4">
-                <h3 className="font-display text-[14px] sm:text-lg font-semibold text-foreground leading-snug text-balance">
+              <figcaption className={lead ? "px-4 py-4 sm:px-5 sm:py-4 sm:self-center" : "px-2.5 py-2.5 sm:px-5 sm:py-4"}>
+                {/* Below the photo the story continues in one line: the multiple of long-term rent.
+                    Then the flat as context, then occupancy against the locality. */}
+                {item.stats?.ratio && (
+                  <p className={`mb-1.5 sm:mb-2 font-body ${lead ? "text-sm" : "text-[11px]"} sm:text-sm font-semibold text-gold-deep leading-snug`}>
+                    {c.statRatio(item.stats.ratio)}
+                  </p>
+                )}
+                <h3 className={`font-display ${lead ? "text-base" : "text-[13px]"} sm:text-base font-semibold text-foreground leading-snug text-balance`}>
                   {item.name}
                 </h3>
                 <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 font-body text-xs sm:text-sm text-muted-foreground">
@@ -153,36 +189,22 @@ const PortfolioSection = () => {
                     </span>
                   )}
                 </p>
-                {/* Real results: what the owner receives per month, plus occupancy. New flats get a note instead. */}
-                {/* K1 (vybráno 29. 8. 2026): obsazenost bytu proti trhu lokality
-                    jako dva pruhy = hlavní sdělení karty; částka pod nimi. */}
+                {/* Occupancy as plain typography: the flat's number leads, the locality's market
+                    number follows in muted text. No bars, no chart. New flats get a note instead. */}
                 {item.stats && (
-                  <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border">
-                    <div className="space-y-1 sm:space-y-1.5 tnum">
-                      <div className="flex items-center gap-1.5 sm:gap-2 font-body text-[10px] sm:text-[11.5px] leading-none">
-                        <span className="w-[58px] sm:w-[72px] shrink-0 text-muted-foreground">{c.barFlat}</span>
-                        <span className="block h-[6px] sm:h-[7px] flex-1 overflow-hidden rounded-full bg-muted">
-                          <span className="block h-full rounded-full bg-gold" style={{ width: `${item.stats.occupancy}%` }} />
-                        </span>
-                        <span className="w-[30px] sm:w-[36px] shrink-0 text-right font-semibold text-foreground">{item.stats.occupancy}&nbsp;%</span>
-                      </div>
-                      <div className="flex items-center gap-1.5 sm:gap-2 font-body text-[10px] sm:text-[11.5px] leading-none">
-                        <span className="w-[58px] sm:w-[72px] shrink-0 text-muted-foreground">{c.barMarket(item.loc)}</span>
-                        <span className="block h-[6px] sm:h-[7px] flex-1 overflow-hidden rounded-full bg-muted">
-                          <span className="block h-full rounded-full bg-charcoal/20" style={{ width: `${item.stats.market}%` }} />
-                        </span>
-                        <span className="w-[30px] sm:w-[36px] shrink-0 text-right text-muted-foreground">{item.stats.market}&nbsp;%</span>
-                      </div>
-                    </div>
-                    <p className="mt-2.5 font-display text-base sm:text-2xl font-semibold text-foreground leading-none tnum">
-                      {fmtCzk(item.stats.owner)}&nbsp;Kč
-                    </p>
-                    <p className="mt-1 font-body text-[10px] sm:text-[11px] uppercase tracking-[0.12em] text-muted-foreground leading-tight">
-                      {c.statOwner}
+                  <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border tnum">
+                    <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-none">
+                      <span className={`font-display ${lead ? "text-xl" : "text-base"} sm:text-xl font-semibold text-foreground`}>
+                        {item.stats.occupancy}{lang === "cs" ? "\u00a0%" : "%"}
+                      </span>
+                      <span className="font-body text-[9.5px] sm:text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                        {c.statOcc}
+                      </span>
+                      <span className={`${lead ? "basis-auto ml-auto" : "basis-full sm:basis-auto sm:ml-auto"} font-body text-[10.5px] sm:text-xs text-muted-foreground`}>
+                        {c.barMarket(item.loc)}&nbsp;{item.stats.market}{lang === "cs" ? "\u00a0%" : "%"}
+                      </span>
                     </p>
                     <p className="mt-2 font-body text-[10.5px] sm:text-xs text-muted-foreground leading-snug">
-                      {item.stats.ratio ? <span className="text-gold-deep font-semibold">{c.statRatio(item.stats.ratio)}</span> : null}
-                      {item.stats.ratio ? " · " : ""}
                       {item.stats.since ? c.statPeriodSince(item.stats.since) : c.statPeriod12}
                     </p>
                   </div>
@@ -199,7 +221,8 @@ const PortfolioSection = () => {
                 )}
               </figcaption>
             </Reveal>
-          ))}
+            );
+          })}
 
           {showAll && (
           <Reveal delay={0.08} className="contents">
@@ -228,7 +251,7 @@ const PortfolioSection = () => {
               onClick={() => setShowAll(true)}
               aria-expanded={false}
               aria-controls="portfolio-vsechny"
-              className="btn btn-secondary"
+              className="btn btn-secondary max-sm:px-4 max-sm:tracking-[0.1em]"
             >
               {c.showAll}
               <ChevronDown className="w-4 h-4" aria-hidden="true" />

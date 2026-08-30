@@ -182,14 +182,14 @@ const ContactSection = () => {
         </Reveal>
 
         {/* Assurance strip — the four things that take the fear out of saying yes */}
-        <Reveal as="ul" delay={0.05} className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 mb-6 sm:mb-8">
+        <Reveal as="ul" delay={0.05} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-1.5 sm:gap-3 mb-6 sm:mb-8">
           {[
             { icon: ShieldCheck, key: "assure1" as const },
             { icon: CalendarClock, key: "assure2" as const },
             { icon: KeyRound, key: "assure3" as const },
             { icon: Receipt, key: "assure4" as const },
           ].map(({ icon: Icon, key }) => (
-            <li key={key} className="flex items-center justify-center gap-2 px-2.5 py-2.5 rounded-sm bg-card/70 border border-border/70 font-body text-[13px] md:text-sm text-foreground/85 whitespace-nowrap">
+            <li key={key} className="flex items-center justify-start md:justify-center gap-2 px-3 py-2 sm:py-2.5 rounded-sm bg-card/70 border border-border/70 font-body text-[13px] text-foreground/85 whitespace-nowrap">
               <Icon className="w-4 h-4 text-gold shrink-0" strokeWidth={1.8} />
               <span>{t(lang, key)}</span>
             </li>
@@ -207,7 +207,9 @@ const ContactSection = () => {
           ) : (
             <>
               {/* Who */}
-              <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-4 sm:gap-5">
+              {/* Phones stack the four contact fields: a 167 px cell cut the phone placeholder
+                  and let the two labels sit on different lines. Two columns from sm, like the rest. */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                 <div>
                   <label htmlFor="c-name" className={labelCls}>
                     {t(lang, "contact_name")} <span className="text-gold-deep">*</span>

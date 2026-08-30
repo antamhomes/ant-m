@@ -15,7 +15,7 @@ const OwnerReportSection = () => {
   // goes under it. VI keeps its side column (report_text + report_cta).
   const hasSide = !!(t(lang, "report_text") || t(lang, "report_cta"));
   const rows = [
-    { icon: BedDouble, key: "report_row_occupancy" as const, value: "96\u00a0%" },
+    { icon: BedDouble, key: "report_row_occupancy" as const, value: lang === "cs" ? "96\u00a0%" : "96%" },
     { icon: FileBarChart, key: "report_row_base" as const, value: "91\u00a0324\u00a0Kč" },
     { icon: Receipt, key: "report_row_costs" as const, value: "27\u00a0397\u00a0Kč" },
     { icon: Wallet, key: "report_row_net" as const, value: "63\u00a0927\u00a0Kč", highlight: true },

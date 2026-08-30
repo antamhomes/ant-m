@@ -42,7 +42,7 @@ describe("odměna za správu", () => {
 
   it("je 30 % všude v české i vietnamské kopii", () => {
     expect(strip(cs.pr1_price)).toMatch(/30 %/);
-    expect(strip(vi.pr1_price)).toMatch(/30 %/);
+    expect(strip(vi.pr1_price)).toMatch(/30%/); // vietnamština píše procenta bez mezery
     for (const key of ["calc_net_sub", "calc_excluded_note", "faq5_a", "faq9_a", "report_row_costs", "faq17_a"]) {
       expect(strip(cs[key]), `cs.${key}`).toMatch(/30\s?%/);
       expect(strip(vi[key]), `vi.${key}`).toMatch(/30\s?%/);

@@ -17,7 +17,7 @@ const translations = {
     hero_title1: "Váš byt může vydělávat víc.",
     hero_title2: "Nemusí vám přidávat práci.",
     hero_desc: "Profesionálně řídíme krátkodobý pronájem v Praze: od cen a rezervací po hosty, úklid a provoz.",
-    hero_extra: "Bereme podíl z výnosu, žádný paušál · nezávazně, ozveme se do 24 hodin",
+    hero_extra: "Podílíme se na výsledku · nezávazně · ozveme se do 24 hodin",
     hero_cta: "Spočítat můj byt",
     hero_cta2: "",
 
@@ -557,7 +557,7 @@ const translations = {
     calc_net: "Tiền về tay chủ nhà (ước tính)",
     calc_tab_month: "Hằng tháng",
     calc_tab_5y: "Sau 5 năm",
-    calc_basis: "Tính từ giá thật đã bán của các căn tương tự quanh những căn Antam lo (PriceLabs, 12 tháng), với tỷ lệ lấp phòng 85 %, mức các căn của Antam đều giữ được hoặc vượt. Là ước tính, không phải báo giá hay cam kết.",
+    calc_basis: "Tính từ giá thật đã bán của các căn tương tự quanh những căn Antam lo (PriceLabs, 12 tháng), với tỷ lệ lấp phòng 85%, mức các căn của Antam đều giữ được hoặc vượt. Là ước tính, không phải báo giá hay cam kết.",
     calc_unsupported_title: "Khu này Antam chưa có số liệu thị trường riêng.",
     calc_unsupported_text: "Antam chỉ hiện con số ở nơi đang quản lý căn hộ và thấy giá thật xung quanh. Gửi địa chỉ và loại nhà, trong 24 giờ anh chị có con số cho căn của mình. Miễn phí, không ràng buộc.",
     calc_loss_1: "Mỗi tháng cho thuê dài hạn, căn này mất khoảng",
@@ -584,9 +584,9 @@ const translations = {
     calc_share_copy: "Sao chép đường link:",
     calc_approx_prefix: "khoảng",
     calc_disclaimer_short: "Đây chỉ là con số tham khảo, không phải báo giá hay cam kết. Cam kết doanh thu chỉ có khi được ghi vào hợp đồng cho từng căn.",
-    calc_disclaimer: "Đây chỉ là con số tham khảo, không phải báo giá hay cam kết. Giá mỗi đêm lấy từ giá thật đã bán của các căn tương tự quanh những căn Antam lo (PriceLabs, 12 tháng đến 7/2026); nơi chưa có số liệu riêng thì Antam không hiện con số. Tỷ lệ lấp phòng tính 85 %: thị trường quanh các căn của Antam là 64 đến 78 %, các căn Antam lo là 85 đến 97 %. Phí nền tảng trong mô hình tính 17 %, thực tế tùy tin đăng dao động từ 15 đến 21 %. Tiền thuê dài hạn tính từ Deloitte Rent Index Q2/2026 theo đúng diện tích căn nhà, phần chênh giữa các loại nhà lấy từ bản đồ giá thuê của Bộ Tài chính (15. 8. 2026). Thực tế còn tùy tình trạng nhà, mùa, đánh giá của khách và quy định về cho thuê ngắn hạn. Cam kết doanh thu chỉ có khi được ghi vào hợp đồng cho từng căn. Điều kiện cụ thể theo hợp đồng.",
+    calc_disclaimer: "Đây chỉ là con số tham khảo, không phải báo giá hay cam kết. Giá mỗi đêm lấy từ giá thật đã bán của các căn tương tự quanh những căn Antam lo (PriceLabs, 12 tháng đến 7/2026); nơi chưa có số liệu riêng thì Antam không hiện con số. Tỷ lệ lấp phòng tính 85%: thị trường quanh các căn của Antam là 64 đến 78%, các căn Antam lo là 85 đến 97%. Phí nền tảng trong mô hình tính 17%, thực tế tùy tin đăng dao động từ 15 đến 21%. Tiền thuê dài hạn tính từ Deloitte Rent Index Q2/2026 theo đúng diện tích căn nhà, phần chênh giữa các loại nhà lấy từ bản đồ giá thuê của Bộ Tài chính (15. 8. 2026). Thực tế còn tùy tình trạng nhà, mùa, đánh giá của khách và quy định về cho thuê ngắn hạn. Cam kết doanh thu chỉ có khi được ghi vào hợp đồng cho từng căn. Điều kiện cụ thể theo hợp đồng.",
     calc_disclaimer_toggle: "Antam tính thế nào và điều gì ảnh hưởng",
-    calc_excluded_note: "Antam nhận 30 % trên doanh thu ròng: phần tiền Airbnb, Booking trả về, sau khi trừ phí dọn dẹp. Là con số cuối cùng, không cộng thêm gì, và trong đó có cả cam kết doanh thu. Phí dọn dẹp khách trả riêng và thuộc về Antam (dọn dẹp, giặt giũ). Điện nước chủ nhà lo.",
+    calc_excluded_note: "Antam nhận 30% trên doanh thu ròng: phần tiền Airbnb, Booking trả về, sau khi trừ phí dọn dẹp. Là con số cuối cùng, không cộng thêm gì, và trong đó có cả cam kết doanh thu. Phí dọn dẹp khách trả riêng và thuộc về Antam (dọn dẹp, giặt giũ). Điện nước chủ nhà lo.",
     calc_method_note: "Phí nền tảng tính trên toàn bộ giá đặt phòng, gồm cả phí dọn dẹp. Khoản này trừ trước, phần còn lại chia 70/30. VAT của phí nền tảng do Antam nộp từ phí của mình, không trừ vào tiền của chủ nhà.",
     calc_energy_note: "Điện nước chủ nhà lo, thường khoảng 2\u00a0500 đến 5\u00a0500 Kč mỗi tháng tùy loại nhà. Khoản này chưa trừ trong kết quả tính.",
     calc_cover_label: "Lo hỏng hóc do khách",
@@ -605,7 +605,7 @@ const translations = {
     report_row_base: "Doanh thu ròng sau phí nền tảng và phí dọn dẹp",
     report_row_net: "Chủ nhà thực nhận",
     report_period: "2+kk · Praha 1 · tháng trung bình",
-    report_note: "Căn thật trong danh mục, trung bình 12 tháng đến 7/2026, tính theo mức phí hiện nay 30 %. Trên thẻ ở mục Kết quả, số được làm tròn thành 64 000 Kč. Dọn dẹp khách trả, điện nước chủ nhà lo.",
+    report_note: "Căn thật trong danh mục, trung bình 12 tháng đến 7/2026, tính theo mức phí hiện nay 30%. Trên thẻ ở mục Kết quả, số được làm tròn thành 64 000 Kč. Dọn dẹp khách trả, điện nước chủ nhà lo.",
     report_cta: "Muốn có bảng kê như vậy",
 
     // FAQ
@@ -619,13 +619,13 @@ const translations = {
     faq1_q: "Nhà chưa sẵn sàng thì sao?",
     faq1_a: "Không sao. Antam sẽ xem nhà trước rồi nói rõ nên chuẩn bị gì.",
     faq16_q: "Chuẩn bị nhà tốn khoảng bao\u00a0nhiêu?",
-    faq16_a: "Tùy tình trạng nhà và những gì đã có sẵn. Phí khởi động là 25\u00a0000 Kč: chuẩn bị nhà, chụp ảnh, đăng tin và đặt giá. Đồ đạc Antam mua theo giá gốc, có hóa đơn đầy đủ, không cộng thêm gì; dự án lớn hơn 30\u00a0000 Kč thì Antam nhận 20\u00a0% chi phí quản lý việc sửa sắm. Nhà trống hoàn toàn thì chủ nhà nên tính khoảng 100 000 Kč cho mỗi phòng. Đồ đạc vẫn là của chủ nhà, và Antam sẽ gửi trước danh sách cần mua gì, hết khoảng bao nhiêu.",
+    faq16_a: "Tùy tình trạng nhà và những gì đã có sẵn. Phí khởi động là 25\u00a0000 Kč: chuẩn bị nhà, chụp ảnh, đăng tin và đặt giá. Đồ đạc Antam mua theo giá gốc, có hóa đơn đầy đủ, không cộng thêm gì; dự án lớn hơn 30\u00a0000 Kč thì Antam nhận 20% chi phí quản lý việc sửa sắm. Nhà trống hoàn toàn thì chủ nhà nên tính khoảng 100 000 Kč cho mỗi phòng. Đồ đạc vẫn là của chủ nhà, và Antam sẽ gửi trước danh sách cần mua gì, hết khoảng bao nhiêu.",
     faq3_q: "Muốn về ở thì sao?",
     faq3_a: "Tất nhiên. Anh chị có thể giữ căn hộ cho mình bất\u00a0cứ\u00a0lúc\u00a0nào. Riêng các dịp cao điểm như Giáng sinh, giao thừa hay Phục sinh thì mình thống nhất trước với Antam. Những đặt phòng đã\u00a0nhận thì vẫn giữ\u00a0nguyên. 14 đêm đầu trong năm không ảnh hưởng gì đến cam kết, từ đêm sau thì mức cam kết chỉ giảm theo tỷ lệ.",
     faq4_q: "Làm sao biết nhà thu được bao nhiêu?",
     faq4_a: "Mỗi tháng Antam gửi một bảng kê gọn một trang: bao nhiêu đêm có khách, tiền phòng, phí nền tảng, phí 30% và Antam đã làm gì trong nhà. Kèm hóa đơn phí nên từng khoản đều rõ ràng. Bảng kê và tiền đều về trước ngày 15 tháng sau.",
     faq5_q: "Phí bao nhiêu?",
-    faq5_a: "Antam nhận 30 % trên doanh thu ròng: phần tiền Airbnb, Booking trả về sau khi trừ phí dọn dẹp. Là con số cuối cùng, không phí cố định, không phí tháng; trong đó có cam kết doanh thu, phần lo hỏng hóc do khách và cả VAT phí nền tảng. Sửa nhỏ đến 5 000 Kč Antam làm luôn và trừ vào tiền phòng, cả năm không quá 20 000 Kč; việc lớn hơn chủ nhà đồng ý mới làm.",
+    faq5_a: "Antam nhận 30% trên doanh thu ròng: phần tiền Airbnb, Booking trả về sau khi trừ phí dọn dẹp. Là con số cuối cùng, không phí cố định, không phí tháng; trong đó có cam kết doanh thu, phần lo hỏng hóc do khách và cả VAT phí nền tảng. Sửa nhỏ đến 5 000 Kč Antam làm luôn và trừ vào tiền phòng, cả năm không quá 20 000 Kč; việc lớn hơn chủ nhà đồng ý mới làm.",
     faq18_q: "Cam kết doanh thu là gì?",
     faq18_a: "Căn nào Antam nhận quản lý, chủ nhà cũng có một mức tối thiểu mỗi năm, ghi rõ trong hợp đồng: bằng tiền thuê dài hạn cộng tiền điện nước. Sau 12 tháng mà chưa đạt mức đó, phần thiếu được trừ vào phí của Antam, hoặc anh chị dừng hợp tác ngay, tùy anh chị chọn. Nhà mình có đạt được mức đó hay không, Antam xem trước miễn phí; không đạt thì Antam nói thẳng.",
     faq6_q: "Ai trả tiền dọn dẹp, điện nước?",
@@ -655,8 +655,8 @@ const translations = {
     pricing_title: "Chủ nhà phải chi những gì",
     pricing_desc: "Không có khoản nào để đến lúc ký mới biết.",
     pr1_name: "Phí quản lý",
-    pr1_price: "30 % trên doanh thu ròng",
-    pr1_note: "Số trong sơ đồ là ví dụ cho 90 000 Kč về tài khoản, không phải một căn cụ thể. 30 % là phí cuối cùng của Antam Homes, không cộng thêm gì, không phí cố định, không phí tháng. Phí dọn dẹp khách trả riêng và dùng để dọn và giặt; điện nước chủ nhà lo.",
+    pr1_price: "30% trên doanh thu ròng",
+    pr1_note: "Số trong sơ đồ là ví dụ cho 90 000 Kč về tài khoản, không phải một căn cụ thể. 30% là phí cuối cùng của Antam Homes, không cộng thêm gì, không phí cố định, không phí tháng. Phí dọn dẹp khách trả riêng và dùng để dọn và giặt; điện nước chủ nhà lo.",
     pr1_split_owner: "70% cho chủ nhà",
     pr1_split_fee: "30% Antam Homes",
     pr1_flow1: "Tiền về tài khoản từ Airbnb và Booking.com",
@@ -665,9 +665,9 @@ const translations = {
     pr1_flow2_v: "−9 000 Kč",
     pr1_flow3: "",
     pr1_flow3_v: "",
-    pr1_flow4: "Chủ nhà (70 %)",
+    pr1_flow4: "Chủ nhà (70%)",
     pr1_flow4_v: "56 700 Kč",
-    pr1_flow5: "Antam Homes (30 %)",
+    pr1_flow5: "Antam Homes (30%)",
     pr1_flow5_v: "24 300 Kč",
     pr1_flow_note: "Antam tính trên số tiền thật sự về tài khoản. Không tính trên giá niêm yết, không tính trên phí dọn dẹp.",
     pr1_stack_title: "",
@@ -691,7 +691,7 @@ const translations = {
     pr3_price: "theo giá gốc",
     pr3_note: "Antam mua đứng tên mình rồi giao lại cho chủ nhà đúng giá trên hóa đơn, không cộng thêm. Đồ đạc vẫn là của chủ nhà. Nhà trống hoàn toàn thì tính khoảng 100\u00a0000 Kč mỗi phòng.",
     pr4_name: "Quản lý sửa sang",
-    pr4_price: "20 % chi phí",
+    pr4_price: "20% chi phí",
     pr4_note: "Chỉ với việc lớn hơn 30\u00a0000 Kč: Antam tìm thợ, điều phối và nghiệm thu. Việc nhỏ thì đã nằm trong phí đưa nhà vào vận hành.",
     pr5_name: "Đi gấp đến nhà",
     pr5_price: "4 lần mỗi năm miễn phí, sau đó 500 Kč một lần",
@@ -719,7 +719,7 @@ const translations = {
     hz_start: "Bắt đầu",
     hz_diff: "Chênh lệch",
     hz_aria: "Thu nhập cộng dồn của chủ nhà trong năm năm: cho thuê ngắn hạn với Antam Homes so với cho thuê dài hạn.",
-    hz_growth: "Antam tính là tiền thuê dài hạn tăng nhanh hơn cho thuê ngắn hạn: 5\u00a0% mỗi năm so với 3\u00a0%. Tính như vậy rồi mà sau năm năm cho thuê ngắn hạn vẫn hơn hẳn.",
+    hz_growth: "Antam tính là tiền thuê dài hạn tăng nhanh hơn cho thuê ngắn hạn: 5% mỗi năm so với 3%. Tính như vậy rồi mà sau năm năm cho thuê ngắn hạn vẫn hơn hẳn.",
     hz_assume_5: "Antam có tính cả tiền thay mới đồ đạc. Ngược lại, phía cho thuê dài hạn chưa trừ những tháng trống giữa hai người thuê hay phí môi giới, dù thực tế vẫn có. Chưa tính thuế thu nhập, chưa tính giá tăng ở cả hai bên. Con số tham khảo, không phải cam kết.",
 
     // Contact
@@ -833,10 +833,19 @@ export const noWidow = (text: string) => {
   return text.slice(0, i) + "\u00a0" + text.slice(i + 1);
 };
 
+// Numbers never break: "25 000" stays one token, and a figure stays with its unit
+// ("25 000 Kč", "30 %", "52 m²", "1,3 mil."). Czech writes a space before % and
+// the units; Vietnamese writes 30% closed up, so only the unit words get glued there.
+const THOUSANDS = /(\d) (?=\d{3}(?!\d))/g;
+const UNIT_CS = /(\d) (Kč|%|m²|tis\.|mil\.)/g;
+const UNIT_VI = /(\d) (Kč|m²|tr\.|triệu)/g;
+export const bindNumbers = (text: string, lang: "cs" | "vi") =>
+  text.replace(THOUSANDS, "$1\u00a0").replace(lang === "cs" ? UNIT_CS : UNIT_VI, "$1\u00a0$2");
+
 export const t = (lang: "cs" | "vi", key: TranslationKey) => {
   const value = translations[lang][key as keyof typeof translations.cs];
   if (typeof value !== "string") return value;
-  return noWidow(lang === "cs" ? czTypo(value) : value);
+  return noWidow(bindNumbers(lang === "cs" ? czTypo(value) : value, lang));
 };
 
 export default translations;

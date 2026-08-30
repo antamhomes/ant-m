@@ -69,8 +69,11 @@ const CalculatorSection = () => {
   // počítá ze stejného stavu přes lib/horizon.
   const d = useMemo(() => fiveYear(location, guests, size, m2, furn), [location, guests, size, m2, furn]);
 
+  // "mil." / "tis." are Czech; the Vietnamese page counts in "triệu" (million) and "nghìn".
   const short = (n: number) =>
-    Math.abs(n) >= 1e6 ? `${(n / 1e6).toFixed(1).replace(".", ",")} mil.` : `${Math.round(n / 1000)} tis.`;
+    Math.abs(n) >= 1e6
+      ? `${(n / 1e6).toFixed(1).replace(".", ",")}\u00a0${lang === "cs" ? "mil." : "triệu"}`
+      : `${Math.round(n / 1000)}\u00a0${lang === "cs" ? "tis." : "nghìn"}`;
   const supported = result.r.supported;
 
   return (
@@ -141,7 +144,10 @@ const CalculatorSection = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* The two sliders stack at every width: side by side, the Vietnamese label
+                ("Nhà ở được mấy khách") wrapped even on desktop and the tablet column cut
+                both labels; the input column has the vertical room, the result panel is taller. */}
+            <div className="grid grid-cols-1 gap-6">
               <div>
                 <label htmlFor="calc-guests" className="flex items-baseline justify-between gap-3 font-body text-sm font-semibold text-foreground mb-2">
                   <span className="flex items-center gap-2"><Users className="w-4 h-4 text-gold" />{t(lang, "calc_guests")}</span>
@@ -272,7 +278,7 @@ const CalculatorSection = () => {
                       >
                         <span className="tnum">
                           {t(lang, "calc_teaser_1")}{" "}
-                          <strong className="text-gold font-semibold">+{short(d.gap)} Kč</strong>{" "}
+                          <strong className="text-gold font-semibold">+{short(d.gap)}&nbsp;Kč</strong>{" "}
                           {t(lang, "calc_teaser_2")}
                         </span>
                         <ChevronRight className="w-4 h-4 shrink-0 text-gold" aria-hidden="true" />
@@ -289,11 +295,11 @@ const CalculatorSection = () => {
                       </div>
                       <div className="mt-2 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 font-body text-[13px] tnum">
                         <span className="text-primary-foreground/85">
-                          <strong className="text-gold font-semibold">70 %</strong> {t(lang, "calc_split_owner")}{" "}
+                          <strong className="text-gold font-semibold">{lang === "cs" ? "70\u00a0%" : "70%"}</strong> {t(lang, "calc_split_owner")}{" "}
                           <span className="text-gold/90">= ~{(Math.round(result.r.net / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč</span>
                         </span>
                         <span className="text-primary-foreground/65 text-right">
-                          <strong className="font-semibold text-primary-foreground/80">30 %</strong> {t(lang, "calc_split_fee")}
+                          <strong className="font-semibold text-primary-foreground/80">{lang === "cs" ? "30\u00a0%" : "30%"}</strong> {t(lang, "calc_split_fee")}
                         </span>
                       </div>
                     </div>

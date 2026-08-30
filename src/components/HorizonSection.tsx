@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Reveal from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useCalc, type Furn } from "@/contexts/CalcContext";
@@ -15,19 +15,42 @@ import { t } from "@/i18n/translations";
  * Patch 124: graf se vrátil z kalkulačkové záložky sem, nad srovnání.
  */
 
-const W = 860, H = 360, PAD = { t: 20, r: 92, b: 32, l: 64 };
+/** The chart draws in real screen pixels: the wrapper's CSS aspect ratio fixes the box
+ *  (no layout shift), a ResizeObserver reports its size and the viewBox follows it.
+ *  So 11 px labels are 11 px on a phone as well, and a phone gets the taller 4:3 box
+ *  where the two curves have room to open up. Before the first measurement (SSG
+ *  markup, first paint) the desktop proportions apply. */
+const DEFAULT_BOX = { w: 860, h: 360 };
 
 const FiveYearChart = () => {
   const { lang } = useLanguage();
   const { location, size, guests, m2, furn, setFurn } = useCalc();
   const [hover, setHover] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
+  const boxRef = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState(DEFAULT_BOX);
+  useEffect(() => {
+    const el = boxRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(([e]) => {
+      const { width, height } = e.contentRect;
+      if (width > 0 && height > 0) setBox({ w: Math.round(width), h: Math.round(height) });
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const { w: W, h: H } = box;
+  const narrow = W < 480;
+  const PAD = { t: 16, r: narrow ? 56 : 92, b: 30, l: narrow ? 50 : 64 };
   const d = useMemo(() => fiveYear(location, guests, size, m2, furn), [location, guests, size, m2, furn]);
   if (!d) return null;
 
   const czk = (n: number) => `${Math.round(n).toLocaleString("cs-CZ").replace(/ /g, "\u00a0")}\u00a0Kč`;
+  // "mil." / "tis." are Czech; the Vietnamese page counts in "triệu" (million) and "nghìn".
   const short = (n: number) =>
-    Math.abs(n) >= 1e6 ? `${(n / 1e6).toFixed(1).replace(".", ",")} mil.` : `${Math.round(n / 1000)} tis.`;
+    Math.abs(n) >= 1e6
+      ? `${(n / 1e6).toFixed(1).replace(".", ",")}\u00a0${lang === "cs" ? "mil." : "triệu"}`
+      : `${Math.round(n / 1000)}\u00a0${lang === "cs" ? "tis." : "nghìn"}`;
   const px = (i: number) => PAD.l + (W - PAD.l - PAD.r) * (i / MONTHS);
   const maxY = Math.max(d.lt[MONTHS], d.str[MONTHS]);
   const minY = Math.min(0, d.str[0]);
@@ -78,8 +101,9 @@ const FiveYearChart = () => {
             {t(lang, "hz_legend_ltr")}
           </span>
         </div>
+        <div ref={boxRef} className="aspect-[4/3] sm:aspect-[860/360]">
         <svg
-          ref={svgRef} viewBox={`0 0 ${W} ${H}`} className="w-full h-auto overflow-visible touch-pan-y"
+          ref={svgRef} viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="xMidYMid meet" className="block w-full h-full overflow-visible touch-pan-y"
           onPointerMove={onMove} onPointerLeave={() => setHover(null)}
           role="img" aria-label={t(lang, "hz_aria") as string}
         >
@@ -92,10 +116,14 @@ const FiveYearChart = () => {
             </g>
           ))}
           <line x1={PAD.l} x2={W - PAD.r} y1={py(0)} y2={py(0)} stroke="hsl(var(--border))" strokeWidth={1.5} />
+          {/* Phones: a 200 px axis cannot carry six words, so the years become plain
+              numbers and only the last one keeps its unit; the origin is self-evident. */}
           {[0, 1, 2, 3, 4, 5].map((yr) => (
+            (narrow && yr === 0) ? null : (
             <text key={yr} x={px(yr * 12)} y={H - PAD.b + 17} textAnchor="middle" className="fill-muted-foreground" style={{ fontSize: 11 }}>
-              {yr === 0 ? t(lang, "hz_start") : `${yr}. ${t(lang, "hz_year")}`}
+              {yr === 0 ? t(lang, "hz_start") : narrow && yr < 5 ? `${yr}.` : `${yr}. ${t(lang, "hz_year")}`}
             </text>
+            )
           ))}
           <path d={path(d.lt)} fill="none" stroke="hsl(var(--primary))" strokeWidth={2} strokeLinecap="round" />
           <path d={path(d.str)} fill="none" stroke="hsl(var(--gold-deep))" strokeWidth={2} strokeLinecap="round" />
@@ -111,6 +139,7 @@ const FiveYearChart = () => {
             </g>
           )}
         </svg>
+        </div>
         {hover !== null && (
           <div
             className="pointer-events-none absolute bg-card border border-border rounded-sm px-3 py-2 font-body text-[12.5px] shadow-lg min-w-[190px]"
@@ -146,26 +175,33 @@ const FiveYearChart = () => {
             {d.gap >= 0 ? "+" : ""}{czk(Math.round(d.gap / 1000) * 1000)}
           </p>
         </div>
-        <ul className="grid grid-cols-3 gap-px bg-border list-none m-0 p-0">
+        <ul className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-border list-none m-0 p-0">
           {([
             [t(lang, "hz_stat_invest"), czk(-d.setup)],
             [t(lang, "hz_stat_payback"),
               d.payback ? `${d.payback} ${t(lang, d.payback === 1 ? "hz_months_one" : d.payback < 5 ? "hz_months_few" : "hz_months")}` : "?"],
             [t(lang, "hz_stat_cross"), d.cross ? `${d.cross}. ${t(lang, "hz_month")}` : "?"],
           ] as [string, string][]).map(([k, v]) => (
-            <li key={k} className="bg-card px-3 py-2.5 min-w-0">
-              <p className="font-body text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground">{k}</p>
-              <p className="font-display text-[15px] sm:text-[17px] mt-0.5 tnum text-foreground/85">{v}</p>
+            <li key={k} className="bg-card px-3 sm:px-3 py-2 sm:py-2.5 min-w-0 flex items-baseline justify-between gap-3 sm:block">
+              <p className="font-body text-[10.5px] uppercase tracking-[0.12em] text-muted-foreground leading-snug">{k}</p>
+              <p className="font-display text-[16px] sm:text-[17px] sm:mt-0.5 tnum text-foreground/85 whitespace-nowrap">{v}</p>
             </li>
           ))}
         </ul>
       </div>
 
       {/* Proč se pětileté číslo liší od měsíčního: odečtené položky viditelně. */}
-      <div className="font-body text-[12.5px] text-muted-foreground leading-relaxed tnum space-y-1">
-        <p className="flex justify-between gap-3"><span>{t(lang, "calc_5y_energy")}</span><span className="whitespace-nowrap shrink-0">−{czk(d.energy)} / {t(lang, "hz_month")}</span></p>
-        <p className="flex justify-between gap-3"><span>{t(lang, "calc_5y_renew")}</span><span className="whitespace-nowrap shrink-0">−{czk(d.renew)} / {t(lang, "hz_month")}</span></p>
-        <p className="flex justify-between gap-3"><span>{t(lang, "calc_5y_rent")}</span><span className="whitespace-nowrap shrink-0">{czk(d.rent)} / {t(lang, "hz_month")}</span></p>
+      <div className="font-body text-muted-foreground tnum space-y-1">
+        {([
+          [t(lang, "calc_5y_energy"), `−${czk(d.energy)}`],
+          [t(lang, "calc_5y_renew"), `−${czk(d.renew)}`],
+          [t(lang, "calc_5y_rent"), czk(d.rent)],
+        ] as [string, string][]).map(([k, v]) => (
+          <p key={k} className="flex justify-between items-baseline gap-3 text-[12.5px] leading-relaxed">
+            <span>{k}</span>
+            <span className="whitespace-nowrap shrink-0">{v} / {t(lang, "hz_month")}</span>
+          </p>
+        ))}
       </div>
       <p className="font-body text-[12px] text-muted-foreground leading-relaxed border-t border-border pt-3">
         {t(lang, "hz_growth")} {t(lang, "hz_assume_5")}
