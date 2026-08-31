@@ -21,7 +21,7 @@ import {
   MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor,
   operatorFactor, OPERATOR_EVIDENCE, publicFactorFrom, AVAILABILITY, BAND_BLEND, bandWeight, bandForSize, ctvrtiOf, MARKET_CTVRT,
   marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, SPREAD, marketCell, guestsFor, BASE_GUESTS,
-  RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, TYPICAL_AREA, typicalArea, type LocationKey,
+  RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, RENT_GROWTH, STR_GROWTH, TYPICAL_AREA, typicalArea, type LocationKey,
   type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
@@ -752,6 +752,30 @@ describe("model výnosu", () => {
     expect(ctvrt.supported && ctvrt.adr).toBeLessThanOrEqual(smAdr);
   });
 
+  it("nájemní benchmark je JEDEN na celé stránce a růst cen se nehádá", () => {
+    // Do 31. 8. 2026 kalkulačka ukazovala nájem "mix" a graf tiše měřil proti
+    // "furnished" (+11,4 %), takže stránka uváděla pro tentýž byt dva nájmy.
+    expect(FURN_RENT.mix, "mix = fit celého vzorku, běžný pražský inzerát").toBe(1);
+    const hzSrc = readFileSync("src/lib/horizon.ts", "utf8");
+    expect(hzSrc, "graf musí brát týž nájem jako kalkulačka").toContain('rentFor(location as LocationKey, size, m2, "mix")');
+    expect(hzSrc, "furnished se do výpočtu grafu nesmí vrátit").not.toMatch(/rentFor\([^)]*"furnished"/);
+    for (const loc of ["praha1", "praha4", "praha9"] as const)
+      for (const size of ["2kk", "3kk"] as const) {
+        const m2 = typicalArea(loc, size);
+        const d = fiveYear(loc, size, m2);
+        if (!d) throw new Error(`${loc} ${size}`);
+        expect(d.rent, `${loc} ${size}: graf i kalkulačka jeden nájem`).toBe(rentFor(loc, size, m2));
+      }
+    // Žádná makro předpověď: dnešní podmínky drží po celých pět let, a web to říká.
+    expect(RENT_GROWTH, "nehádáme růst nájmů").toBe(0);
+    expect(STR_GROWTH, "ani růst krátkodobého pronájmu").toBe(0);
+    for (const d of [cs, vi]) {
+      expect(strip(d.hz_growth), "text nesmí slibovat 5 % proti 3 %").not.toMatch(/5\s*%|3\s*%/);
+      expect(strip(d.hz_growth)).toMatch(/neodhadujeme|không đoán/i);
+      expect(strip(d.hz_stat_gap), "pětiletka je po nákladech, ať je to vidět").toMatch(/po nákladech|đã trừ chi phí/i);
+    }
+  });
+
   it("pětiletý graf počítá ze stejného čísla jako kalkulačka, obě křivky", () => {
     for (const loc of ["praha1", "praha3", "praha5"] as const)
       for (const size of ["2kk", "3kk"] as const) {
@@ -761,22 +785,29 @@ describe("model výnosu", () => {
         // 2. rok (po rozjezdu): měsíční přírůstek = net − energie − obnova
         // Veřejně jede graf na TOMTÉŽ základu jako headline kalkulačky (vršek).
         expect(d.basis).toBe("potential");
-        expect(d.str[24] - d.str[23]).toBeCloseTo((r.high - d.energy - d.renew) * 1.03, 5);
-        expect(d.strMarket[24] - d.strMarket[23]).toBeCloseTo((r.low - d.energy - d.renew) * 1.03, 5);
-        expect(d.strHigh[24] - d.strHigh[23]).toBeCloseTo((r.high - d.energy - d.renew) * 1.03, 5);
+        // Bez růstového násobku (31. 8. 2026: RENT_GROWTH i STR_GROWTH = 0):
+        // měsíční přírůstek je prostě čistý příjem minus energie a obnova.
+        expect(d.str[24] - d.str[23]).toBeCloseTo(r.high - d.energy - d.renew, 5);
+        expect(d.strMarket[24] - d.strMarket[23]).toBeCloseTo(r.low - d.energy - d.renew, 5);
+        expect(d.strHigh[24] - d.strHigh[23]).toBeCloseTo(r.high - d.energy - d.renew, 5);
         expect(d.netMarket).toBe(r.market.net);
-        expect(d.rent).toBe(rentFor(loc, size, typicalArea(loc, size), "furnished"));
+        // JEDEN nájemní benchmark: graf i kalkulačka berou "mix" (31. 8. 2026).
+        expect(d.rent).toBe(rentFor(loc, size, typicalArea(loc, size)));
         expect(d.lt[12] - d.lt[11]).toBeCloseTo(d.rent, 5);
       }
     for (const loc of ["praha1", "praha4"] as const) {
       const d = fiveYear(loc, "2kk");
       if (!d) throw new Error(loc);
       expect(d.setup).toBe(LAUNCH_FEE);
-      expect(d.rent).toBe(rentFor(loc, "2kk", typicalArea(loc, "2kk"), "furnished"));
+      expect(d.rent).toBe(rentFor(loc, "2kk", typicalArea(loc, "2kk")));
     }
     // teaser se ukazuje jen pro kladný pětiletý rozdíl
     const calcSrc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
-    expect(calcSrc).toContain("d && d.gap > 0 && (");
+    // Pětiletý teaser je z karty výsledku PRYČ (31. 8. 2026): roční rozdíl je
+    // hrubý rozdíl měsíčních příjmů, pětiletka je po energiích, obnově, uvedení
+    // do provozu a rozjezdu. Vedle sebe se to čte jako chyba.
+    expect(calcSrc, "pětiletý teaser se nesmí vrátit do karty").not.toContain("calc_teaser_1");
+    expect(calcSrc, "kalkulačka už pětiletku nepočítá").not.toContain("fiveYear");
     const hz = readFileSync("src/components/HorizonSection.tsx", "utf8");
     expect(hz).toContain("d.strMarket");
     expect(hz).toContain("d.strHigh");
@@ -1091,7 +1122,8 @@ describe("nájem podle plochy (Sreality 8/2026)", () => {
     expect(rentFor("praha1", "2kk", 53, "furnished")).toBeGreaterThan(rentFor("praha1", "2kk", 53, "none"));
     // graf Za 5 let počítá zařízený byt (jediný scénář od 30. 8. 2026)
     const hz = readFileSync("src/lib/horizon.ts", "utf8");
-    expect(hz).toContain('"furnished"');
+    // Graf bere TÝŽ nájem jako kalkulačka ("mix"), viz test o jednom benchmarku.
+    expect(hz).toContain('size, m2, "mix"');
   });
 
   it("každý byt v portfoliu má plochu a ta sedí na kartu", () => {

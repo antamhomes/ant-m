@@ -522,12 +522,21 @@ export const RENEW_PER_ROOM_YEAR = 4000;
 export const YEAR_ONE_RAMP = 0.85;    // nová nabídka nenajede hned na plný výkon
 
 /**
- * Roční růst pro pětiletý horizont. Schválně proti nám: nájmy v Praze rostou
- * rychleji než krátkodobý pronájem (CEMAP, Sreality, RealityMIX, ČSÚ, Deloitte
- * vs pražské hotely v korunách).
+ * Růst cen v pětiletém horizontu: NULA na obou stranách (31. 8. 2026).
+ *
+ * Do té doby tu stálo 5 % ročně u nájmu proti 3 % u krátkodobého pronájmu.
+ * Byla to nepodložená makro předpověď, která přitom rozhodovala o výsledku:
+ * u typického 3+kk v Praze 9 sebrala za pět let ~80 000 Kč a dokázala překlopit
+ * dobrý dnešní případ do záporu. Navíc si to odporovalo s vlastním textem na
+ * webu (hz_assume_5 už tehdy tvrdil „bez růstu cen na obou stranách").
+ *
+ * Pětiletka teď drží DNEŠNÍ tržní podmínky konstantní a web to říká nahlas.
+ * Není to tvrzení, že trh poroste nulou; je to odmítnutí hádat, kterým směrem
+ * se rozejdou dva trhy, když pro to nemáme data. Až budou, můžou se sem vrátit
+ * — ale jako změřený vstup, ne jako předpoklad.
  */
-export const RENT_GROWTH = 0.05;
-export const STR_GROWTH = 0.03;
+export const RENT_GROWTH = 0;
+export const STR_GROWTH = 0;
 export const PROJECT_FEE = 0.20;           // odměna za řízení projektu, z rozpočtu
 export const PROJECT_FEE_THRESHOLD = 30000;// pod tímto rozpočtem je řízení v ceně uvedení do provozu
 

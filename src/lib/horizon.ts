@@ -21,8 +21,8 @@ export const HORIZON_MONTHS = 60;
  *
  * Rozhodnutí 30. 8. 2026: graf počítá JEN plně vybavený byt (připravený pro
  * hosty). Start = uvedení do provozu 25 000 Kč; dovybavení se řeší v propočtu
- * a v ceníku, přepínač vybavení z grafu zmizel. Nájem pro srovnání je proto
- * za zařízený byt (Sreality faktor furnished).
+ * a v ceníku, přepínač vybavení z grafu zmizel. Nájem pro srovnání je od
+ * 31. 8. 2026 TÝŽ jako v kalkulačce (mix), viz poznámka u rentFor níž.
  */
 /**
  * Který scénář je v grafu ta HLAVNÍ křivka.
@@ -55,7 +55,13 @@ export const fiveYear = (
   const m2y = netMarket - energy - renew;
   const h1 = netHigh * YEAR_ONE_RAMP - energy - renew;
   const h2 = netHigh - energy - renew;
-  const rent = rentFor(location as LocationKey, size, m2, "furnished");
+  // JEDEN nájemní benchmark na celé stránce. Do 31. 8. 2026 tu bylo "furnished"
+  // (×1,114), zatímco kalkulačka ukazuje "mix" — stránka tedy pro tentýž byt
+  // uváděla dva různé nájmy a graf tiše měřil proti o 11 % vyššímu. "mix" je
+  // fit celého vzorku Sreality (zařízené i nezařízené), tedy to, co majitel
+  // reálně dostane, když byt pronajme běžně. To je ta správná alternativa:
+  // porovnávají se dvě strategie využití bytu, ne dva stejně provozované produkty.
+  const rent = rentFor(location as LocationKey, size, m2, "mix");
   const setup = LAUNCH_FEE;
   const lt = [0], str = [-setup], strMarket = [-setup], strHigh = [-setup];
   for (let i = 1; i <= HORIZON_MONTHS; i++) {

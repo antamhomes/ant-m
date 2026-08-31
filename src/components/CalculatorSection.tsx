@@ -1,11 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import Reveal from "@/components/Reveal";
-import { Calculator, MapPin, Home, Share2, Pencil, ChevronRight, Ruler } from "lucide-react";
+import { Calculator, MapPin, Home, Share2, Pencil, Ruler } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
 import { BAND_LABEL, ownerMonthly, rentFor, ctvrtiOf, SIZE_SLIDER, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
-import { fiveYear } from "@/lib/horizon";
 import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/CalcContext";
 
 /** Lokalita v kalkulačce: pražské čtvrti + „jinde". U čtvrtí bez vlastních dat
@@ -76,9 +75,11 @@ const CalculatorSection = () => {
     return { r, ltr, ratio, ctvrtLabel };
   }, [location, ctvrt, size, m2, season]);
 
-  // Pětiletý rozdíl pro teaser; sám graf je v sekci Horizont (#horizont) a
-  // počítá ze stejného stavu přes lib/horizon.
-  const d = useMemo(() => fiveYear(location, size, m2, ctvrt), [location, size, m2, ctvrt]);
+  // Pětiletka se v kartě výsledku ZÁMĚRNĚ neukazuje (31. 8. 2026). Roční rozdíl
+  // je hrubý rozdíl zobrazených měsíčních příjmů, kdežto pětiletý scénář je po
+  // energiích, obnově vybavení, uvedení do provozu a rozjezdu. Vedle sebe to
+  // vypadá, že jedno je pětina druhého. Graf žije v sekci Horizont (#horizont)
+  // a je tam označený jako scénář PO NÁKLADECH.
 
   // "mil." / "tis." are Czech; the Vietnamese page counts in "triệu" (million) and "nghìn".
   const short = (n: number) =>
@@ -343,22 +344,6 @@ const CalculatorSection = () => {
                       </p>
                     </div>
 
-                    {/* Teaser s konkrétním pětiletým rozdílem; vede na graf v sekci
-                        Horizont. Jen když rozdíl vychází kladně: u velkých bytů mimo
-                        centrum může pětiletka po nákladech na vybavení vyjít pod nájmem
-                        a pak teaser nemá co slibovat (graf to ukáže poctivě). */}
-                    {d && d.gap > 0 && (
-                      <a href="#horizont" onClick={() => trackEvent("calc_tab_5y", { district: location })}
-                        className="flex w-full items-center justify-between gap-3 rounded-sm border border-gold/30 bg-gold/10 px-3.5 py-2.5 text-left font-body text-[13px] text-primary-foreground/90 transition-colors hover:bg-gold/15"
-                      >
-                        <span className="tnum">
-                          {t(lang, "calc_teaser_1")}{" "}
-                          <strong className="text-gold font-semibold">+{short(d.gap)}&nbsp;Kč</strong>{" "}
-                          {t(lang, "calc_teaser_2")}
-                        </span>
-                        <ChevronRight className="w-4 h-4 shrink-0 text-gold" aria-hidden="true" />
-                      </a>
-                    )}
 
                     <div className="border-t border-primary-foreground/10 pt-4">
                       <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">

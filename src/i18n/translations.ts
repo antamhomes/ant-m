@@ -324,10 +324,10 @@ const translations = {
     hz_furn_najem: "zařízený pro nájemníka",
     hz_furn_prazdny: "prázdný",
     hz_stat_invest: "Investice na začátku",
-    hz_furnish_note: "Počítáme byt už vybavený pro hosty, na začátku tedy jen uvedení do provozu 25\u00a0000 Kč; případné dovybavení spočítáme v\u00a0propočtu a ceny jsou v\u00a0ceníku. Nájem pro srovnání bereme za zařízený byt.",
+    hz_furnish_note: "Počítáme byt už vybavený pro hosty, na začátku tedy jen uvedení do provozu 25\u00a0000 Kč; případné dovybavení spočítáme v\u00a0propočtu a ceny jsou v\u00a0ceníku. Nájem pro srovnání je stejný jako v\u00a0kalkulačce: medián běžných pražských inzerátů, tedy co byt vydělá při\u00a0běžném pronájmu.",
     hz_stat_payback: "Vrátí se za",
     hz_stat_cross: "Předežene nájem v měsíci",
-    hz_stat_gap: "Rozdíl za 5 let",
+    hz_stat_gap: "Rozdíl za\u00a05 let, po\u00a0nákladech",
     hz_months: "měsíců",
     hz_months_few: "měsíce",
     hz_months_one: "měsíc",
@@ -336,7 +336,7 @@ const translations = {
     hz_start: "Start",
     hz_diff: "Rozdíl",
     hz_aria: "Kumulativní příjem majitele za pět let: krátkodobý pronájem s Antam Homes proti dlouhodobému nájmu.",
-    hz_growth: "Počítáme s\u00a0tím, že nájmy rostou rychleji než krátkodobý pronájem: 5\u00a0% ročně proti 3\u00a0%. I\u00a0tak vychází krátkodobý pronájem za\u00a0pět let výrazně výš.",
+    hz_growth: "Pro\u00a0jednoduchost neodhadujeme budoucí vývoj cen ani u\u00a0krátkodobého, ani u\u00a0dlouhodobého pronájmu. Výpočet drží dnešní tržní podmínky po\u00a0celých pět let.",
     hz_assume_5: "Počítáme i obnovu vybavení. U nájmu naopak nepočítáme neobsazenost mezi nájemníky ani provizi za zprostředkování, ačkoli v praxi bývají. Bez zdanění příjmu a bez růstu cen na obou stranách. Orientační výpočet, ne garance.",
 
     // Contact
@@ -749,10 +749,10 @@ const translations = {
     hz_furn_najem: "đang cho thuê dài hạn",
     hz_furn_prazdny: "nhà trống",
     hz_stat_invest: "Bỏ ra lúc đầu",
-    hz_furnish_note: "Antam tính căn đã sẵn đồ cho khách, lúc đầu chỉ tốn phí khởi động 25\u00a0000 Kč; nếu cần sắm thêm đồ thì tính trong bản tính riêng, giá có trong bảng phí. Tiền thuê dài hạn để so sánh là nhà đã có\u00a0đồ.",
+    hz_furnish_note: "Antam tính căn đã sẵn đồ cho khách, lúc đầu chỉ tốn phí khởi động 25\u00a0000 Kč; nếu cần sắm thêm đồ thì tính trong bản tính riêng, giá có trong bảng phí. Tiền thuê dài hạn để so sánh lấy đúng như trong phần tính thử: mức giữa các tin đăng thường ở\u00a0Praha, tức là mức nhà mình thu được khi cho thuê bình thường.",
     hz_stat_payback: "Về lại sau",
     hz_stat_cross: "Vượt tiền thuê ở tháng",
-    hz_stat_gap: "Chênh lệch 5 năm",
+    hz_stat_gap: "Chênh lệch 5 năm, đã trừ chi phí",
     hz_months: "tháng",
     hz_months_few: "tháng",
     hz_months_one: "tháng",
@@ -761,7 +761,7 @@ const translations = {
     hz_start: "Bắt đầu",
     hz_diff: "Chênh lệch",
     hz_aria: "Thu nhập cộng dồn của chủ nhà trong năm năm: cho thuê ngắn hạn với Antam Homes so với cho thuê dài hạn.",
-    hz_growth: "Antam tính là tiền thuê dài hạn tăng nhanh hơn cho thuê ngắn hạn: 5% mỗi năm so với 3%. Tính như vậy rồi mà sau năm năm cho thuê ngắn hạn vẫn hơn hẳn.",
+    hz_growth: "Cho đơn giản, Antam không đoán giá sẽ thay đổi ra sao, cả bên ngắn hạn lẫn bên dài hạn. Con số giữ nguyên điều kiện thị trường hôm nay trong suốt năm năm.",
     hz_assume_5: "Antam có tính cả tiền thay mới đồ đạc. Ngược lại, phía cho thuê dài hạn chưa trừ những tháng trống giữa hai người thuê hay phí môi giới, dù thực tế vẫn có. Chưa tính thuế thu nhập, chưa tính giá tăng ở cả hai bên. Con số tham khảo, không phải cam kết.",
 
     // Contact
