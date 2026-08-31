@@ -26,7 +26,7 @@ const DEFAULT_BOX = { w: 860, h: 360 };
 
 const FiveYearChart = () => {
   const { lang } = useLanguage();
-  const { location, size } = useCalc();
+  const { location, size, m2, ctvrt } = useCalc();
   const [hover, setHover] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
@@ -44,7 +44,7 @@ const FiveYearChart = () => {
   const { w: W, h: H } = box;
   const narrow = W < 480;
   const PAD = { t: 16, r: narrow ? 56 : 92, b: 30, l: narrow ? 50 : 64 };
-  const d = useMemo(() => fiveYear(location, size), [location, size]);
+  const d = useMemo(() => fiveYear(location, size, m2, ctvrt), [location, size, m2, ctvrt]);
   if (!d) return null;
 
   const czk = (n: number) => `${Math.round(n).toLocaleString("cs-CZ").replace(/ /g, "\u00a0")}\u00a0Kč`;

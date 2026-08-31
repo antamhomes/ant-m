@@ -18,8 +18,9 @@ import {
   ENERGY, MGMT_FEE, PLATFORM_FEE, LAUNCH_FEE, ROOMS,
   DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, annualDamageCover, ownerMonthly,
   OCCUPANCY_BY_FLAT, MEDIAN_AREA, rentFor,
-  MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor, antamOccupancy,
-  OCC_UPLIFT, OCC_CAP, marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, marketCell, guestsFor, BASE_GUESTS,
+  MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor,
+  operatorFactor, AVAILABILITY, BAND_BLEND, bandWeight, bandForSize, ctvrtiOf, MARKET_CTVRT,
+  marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, marketCell, guestsFor, BASE_GUESTS,
   RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, TYPICAL_AREA, typicalArea, type LocationKey,
   type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
@@ -302,15 +303,23 @@ describe("model výnosu", () => {
     expect(bandFor(5)).toBe("2BR");
     expect(bandFor(8)).toBe("2BR");
     expect(bandFor(9)).toBe("3BR");
-    // 2+kk s gaučem = 6 hostů = na Airbnb dvě ložnice (tak Antam listuje AC i zahradu)
-    const r = ownerMonthly("praha3", "2kk");
+    // Od 31. 8. 2026 rozhoduje o pásmu dispozice A plocha, ne kapacita samotná:
+    // 2+kk se mezi 40 a 55 m² překlápí z 1BR do 2BR. Kalibrováno na vlastních
+    // bytech (Mozart 40 m² pro 4 = 1BR, Čelakovského 52 m² pro 8 = 2BR,
+    // Modern AC 55 m² pro 6 = 2BR).
+    expect(BAND_BLEND["2kk"]).toEqual({ base: "1BR", next: "2BR", lo: 40, hi: 55 });
+    expect(bandWeight("2kk", 40)).toBe(0);
+    expect(bandWeight("2kk", 55)).toBe(1);
+    expect(bandForSize("2kk", 40)).toBe("1BR");
+    expect(bandForSize("2kk", 52)).toBe("2BR");
+    const r = ownerMonthly("praha3", "2kk", { m2: 55 });
     expect(r.supported && r.band).toBe("2BR");
     expect(r.supported && r.guests).toBe(6);
     const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
     expect(calc, "posuvník hostů se do kalkulačky nesmí vrátit").not.toContain("calc-guests");
-    expect(calc, "posuvník plochy je pryč (patch 142)").not.toContain('id="calc-m2"');
+    expect(calc, "posuvník plochy je zpět (31. 8. 2026): rozhoduje o pásmu i o nájmu").toContain('id="calc-m2"');
     expect(calc).toContain("result.r.guests");
-    expect(calc).toContain("?byt=${location}-${size}-${season}#kalkulacka");
+    expect(calc).toContain('?byt=${location}-${ctvrt ?? "-"}-${size}-${m2}m-${season}#kalkulacka');
     for (const k of ["calc_guests_1", "calc_guests_2", "calc_range_to", "calc_range_label", "calc_derived_note", "calc_terms_note", "calc_rent_src"]) {
       expect(strip(cs[k]).length).toBeGreaterThan(0);
       expect(strip(vi[k]).length).toBeGreaterThan(0);
@@ -339,9 +348,9 @@ describe("model výnosu", () => {
     // kalkulačka i graf ji používají; „jinde" padá na celopražský medián MF
     expect(typicalArea("praha1", "2kk")).toBe(65);
     expect(typicalArea("jinde", "2kk")).toBe(MEDIAN_AREA["2kk"]);
-    const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
-    expect(calc).toContain("typicalArea(location, size)");
-    expect(readFileSync("src/lib/horizon.ts", "utf8")).toContain("typicalArea(location, size)");
+    // typicalArea zůstává jako VÝCHOZÍ hodnota posuvníku a záloha, ne jako vstup výpočtu
+    expect(readFileSync("src/contexts/CalcContext.tsx", "utf8")).toContain("typicalArea(loc0, size0)");
+    expect(readFileSync("src/lib/horizon.ts", "utf8")).toContain("m2Input ?? typicalArea(location, size)");
   });
 
   it("výsledek je rozpětí (průměr trhu až s Antam) a publikované karty do něj padají", () => {
@@ -381,13 +390,17 @@ describe("model výnosu", () => {
     expect(SIZE_RATIO["2BR/1BR"].revpar).toBeCloseTo(w(r21.map((p) => [p[1], 0, p[2]])), 2);
     expect(SIZE_RATIO["3BR/2BR"].adr).toBeCloseTo(w(r32), 2);
     expect(SIZE_RATIO["3BR/2BR"].revpar).toBeCloseTo(w(r32.map((p) => [p[1], 0, p[2]])), 2);
-    // měřené buňky nejsou derived, dopočítané ano; P9 3BR jde přes dva kroky
+    // měřené buňky nejsou derived, dopočítané ano; od 31. 8. 2026 se poměry
+    // NEŘETĚZÍ: P9 3BR se bere přímým poměrem 3BR/1BR z jediného spolehlivého
+    // pásma čtvrti, ne přes mezikrok 2BR
     expect(marketCell("praha1", "3BR")!.derived).toBe(false);
     expect(marketCell("praha3", "3BR")!.derived).toBe(true);
     expect(marketCell("praha3", "3BR")!.adr).toBe(Math.round(MARKET_STR.praha3["2BR"]!.adr * SIZE_RATIO["3BR/2BR"].adr));
     expect(marketCell("praha9", "2BR")!.derived).toBe(true);
-    expect(marketCell("praha9", "3BR")!.adr).toBe(Math.round(Math.round(MARKET_STR.praha9["1BR"]!.adr * SIZE_RATIO["2BR/1BR"].adr) * SIZE_RATIO["3BR/2BR"].adr));
-    const r = ownerMonthly("praha4", "4kk");
+    expect(marketCell("praha9", "3BR")!.adr).toBe(Math.round(MARKET_STR.praha9["1BR"]!.adr * SIZE_RATIO["3BR/1BR"].adr));
+    expect(SIZE_RATIO["3BR/1BR"].adr, "přímý poměr, ne součin sousedních")
+      .not.toBeCloseTo(SIZE_RATIO["2BR/1BR"].adr * SIZE_RATIO["3BR/2BR"].adr, 3);
+    const r = ownerMonthly("praha4", "4kk", { m2: 105 });
     expect(r.supported && r.derived).toBe(true);
     const r1 = ownerMonthly("praha1", "2kk");
     expect(r1.supported && r1.derived).toBe(false);
@@ -417,33 +430,124 @@ describe("model výnosu", () => {
     }
   });
 
-  it("průměr trhu je čistý tržní benchmark a číslo s Antam stojí na téže ceně za noc", () => {
-    // Rozhodnutí majitele 30. 8. 2026: kalkulačka ukazuje reálnou tržní cenu
-    // (průměr trhu čtvrti) A k tomu odhad s Antam Homes. Obě z téže ceny za
-    // noc; liší se jen obsazeností (trh × 1,15, strop 85 %, nikdy pod trhem).
-    expect(OCC_UPLIFT).toBe(1.15);
-    expect(OCC_CAP).toBe(0.85);
-    expect(antamOccupancy(0.70)).toBeCloseTo(0.805, 3);
-    expect(antamOccupancy(0.80)).toBe(0.85);
-    expect(antamOccupancy(0.90)).toBe(0.90);
+  it("efekt Antam je naměřený poměr tržby, ne zvednutá obsazenost", () => {
+    // Přestavěno 31. 8. 2026 po rekonciliaci jedenácti vlastních bytů proti
+    // PriceLabs. Starý model (obsazenost × 1,15, strop 85 %, na plné tržní ADR)
+    // popisoval kombinaci, která u nás nenastává: obsazenost opravdu jede
+    // 92–96 %, ale za 63–77 % tržního ADR. Čistý poměr tržby proti průměru
+    // trhu vyšel 0,99 v Praze 1, 1,21 v Praze 3 a 1,08 v Praze 5.
+    // Veřejně jde do centra 0,95, aby veřejné číslo bylo spíš pod skutečností.
+    expect(operatorFactor("praha1", "public")).toBe(0.95);
+    expect(operatorFactor("praha2", "public")).toBe(0.95);
+    expect(operatorFactor("praha1", "internal")).toBe(1.0);
+    expect(operatorFactor("praha3", "public")).toBe(1.1);
+    expect(operatorFactor("praha5", "internal")).toBe(1.1);
+
+    // RevPAR × dny NENÍ tržba na inzerát: PriceLabs počítá RevPAR z dostupných
+    // nocí, avg_revenue je za celý kalendářní měsíc. Rozklad 27 segmentů dal 0,92.
+    expect(AVAILABILITY).toBe(0.92);
+
     for (const [loc, bands] of Object.entries(MARKET_STR))
       for (const [band, cell] of Object.entries(bands)) {
-        const r = ownerMonthly(loc, sizeOf(band));
+        const size = sizeOf(band);
+        const m2 = band === "1BR" ? 35 : band === "2BR" ? 60 : 105;
+        const r = ownerMonthly(loc, size, { m2 });
         if (!r.supported) throw new Error(`${loc} ${band} má data, ale model je nevrací`);
         expect(r.band).toBe(band);
-        // průměr trhu: gross přesně z tržního RevPAR, žádný jiný vstup
-        expect(r.market.gross, `${loc} ${band}`).toBe(Math.round(cell.revpar * 30.44));
         expect(r.adr).toBe(cell.adr);
-        // s Antam: táž cena × zvednutá obsazenost, nikdy pod trhem, nikdy nad 85 % (leda trh sám)
-        expect(r.antam.occupancy).toBeGreaterThanOrEqual(r.market.occupancy);
-        expect(r.antam.occupancy).toBeLessThanOrEqual(Math.max(OCC_CAP, r.market.occupancy));
-        expect(r.antam.gross).toBe(Math.round(r.adr * r.antam.occupancy * 30.44));
-        expect(r.antam.net).toBeGreaterThanOrEqual(r.market.net);
-        // obsazenost na trhu sedí s tím, co vidí karty (marketOccPct)
+        // rozpětí je vždy kladné a vršek nad spodkem
+        expect(r.high).toBeGreaterThan(r.low);
+        expect(r.mid).toBeGreaterThan(0);
+        // horní hranice u pásma bez překlopení = tržní RevPAR × dny × dostupnost × faktor
+        if (size === "1kk" || size === "4kk") {
+          const k = operatorFactor(loc, "public");
+          expect(r.antam.gross).toBe(Math.round(cell.revpar * 30.44 * 1.08 * AVAILABILITY * k));
+        }
         expect(Math.round(r.market.occupancy * 100)).toBe(marketOccPct(loc as MeasuredLocation, band as "1BR" | "2BR" | "3BR"));
       }
-    // byty v naší správě měří víc, než s čím model počítá (85 %)
-    for (const f of OCCUPANCY_BY_FLAT) expect(f.occupancy).toBeGreaterThanOrEqual(OCC_CAP * 100);
+  });
+
+  /** Kalibrační portfolio: skutečné plochy (PortfolioSection) a skutečný výsledek
+   *  majiteli z rekonciliace proti Hospitable za 8/2025 až 7/2026, u novějších
+   *  bytů za jejich plné měsíce. Slouží ke kontrole, že veřejný model není
+   *  systematicky nad realitou. NENÍ to pravidlo „každý byt musí web překonat“:
+   *  veřejné číslo je mírně konzervativní výhled dopředu, ne minimum přes
+   *  historii, a legitimní zvýšení modelu nemá padat kvůli jednomu slabšímu
+   *  měsíci jednoho bytu. */
+  const CALIBRATION: { name: string; loc: LocationKey; m2: number; size: SizeKey; actual: number }[] = [
+    { name: "402", loc: "praha1", m2: 52, size: "2kk", actual: 59913 },
+    { name: "405", loc: "praha1", m2: 52, size: "2kk", actual: 52553 },
+    { name: "302", loc: "praha1", m2: 52, size: "2kk", actual: 52271 },
+    { name: "Modern AC", loc: "praha3", m2: 55, size: "2kk", actual: 49200 },
+    { name: "Garden APT", loc: "praha3", m2: 60, size: "2kk", actual: 45345 },
+    { name: "Mozart", loc: "praha5", m2: 40, size: "2kk", actual: 30705 },
+  ];
+
+  /** HEURISTIC / regression guard. Meze 0,70 a 1,15 nejsou naměřené, jsou to
+   *  smoke-test proti tomu, aby se model omylem rozbil (zlomený fallback,
+   *  dvakrát aplikovaná korekce, prohozený faktor). Neříkají, že model je
+   *  správný, ani že má být pod každým jednotlivým bytem. Skutečné modelové
+   *  invarianty hlídá test rozhodovací cesty pod tímhle. */
+  it("veřejný model je na kalibračním portfoliu jako celku konzervativní (smoke test)", () => {
+    let est = 0, real = 0, worst = 0, worstName = "";
+    for (const c of CALIBRATION) {
+      const r = ownerMonthly(c.loc, c.size, { m2: c.m2 });
+      if (!r.supported) throw new Error(`${c.name}: model nevrací číslo`);
+      est += r.mid; real += c.actual;
+      const over = r.mid / c.actual;
+      if (over > worst) { worst = over; worstName = c.name; }
+    }
+    // HEURISTIC: meze zvolené, ne změřené. Na celku pod realitou, ale ne
+    // absurdně nízko: kdyby poměr spadl pod 0,70, je někde zlomený fallback.
+    expect(est / real, "veřejný odhad nesmí být na celku nad realitou").toBeLessThanOrEqual(1);
+    expect(est / real, "a nesmí spadnout do nesmyslu").toBeGreaterThan(0.7);
+    // HEURISTIC: jednotlivý byt smí být nad odhadem i pod ním, hlídá se jen
+    // hrubé přestřelení. Není to pravidlo „každý byt musí web překonat“.
+    expect(worst, `nejvíc nadstřelený byt: ${worstName}`).toBeLessThanOrEqual(1.15);
+  });
+
+  it("rozhodovací cesta u typických scénářů (pásmo, překlopení, čtvrť, faktor)", () => {
+    const cases: { label: string; loc: LocationKey; size: SizeKey; m2: number; ctvrt?: string | null;
+      base: string; next: string | null; w: number; usedCtvrt: string | null; factor: number; derived: boolean }[] = [
+      { label: "P1 2+kk 52 m², Ostatní", loc: "praha1", size: "2kk", m2: 52, ctvrt: null,
+        base: "1BR", next: "2BR", w: 0.8, usedCtvrt: null, factor: 0.95, derived: false },
+      { label: "P1 2+kk 52 m², Staré Město", loc: "praha1", size: "2kk", m2: 52, ctvrt: "stare_mesto",
+        base: "1BR", next: "2BR", w: 0.8, usedCtvrt: "stare_mesto", factor: 0.95, derived: false },
+      { label: "P3 2+kk 55 m²", loc: "praha3", size: "2kk", m2: 55,
+        base: "1BR", next: "2BR", w: 1, usedCtvrt: null, factor: 1.1, derived: false },
+      { label: "P5 2+kk 40 m² (1BR produkt)", loc: "praha5", size: "2kk", m2: 40,
+        base: "1BR", next: "2BR", w: 0, usedCtvrt: null, factor: 1.1, derived: false },
+      { label: "P9 4+kk 105 m² (3BR dopočítané z 1BR)", loc: "praha9", size: "4kk", m2: 105,
+        base: "3BR", next: null, w: 0, usedCtvrt: null, factor: 1.1, derived: true },
+    ];
+    for (const c of cases) {
+      const r = ownerMonthly(c.loc, c.size, { m2: c.m2, ctvrt: c.ctvrt });
+      if (!r.supported) throw new Error(`${c.label}: model nevrací číslo`);
+      expect(r.trace.base, c.label).toBe(c.base);
+      expect(r.trace.next, c.label).toBe(c.next);
+      expect(r.trace.w, c.label).toBeCloseTo(c.w, 3);
+      expect(r.trace.ctvrt, c.label).toBe(c.usedCtvrt);
+      expect(r.trace.factor, c.label).toBe(c.factor);
+      expect(r.derived, c.label).toBe(c.derived);
+      expect(r.high, c.label).toBeGreaterThan(r.low);
+    }
+    // Čtvrť musí číslo posunout, jinak se vrstva někde ztrácí.
+    const okres = ownerMonthly("praha1", "2kk", { m2: 52, ctvrt: null });
+    const ctvrt = ownerMonthly("praha1", "2kk", { m2: 52, ctvrt: "stare_mesto" });
+    expect(ctvrt.supported && okres.supported && ctvrt.mid).toBeGreaterThan(okres.supported ? okres.mid : 0);
+    // Čtvrť patřící pod jiný okres se ignoruje, nikdy se neopíše cizí číslo.
+    const cizi = ownerMonthly("praha3", "2kk", { m2: 52, ctvrt: "stare_mesto" });
+    expect(cizi.supported && cizi.trace.ctvrt).toBe(null);
+    // Korekce dostupnosti se aplikuje právě jednou: hrubé tržby u pásma bez
+    // překlopení sedí přesně na RevPAR × dny × 0,92 × faktor.
+    const p1 = ownerMonthly("praha1", "1kk", { m2: 35 });
+    expect(p1.supported && p1.antam.gross).toBe(
+      Math.round(MARKET_STR.praha1["1BR"]!.revpar * 30.44 * 1.08 * AVAILABILITY * operatorFactor("praha1", "public")),
+    );
+    // Staré Město mísí, nepřepisuje: leží mezi okresem a vlastními daty čtvrti.
+    const smAdr = MARKET_CTVRT.stare_mesto.bands["2BR"]!.adr;
+    expect(ctvrt.supported && ctvrt.adr).toBeGreaterThan(okres.supported ? okres.adr : 0);
+    expect(ctvrt.supported && ctvrt.adr).toBeLessThanOrEqual(smAdr);
   });
 
   it("pětiletý graf počítá ze stejného čísla jako kalkulačka, obě křivky", () => {
@@ -472,7 +576,7 @@ describe("model výnosu", () => {
     const hz = readFileSync("src/components/HorizonSection.tsx", "utf8");
     expect(hz).toContain("d.strMarket");
     expect(hz).toContain("d.strHigh");
-    expect(hz).toContain("fiveYear(location, size)");
+    expect(hz).toContain("fiveYear(location, size, m2, ctvrt)");
     // graf počítá jen plně vybavený byt: bez přepínače vybavení, start = uvedení do provozu
     expect(hz).not.toContain("setFurn");
     expect(strip(cs.hz_furnish_note)).toContain("25 000");

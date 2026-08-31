@@ -1,10 +1,10 @@
 import { useState, useMemo, useEffect } from "react";
 import Reveal from "@/components/Reveal";
-import { Calculator, MapPin, Home, Users, Share2, Pencil, ChevronRight } from "lucide-react";
+import { Calculator, MapPin, Home, Users, Share2, Pencil, ChevronRight, Ruler } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
-import { BAND_LABEL, ownerMonthly, rentFor, typicalArea, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
+import { BAND_LABEL, ownerMonthly, rentFor, ctvrtiOf, SIZE_SLIDER, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
 import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/CalcContext";
 
@@ -36,7 +36,7 @@ const CalculatorSection = () => {
     l === "jinde" ? t(lang, "calc_loc_other") : `Praha ${l.replace("praha", "")}`;
   // Stav (lokalita, dispozice, plocha, sezóna, vybavení) žije v CalcContext,
   // aby s ním počítal i pětiletý graf v sekci Horizont.
-  const { location, setLocation, size, pickSize, season, setSeason, fromShare } = useCalc();
+  const { location, setLocation, ctvrt, setCtvrt, needsCtvrt, size, pickSize, m2, setM2, season, setSeason, fromShare } = useCalc();
   const [shared, setShared] = useState(false);
 
   useEffect(() => {
@@ -44,8 +44,8 @@ const CalculatorSection = () => {
   }, [fromShare]);
 
   const shareResult = async () => {
-    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${size}-${season}#kalkulacka`;
-    trackEvent("calc_share", { district: location, size, season });
+    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${ctvrt ?? "-"}-${size}-${m2}m-${season}#kalkulacka`;
+    trackEvent("calc_share", { district: location, ctvrt: ctvrt ?? "-", size, m2, season });
     try {
       if (navigator.share) { await navigator.share({ title: "Antam Homes", url }); return; }
     } catch { /* user cancelled — fall through to copy */ }
@@ -62,24 +62,24 @@ const CalculatorSection = () => {
   // a pásmo ložnic × sezóna. Dvě čísla z téže ceny: průměr trhu (tržní
   // obsazenost) a s Antam Homes (obsazenost zvednutá, strop 85 %); minus
   // provize platformy, dělení 70/30. Nájem řídí PLOCHA (rentFor).
-  const m2 = typicalArea(location, size);
   const result = useMemo(() => {
-    const r = ownerMonthly(location, size, { season });
+    const r = ownerMonthly(location, size, { season, m2, ctvrt });
     const ltr = location === "jinde" ? 0 : rentFor(location as LocationKey, size, m2);
     const ratio = r.supported && ltr > 0 ? r.mid / ltr : 0;
     return { r, ltr, ratio };
-  }, [location, size, m2, season]);
+  }, [location, ctvrt, size, m2, season]);
 
   // Pětiletý rozdíl pro teaser; sám graf je v sekci Horizont (#horizont) a
   // počítá ze stejného stavu přes lib/horizon.
-  const d = useMemo(() => fiveYear(location, size), [location, size]);
+  const d = useMemo(() => fiveYear(location, size, m2, ctvrt), [location, size, m2, ctvrt]);
 
   // "mil." / "tis." are Czech; the Vietnamese page counts in "triệu" (million) and "nghìn".
   const short = (n: number) =>
     Math.abs(n) >= 1e6
       ? `${(n / 1e6).toFixed(1).replace(".", ",")}\u00a0${lang === "cs" ? "mil." : "triệu"}`
       : `${Math.round(n / 1000)}\u00a0${lang === "cs" ? "tis." : "nghìn"}`;
-  const supported = result.r.supported;
+  const answered = !needsCtvrt || ctvrt !== undefined;
+  const supported = result.r.supported && answered;
 
   return (
     <section id="kalkulacka" className="section bg-secondary scroll-mt-16">
@@ -126,6 +126,39 @@ const CalculatorSection = () => {
               </div>
             </div>
 
+            {/* Čtvrť: jen tam, kde pro ni máme vlastní tržní data. Krok se nedá
+                přeskočit, „Ostatní“ je vědomá volba, ne výchozí stav. */}
+            {needsCtvrt && (
+              <div>
+                <label className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
+                  <MapPin className="w-4 h-4 text-gold" />
+                  {t(lang, "calc_area")}
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {ctvrtiOf(location).map((c) => (
+                    <button key={c.id} type="button" onClick={() => setCtvrt(c.id)}
+                      className={`px-3 py-2.5 rounded-sm text-sm font-body font-medium transition-all border ${
+                        ctvrt === c.id
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-card border-border text-foreground hover:border-gold/50"
+                      }`}
+                    >
+                      {c.label}
+                    </button>
+                  ))}
+                  <button type="button" onClick={() => setCtvrt(null)}
+                    className={`px-3 py-2.5 rounded-sm text-sm font-body font-medium transition-all border ${
+                      ctvrt === null
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-card border-border text-foreground hover:border-gold/50"
+                    }`}
+                  >
+                    {t(lang, "calc_area_other").replace("{district}", locLabel(location))}
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Dispozice je viditelně jen rychlá předvolba: předvyplní kapacitu
                 a plochu; podle ní se počítají energie a obnova vybavení. */}
             <div>
@@ -146,6 +179,31 @@ const CalculatorSection = () => {
                     {s.label}
                   </button>
                 ))}
+              </div>
+            </div>
+
+            {/* Plocha (zpět 31. 8. 2026): rozhoduje o tom, jestli se 2+kk počítá
+                jako 1BR nebo 2BR produkt, a jde rovnou do nájmu. Výchozí hodnota
+                je medián dispozice v dané čtvrti, rozsah podle dispozice. */}
+            <div>
+              <label htmlFor="calc-m2" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
+                <Ruler className="w-4 h-4 text-gold" />
+                {t(lang, "calc_m2")}
+              </label>
+              <div className="flex items-center gap-4">
+                <input
+                  id="calc-m2"
+                  type="range"
+                  min={SIZE_SLIDER[size][0]}
+                  max={SIZE_SLIDER[size][1]}
+                  step={1}
+                  value={Math.min(Math.max(m2, SIZE_SLIDER[size][0]), SIZE_SLIDER[size][1])}
+                  onChange={(e) => setM2(Number(e.target.value))}
+                  className="h-1 w-full min-w-0 cursor-pointer appearance-none rounded-full bg-border accent-gold"
+                />
+                <span className="w-20 shrink-0 text-right font-body text-lg font-semibold text-foreground tnum">
+                  {m2}&nbsp;m²
+                </span>
               </div>
             </div>
 
@@ -187,10 +245,10 @@ const CalculatorSection = () => {
                     {t(lang, "calc_net")}
                   </p>
                   <p className="font-display text-2xl sm:text-[1.75rem] font-semibold text-primary-foreground leading-snug text-balance">
-                    {t(lang, "calc_unsupported_title")}
+                    {t(lang, answered ? "calc_unsupported_title" : "calc_pick_area_title")}
                   </p>
                   <p className="font-body text-[14.5px] text-primary-foreground/80 leading-relaxed">
-                    {t(lang, "calc_unsupported_text")}
+                    {t(lang, answered ? "calc_unsupported_text" : "calc_pick_area_text")}
                   </p>
                   <p className="md:hidden flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
                     <span>{locLabel(location)}</span>
@@ -204,7 +262,7 @@ const CalculatorSection = () => {
                     onClick={() => {
                       trackEvent("cta_click", { location: "calculator_unsupported", target: "contact", district: location, size });
                       window.dispatchEvent(new CustomEvent("antam:prefill-contact", {
-                        detail: { location: locLabel(location), size: sizes.find((s) => s.value === size)?.label ?? "", m2, guests: result.r.guests },
+                        detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2, guests: result.r.guests },
                       }));
                     }}
                     className="btn btn-primary-inverse w-full"
@@ -313,7 +371,7 @@ const CalculatorSection = () => {
                         trackEvent("cta_click", { location: "calculator", target: "contact", district: location, size });
                         window.dispatchEvent(
                           new CustomEvent("antam:prefill-contact", {
-                            detail: { location: locLabel(location), size: sizes.find((s) => s.value === size)?.label ?? "", m2, guests: result.r.guests },
+                            detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2, guests: result.r.guests },
                           })
                         );
                       }}

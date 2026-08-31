@@ -22,9 +22,10 @@ export const HORIZON_MONTHS = 60;
  * a v ceníku, přepínač vybavení z grafu zmizel. Nájem pro srovnání je proto
  * za zařízený byt (Sreality faktor furnished).
  */
-export const fiveYear = (location: CalcLoc, size: SizeKey) => {
+export const fiveYear = (location: CalcLoc, size: SizeKey, m2Input?: number, ctvrt?: string | null) => {
   if (location === "jinde") return null;
-  const year = ownerMonthly(location, size);
+  const m2 = m2Input ?? typicalArea(location, size);
+  const year = ownerMonthly(location, size, { m2, ctvrt });
   if (!year.supported) return null;
   const net = year.mid;
   const netMarket = year.low;
@@ -37,7 +38,6 @@ export const fiveYear = (location: CalcLoc, size: SizeKey) => {
   const m2y = netMarket - energy - renew;
   const h1 = netHigh * YEAR_ONE_RAMP - energy - renew;
   const h2 = netHigh - energy - renew;
-  const m2 = typicalArea(location, size);
   const rent = rentFor(location as LocationKey, size, m2, "furnished");
   const setup = LAUNCH_FEE;
   const lt = [0], str = [-setup], strMarket = [-setup], strHigh = [-setup];

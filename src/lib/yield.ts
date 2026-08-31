@@ -19,14 +19,17 @@
  * na doplnění dat (rate limit 30. 8.), do té doby „posoudíme individuálně“.
  * Nikdy neopisovat čísla jedné čtvrti do jiné.
  *
- * Patch 127 (30. 8. 2026, tři vstupy): výsledek má DVĚ čísla ze stejných
- * dat. „Průměr trhu“ = tržní RevPAR čtvrti (reálná tržní cena za noc ×
- * tržní obsazenost). „S Antam Homes“ = táž tržní cena za noc × obsazenost
- * trhu zvednutá o OCC_UPLIFT, nejvýš OCC_CAP (byty v naší správě měří 85
- * až 97 % proti trhu 68 až 77 %, tedy ×1,25; násobek 1,15 je záměrně pod
- * tím). Pásmo se bere z DISPOZICE (počet ložnic, stejně jako PriceLabs),
- * ne z počtu hostů. Nájem se řídí jen plochou (koeficient MF interpolovaný
- * podle m², ne podle nálepky dispozice).
+ * Přestavěno 31. 8. 2026 (čtyři vstupy: čtvrť, dispozice, plocha, sezóna) po
+ * rekonciliaci jedenácti vlastních bytů proti PriceLabs za 8/2025 až 7/2026.
+ * Tři věci se tím změnily. Efekt Antam je naměřený poměr tržby proti průměru
+ * trhu (operatorFactor), ne zvednutá obsazenost: obsazenost u nás opravdu jede
+ * 92 až 96 %, ale za 63 až 77 % tržního ADR, takže kombinace „plné tržní ADR
+ * a zvednutá obsazenost" popisovala byt, který nemáme. RevPAR × dny se převádí
+ * na tržbu za kalendářní měsíc přes AVAILABILITY, protože RevPAR počítá jen
+ * dostupné noci. A pásmo se bere z dispozice A plochy, ne z kapacity odvozené
+ * jen z dispozice: 2+kk může být 1BR i 2BR produkt podle toho, jestli se dá
+ * zařídit pro šest (Mozart 40 m² pro čtyři vs. Čelakovského 52 m² pro osm).
+ * Nájem se řídí jen plochou.
  */
 
 export type SizeKey = "1kk" | "2kk" | "3kk" | "4kk";
@@ -100,28 +103,179 @@ export const MARKET_STR: Record<MeasuredLocation, Partial<Record<Band, { adr: nu
 export const SIZE_RATIO = {
   "2BR/1BR": { adr: 1.525, revpar: 1.517 },
   "3BR/2BR": { adr: 1.514, revpar: 1.481 },
+  /** Přímý poměr přes dvě pásma. Spočítaný z týchž řad jako oba sousední
+   *  (čtvrti se solidním vzorkem obou pásem, váženo nabídkami), ne jejich
+   *  součin: řetězit dva odvozené poměry zesiluje chybu. Rozhodnutí
+   *  31. 8. 2026 po rekonciliaci jedenácti bytů. */
+  "3BR/1BR": { adr: 2.329, revpar: 2.304 },
 } as const;
 export type MarketCell = { adr: number; revpar: number; listings: number; derived: boolean };
+/**
+ * Buňka trhu pro čtvrť a pásmo. Když čtvrť pásmo nemá dost velké, odvodí se
+ * JEDNÍM krokem z nejbližšího spolehlivého pásma téže čtvrti přímým poměrem.
+ * Nikdy se neřetězí dva poměry za sebou: 3BR se bere buď z 2BR (×3BR/2BR),
+ * nebo, když 2BR chybí taky, rovnou z 1BR (×3BR/1BR).
+ */
+const RATIO_OF: Record<string, { adr: number; revpar: number }> = {
+  "1BR>2BR": SIZE_RATIO["2BR/1BR"],
+  "2BR>3BR": SIZE_RATIO["3BR/2BR"],
+  "1BR>3BR": SIZE_RATIO["3BR/1BR"],
+};
+const BAND_ORDER: Band[] = ["1BR", "2BR", "3BR"];
 export const marketCell = (loc: MeasuredLocation, band: Band): MarketCell | null => {
   const own = MARKET_STR[loc][band];
   if (own) return { ...own, derived: false };
-  if (band === "1BR") return null;
-  const lower = marketCell(loc, band === "3BR" ? "2BR" : "1BR");
-  if (!lower) return null;
-  const k = band === "3BR" ? SIZE_RATIO["3BR/2BR"] : SIZE_RATIO["2BR/1BR"];
-  return { adr: Math.round(lower.adr * k.adr), revpar: lower.revpar * k.revpar, listings: lower.listings, derived: true };
+  // Donor = NEJBLIŽŠÍ spolehlivé pásmo (kratší extrapolace = menší chyba;
+  // poměr 2BR→3BR má rozptyl 3,4 %, kdežto 1BR→3BR 7,2 %). Při stejné
+  // vzdálenosti rozhoduje větší vzorek.
+  const target = BAND_ORDER.indexOf(band);
+  const donors = BAND_ORDER
+    .filter((b) => b !== band && MARKET_STR[loc][b])
+    .sort((a, b) => {
+      const da = Math.abs(BAND_ORDER.indexOf(a) - target), db = Math.abs(BAND_ORDER.indexOf(b) - target);
+      return da !== db ? da - db : MARKET_STR[loc][b]!.listings - MARKET_STR[loc][a]!.listings;
+    });
+  for (const from of donors) {
+    const up = BAND_ORDER.indexOf(from) < BAND_ORDER.indexOf(band);
+    const k = RATIO_OF[up ? `${from}>${band}` : `${band}>${from}`];
+    if (!k) continue;
+    const src = MARKET_STR[loc][from]!;
+    return {
+      adr: Math.round(up ? src.adr * k.adr : src.adr / k.adr),
+      revpar: up ? src.revpar * k.revpar : src.revpar / k.revpar,
+      listings: src.listings,
+      derived: true,
+    };
+  }
+  return null;
 };
 
 /**
- * Obsazenost, se kterou počítá číslo „s Antam Homes“: tržní obsazenost
- * čtvrti × OCC_UPLIFT, nejvýš OCC_CAP, nikdy pod trhem (v prosinci může trh
- * sám být nad stropem). Byty v naší správě měří 85 až 97 % proti trhu své
- * čtvrti 68 až 77 %, tj. ×1,25; 1,15 je záměrně pod tím.
+ * Efekt Antam Homes. Do 31. 8. 2026 to byl zvednutý koeficient obsazenosti
+ * (×1,15, strop 85 %) aplikovaný na plné tržní ADR. Rekonciliace jedenácti
+ * vlastních bytů proti PriceLabs (12 měsíců 8/2025–7/2026) ukázala, že ta
+ * kombinace u nás nenastává: obsazenost opravdu jede 92–96 % proti trhu
+ * 68–77 %, ale za 63–77 % tržního ADR. Čistý poměr tržby proti průměru trhu
+ * vyšel v Praze 1 na 0,99 (402 1,08, 405 0,95, 302 0,94), v Praze 3 na 1,21
+ * (Modern AC 1,31) a v Praze 5 na 1,08 (Mozart).
+ *
+ * Na web jde ZÁMĚRNĚ nižší číslo než naměřený stav v centru, aby vlastní
+ * portfolio veřejný odhad překonalo (pravidlo z 30. 8. 2026). Interní
+ * podklad pro nabídku majiteli počítá s 1,00.
  */
-export const OCC_UPLIFT = 1.15;
-export const OCC_CAP = 0.85;
-export const antamOccupancy = (marketOcc: number) =>
-  Math.max(marketOcc, Math.min(OCC_CAP, marketOcc * OCC_UPLIFT));
+export const OPERATOR_FACTOR_PUBLIC: Partial<Record<LocationKey, number>> = {
+  praha1: 0.95, praha2: 0.95,
+};
+export const OPERATOR_FACTOR_INTERNAL: Partial<Record<LocationKey, number>> = {
+  praha1: 1.0, praha2: 1.0,
+};
+/** Mimo centrum: naměřeno 1,21 (Praha 3, hlavně Modern AC 1,31) a 1,08
+ *  (Mozart). Veřejně i interně 1,10. */
+export const OPERATOR_FACTOR_DEFAULT_PUBLIC = 1.1;
+export const OPERATOR_FACTOR_DEFAULT = 1.1;
+
+/**
+ * RevPAR × dny NENÍ tržba na inzerát. PriceLabs počítá obsazenost a RevPAR
+ * z DOSTUPNÝCH nocí (blokované noci jsou pryč), kdežto avg_revenue je tržba
+ * na aktivní inzerát za celý kalendářní měsíc. Rozklad všech 27 segmentů
+ * (Praha 1–9 × tři pásma, 8/2025–7/2026) dává avg_revenue / (RevPAR × dny)
+ * = 0,92 s rozptylem 0,88 až 0,98; průměrně 8 % nocí je blokovaných.
+ * Bez tohoto koeficientu by web nadsazoval o 8 % a operátorský faktor,
+ * změřený proti avg_revenue, by se s tím vynásobil podruhé.
+ */
+export const AVAILABILITY = 0.92;
+export const operatorFactor = (loc: string, scope: "public" | "internal" = "public") =>
+  (scope === "public" ? OPERATOR_FACTOR_PUBLIC : OPERATOR_FACTOR_INTERNAL)[loc as LocationKey]
+  ?? (scope === "public" ? OPERATOR_FACTOR_DEFAULT_PUBLIC : OPERATOR_FACTOR_DEFAULT);
+
+/**
+ * Dispozice → pásmo trhu. Do 31. 8. 2026 se pásmo bralo z kapacity odvozené
+ * jen z dispozice (2+kk = 6 hostů = vždy 2BR). Rekonciliace vlastních bytů
+ * ukázala, že to platí jen pro byty, které se opravdu dají zařídit pro šest.
+ * Modern AC a free movies jsou 2+kk pro 6 a vydělávají jako 2BR. Čelakovského
+ * 402, 405 a 302 jsou taky 2+kk (jedna samostatná ložnice, v obýváku postel
+ * a gauč) a komerčně jedou jako plnohodnotný 2BR produkt. Mozart je 2+kk
+ * pro 4 a vydělává jako 1BR. Veřejná kalkulačka se na počet lůžek záměrně
+ * neptá, takže tu roli zastane plocha: mezi lo a hi se pásmo plynule překlápí
+ * do vyššího. HEURISTIC: že rozhoduje kapacita, je změřené; že zlomy leží
+ * zrovna na 40/55 a 75/100 m², změřené není.
+ *
+ * Prahy u 2+kk kalibrovány 31. 8. 2026 na skutečných plochách vlastních bytů
+ * (PortfolioSection): Mozart 40 m² / 4 lůžka = 1BR produkt, Čelakovského
+ * 402, 405 a 302 52 m² / 8 lůžek = 2BR produkt, Modern AC 55 m² / 6 lůžek
+ * a Garden APT 60 m² / 6 lůžek = 2BR. Přechod tedy končí nejpozději na
+ * 52 m². Ponecháno 55 m² záměrně: 52 by celý zlom pověsilo na jeden bod
+ * a veřejné číslo má být spíš pod skutečností.
+ */
+export const BAND_BLEND: Record<SizeKey, { base: Band; next?: Band; lo?: number; hi?: number }> = {
+  "1kk": { base: "1BR" },
+  "2kk": { base: "1BR", next: "2BR", lo: 40, hi: 55 },
+  "3kk": { base: "2BR", next: "3BR", lo: 75, hi: 100 },
+  "4kk": { base: "3BR" },
+};
+/** Váha překlopení do vyššího pásma podle plochy (0 = základní pásmo, 1 = vyšší). */
+export const bandWeight = (size: SizeKey, m2: number): number => {
+  const b = BAND_BLEND[size];
+  if (!b.next || b.lo === undefined || b.hi === undefined) return 0;
+  return Math.min(1, Math.max(0, (m2 - b.lo) / (b.hi - b.lo)));
+};
+/** Pásmo, které výsledek popisuje (to s větší vahou); jen pro popisek. */
+export const bandForSize = (size: SizeKey, m2: number): Band => {
+  const b = BAND_BLEND[size];
+  return b.next && bandWeight(size, m2) >= 0.5 ? b.next : b.base;
+};
+/** Rozsah posuvníku plochy podle dispozice. Výchozí hodnota není tady: bere se
+ *  typicalArea(čtvrť, dispozice), tedy medián Sreality pro danou lokalitu. */
+export const SIZE_SLIDER: Record<SizeKey, [number, number]> = {
+  "1kk": [20, 55], "2kk": [35, 85], "3kk": [50, 115], "4kk": [70, 140],
+};
+
+/** Spodek rozpětí bere jen polovinu překlopení, vršek celé. */
+export const LOW_BLEND = 0.5;
+/** Rozpětí u dispozic bez překlopení a minimální šířka rozpětí. */
+export const SPREAD = { low: 0.92, high: 1.08, minWidth: 0.08, derivedWiden: 1.6 };
+
+/**
+ * Čtvrti uvnitř okresu. Okres je pro Prahu 1 nebo 5 hrubé síto: Staré Město
+ * má 2BR o 11 % nad průměrem Prahy 1, Nové Město naopak pod ním. Data se
+ * stahují postupně (PriceLabs market_research, 20 dotazů denně), čtvrť se na
+ * webu nabídne teprve tehdy, když pro ni data jsou. Mísení s okresem podle
+ * velikosti vzorku: 100+ nabídek = čtvrť sama, 50–99 = 0,75, 25–49 = 0,5,
+ * míň = okres. Sdílené čtvrti (Vinohrady, Nové Město) patří pod víc okresů;
+ * rodičem je vždycky okres, který si člověk vybral.
+ */
+export type CtvrtCell = { adr: number; revpar: number; listings: number };
+export const MARKET_CTVRT: Record<string, { label: string; parents: LocationKey[]; bands: Partial<Record<Band, CtvrtCell>> }> = {
+  stare_mesto: {
+    label: "Staré Město", parents: ["praha1"],
+    bands: {
+      "1BR": { adr: 3206, revpar: 2467.4, listings: 533 },
+      "2BR": { adr: 4886, revpar: 3733.7, listings: 297 },
+      "3BR": { adr: 6353, revpar: 4809.4, listings: 110 },
+    },
+  },
+};
+export const ctvrtiOf = (loc: string) =>
+  Object.entries(MARKET_CTVRT)
+    .filter(([, v]) => v.parents.includes(loc as LocationKey))
+    .map(([id, v]) => ({ id, label: v.label }));
+const ctvrtWeight = (n: number) => (n >= 100 ? 1 : n >= 50 ? 0.75 : n >= 25 ? 0.5 : 0);
+/** Buňka trhu pro čtvrť: vlastní data smíchaná s okresem podle vzorku. */
+export const localCell = (loc: MeasuredLocation, band: Band, ctvrt?: string | null): MarketCell | null => {
+  const district = marketCell(loc, band);
+  const c = ctvrt ? MARKET_CTVRT[ctvrt] : undefined;
+  if (!c || !c.parents.includes(loc as LocationKey)) return district;
+  const own = c.bands[band];
+  if (!own || !district) return district;
+  const w = ctvrtWeight(own.listings);
+  if (w === 0) return district;
+  return {
+    adr: Math.round(own.adr * w + district.adr * (1 - w)),
+    revpar: own.revpar * w + district.revpar * (1 - w),
+    listings: own.listings,
+    derived: district.derived && w < 1,
+  };
+};
 
 /** Tržní obsazenost čtvrti a pásma v procentech (RevPAR / ADR z MARKET_STR),
  *  totéž číslo, které kalkulačka ukazuje jako „obsazenost okolí“. */
@@ -303,14 +457,17 @@ export type OwnerMonthly = {
   adr: number;
   /** průměr trhu: tržní RevPAR, tj. tržní cena × tržní obsazenost */
   market: Split;
-  /** s Antam Homes: táž cena × antamOccupancy(tržní obsazenost) */
+  /** vršek rozpětí: vyšší konfigurace téhož bytu × operátorský faktor */
   antam: Split;
   /** true = pásmo dopočítané z menšího pásma čtvrti × celoměstský poměr */
   derived: boolean;
-  /** s kolika hosty počítáme (guestsFor) */
+  /** orientační kapacita z dispozice (přesně se určí při prohlídce) */
   guests: number;
-  /** rozpětí pro majitele: spodek = průměr trhu, vršek = s Antam, střed pro dělení a násobek */
+  /** rozpětí pro majitele: spodek = konzervativní konfigurace, vršek = vyšší, střed pro dělení a násobek */
   low: number; high: number; mid: number;
+  /** jak se k číslu došlo: základní pásmo, případné vyšší, váha překlopení,
+   *  použitá čtvrť a operátorský faktor. Web to nezobrazuje, hlídají to testy. */
+  trace: { base: Band; next: Band | null; w: number; ctvrt: string | null; factor: number; availability: number };
 } | { supported: false; band: Band; guests: number };
 
 const split = (gross: number, occupancy: number): Split => {
@@ -328,12 +485,11 @@ const split = (gross: number, occupancy: number): Split => {
  * kapacita (guestsFor) a z ní pásmo trhu (bandFor). Výsledek je ROZPĚTÍ:
  * spodek = průměr trhu čtvrti, vršek = s Antam; na vlastních bytech leží
  * skutečnost mezi −5 a +22 % od průměru trhu (test „backtest“).
- * market.gross = tržní RevPAR × sezónní násobek RevPAR × dny (v RevPAR je
- * i tržní obsazenost). antam.gross = tržní ADR × sezónní násobek ADR ×
- * antamOccupancy(tržní obsazenost) × dny. Z hrubého se odečte provize
- * platformy (počítá se z celé ceny rezervace včetně úklidu), zbytek se dělí
- * 70/30. DPH z provize neodečítáme, hradí ji Antam ze své odměny. Energie
- * majitel platí zvlášť a nejsou tu.
+ * Spodek i vršek jdou z tržního RevPAR × sezónní násobek × dny × AVAILABILITY
+ * × operátorský faktor; liší se jen vahou překlopení do vyššího pásma podle
+ * plochy. Z hrubého se odečte provize platformy (počítá se z celé ceny
+ * rezervace včetně úklidu), zbytek se dělí 70/30. DPH z provize neodečítáme,
+ * hradí ji Antam ze své odměny. Energie majitel platí zvlášť a nejsou tu.
  *
  * Když pro čtvrť nebo pásmo tržní vzorek nestačí, vrací { supported: false }
  * a web ukáže „posoudíme individuálně“, nikdy cizí číslo.
@@ -341,24 +497,50 @@ const split = (gross: number, occupancy: number): Split => {
 export function ownerMonthly(
   location: string,
   size: SizeKey,
-  { season = "year" as SeasonKey } = {},
+  { season = "year" as SeasonKey, m2, ctvrt = null, scope = "public" as "public" | "internal" } = {} as
+    { season?: SeasonKey; m2?: number; ctvrt?: string | null; scope?: "public" | "internal" },
 ): OwnerMonthly {
   const guests = guestsFor(size);
-  const band = bandFor(guests);
+  const area = m2 ?? typicalArea(location, size);
+  const band = bandForSize(size, area);
   if (!isMeasured(location)) return { supported: false, band, guests };
-  const cell = marketCell(location, band);
-  if (!cell) return { supported: false, band, guests };
-  const f = season === "year"
-    ? { adr: 1, revpar: 1 }
-    : SEASONS_BY_LOC[location][season];
-  const adr = Math.round(cell.adr * f.adr);
-  const revpar = cell.revpar * f.revpar;
-  const marketOcc = Math.round((revpar / adr) * 1000) / 1000;
-  const antamOcc = Math.round(antamOccupancy(marketOcc) * 1000) / 1000;
-  const market = split(Math.round(revpar * DAYS), marketOcc);
-  const antam = split(Math.round(adr * antamOcc * DAYS), antamOcc);
+
+  const cfg = BAND_BLEND[size];
+  const usedCtvrt = ctvrt && MARKET_CTVRT[ctvrt]?.parents.includes(location as LocationKey) ? ctvrt : null;
+  const baseCell = localCell(location, cfg.base, usedCtvrt);
+  if (!baseCell) return { supported: false, band, guests };
+  const nextCell = cfg.next ? localCell(location, cfg.next, usedCtvrt) : null;
+  const w = nextCell ? bandWeight(size, area) : 0;
+
+  const f = season === "year" ? { adr: 1, revpar: 1 } : SEASONS_BY_LOC[location][season];
+  // cena za noc, kterou web ukazuje: pásmo, které výsledek popisuje
+  const shownCell = w >= 0.5 && nextCell ? nextCell : baseCell;
+  const adr = Math.round(shownCell.adr * f.adr);
+  const marketRevpar = shownCell.revpar * f.revpar;
+  const marketOcc = Math.round((marketRevpar / adr) * 1000) / 1000;
+
+  // hrubé tržby: mezi pásmy podle plochy, jinak prezentační rozpětí
+  const gBase = baseCell.revpar * f.revpar * DAYS;
+  const gNext = nextCell ? nextCell.revpar * f.revpar * DAYS : gBase;
+  let lowGross = nextCell ? gBase + LOW_BLEND * w * (gNext - gBase) : gBase * SPREAD.low;
+  let highGross = nextCell ? gBase + w * (gNext - gBase) : gBase * SPREAD.high;
+  const derived = baseCell.derived || (!!nextCell && nextCell.derived);
+  if (derived) {
+    const mid = (lowGross + highGross) / 2;
+    lowGross = mid - (mid - lowGross) * SPREAD.derivedWiden;
+    highGross = mid + (highGross - mid) * SPREAD.derivedWiden;
+  }
+  if (highGross - lowGross < SPREAD.minWidth * lowGross) {
+    const mid = (lowGross + highGross) / 2;
+    lowGross = mid * (1 - SPREAD.minWidth / 2);
+    highGross = mid * (1 + SPREAD.minWidth / 2);
+  }
+  const k = operatorFactor(location, scope);
+  const market = split(Math.round(lowGross * k * AVAILABILITY), marketOcc);
+  const antam = split(Math.round(highGross * k * AVAILABILITY), marketOcc);
   return {
-    supported: true, band, adr, derived: cell.derived, guests, market, antam,
+    supported: true, band, adr, derived, guests, market, antam,
     low: market.net, high: antam.net, mid: Math.round((market.net + antam.net) / 2),
+    trace: { base: cfg.base, next: nextCell ? cfg.next ?? null : null, w, ctvrt: usedCtvrt, factor: k, availability: AVAILABILITY },
   };
 }

@@ -2,7 +2,7 @@ import { defineTool } from "@lovable.dev/mcp-js";
 import { z } from "zod";
 import {
   ownerMonthly, rentFor, isMeasured, typicalArea, MGMT_FEE, PLATFORM_FEE,
-  OCC_UPLIFT, OCC_CAP, guestsFor,
+  operatorFactor, AVAILABILITY, guestsFor,
   type LocationKey, type SizeKey, type SeasonKey,
 } from "../../yield";
 
@@ -101,7 +101,7 @@ export default defineTool({
       },
       withAntamHomes: {
         occupancyRate: r.antam.occupancy,
-        occupancyAssumption: `district market occupancy x ${OCC_UPLIFT}, capped at ${Math.round(OCC_CAP * 100)} %; apartments under Antam Homes management measure 85-97 %`,
+        occupancyAssumption: `district market RevPAR x ${AVAILABILITY} (PriceLabs RevPAR counts available nights only) x measured Antam factor ${operatorFactor(location, "public")}; factor comes from reconciling eleven managed flats against PriceLabs, 8/2025-7/2026`,
         grossMonthlyRevenue: r.antam.gross,
         platformCommission: r.antam.platformFee,
         netRevenueAfterPlatform: r.antam.netRevenue,

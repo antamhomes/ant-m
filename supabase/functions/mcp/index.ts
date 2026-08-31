@@ -18,7 +18,6 @@ var MEDIAN_AREA = {
 };
 var BASE_GUESTS = { "1kk": 4, "2kk": 6, "3kk": 8, "4kk": 10 };
 var guestsFor = (size) => BASE_GUESTS[size];
-var bandFor = (guests) => guests <= 4 ? "1BR" : guests <= 8 ? "2BR" : "3BR";
 var isMeasured = (loc) => loc in MARKET_STR;
 var MARKET_STR = {
   praha1: { "1BR": { adr: 2917, revpar: 2207.5, listings: 1675 }, "2BR": { adr: 4507, revpar: 3399.3, listings: 904 }, "3BR": { adr: 6576, revpar: 4924.8, listings: 320 } },
@@ -33,20 +32,97 @@ var MARKET_STR = {
 };
 var SIZE_RATIO = {
   "2BR/1BR": { adr: 1.525, revpar: 1.517 },
-  "3BR/2BR": { adr: 1.514, revpar: 1.481 }
+  "3BR/2BR": { adr: 1.514, revpar: 1.481 },
+  /** Přímý poměr přes dvě pásma. Spočítaný z týchž řad jako oba sousední
+   *  (čtvrti se solidním vzorkem obou pásem, váženo nabídkami), ne jejich
+   *  součin: řetězit dva odvozené poměry zesiluje chybu. Rozhodnutí
+   *  31. 8. 2026 po rekonciliaci jedenácti bytů. */
+  "3BR/1BR": { adr: 2.329, revpar: 2.304 }
 };
+var RATIO_OF = {
+  "1BR>2BR": SIZE_RATIO["2BR/1BR"],
+  "2BR>3BR": SIZE_RATIO["3BR/2BR"],
+  "1BR>3BR": SIZE_RATIO["3BR/1BR"]
+};
+var BAND_ORDER = ["1BR", "2BR", "3BR"];
 var marketCell = (loc, band) => {
   const own = MARKET_STR[loc][band];
   if (own) return { ...own, derived: false };
-  if (band === "1BR") return null;
-  const lower = marketCell(loc, band === "3BR" ? "2BR" : "1BR");
-  if (!lower) return null;
-  const k = band === "3BR" ? SIZE_RATIO["3BR/2BR"] : SIZE_RATIO["2BR/1BR"];
-  return { adr: Math.round(lower.adr * k.adr), revpar: lower.revpar * k.revpar, listings: lower.listings, derived: true };
+  const target = BAND_ORDER.indexOf(band);
+  const donors = BAND_ORDER.filter((b) => b !== band && MARKET_STR[loc][b]).sort((a, b) => {
+    const da = Math.abs(BAND_ORDER.indexOf(a) - target), db = Math.abs(BAND_ORDER.indexOf(b) - target);
+    return da !== db ? da - db : MARKET_STR[loc][b].listings - MARKET_STR[loc][a].listings;
+  });
+  for (const from of donors) {
+    const up = BAND_ORDER.indexOf(from) < BAND_ORDER.indexOf(band);
+    const k = RATIO_OF[up ? `${from}>${band}` : `${band}>${from}`];
+    if (!k) continue;
+    const src = MARKET_STR[loc][from];
+    return {
+      adr: Math.round(up ? src.adr * k.adr : src.adr / k.adr),
+      revpar: up ? src.revpar * k.revpar : src.revpar / k.revpar,
+      listings: src.listings,
+      derived: true
+    };
+  }
+  return null;
 };
-var OCC_UPLIFT = 1.15;
-var OCC_CAP = 0.85;
-var antamOccupancy = (marketOcc) => Math.max(marketOcc, Math.min(OCC_CAP, marketOcc * OCC_UPLIFT));
+var OPERATOR_FACTOR_PUBLIC = {
+  praha1: 0.95,
+  praha2: 0.95
+};
+var OPERATOR_FACTOR_INTERNAL = {
+  praha1: 1,
+  praha2: 1
+};
+var OPERATOR_FACTOR_DEFAULT_PUBLIC = 1.1;
+var OPERATOR_FACTOR_DEFAULT = 1.1;
+var AVAILABILITY = 0.92;
+var operatorFactor = (loc, scope = "public") => (scope === "public" ? OPERATOR_FACTOR_PUBLIC : OPERATOR_FACTOR_INTERNAL)[loc] ?? (scope === "public" ? OPERATOR_FACTOR_DEFAULT_PUBLIC : OPERATOR_FACTOR_DEFAULT);
+var BAND_BLEND = {
+  "1kk": { base: "1BR" },
+  "2kk": { base: "1BR", next: "2BR", lo: 40, hi: 55 },
+  "3kk": { base: "2BR", next: "3BR", lo: 75, hi: 100 },
+  "4kk": { base: "3BR" }
+};
+var bandWeight = (size, m2) => {
+  const b = BAND_BLEND[size];
+  if (!b.next || b.lo === void 0 || b.hi === void 0) return 0;
+  return Math.min(1, Math.max(0, (m2 - b.lo) / (b.hi - b.lo)));
+};
+var bandForSize = (size, m2) => {
+  const b = BAND_BLEND[size];
+  return b.next && bandWeight(size, m2) >= 0.5 ? b.next : b.base;
+};
+var LOW_BLEND = 0.5;
+var SPREAD = { low: 0.92, high: 1.08, minWidth: 0.08, derivedWiden: 1.6 };
+var MARKET_CTVRT = {
+  stare_mesto: {
+    label: "Star\xE9 M\u011Bsto",
+    parents: ["praha1"],
+    bands: {
+      "1BR": { adr: 3206, revpar: 2467.4, listings: 533 },
+      "2BR": { adr: 4886, revpar: 3733.7, listings: 297 },
+      "3BR": { adr: 6353, revpar: 4809.4, listings: 110 }
+    }
+  }
+};
+var ctvrtWeight = (n) => n >= 100 ? 1 : n >= 50 ? 0.75 : n >= 25 ? 0.5 : 0;
+var localCell = (loc, band, ctvrt) => {
+  const district = marketCell(loc, band);
+  const c = ctvrt ? MARKET_CTVRT[ctvrt] : void 0;
+  if (!c || !c.parents.includes(loc)) return district;
+  const own = c.bands[band];
+  if (!own || !district) return district;
+  const w = ctvrtWeight(own.listings);
+  if (w === 0) return district;
+  return {
+    adr: Math.round(own.adr * w + district.adr * (1 - w)),
+    revpar: own.revpar * w + district.revpar * (1 - w),
+    listings: own.listings,
+    derived: district.derived && w < 1
+  };
+};
 var marketOccPct = (loc, band) => {
   const cell = marketCell(loc, band);
   return cell ? Math.round(cell.revpar / cell.adr * 100) : null;
@@ -127,30 +203,52 @@ var split = (gross, occupancy) => {
   const mgmt = Math.round(netRevenue * MGMT_FEE);
   return { occupancy, gross, platformFee, netRevenue, mgmt, net: netRevenue - mgmt };
 };
-function ownerMonthly(location, size, { season = "year" } = {}) {
+function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope = "public" } = {}) {
   const guests = guestsFor(size);
-  const band = bandFor(guests);
+  const area = m2 ?? typicalArea(location, size);
+  const band = bandForSize(size, area);
   if (!isMeasured(location)) return { supported: false, band, guests };
-  const cell = marketCell(location, band);
-  if (!cell) return { supported: false, band, guests };
+  const cfg = BAND_BLEND[size];
+  const usedCtvrt = ctvrt && MARKET_CTVRT[ctvrt]?.parents.includes(location) ? ctvrt : null;
+  const baseCell = localCell(location, cfg.base, usedCtvrt);
+  if (!baseCell) return { supported: false, band, guests };
+  const nextCell = cfg.next ? localCell(location, cfg.next, usedCtvrt) : null;
+  const w = nextCell ? bandWeight(size, area) : 0;
   const f = season === "year" ? { adr: 1, revpar: 1 } : SEASONS_BY_LOC[location][season];
-  const adr = Math.round(cell.adr * f.adr);
-  const revpar = cell.revpar * f.revpar;
-  const marketOcc = Math.round(revpar / adr * 1e3) / 1e3;
-  const antamOcc = Math.round(antamOccupancy(marketOcc) * 1e3) / 1e3;
-  const market = split(Math.round(revpar * DAYS), marketOcc);
-  const antam = split(Math.round(adr * antamOcc * DAYS), antamOcc);
+  const shownCell = w >= 0.5 && nextCell ? nextCell : baseCell;
+  const adr = Math.round(shownCell.adr * f.adr);
+  const marketRevpar = shownCell.revpar * f.revpar;
+  const marketOcc = Math.round(marketRevpar / adr * 1e3) / 1e3;
+  const gBase = baseCell.revpar * f.revpar * DAYS;
+  const gNext = nextCell ? nextCell.revpar * f.revpar * DAYS : gBase;
+  let lowGross = nextCell ? gBase + LOW_BLEND * w * (gNext - gBase) : gBase * SPREAD.low;
+  let highGross = nextCell ? gBase + w * (gNext - gBase) : gBase * SPREAD.high;
+  const derived = baseCell.derived || !!nextCell && nextCell.derived;
+  if (derived) {
+    const mid = (lowGross + highGross) / 2;
+    lowGross = mid - (mid - lowGross) * SPREAD.derivedWiden;
+    highGross = mid + (highGross - mid) * SPREAD.derivedWiden;
+  }
+  if (highGross - lowGross < SPREAD.minWidth * lowGross) {
+    const mid = (lowGross + highGross) / 2;
+    lowGross = mid * (1 - SPREAD.minWidth / 2);
+    highGross = mid * (1 + SPREAD.minWidth / 2);
+  }
+  const k = operatorFactor(location, scope);
+  const market = split(Math.round(lowGross * k * AVAILABILITY), marketOcc);
+  const antam = split(Math.round(highGross * k * AVAILABILITY), marketOcc);
   return {
     supported: true,
     band,
     adr,
-    derived: cell.derived,
+    derived,
     guests,
     market,
     antam,
     low: market.net,
     high: antam.net,
-    mid: Math.round((market.net + antam.net) / 2)
+    mid: Math.round((market.net + antam.net) / 2),
+    trace: { base: cfg.base, next: nextCell ? cfg.next ?? null : null, w, ctvrt: usedCtvrt, factor: k, availability: AVAILABILITY }
   };
 }
 
@@ -235,7 +333,7 @@ var estimate_yield_default = defineTool({
       },
       withAntamHomes: {
         occupancyRate: r.antam.occupancy,
-        occupancyAssumption: `district market occupancy x ${OCC_UPLIFT}, capped at ${Math.round(OCC_CAP * 100)} %; apartments under Antam Homes management measure 85-97 %`,
+        occupancyAssumption: `district market RevPAR x ${AVAILABILITY} (PriceLabs RevPAR counts available nights only) x measured Antam factor ${operatorFactor(location, "public")}; factor comes from reconciling eleven managed flats against PriceLabs, 8/2025-7/2026`,
         grossMonthlyRevenue: r.antam.gross,
         platformCommission: r.antam.platformFee,
         netRevenueAfterPlatform: r.antam.netRevenue,
