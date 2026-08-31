@@ -66,7 +66,9 @@ const CalculatorSection = () => {
   const result = useMemo(() => {
     const r = ownerMonthly(location, size, { season, m2, ctvrt });
     const ltr = location === "jinde" ? 0 : rentFor(location as LocationKey, size, m2);
-    const ratio = r.supported && ltr > 0 ? r.mid / ltr : 0;
+    // Násobek se počítá z čísla, které je v headline (vršek), aby si to
+    // navzájem neodporovalo. Od 31. 8. 2026 je headline POTENCIÁL, ne střed.
+    const ratio = r.supported && ltr > 0 ? r.high / ltr : 0;
     // Čtvrť, se kterou model OPRAVDU počítal (ne stav: čtvrť patřící pod jiný
     // okres se ignoruje). Ve shrnutí výsledku musí být vidět, protože mění číslo.
     const used = r.supported ? r.trace.ctvrt : null;
@@ -289,9 +291,13 @@ const CalculatorSection = () => {
                       </p>
                       {/* Jedno číslo se čte líp (rozhodnutí 30. 8. 2026): střed rozpětí
                           jako hlavní číslo, rozpětí drobně pod ním. */}
+                      {/* HEADLINE = dosažitelný vršek UŽ SPOČÍTANÉHO rozpětí, ne jeho střed
+                          (31. 8. 2026). Nemění se tím žádný předpoklad modelu, jen se ukazuje
+                          jiný bod téhož rozpětí, a je označený jako POTENCIÁL. Rozpětí zůstává
+                          hned pod tím: nejistota se neschovává, jen se nefeatur uje střed. */}
                       <p className="flex flex-wrap items-baseline gap-x-2 leading-tight tnum">
                         <span className="font-display text-[2.25rem] min-[360px]:text-[2.75rem] sm:text-5xl md:text-[3.25rem] font-bold text-gradient-gold-on-dark whitespace-nowrap">
-                          ~{(Math.round(result.r.mid / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
+                          ~{(Math.round(result.r.high / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
                         </span>
                         <span className="font-body text-sm font-normal text-primary-foreground/65 whitespace-nowrap">
                           {t(lang, "calc_month_suffix")}
@@ -362,13 +368,35 @@ const CalculatorSection = () => {
                         ~{(Math.round(result.ltr / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
                         <span className="font-body text-[12px] font-normal text-primary-foreground/50">{t(lang, "calc_ltr_for")} {sizes.find((x) => x.value === size)?.label} {t(lang, "calc_rent_typical")} {m2}&nbsp;m² ({t(lang, "calc_rent_src")})</span>
                       </p>
+                      {/* Násobek se ukazuje jen tam, kde po zaokrouhlení opravdu VÍC než 1×.
+                          Jinak by web psal „přibližně 0,8× více" (nesmysl a navíc tvrzení,
+                          že krátkodobě vyděláte míň, hned vedle slibu garance) nebo
+                          „1,0× více". Tam, kde nájem vyjde stejně nebo výš, to řekneme
+                          rovnou: je to pravda a zároveň to poptávku rovnou zatřídí. */}
                       {result.ratio > 0 && (
-                        <p className="font-body text-[13px] text-primary-foreground/85 mt-2">
-                          → {t(lang, "calc_approx_prefix")}{" "}
-                          <strong className="text-gold">
-                            {(Math.round(result.ratio * 10) / 10).toLocaleString("cs-CZ")}×{" "}
-                          </strong>
-                          {t(lang, "calc_vs_ltr")}
+                        Math.round(result.ratio * 10) / 10 > 1 ? (
+                          <p className="font-body text-[13px] text-primary-foreground/85 mt-2">
+                            → {t(lang, "calc_approx_prefix")}{" "}
+                            <strong className="text-gold">
+                              {(Math.round(result.ratio * 10) / 10).toLocaleString("cs-CZ")}×{" "}
+                            </strong>
+                            {t(lang, "calc_vs_ltr")}
+                          </p>
+                        ) : (
+                          <p className="font-body text-[13px] text-primary-foreground/85 mt-2">
+                            {t(lang, "calc_ltr_higher")}
+                          </p>
+                        )
+                      )}
+                      {/* Benefit v korunách za rok. Pro majitele je „+192 000 Kč ročně"
+                          hmatatelnější než „1,6×"; násobek zůstává nad tím jako důkaz.
+                          Ukazuje se jen tam, kde je rozdíl kladný. */}
+                      {result.r.high > result.ltr && (
+                        <p className="font-body text-[15px] font-semibold text-gold mt-1 tnum">
+                          +{(Math.round(((result.r.high - result.ltr) * 12) / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
+                          <span className="font-normal text-[13px] text-primary-foreground/70">
+                            {t(lang, "calc_vs_ltr_year")}
+                          </span>
                         </p>
                       )}
                     </div>

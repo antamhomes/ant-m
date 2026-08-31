@@ -159,21 +159,72 @@ export const marketCell = (loc: MeasuredLocation, band: Band): MarketCell | null
  * vyšel v Praze 1 na 0,99 (402 1,08, 405 0,95, 302 0,94), v Praze 3 na 1,21
  * (Modern AC 1,31) a v Praze 5 na 1,08 (Mozart).
  *
- * Veřejný faktor 0,95 v centru je ZÁMĚRNÝ konzervativní výhled dopředu proti
- * naměřenému poměru ~0,99. NENÍ kalibrovaný na historii a NENÍ to pravidlo,
- * že každý náš byt musí veřejný odhad překonat — to pravidlo bylo 31. 8. 2026
- * opuštěno. Interní podklad pro nabídku majiteli počítá s naměřenou 1,00.
+ * Od 31. 8. 2026 veřejný faktor NENÍ paušální srážka: odvozuje se z měření
+ * pravidlem pod tímhle blokem. Praha 1 tak jde z 0,95 na naměřených 0,99,
+ * protože ta srážka nebyla ničím podložená. Pravidlo, že každý náš byt musí
+ * veřejný odhad překonat, bylo opuštěno a nevrací se. Interní podklad pro
+ * nabídku majiteli počítá dál s 1,00.
  */
-export const OPERATOR_FACTOR_PUBLIC: Partial<Record<LocationKey, number>> = {
-  praha1: 0.95, praha2: 0.95,
-};
-export const OPERATOR_FACTOR_INTERNAL: Partial<Record<LocationKey, number>> = {
-  praha1: 1.0, praha2: 1.0,
-};
-/** Mimo centrum: naměřeno 1,21 (Praha 3, hlavně Modern AC 1,31) a 1,08
- *  (Mozart). Veřejně i interně 1,10. */
 export const OPERATOR_FACTOR_DEFAULT_PUBLIC = 1.1;
 export const OPERATOR_FACTOR_DEFAULT = 1.1;
+
+/**
+ * Co je kde NAMĚŘENÉ, včetně velikosti vzorku. Veřejný faktor se z tohohle
+ * odvozuje pravidlem níž, nezapisuje se ručně — aby se sám posunul, jak
+ * vlastním bytům přibývá historie.
+ */
+export const OPERATOR_EVIDENCE: Partial<Record<LocationKey, { measured: number; weight: number; sample: string }>> = {
+  praha1: { measured: 0.99, weight: 1.00, sample: "3 byty (402 1,08 · 405 0,95 · 302 0,94), ~318 dní každý" },
+  praha3: { measured: 1.21, weight: 0.50, sample: "2 byty (Modern AC 1,31 / 139 dní · Garden APT 1,21 / 54 dní)" },
+  praha5: { measured: 1.08, weight: 1.00, sample: "1 byt (Mozart, 113 dní)" },
+};
+
+/**
+ * Veřejný faktor z naměřeného. PRAVIDLO, ne jednotlivá čísla:
+ *
+ *  - měření, které veřejné číslo SNIŽUJE (pod výchozí 1,10), se bere celé;
+ *  - měření, které ho ZVYŠUJE, se krátí k výchozí 1,10 podle váhy vzorku
+ *    (týž princip jako ctvrtWeight u čtvrtí: tenký vzorek se stahuje k celku).
+ *
+ * Ta asymetrie je ZÁMĚRNÁ veřejná opatrnost, ne statistika, a je tu napsaná
+ * proto, aby se za statistiku nevydávala: příznivé měření musí být pořádné,
+ * nepříznivé bereme hned. Bez toho by model byl selektivně optimistický.
+ *
+ * Praha 3: naměřeno 1,21, ale na dvou bytech a Garden APT má za sebou 54 dní,
+ * tedy kus jedné sezóny. Váha 0,50 -> 1,155. Až Garden doběhne rok, váha jde
+ * nahoru a číslo se posune samo.
+ * Praha 5: naměřeno 1,08, tedy POD výchozí 1,10, a bere se celé, i když to
+ * veřejné číslo snižuje.
+ * Praha 2: žádný vlastní byt. Nedědí 0,99 z Prahy 1 — zůstává ZÁMĚRNÝ
+ * konzervativní předpoklad 0,95, dokud pro ni nebude důkaz.
+ * Praha 4, 6, 7, 8, 9: bez měření, výchozí 1,10. Praha 8 se NESRÁŽÍ za to,
+ * že jí vychází vysoký násobek — uvnitř okresu je Karlín a ten okresní
+ * benchmark legitimně táhne nahoru.
+ */
+export const publicFactorFrom = (measured: number, weight: number): number =>
+  measured <= OPERATOR_FACTOR_DEFAULT_PUBLIC
+    ? measured
+    : Math.round((OPERATOR_FACTOR_DEFAULT_PUBLIC + weight * (measured - OPERATOR_FACTOR_DEFAULT_PUBLIC)) * 1000) / 1000;
+
+export const OPERATOR_FACTOR_PUBLIC: Partial<Record<LocationKey, number>> = {
+  // bez vlastního bytu: záměrný konzervativní předpoklad, ne měření
+  praha2: 0.95,
+  ...Object.fromEntries(
+    Object.entries(OPERATOR_EVIDENCE).map(([loc, e]) => [loc, publicFactorFrom(e.measured, e.weight)]),
+  ),
+};
+/**
+ * Interní faktory jsou ZÁMĚRNĚ TOTOŽNÉ s veřejnými. Rozdíl mezi veřejným
+ * odhadem a interním propočtem NENÍ násobitel, ale MNOŽSTVÍ INFORMACÍ:
+ * veřejně se neznámá konfigurace mísí mezi pásmy, interně se nahradí tím,
+ * co je na prohlídce vidět (viz ObservedConfig níž).
+ *
+ * Prohlídka totiž odstraní nejistotu o KONKRÉTNÍM BYTĚ, ale nezvětší vzorek,
+ * ze kterého je změřený OKRESNÍ faktor. Zvednout Prahu 3 z 1,155 na naměřených
+ * 1,21 jen proto, že jsem byt viděl, by ty dvě různé nejistoty zaměnilo.
+ * Faktor se pohne teprve tím, že vlastním bytům přibude historie.
+ */
+export const OPERATOR_FACTOR_INTERNAL: Partial<Record<LocationKey, number>> = OPERATOR_FACTOR_PUBLIC;
 
 /**
  * RevPAR × dny NENÍ tržba na inzerát. PriceLabs počítá obsazenost a RevPAR
@@ -250,6 +301,20 @@ export const bandForSize = (size: SizeKey, m2: number): Band => {
 export const SIZE_SLIDER: Record<SizeKey, [number, number]> = {
   "1kk": [20, 55], "2kk": [35, 85], "3kk": [50, 115], "4kk": [70, 140],
 };
+
+/**
+ * Co se na prohlídce OPRAVDU zjistilo. Není to posuvník „horší/lepší": je to
+ * výslovné určení komerčního pásma, kterým byt je, plus doklad, čím to na
+ * prohlídce podloženo. Bez `evidence` to nemá u konkrétního bytu co dělat —
+ * musí jít dohledat, PROČ se číslo hnulo.
+ *
+ * INVARIANT: samotné přepnutí na interní režim nesmí číslo zvednout. Interní
+ * odhad bez pozorované konfigurace se musí rovnat veřejnému do koruny (hlídá
+ * facts.test.ts). Číslem hne jen zaznamenané pozorování, a to OBĚMA SMĚRY:
+ * špatný půdorys, tmavé přízemí nebo malý obývák ho musí umět srazit pod
+ * veřejný odhad. Bez toho by „interní" byla jen skrytá funkce na hezčí číslo.
+ */
+export type ObservedConfig = { band: Band; evidence: string };
 
 /** Spodek rozpětí bere jen polovinu překlopení, vršek celé. */
 export const LOW_BLEND = 0.5;
@@ -488,7 +553,9 @@ export type OwnerMonthly = {
   low: number; high: number; mid: number;
   /** jak se k číslu došlo: základní pásmo, případné vyšší, váha překlopení,
    *  použitá čtvrť a operátorský faktor. Web to nezobrazuje, hlídají to testy. */
-  trace: { base: Band; next: Band | null; w: number; ctvrt: string | null; factor: number; availability: number };
+  trace: { base: Band; next: Band | null; w: number; ctvrt: string | null; factor: number; availability: number;
+    /** null = číslo stojí na odhadu z m²; jinak co se na prohlídce zjistilo a čím je to doložené */
+    config: { band: Band; evidence: string } | null };
 } | { supported: false; band: Band; guests: number };
 
 const split = (gross: number, occupancy: number): Split => {
@@ -518,20 +585,29 @@ const split = (gross: number, occupancy: number): Split => {
 export function ownerMonthly(
   location: string,
   size: SizeKey,
-  { season = "year" as SeasonKey, m2, ctvrt = null, scope = "public" as "public" | "internal" } = {} as
-    { season?: SeasonKey; m2?: number; ctvrt?: string | null; scope?: "public" | "internal" },
+  { season = "year" as SeasonKey, m2, ctvrt = null, scope = "public" as "public" | "internal", config }: {
+    season?: SeasonKey; m2?: number; ctvrt?: string | null;
+    scope?: "public" | "internal";
+    /** jen pro scope "internal": pásmo zjištěné na prohlídce, nahradí odhad z m² */
+    config?: ObservedConfig;
+  } = {},
 ): OwnerMonthly {
   const guests = guestsFor(size);
   const area = m2 ?? typicalArea(location, size);
   const band = bandForSize(size, area);
   if (!isMeasured(location)) return { supported: false, band, guests };
 
-  const cfg = BAND_BLEND[size];
+  // Pozorovaná konfigurace platí jen interně. Ve veřejném režimu se ignoruje,
+  // aby se do webu nedala propašovat jinou cestou.
+  const observed = scope === "internal" ? config ?? null : null;
+  const cfg = observed
+    ? { base: observed.band, next: undefined, lo: undefined, hi: undefined }
+    : BAND_BLEND[size];
   const usedCtvrt = ctvrt && MARKET_CTVRT[ctvrt]?.parents.includes(location as LocationKey) ? ctvrt : null;
   const baseCell = localCell(location, cfg.base, usedCtvrt);
   if (!baseCell) return { supported: false, band, guests };
   const nextCell = cfg.next ? localCell(location, cfg.next, usedCtvrt) : null;
-  const w = nextCell ? bandWeight(size, area) : 0;
+  const w = nextCell && !observed ? bandWeight(size, area) : 0;
 
   const f = season === "year" ? { adr: 1, revpar: 1 } : SEASONS_BY_LOC[location][season];
   // cena za noc, kterou web ukazuje: pásmo, které výsledek popisuje
@@ -562,6 +638,7 @@ export function ownerMonthly(
   return {
     supported: true, band, adr, derived, guests, market, antam,
     low: market.net, high: antam.net, mid: Math.round((market.net + antam.net) / 2),
-    trace: { base: cfg.base, next: nextCell ? cfg.next ?? null : null, w, ctvrt: usedCtvrt, factor: k, availability: AVAILABILITY },
+    trace: { base: cfg.base, next: nextCell ? cfg.next ?? null : null, w, ctvrt: usedCtvrt, factor: k, availability: AVAILABILITY,
+      config: observed ? { band: observed.band, evidence: observed.evidence } : null },
   };
 }

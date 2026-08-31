@@ -67,16 +67,22 @@ var marketCell = (loc, band) => {
   }
   return null;
 };
-var OPERATOR_FACTOR_PUBLIC = {
-  praha1: 0.95,
-  praha2: 0.95
-};
-var OPERATOR_FACTOR_INTERNAL = {
-  praha1: 1,
-  praha2: 1
-};
 var OPERATOR_FACTOR_DEFAULT_PUBLIC = 1.1;
 var OPERATOR_FACTOR_DEFAULT = 1.1;
+var OPERATOR_EVIDENCE = {
+  praha1: { measured: 0.99, weight: 1, sample: "3 byty (402 1,08 \xB7 405 0,95 \xB7 302 0,94), ~318 dn\xED ka\u017Ed\xFD" },
+  praha3: { measured: 1.21, weight: 0.5, sample: "2 byty (Modern AC 1,31 / 139 dn\xED \xB7 Garden APT 1,21 / 54 dn\xED)" },
+  praha5: { measured: 1.08, weight: 1, sample: "1 byt (Mozart, 113 dn\xED)" }
+};
+var publicFactorFrom = (measured, weight) => measured <= OPERATOR_FACTOR_DEFAULT_PUBLIC ? measured : Math.round((OPERATOR_FACTOR_DEFAULT_PUBLIC + weight * (measured - OPERATOR_FACTOR_DEFAULT_PUBLIC)) * 1e3) / 1e3;
+var OPERATOR_FACTOR_PUBLIC = {
+  // bez vlastního bytu: záměrný konzervativní předpoklad, ne měření
+  praha2: 0.95,
+  ...Object.fromEntries(
+    Object.entries(OPERATOR_EVIDENCE).map(([loc, e]) => [loc, publicFactorFrom(e.measured, e.weight)])
+  )
+};
+var OPERATOR_FACTOR_INTERNAL = OPERATOR_FACTOR_PUBLIC;
 var AVAILABILITY = 0.92;
 var operatorFactor = (loc, scope = "public") => (scope === "public" ? OPERATOR_FACTOR_PUBLIC : OPERATOR_FACTOR_INTERNAL)[loc] ?? (scope === "public" ? OPERATOR_FACTOR_DEFAULT_PUBLIC : OPERATOR_FACTOR_DEFAULT);
 var BAND_BLEND = {
@@ -203,17 +209,18 @@ var split = (gross, occupancy) => {
   const mgmt = Math.round(netRevenue * MGMT_FEE);
   return { occupancy, gross, platformFee, netRevenue, mgmt, net: netRevenue - mgmt };
 };
-function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope = "public" } = {}) {
+function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope = "public", config } = {}) {
   const guests = guestsFor(size);
   const area = m2 ?? typicalArea(location, size);
   const band = bandForSize(size, area);
   if (!isMeasured(location)) return { supported: false, band, guests };
-  const cfg = BAND_BLEND[size];
+  const observed = scope === "internal" ? config ?? null : null;
+  const cfg = observed ? { base: observed.band, next: void 0, lo: void 0, hi: void 0 } : BAND_BLEND[size];
   const usedCtvrt = ctvrt && MARKET_CTVRT[ctvrt]?.parents.includes(location) ? ctvrt : null;
   const baseCell = localCell(location, cfg.base, usedCtvrt);
   if (!baseCell) return { supported: false, band, guests };
   const nextCell = cfg.next ? localCell(location, cfg.next, usedCtvrt) : null;
-  const w = nextCell ? bandWeight(size, area) : 0;
+  const w = nextCell && !observed ? bandWeight(size, area) : 0;
   const f = season === "year" ? { adr: 1, revpar: 1 } : SEASONS_BY_LOC[location][season];
   const shownCell = w >= 0.5 && nextCell ? nextCell : baseCell;
   const adr = Math.round(shownCell.adr * f.adr);
@@ -248,7 +255,15 @@ function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope
     low: market.net,
     high: antam.net,
     mid: Math.round((market.net + antam.net) / 2),
-    trace: { base: cfg.base, next: nextCell ? cfg.next ?? null : null, w, ctvrt: usedCtvrt, factor: k, availability: AVAILABILITY }
+    trace: {
+      base: cfg.base,
+      next: nextCell ? cfg.next ?? null : null,
+      w,
+      ctvrt: usedCtvrt,
+      factor: k,
+      availability: AVAILABILITY,
+      config: observed ? { band: observed.band, evidence: observed.evidence } : null
+    }
   };
 }
 

@@ -157,7 +157,7 @@ const translations = {
     calc_season_winter_sub: "listopad–březen, bez prosince",
     calc_season_xmas: "Vánoce & Nový rok",
     calc_season_xmas_sub: "prosinec",
-    calc_net: "Odhad pro majitele s Antam Homes",
+    calc_net: "Potenciál příjmu s\u00a0Antam Homes",
     calc_tab_month: "Měsíčně",
     calc_tab_5y: "Za 5 let",
     calc_unsupported_title: "Pro tuhle lokalitu nemáme vlastní tržní data.",
@@ -179,6 +179,12 @@ const translations = {
     calc_5y_market: "Rozpětí měsíčně",
     calc_ltr: "Dlouhodobý pronájem",
     calc_vs_ltr: "více",
+    // Benefit v korunách vedle důkazu v násobku: „+192 000 Kč ročně" je pro
+    // majitele hmatatelnější než „1,6×". Násobek zůstává drobně vedle.
+    calc_vs_ltr_year: "ročně navíc oproti dlouhodobému pronájmu",
+    // Když nájem vyjde stejně nebo výš, NEPÍŠE se "0,8× více". Řekne se to rovnou:
+    // je to poctivé a zároveň to rovnou třídí poptávky (takový byt na garanci nemusí dosáhnout).
+    calc_ltr_higher: "U\u00a0tohoto bytu vychází dlouhodobý nájem podobně nebo výše.",
     calc_bridge: "Konkrétní propočet potvrdíme po posouzení bytu.",
     calc_cta: "Spočítat můj byt",
     calc_month_suffix: "/ měsíc",
@@ -311,7 +317,7 @@ const translations = {
     pricing_foot: "Drobné opravy do 5\u00a0000 Kč řešíme hned a strháváme z výnosu, dohromady nejvýše 20\u00a0000 Kč za rok. Energie hradí majitel.",
 
     // Horizont — dlouhodobě vs krátkodobě
-    hz_legend_str: "Krátkodobě s\u00a0Antam Homes (střed)",
+    hz_legend_str: "Krátkodobě s\u00a0Antam Homes (potenciál)",
     hz_legend_ltr: "Dlouhodobý nájem",
     hz_legend_market: "Rozpětí odhadu",
     hz_furn_airbnb: "už vybavený pro hosty",
@@ -580,7 +586,7 @@ const translations = {
     calc_season_winter_sub: "tháng 11 đến 3, trừ tháng 12",
     calc_season_xmas_sub: "tháng 12",
     calc_season_xmas: "Giáng sinh, Năm mới",
-    calc_net: "Tiền về tay chủ nhà khi Antam lo (ước tính)",
+    calc_net: "Tiềm năng thu nhập khi Antam lo",
     calc_tab_month: "Hằng tháng",
     calc_tab_5y: "Sau 5 năm",
     calc_unsupported_title: "Khu này Antam chưa có số liệu thị trường riêng.",
@@ -602,6 +608,8 @@ const translations = {
     calc_5y_market: "Khoảng mỗi tháng",
     calc_ltr: "Cho thuê dài hạn",
     calc_vs_ltr: "so với cho thuê dài hạn",
+    calc_vs_ltr_year: "mỗi năm nhiều hơn so với cho thuê dài hạn",
+    calc_ltr_higher: "Với căn này, cho thuê dài hạn ra tương đương hoặc cao hơn.",
     calc_bridge: "Đây là ước tính theo thị trường và kết quả thật của Antam. Còn căn nhà mình có được nhận cam kết không, và với con số nào, Antam tính miễn phí trong 24 giờ.",
     calc_cta: "Nhờ Antam tính miễn phí",
     calc_month_suffix: "/ tháng",
@@ -734,7 +742,7 @@ const translations = {
     pricing_foot: "Sửa nhỏ đến 5 000 Kč Antam làm luôn và trừ vào tiền phòng, cả năm không quá 20 000 Kč. Điện nước chủ nhà lo.",
 
     // Năm năm tới
-    hz_legend_str: "Ngắn hạn với\u00a0Antam Homes (mức giữa)",
+    hz_legend_str: "Ngắn hạn với\u00a0Antam Homes (tiềm năng)",
     hz_legend_ltr: "Cho thuê dài hạn",
     hz_legend_market: "Khoảng ước tính",
     hz_furn_airbnb: "đã sẵn cho khách",

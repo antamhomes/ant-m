@@ -13,21 +13,38 @@ export const HORIZON_MONTHS = 60;
  * (ownerMonthly na výnos, rentFor na nájem). Od měsíčního čísla se odečítají
  * energie a obnova vybavení; obojí graf vypisuje, aby bylo vidět, proč se
  * pětileté číslo liší od měsíčního. Vrací null pro lokality bez dat.
- * Křivka `str` = střed rozpětí (hlavní číslo kalkulačky), `strMarket` a
- * `strHigh` = spodek (průměr trhu) a vršek (s Antam) téhož rozpětí; všechny
- * z téhož ownerMonthly, stejné energie, obnova i start. Graf kreslí pás.
+ * Křivka `str` = hlavní scénář podle parametru `basis`; veřejně je to vršek
+ * rozpětí, tedy STEJNÝ základ jako headline kalkulačky, aby stránka neměla
+ * dvě různé definice „scénáře s Antam". `strMarket` a `strHigh` = spodek
+ * (průměr trhu) a vršek téhož rozpětí; všechny z téhož ownerMonthly, stejné
+ * energie, obnova i start. Graf kreslí pás, nejistota zůstává vidět.
  *
  * Rozhodnutí 30. 8. 2026: graf počítá JEN plně vybavený byt (připravený pro
  * hosty). Start = uvedení do provozu 25 000 Kč; dovybavení se řeší v propočtu
  * a v ceníku, přepínač vybavení z grafu zmizel. Nájem pro srovnání je proto
  * za zařízený byt (Sreality faktor furnished).
  */
-export const fiveYear = (location: CalcLoc, size: SizeKey, m2Input?: number, ctvrt?: string | null) => {
+/**
+ * Který scénář je v grafu ta HLAVNÍ křivka.
+ *  "potential" = vršek rozpětí, tedy TOTÉŽ číslo, které je v headline kalkulačky
+ *                jako „Potenciál příjmu s Antam Homes" (rozhodnutí 31. 8. 2026).
+ *  "mid"       = střed rozpětí; zůstává pro interní propočty, aby si mohly
+ *                sáhnout na konzervativnější variantu.
+ * Základ je VÝSLOVNÝ parametr, ne tiché přepsání mid: web i interní podklad
+ * musí být schopné říct, které číslo zrovna kreslí. Pásmo (strMarket–strHigh)
+ * se nemění, nejistota je pořád vidět.
+ */
+export type HorizonBasis = "potential" | "mid";
+
+export const fiveYear = (
+  location: CalcLoc, size: SizeKey, m2Input?: number, ctvrt?: string | null,
+  basis: HorizonBasis = "potential",
+) => {
   if (location === "jinde") return null;
   const m2 = m2Input ?? typicalArea(location, size);
   const year = ownerMonthly(location, size, { m2, ctvrt });
   if (!year.supported) return null;
-  const net = year.mid;
+  const net = basis === "potential" ? year.high : year.mid;
   const netMarket = year.low;
   const netHigh = year.high;
   const energy = ENERGY[size];
@@ -53,7 +70,7 @@ export const fiveYear = (location: CalcLoc, size: SizeKey, m2Input?: number, ctv
     if (payback === null && str[i] >= 0) payback = i;
     if (cross === null && str[i] >= lt[i]) cross = i;
   }
-  return { lt, str, strMarket, strHigh, rent, m2, y2, net, netMarket, netHigh, guests: year.guests, setup, energy, renew, payback, cross, gap: str[HORIZON_MONTHS] - lt[HORIZON_MONTHS] };
+  return { lt, str, strMarket, strHigh, rent, m2, y2, net, netMarket, netHigh, basis, guests: year.guests, setup, energy, renew, payback, cross, gap: str[HORIZON_MONTHS] - lt[HORIZON_MONTHS] };
 };
 
 export type FiveYear = NonNullable<ReturnType<typeof fiveYear>>;

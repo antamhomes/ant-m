@@ -19,7 +19,7 @@ import {
   DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, annualDamageCover, ownerMonthly,
   OCCUPANCY_BY_FLAT, MEDIAN_AREA, rentFor,
   MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor,
-  operatorFactor, AVAILABILITY, BAND_BLEND, bandWeight, bandForSize, ctvrtiOf, MARKET_CTVRT,
+  operatorFactor, OPERATOR_EVIDENCE, publicFactorFrom, AVAILABILITY, BAND_BLEND, bandWeight, bandForSize, ctvrtiOf, MARKET_CTVRT,
   marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, SPREAD, marketCell, guestsFor, BASE_GUESTS,
   RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, TYPICAL_AREA, typicalArea, type LocationKey,
   type MeasuredLocation, type SizeKey,
@@ -355,6 +355,23 @@ describe("model výnosu", () => {
     expect(calc, "PriceLabs pryč z veřejného řádku s cenou za noc").not.toContain("PriceLabs");
     // Čtvrť mění číslo, takže se musí ve shrnutí výsledku objevit.
     expect(calc, "čtvrť se echuje ve shrnutí").toContain("result.ctvrtLabel");
+    // Násobek proti nájmu smí být "× více" jen tam, kde po zaokrouhlení VÍC než 1×.
+    // Web dřív psal i "přibližně 0,8× více" (Praha 4, 2+kk, 85 m²): nesmysl a navíc
+    // tvrzení o nižším výnosu hned vedle slibu garance.
+    expect(calc, "násobek jen nad 1×").toContain("Math.round(result.ratio * 10) / 10 > 1");
+    // Headline = dosažitelný vršek už spočítaného rozpětí, ne jeho střed. Rozpětí
+    // musí zůstat vidět hned pod ním: featuruje se jiný bod, nejistota se neschovává.
+    expect(calc, "headline je vršek rozpětí").toContain("result.r.high / 1000");
+    expect(calc, "headline NENÍ střed").not.toContain("result.r.mid / 1000");
+    expect(calc, "rozpětí zůstává pod headline").toContain("calc_range_label");
+    expect(calc, "násobek jde z čísla v headline").toContain("r.high / ltr");
+    for (const d of [cs, vi]) expect(strip(d.calc_net)).toMatch(/[Pp]otenciál|[Tt]iềm năng/);
+    expect(calc, "a jinak poctivá věta").toContain("calc_ltr_higher");
+    for (const d of [cs, vi]) expect(strip(d.calc_ltr_higher).length).toBeGreaterThan(10);
+    // Benefit v Kč/rok vedle násobku, jen když je rozdíl kladný.
+    expect(calc, "Kč za rok vedle násobku").toContain("result.r.high > result.ltr");
+    expect(calc).toContain("calc_vs_ltr_year");
+    for (const d of [cs, vi]) expect(strip(d.calc_vs_ltr_year).length).toBeGreaterThan(10);
     expect(calc, "a bere se z trace, ne ze stavu").toContain("r.supported ? r.trace.ctvrt : null");
     expect(calc).toContain('?byt=${location}-${ctvrt ?? "-"}-${size}-${m2}m-${season}#kalkulacka');
     // Kapacita NENÍ veřejné tvrzení (rozhodnutí 31. 8. 2026). Počet lůžek závisí
@@ -563,11 +580,26 @@ describe("model výnosu", () => {
     // 92–96 %, ale za 63–77 % tržního ADR. Čistý poměr tržby proti průměru
     // trhu vyšel 0,99 v Praze 1, 1,21 v Praze 3 a 1,08 v Praze 5.
     // Veřejně jde do centra 0,95, aby veřejné číslo bylo spíš pod skutečností.
-    expect(operatorFactor("praha1", "public")).toBe(0.95);
-    expect(operatorFactor("praha2", "public")).toBe(0.95);
-    expect(operatorFactor("praha1", "internal")).toBe(1.0);
-    expect(operatorFactor("praha3", "public")).toBe(1.1);
-    expect(operatorFactor("praha5", "internal")).toBe(1.1);
+    // Veřejný faktor se od 31. 8. 2026 ODVOZUJE z měření, nezapisuje se ručně:
+    // nepříznivé měření se bere celé, příznivé se krátí k výchozí 1,10 podle
+    // váhy vzorku. Asymetrie je záměrná veřejná opatrnost, ne statistika.
+    expect(operatorFactor("praha1", "public"), "naměřeno 0,99 na 3 bytech, bere se celé").toBe(0.99);
+    expect(operatorFactor("praha2", "public"), "bez vlastního bytu: nedědí 0,99 z P1").toBe(0.95);
+    expect(operatorFactor("praha3", "public"), "1,21 na 2 bytech (54 dní) -> váha 0,5 -> 1,155").toBe(1.155);
+    expect(operatorFactor("praha5", "public"), "1,08 je POD výchozí, bere se celé i když snižuje").toBe(1.08);
+    for (const loc of ["praha4", "praha6", "praha7", "praha8", "praha9"] as const)
+      expect(operatorFactor(loc, "public"), `${loc} bez měření zůstává na výchozí`).toBe(1.1);
+    // Praha 8 se NESRÁŽÍ za vysoký násobek: uvnitř okresu je Karlín.
+    expect(OPERATOR_EVIDENCE.praha8, "Praha 8 nemá vlastní měření a nesmí ho dostat od oka").toBeUndefined();
+    expect(publicFactorFrom(1.21, 0.5)).toBe(1.155);
+    expect(publicFactorFrom(1.08, 1), "pod výchozí -> celé").toBe(1.08);
+    expect(publicFactorFrom(1.21, 1), "plná váha -> celé naměřené").toBe(1.21);
+    // Interní faktor je od 31. 8. 2026 TOTOŽNÝ s veřejným: rozdíl mezi režimy
+    // je množství informací o konkrétním bytě, ne násobitel. Prohlídka odstraní
+    // nejistotu o bytě, ale nezvětší vzorek, ze kterého je faktor okresu měřený.
+    expect(operatorFactor("praha1", "internal")).toBe(0.99);
+    expect(operatorFactor("praha5", "internal")).toBe(1.08);
+    expect(operatorFactor("praha3", "internal")).toBe(1.155);
 
     // RevPAR × dny NENÍ tržba na inzerát: PriceLabs počítá RevPAR z dostupných
     // nocí, avg_revenue je za celý kalendářní měsíc. Rozklad 27 segmentů dal 0,92.
@@ -619,8 +651,11 @@ describe("model výnosu", () => {
     for (const c of CALIBRATION) {
       const r = ownerMonthly(c.loc, c.size, { m2: c.m2 });
       if (!r.supported) throw new Error(`${c.name}: model nevrací číslo`);
-      est += r.mid; real += c.actual;
-      const over = r.mid / c.actual;
+      // Od 31. 8. 2026 je veřejné číslo VRŠEK rozpětí (headline = potenciál),
+      // takže pojistka musí měřit vršek, ne střed. Jinak by hlídala číslo,
+      // které se majiteli nikde neukazuje.
+      est += r.high; real += c.actual;
+      const over = r.high / c.actual;
       if (over > worst) { worst = over; worstName = c.name; }
     }
     // HEURISTIC: meze zvolené, ne změřené. Na celku pod realitou, ale ne
@@ -632,17 +667,58 @@ describe("model výnosu", () => {
     expect(worst, `nejvíc nadstřelený byt: ${worstName}`).toBeLessThanOrEqual(1.15);
   });
 
+  it("INVARIANT: přepnutí na interní režim samo o sobě číslo nezvedne", () => {
+    // Rozdíl mezi veřejným a interním NENÍ násobitel, ale množství informací.
+    // Bez zaznamenaného pozorování musí interní sedět na veřejném do koruny.
+    for (const loc of Object.keys(MARKET_STR) as MeasuredLocation[])
+      for (const size of ["1kk", "2kk", "3kk", "4kk"] as const) {
+        const m2 = typicalArea(loc, size);
+        const pub = ownerMonthly(loc, size, { m2 });
+        const int = ownerMonthly(loc, size, { m2, scope: "internal" });
+        if (!pub.supported || !int.supported) throw new Error(`${loc} ${size}`);
+        expect(int.low, `${loc} ${size}`).toBe(pub.low);
+        expect(int.high, `${loc} ${size}`).toBe(pub.high);
+        expect(int.trace.factor, `${loc} ${size}: faktor se scope neliší`).toBe(pub.trace.factor);
+        expect(int.trace.config).toBe(null);
+      }
+    // Prohlídka nezvětší vzorek okresu, takže se faktor scope nemění.
+    for (const loc of ["praha1", "praha2", "praha3", "praha5", "praha9"] as const)
+      expect(operatorFactor(loc, "internal"), loc).toBe(operatorFactor(loc, "public"));
+  });
+
+  it("pozorovaná konfigurace hne číslem OBĚMA směry a jen interně", () => {
+    const m2 = typicalArea("praha9", "3kk"); // w = 0,23: web tu hádá nejvíc
+    const pub = ownerMonthly("praha9", "3kk", { m2 });
+    const good = ownerMonthly("praha9", "3kk", { m2, scope: "internal",
+      config: { band: "3BR", evidence: "dvě samostatné ložnice + obývák unese třetí spací pokoj" } });
+    const poor = ownerMonthly("praha9", "3kk", { m2, scope: "internal",
+      config: { band: "2BR", evidence: "průchozí pokoj, obývák bez místa na lůžko" } });
+    if (!pub.supported || !good.supported || !poor.supported) throw new Error("praha9");
+    expect(good.high, "doložená lepší konfigurace zvedne").toBeGreaterThan(pub.high);
+    expect(poor.high, "doložená horší konfigurace SRAZÍ pod veřejný odhad").toBeLessThan(pub.high);
+    // co číslo posunulo, musí být dohledatelné
+    expect(good.trace.config?.band).toBe("3BR");
+    expect(good.trace.config?.evidence).toContain("ložnice");
+    expect(good.trace.w, "pozorování nahradí odhad z m², nemísí se").toBe(0);
+    // veřejný režim konfiguraci ignoruje, nedá se tudy do webu propašovat
+    const sneak = ownerMonthly("praha9", "3kk", { m2,
+      config: { band: "3BR", evidence: "pokus obejít veřejný režim" } });
+    if (!sneak.supported) throw new Error("praha9");
+    expect(sneak.high).toBe(pub.high);
+    expect(sneak.trace.config).toBe(null);
+  });
+
   it("rozhodovací cesta u typických scénářů (pásmo, překlopení, čtvrť, faktor)", () => {
     const cases: { label: string; loc: LocationKey; size: SizeKey; m2: number; ctvrt?: string | null;
       base: string; next: string | null; w: number; usedCtvrt: string | null; factor: number; derived: boolean }[] = [
       { label: "P1 2+kk 52 m², Ostatní", loc: "praha1", size: "2kk", m2: 52, ctvrt: null,
-        base: "1BR", next: "2BR", w: 0.8, usedCtvrt: null, factor: 0.95, derived: false },
+        base: "1BR", next: "2BR", w: 0.8, usedCtvrt: null, factor: 0.99, derived: false },
       { label: "P1 2+kk 52 m², Staré Město", loc: "praha1", size: "2kk", m2: 52, ctvrt: "stare_mesto",
-        base: "1BR", next: "2BR", w: 0.8, usedCtvrt: "stare_mesto", factor: 0.95, derived: false },
+        base: "1BR", next: "2BR", w: 0.8, usedCtvrt: "stare_mesto", factor: 0.99, derived: false },
       { label: "P3 2+kk 55 m²", loc: "praha3", size: "2kk", m2: 55,
-        base: "1BR", next: "2BR", w: 1, usedCtvrt: null, factor: 1.1, derived: false },
+        base: "1BR", next: "2BR", w: 1, usedCtvrt: null, factor: 1.155, derived: false },
       { label: "P5 2+kk 40 m² (1BR produkt)", loc: "praha5", size: "2kk", m2: 40,
-        base: "1BR", next: "2BR", w: 0, usedCtvrt: null, factor: 1.1, derived: false },
+        base: "1BR", next: "2BR", w: 0, usedCtvrt: null, factor: 1.08, derived: false },
       { label: "P9 4+kk 105 m² (3BR dopočítané z 1BR)", loc: "praha9", size: "4kk", m2: 105,
         base: "3BR", next: null, w: 0, usedCtvrt: null, factor: 1.1, derived: true },
     ];
@@ -683,7 +759,9 @@ describe("model výnosu", () => {
         const d = fiveYear(loc, size);
         if (!r.supported || !d) throw new Error(`${loc} ${size}`);
         // 2. rok (po rozjezdu): měsíční přírůstek = net − energie − obnova
-        expect(d.str[24] - d.str[23]).toBeCloseTo((r.mid - d.energy - d.renew) * 1.03, 5);
+        // Veřejně jede graf na TOMTÉŽ základu jako headline kalkulačky (vršek).
+        expect(d.basis).toBe("potential");
+        expect(d.str[24] - d.str[23]).toBeCloseTo((r.high - d.energy - d.renew) * 1.03, 5);
         expect(d.strMarket[24] - d.strMarket[23]).toBeCloseTo((r.low - d.energy - d.renew) * 1.03, 5);
         expect(d.strHigh[24] - d.strHigh[23]).toBeCloseTo((r.high - d.energy - d.renew) * 1.03, 5);
         expect(d.netMarket).toBe(r.market.net);
@@ -703,6 +781,27 @@ describe("model výnosu", () => {
     expect(hz).toContain("d.strMarket");
     expect(hz).toContain("d.strHigh");
     expect(hz).toContain("fiveYear(location, size, m2, ctvrt)");
+    // Jedna definice „scénáře s Antam" na celé stránce: měsíční headline i
+    // pětiletý teaser musí stát na stejném základu. Dřív byl headline střed
+    // a teaser taky střed; od 31. 8. 2026 je headline vršek, tak i graf.
+    for (const loc of ["praha1", "praha3", "praha5"] as const)
+      for (const size of ["1kk", "2kk", "3kk", "4kk"] as const) {
+        const r = ownerMonthly(loc, size);
+        const pub = fiveYear(loc, size);
+        const internal = fiveYear(loc, size, undefined, null, "mid");
+        if (!r.supported || !pub || !internal) throw new Error(`${loc} ${size}`);
+        expect(pub.net, `${loc} ${size}: graf jede na headline čísle`).toBe(r.high);
+        expect(internal.net, `${loc} ${size}: interní základ zůstává střed`).toBe(r.mid);
+        expect(internal.basis).toBe("mid");
+        // pásmo se tím nemění, nejistota zůstává vidět
+        expect(pub.netMarket).toBe(r.market.net);
+        expect(pub.netHigh).toBe(r.antam.net);
+      }
+    // Popisek hlavní křivky nesmí říkat „střed", když kreslí potenciál.
+    for (const d of [cs, vi]) {
+      expect(strip(d.hz_legend_str), "legenda grafu tvrdí střed").not.toMatch(/střed|mức giữa/i);
+      expect(strip(d.hz_legend_str)).toMatch(/potenciál|tiềm năng/i);
+    }
     // graf počítá jen plně vybavený byt: bez přepínače vybavení, start = uvedení do provozu
     expect(hz).not.toContain("setFurn");
     expect(strip(cs.hz_furnish_note)).toContain("25 000");
