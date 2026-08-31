@@ -194,16 +194,39 @@ z čtvrtí, kde se dá porovnat rozptyl tenkých a tlustých buněk.
 
 ## 3. CURRENT PRODUCT RULES
 
-**Veřejné vstupy:** Praha X → čtvrť (jen kde jsou data) → dispozice → velikost.
-Jen klikání a posuvník, žádné psaní. Kapacita ani kvalita se neptají.
+**Veřejné vstupy:** Praha X → čtvrť (jen kde jsou data) → dispozice → velikost
+→ volitelně sezóna. Samé klikání, žádné psaní; posuvník na m² je pryč od
+31. 8. 2026 (viz sekce 5). Kapacita ani kvalita se neptají.
 
 **Headline je dosažitelný VRŠEK už spočítaného rozpětí,** označený jako
-POTENCIÁL, s rozpětím hned pod ním. Nemění to žádný předpoklad modelu, jen se
-featuruje jiný bod téhož rozpětí.
+POTENCIÁL. Nemění to žádný předpoklad modelu, jen se featuruje jiný bod téhož
+rozpětí.
+
+**Veřejně je to JEDNO číslo (1. 9. 2026).** Řádek „odhadované rozpětí X až Y"
+se přestal renderovat. Není to změna modelu ani zaokrouhlení: `low`, `high`
+i `mid` se počítají dál a jdou beze změny do stopy, do leadu (`owner_low`,
+`owner_high`), do pětiletého grafu i do MCP nástroje. Ověřeno na všech
+832 veřejných kombinacích (okres × čtvrť × dispozice × kbelík × sezóna):
+před i po je výstup `ownerMonthly`, `rentFor` i `fiveYear` bajt po bajtu týž.
+
+Rozpětí se NENAHRAZUJE jinou formou nejistoty. Žádné „od X", „až X", žádný
+interval spolehlivosti, žádný odznak kvality dat ani skóre. Kdo by to chtěl
+vrátit, mění produktové rozhodnutí, ne formátování.
+
+**Násobek i benefit v Kč/rok mají JEDNU podmínku.** Do 1. 9. 2026 měl každý
+svou (`ratio` po zaokrouhlení nad 1× proti `high > ltr`), takže mezi 1,00×
+a 1,05× — 8 z 832 kombinací, typicky zimní sezóna — stránka psala „dlouhodobý
+nájem vychází podobně nebo výše" a hned pod tím zlatě „+9 000 Kč ročně navíc".
+Obojí teď visí na `betterThanLtr`; ani `ratio`, ani roční rozdíl se nepočítá
+jinak.
 
 **Násobek proti nájmu jen když je po zaokrouhlení nad 1×.** Jinak se řekne
-rovnou, že dlouhodobý nájem vychází podobně nebo výš. Vedle násobku stojí
-benefit v korunách za rok, a jen když je kladný.
+rovnou, že dlouhodobý nájem vychází podobně nebo výš. Benefit v korunách za
+rok stojí pod headline jako druhý nejsilnější prvek karty a řídí se TOUŽ
+podmínkou jako násobek.
+
+**Pořadí v kartě výsledku:** měsíční potenciál (dominantní) → rozdíl v Kč za
+rok → měsíční nájem pro srovnání → tichá metodika → CTA.
 
 **Jeden nájemní benchmark na celé stránce: `mix`.** Kalkulačka i graf. `mix` je
 fit celého vzorku, tedy skutečná alternativa majitele. Porovnávají se dvě

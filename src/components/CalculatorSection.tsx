@@ -11,11 +11,12 @@ import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/C
  *  (P2, P6 až P10) a u „jinde" se panel výsledku přepne na posouzení
  *  do 24 hodin; ŽÁDNÉ číslo se neukazuje a nic se neopisuje z jiné čtvrti. */
 
-// Dva vstupy (patch 142): lokalita, dispozice. Kapacita jde z dispozice
-// (guestsFor), nájem z typické plochy dispozice v té čtvrti (typicalArea,
-// Sreality mediány) a panel obojí vypíše. Výsledek je rozpětí (průměr trhu
-// až s Antam), střed řídí násobek nájmu. Panel drží jen to podstatné;
-// metodika, dělení 70/30, energie a krytí škod žijí v rozkliku pod sekcí
+// Veřejné vstupy: lokalita → čtvrť (jen kde jsou data) → dispozice → velikost
+// → volitelně sezóna. Samé klikání, nic se nepíše. Kapacita se neptá ani
+// nezobrazuje. Model počítá rozpětí, ale VEŘEJNĚ se ukazuje JEDNO číslo:
+// vršek rozpětí označený jako potenciál (1. 9. 2026). low/high žijí dál
+// v ownerMonthly, ve stopě, v leadu, v grafu i v MCP — jen se nerenderují.
+// Metodika, dělení 70/30, energie a krytí škod žijí v rozkliku pod sekcí
 // a v Ceníku (rozhodnutí 30. 8. 2026: „jen info co je důležitý“).
 const sizes: { value: SizeKey; label: string }[] = [
   { value: "1kk", label: "1+kk" },
@@ -43,8 +44,13 @@ const CalculatorSection = () => {
   }, [fromShare]);
 
   const shareResult = async () => {
-    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${ctvrt ?? "-"}-${size}-${m2}m-${season}#kalkulacka`;
-    trackEvent("calc_share", { district: location, ctvrt: ctvrt ?? "-", size, m2, season });
+    // Formát odkazu se NEMĚNÍ (pořád m²), ale u „ještě většího" bytu se posílá
+    // spodní hranice toho kbelíku místo typické plochy okresu. Do 1. 9. 2026 se
+    // posílala typická plocha, takže se sdílený „posoudíme individuálně" otevřel
+    // příjemci jako normální kbelík S ČÍSLEM. Oversized musí zůstat oversized.
+    const shareM2 = oversized ? (bucketsFor(size).find((b) => b.id === bucket)?.minM2 ?? m2) : m2;
+    const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${ctvrt ?? "-"}-${size}-${shareM2}m-${season}#kalkulacka`;
+    trackEvent("calc_share", { district: location, ctvrt: ctvrt ?? "-", size, m2: shareM2, season });
     try {
       if (navigator.share) { await navigator.share({ title: "Antam Homes", url }); return; }
     } catch { /* user cancelled — fall through to copy */ }
@@ -91,6 +97,14 @@ const CalculatorSection = () => {
       ? `${(n / 1e6).toFixed(1).replace(".", ",")}\u00a0${lang === "cs" ? "mil." : "triệu"}`
       : `${Math.round(n / 1000)}\u00a0${lang === "cs" ? "tis." : "nghìn"}`;
   const answered = !needsCtvrt || ctvrt !== undefined;
+  // JEDNA podmínka pro obě věty o nájmu. Do 1. 9. 2026 měl násobek práh
+  // „po zaokrouhlení nad 1×“, kdežto Kč/rok jen „high > ltr“, takže mezi
+  // 1,00× a 1,05× (8 z 832 kombinací, typicky zimní sezóna) stránka psala
+  // „dlouhodobý nájem vychází podobně nebo výše“ a hned pod tím zlatě
+  // „+9 000 Kč ročně navíc“. Ani ratio, ani roční rozdíl se nepočítá jinak;
+  // mění se jen to, kdy se ta dvojice vůbec ukáže.
+  const ratioRounded = Math.round(result.ratio * 10) / 10;
+  const betterThanLtr = result.ratio > 0 && ratioRounded > 1;
   // Label kbelíku PŘESNĚ tak, jak ho majitel viděl. Ukládá se k leadu, aby šlo
   // zpětně zrekonstruovat, co mu web ukázal, i když se hranice později posunou.
   const bucketLabel = (() => {
@@ -107,6 +121,31 @@ const CalculatorSection = () => {
   // individuální posouzení, stejně jako čtvrť nebo pásmo bez dat.
   const supported = result.r.supported && answered && !oversized;
 
+  // Co se ukládá k leadu. JEDNA definice pro obě CTA (dřív byl tentýž objekt
+  // opsaný dvakrát a mohl se rozejít). low/high se sem posílají DÁL, i když se
+  // veřejně nerenderují: bez nich se zpětně nedá underwritovat, co majitel viděl.
+  const calcPayload = {
+    model_version: CALC_MODEL_VERSION,
+    district: location, ctvrt: ctvrt ?? null, dispozice: size,
+    size_bucket_id: bucket,
+    representative_m2: oversized ? null : m2,
+    bucket_label: bucketLabel,
+    oversized,
+    owner_low: result.r.supported ? result.r.low : null,
+    owner_high: result.r.supported ? result.r.high : null,
+    ltr_month: result.ltr || null,
+    ltr_ctvrt_factor: result.rentCtvrtFactor,
+  };
+
+  // Poptávka si snapshot bere při kliknutí na CTA. Když majitel potom ještě
+  // přepne okres nebo velikost a teprve pak formulář odešle, lead by nesl
+  // ČÍSLO, které už na stránce není. Tenhle event drží snapshot v poptávce
+  // synchronně se stavem kalkulačky — ale jen tam, kde už nějaký je, aby se
+  // k leadu nelepil výchozí stav někomu, kdo kalkulačku vůbec nepoužil.
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("antam:calc-state", { detail: calcPayload }));
+  });
+
   return (
     <section id="kalkulacka" className="section bg-secondary scroll-mt-16">
       <div className="container-narrow">
@@ -122,12 +161,13 @@ const CalculatorSection = () => {
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 md:items-start">
           <Reveal id="kalkulacka-zadani" delay={0.05} className="space-y-8 order-2 md:order-1 scroll-mt-20 min-w-0">
             <div>
-              <label className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
+              <label htmlFor="calc-location" id="calc-location-label" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
                 <MapPin className="w-4 h-4 text-gold" />
                 {t(lang, "calc_location")}
               </label>
               {/* Mobile: native select (úspora místa) */}
               <select
+                id="calc-location"
                 value={location}
                 onChange={(e) => setLocation(e.target.value as CalcLoc)}
                 className="sm:hidden w-full min-w-0 max-w-full px-4 py-3 bg-card border border-border rounded-sm font-body text-sm font-medium text-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors"
@@ -137,9 +177,10 @@ const CalculatorSection = () => {
                 ))}
               </select>
               {/* Desktop: tlačítka */}
-              <div className="hidden sm:grid sm:grid-cols-3 gap-2">
+              <div role="group" aria-labelledby="calc-location-label" className="hidden sm:grid sm:grid-cols-3 gap-2">
                 {LOCATIONS.map((l) => (
                   <button key={l} type="button" onClick={() => setLocation(l)}
+                    aria-pressed={location === l}
                     className={`px-3 py-2.5 rounded-sm text-sm font-body font-medium transition-all border ${
                       location === l
                         ? "bg-primary text-primary-foreground border-primary"
@@ -156,13 +197,14 @@ const CalculatorSection = () => {
                 přeskočit, „Ostatní“ je vědomá volba, ne výchozí stav. */}
             {needsCtvrt && (
               <div>
-                <label className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
+                <p id="calc-area-label" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
                   <MapPin className="w-4 h-4 text-gold" />
                   {t(lang, "calc_area")}
-                </label>
-                <div className="flex flex-wrap gap-2">
+                </p>
+                <div role="group" aria-labelledby="calc-area-label" className="flex flex-wrap gap-2">
                   {ctvrtiOf(location).map((c) => (
                     <button key={c.id} type="button" onClick={() => setCtvrt(c.id)}
+                      aria-pressed={ctvrt === c.id}
                       className={`px-3 py-2.5 rounded-sm text-sm font-body font-medium transition-all border ${
                         ctvrt === c.id
                           ? "bg-primary text-primary-foreground border-primary"
@@ -173,6 +215,7 @@ const CalculatorSection = () => {
                     </button>
                   ))}
                   <button type="button" onClick={() => setCtvrt(null)}
+                    aria-pressed={ctvrt === null}
                     className={`px-3 py-2.5 rounded-sm text-sm font-body font-medium transition-all border ${
                       ctvrt === null
                         ? "bg-primary text-primary-foreground border-primary"
@@ -188,13 +231,14 @@ const CalculatorSection = () => {
             {/* Dispozice je viditelně jen rychlá předvolba: předvyplní kapacitu
                 a plochu; podle ní se počítají energie a obnova vybavení. */}
             <div>
-              <label className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-1.5">
+              <p id="calc-disposition-label" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-1.5">
                 <Home className="w-4 h-4 text-gold" />
                 {t(lang, "calc_size")}
-              </label>
-              <div className="grid grid-cols-4 gap-2">
+              </p>
+              <div role="group" aria-labelledby="calc-disposition-label" className="grid grid-cols-4 gap-2">
                 {sizes.map((s) => (
                   <button key={s.value} type="button" onClick={() => pickSize(s.value)}
+                    aria-pressed={size === s.value}
                     className={`px-2 sm:px-3 py-3 min-w-0 rounded-sm text-sm font-body font-semibold transition-all border ${
                       size === s.value
                         ? "bg-primary text-primary-foreground border-primary"
@@ -213,11 +257,11 @@ const CalculatorSection = () => {
                 pošle reprezentativní plochu do TÉHOŽ modelu, ekonomika se nemění.
                 Poslední volba se neextrapoluje a jde na individuální posouzení. */}
             <div>
-              <p className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
+              <p id="calc-size-label" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
                 <Ruler className="w-4 h-4 text-gold" />
                 {t(lang, "calc_m2")}
               </p>
-              <div id="calc-size" className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div id="calc-size" role="group" aria-labelledby="calc-size-label" aria-describedby="calc-size-hint" className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {bucketsFor(size).map((b) => {
                   // Rozsah se SKLÁDÁ z konfigurace. V komponentě nesmí být žádná
                   // hranice natvrdo: jinak by se s novou verzí modelu rozešla
@@ -245,7 +289,7 @@ const CalculatorSection = () => {
                 })}
               </div>
               {/* Nápověda patří pod výběr velikosti: mluví o ploše. */}
-              <p className="mt-2 font-body text-[12.5px] text-muted-foreground leading-snug">{t(lang, "calc_size_hint")}</p>
+              <p id="calc-size-hint" className="mt-2 font-body text-[12.5px] text-muted-foreground leading-snug">{t(lang, "calc_size_hint")}</p>
             </div>
 
             {/* Rok je výchozí rozhodnutí; sezónu si rozklikne, kdo ji chce. */}
@@ -257,6 +301,7 @@ const CalculatorSection = () => {
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {SEASON_KEYS.map((key) => (
                   <button key={key} type="button" onClick={() => setSeason(key)}
+                    aria-pressed={season === key}
                     className={`flex flex-col px-3 py-3 rounded-sm font-body transition-all border text-left leading-tight ${
                       season === key
                         ? "bg-primary text-primary-foreground border-primary"
@@ -282,16 +327,16 @@ const CalculatorSection = () => {
                 /* Lokalita bez vlastních tržních dat: žádné číslo, poctivé
                    zavření s cestou k propočtu do 24 hodin. */
                 <div className="space-y-4">
-                  <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em]">
-                    {t(lang, "calc_net")}
-                  </p>
+                  {/* ŽÁDNÝ eyebrow „Potenciál příjmu s Antam Homes" (1. 9. 2026):
+                      ohlašoval potenciál nad větou, že pro tuhle lokalitu číslo
+                      nemáme. Titulek si stav řekne sám. */}
                   <p className="font-display text-2xl sm:text-[1.75rem] font-semibold text-primary-foreground leading-snug text-balance">
                     {t(lang, !answered ? "calc_pick_area_title" : oversized ? "calc_oversized_title" : "calc_unsupported_title")}
                   </p>
                   <p className="font-body text-[14.5px] text-primary-foreground/80 leading-relaxed">
                     {t(lang, !answered ? "calc_pick_area_text" : oversized ? "calc_oversized_text" : "calc_unsupported_text")}
                   </p>
-                  <p className="md:hidden flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
+                  <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
                     <span>{locLabel(location)}</span>
                     <a href="#kalkulacka-zadani" className="ml-1 inline-flex items-center gap-1 underline underline-offset-4 decoration-primary-foreground/30 hover:text-primary-foreground">
                       <Pencil className="w-3 h-3" aria-hidden="true" />
@@ -304,18 +349,7 @@ const CalculatorSection = () => {
                       trackEvent("cta_click", { location: "calculator_unsupported", target: "contact", district: location, size });
                       window.dispatchEvent(new CustomEvent("antam:prefill-contact", {
                         detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2,
-                          calc: {
-                            model_version: CALC_MODEL_VERSION,
-                            district: location, ctvrt: ctvrt ?? null, dispozice: size,
-                            size_bucket_id: bucket,
-                            representative_m2: oversized ? null : m2,
-                            bucket_label: bucketLabel,
-                            oversized,
-                            owner_low: result.r.supported ? result.r.low : null,
-                            owner_high: result.r.supported ? result.r.high : null,
-                            ltr_month: result.ltr || null,
-                            ltr_ctvrt_factor: result.rentCtvrtFactor,
-                          } },
+                          calc: calcPayload },
                       }));
                     }}
                     className="btn btn-primary-inverse w-full"
@@ -334,12 +368,14 @@ const CalculatorSection = () => {
                       <p className="font-body text-[12px] text-primary-foreground/60 -mt-0.5 mb-1">
                         {t(lang, "calc_net_sub")}
                       </p>
-                      {/* Jedno číslo se čte líp (rozhodnutí 30. 8. 2026): střed rozpětí
-                          jako hlavní číslo, rozpětí drobně pod ním. */}
-                      {/* HEADLINE = dosažitelný vršek UŽ SPOČÍTANÉHO rozpětí, ne jeho střed
-                          (31. 8. 2026). Nemění se tím žádný předpoklad modelu, jen se ukazuje
-                          jiný bod téhož rozpětí, a je označený jako POTENCIÁL. Rozpětí zůstává
-                          hned pod tím: nejistota se neschovává, jen se nefeatur uje střed. */}
+                      {/* HEADLINE = dosažitelný vršek UŽ SPOČÍTANÉHO rozpětí (31. 8. 2026),
+                          označený jako POTENCIÁL. Od 1. 9. 2026 je to JEDINÉ veřejné číslo:
+                          rozpětí „odhadované rozpětí X až Y“ se přestalo renderovat, protože
+                          veřejně nemáme čím ty dva konce odlišit tak, aby to majiteli něco
+                          řeklo. NEMĚNÍ se tím žádný předpoklad ani žádné číslo: low i high
+                          se dál počítají a jdou do stopy, do leadu, do grafu i do MCP.
+                          Rozpětí se NENAHRAZUJE jinou formou nejistoty („od X“, „až X“,
+                          pásmo spolehlivosti): veřejný výsledek je záměrně jedno číslo. */}
                       <p className="flex flex-wrap items-baseline gap-x-2 leading-tight tnum">
                         <span className="font-display text-[2.25rem] min-[360px]:text-[2.75rem] sm:text-5xl md:text-[3.25rem] font-bold text-gradient-gold-on-dark whitespace-nowrap">
                           ~{(Math.round(result.r.high / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
@@ -348,9 +384,18 @@ const CalculatorSection = () => {
                           {t(lang, "calc_month_suffix")}
                         </span>
                       </p>
-                      <p className="mt-1 font-body text-[13px] text-primary-foreground/70 tnum">
-                        {t(lang, "calc_range_label")} {Math.round(result.r.low / 1000)}&nbsp;{t(lang, "calc_range_to")}&nbsp;{Math.round(result.r.high / 1000)}&nbsp;{lang === "cs" ? "tis." : "nghìn"}&nbsp;Kč
-                      </p>
+                      {/* Benefit v Kč za rok hned pod headline: pro majitele je
+                          „+192 000 Kč ročně“ hmatatelnější než násobek, a je to
+                          druhý nejsilnější prvek karty. Stejná podmínka jako
+                          u násobku níž, aby si ty dvě věty neodporovaly. */}
+                      {betterThanLtr && (
+                        <p className="mt-2 font-body text-[15px] sm:text-base font-semibold text-gold tnum">
+                          +{(Math.round(((result.r.high - result.ltr) * 12) / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
+                          <span className="font-normal text-[13px] text-primary-foreground/70">
+                            {t(lang, "calc_vs_ltr_year")}
+                          </span>
+                        </p>
+                      )}
                       {/* Kapacita se majiteli ZÁMĚRNĚ neukazuje (rozhodnutí 31. 8. 2026).
                           Pásmo trhu se bere z dispozice a plochy, ale kolik lůžek se do bytu
                           opravdu vejde, závisí na proporcích pokojů, ne na celkových m².
@@ -368,7 +413,10 @@ const CalculatorSection = () => {
                       <p className="mt-3 font-body text-[13px] text-primary-foreground/70 tnum">
                         {t(lang, "calc_market_line")} ({BAND_LABEL[result.r.band][lang]}): {result.r.adr.toLocaleString("cs-CZ")}&nbsp;Kč
                       </p>
-                      <p className="md:hidden mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
+                      {/* Shrnutí vstupů na VŠECH šířkách (1. 9. 2026). Do té doby bylo
+                          md:hidden, takže na desktopu nebylo vidět, se kterou čtvrtí
+                          a sezónou se počítalo — obojí přitom mění výsledné číslo. */}
+                      <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
                         <span>{locLabel(location)}</span>
                         {/* Čtvrť mění číslo, takže musí být ve shrnutí vidět. Bereme ji
                             z trace, ne ze stavu: je to ta, se kterou model opravdu počítal
@@ -401,13 +449,14 @@ const CalculatorSection = () => {
                           Jinak by web psal „přibližně 0,8× více" (nesmysl a navíc tvrzení,
                           že krátkodobě vyděláte míň, hned vedle slibu garance) nebo
                           „1,0× více". Tam, kde nájem vyjde stejně nebo výš, to řekneme
-                          rovnou: je to pravda a zároveň to poptávku rovnou zatřídí. */}
+                          rovnou: je to pravda a zároveň to poptávku rovnou zatřídí.
+                          TÁŽ podmínka řídí i řádek Kč/rok nahoře pod headline. */}
                       {result.ratio > 0 && (
-                        Math.round(result.ratio * 10) / 10 > 1 ? (
+                        betterThanLtr ? (
                           <p className="font-body text-[13px] text-primary-foreground/85 mt-2">
                             → {t(lang, "calc_approx_prefix")}{" "}
                             <strong className="text-gold">
-                              {(Math.round(result.ratio * 10) / 10).toLocaleString("cs-CZ")}×{" "}
+                              {ratioRounded.toLocaleString("cs-CZ")}×{" "}
                             </strong>
                             {t(lang, "calc_vs_ltr")}
                           </p>
@@ -416,17 +465,6 @@ const CalculatorSection = () => {
                             {t(lang, "calc_ltr_higher")}
                           </p>
                         )
-                      )}
-                      {/* Benefit v korunách za rok. Pro majitele je „+192 000 Kč ročně"
-                          hmatatelnější než „1,6×"; násobek zůstává nad tím jako důkaz.
-                          Ukazuje se jen tam, kde je rozdíl kladný. */}
-                      {result.r.high > result.ltr && (
-                        <p className="font-body text-[15px] font-semibold text-gold mt-1 tnum">
-                          +{(Math.round(((result.r.high - result.ltr) * 12) / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
-                          <span className="font-normal text-[13px] text-primary-foreground/70">
-                            {t(lang, "calc_vs_ltr_year")}
-                          </span>
-                        </p>
                       )}
                     </div>
 
@@ -445,18 +483,7 @@ const CalculatorSection = () => {
                         window.dispatchEvent(
                           new CustomEvent("antam:prefill-contact", {
                             detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2,
-                          calc: {
-                            model_version: CALC_MODEL_VERSION,
-                            district: location, ctvrt: ctvrt ?? null, dispozice: size,
-                            size_bucket_id: bucket,
-                            representative_m2: oversized ? null : m2,
-                            bucket_label: bucketLabel,
-                            oversized,
-                            owner_low: result.r.supported ? result.r.low : null,
-                            owner_high: result.r.supported ? result.r.high : null,
-                            ltr_month: result.ltr || null,
-                            ltr_ctvrt_factor: result.rentCtvrtFactor,
-                          } },
+                          calc: calcPayload },
                           })
                         );
                       }}

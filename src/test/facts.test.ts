@@ -25,6 +25,7 @@ import {
   type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
+import { parseShare } from "@/contexts/CalcContext";
 
 /** ownerMonthly vrací supported-flag; testy chtějí číslo, nebo spadnout. */
 const net = (r: ReturnType<typeof ownerMonthly>) => {
@@ -469,22 +470,66 @@ describe("model výnosu", () => {
     // Násobek proti nájmu smí být "× více" jen tam, kde po zaokrouhlení VÍC než 1×.
     // Web dřív psal i "přibližně 0,8× více" (Praha 4, 2+kk, 85 m²): nesmysl a navíc
     // tvrzení o nižším výnosu hned vedle slibu garance.
-    expect(calc, "násobek jen nad 1×").toContain("Math.round(result.ratio * 10) / 10 > 1");
+    expect(calc, "násobek jen nad 1×").toContain("const betterThanLtr = result.ratio > 0 && ratioRounded > 1;");
+    // Násobek i Kč/rok pod TOUŽ podmínkou. Do 1. 9. 2026 měly každá svou
+    // (`> 1` proti `high > ltr`), takže u 8 z 832 kombinací stránka tvrdila
+    // „nájem vychází podobně nebo výše" a zároveň „+9 000 Kč ročně navíc".
+    expect(calc, "Kč/rok pod touž podmínkou jako násobek")
+      .not.toContain("result.r.high > result.ltr &&");
+    expect((calc.match(/betterThanLtr/g) ?? []).length, "jedna podmínka, dvě použití")
+      .toBeGreaterThanOrEqual(3);
     // Headline = dosažitelný vršek už spočítaného rozpětí, ne jeho střed. Rozpětí
     // musí zůstat vidět hned pod ním: featuruje se jiný bod, nejistota se neschovává.
     expect(calc, "headline je vršek rozpětí").toContain("result.r.high / 1000");
     expect(calc, "headline NENÍ střed").not.toContain("result.r.mid / 1000");
-    expect(calc, "rozpětí zůstává pod headline").toContain("calc_range_label");
+    // OTOČENO 1. 9. 2026: veřejné rozpětí se přestalo renderovat, výsledek je
+    // JEDNO číslo. Assertion proto hlídá opak — a hlavně to, že se rozpětí
+    // nenahradilo jinou formou nejistoty ani nezmizelo zpod povrchu.
+    expect(calc, "veřejné rozpětí se nerenderuje").not.toContain("calc_range_label");
+    expect(calc, "ani jeho druhý konec").not.toContain("calc_range_to");
+    for (const d of [cs, vi]) {
+      expect(d.calc_range_label, "mrtvý klíč pryč z překladů").toBeUndefined();
+      expect(d.calc_range_to, "mrtvý klíč pryč z překladů").toBeUndefined();
+    }
+    // Žádná náhradní vizualizace nejistoty (rozhodnutí 1. 9. 2026).
+    for (const d of [cs, vi]) {
+      for (const [k, v] of Object.entries(d)) {
+        if (!k.startsWith("calc_")) continue;
+        expect(v, `${k}: žádné „od X" / „až X" jako náhrada rozpětí`)
+          .not.toMatch(/\bod\s+\{|\baž\s+\{|khoảng\s+\{/);
+      }
+    }
+    // low/high MUSÍ přežít pod povrchem: v modelu, ve stopě, v leadu, v grafu i v MCP.
+    expect(calc, "low jde do leadu").toContain("owner_low: result.r.supported ? result.r.low");
+    expect(calc, "high jde do leadu").toContain("owner_high: result.r.supported ? result.r.high");
+    expect(readFileSync("src/lib/horizon.ts", "utf8"), "graf dál čte oba konce")
+      .toContain("const netMarket = year.low;");
+    expect(readFileSync("src/lib/mcp/tools/estimate-yield.ts", "utf8"), "MCP dál vrací oba konce")
+      .toMatch(/czk\(r\.low\)[\s\S]*czk\(r\.high\)/);
     expect(calc, "násobek jde z čísla v headline").toContain("r.high / ltr");
     for (const d of [cs, vi]) expect(strip(d.calc_net)).toMatch(/[Pp]otenciál|[Tt]iềm năng/);
     expect(calc, "a jinak poctivá věta").toContain("calc_ltr_higher");
     for (const d of [cs, vi]) expect(strip(d.calc_ltr_higher).length).toBeGreaterThan(10);
     // Benefit v Kč/rok vedle násobku, jen když je rozdíl kladný.
-    expect(calc, "Kč za rok vedle násobku").toContain("result.r.high > result.ltr");
+    expect(calc, "Kč za rok pod headline").toContain("(result.r.high - result.ltr) * 12");
     expect(calc).toContain("calc_vs_ltr_year");
     for (const d of [cs, vi]) expect(strip(d.calc_vs_ltr_year).length).toBeGreaterThan(10);
     expect(calc, "a bere se z trace, ne ze stavu").toContain("r.supported ? r.trace.ctvrt : null");
-    expect(calc).toContain('?byt=${location}-${ctvrt ?? "-"}-${size}-${m2}m-${season}#kalkulacka');
+    // Formát odkazu se NEMĚNÍ (okres-čtvrť-dispozice-Xm-sezóna), mění se jen
+    // to, které m² se u „ještě většího" bytu posílá: spodní hranice kbelíku
+    // místo typické plochy okresu, aby se sdílený oversized stav neotevřel
+    // příjemci jako normální kbelík s číslem.
+    expect(calc).toContain('?byt=${location}-${ctvrt ?? "-"}-${size}-${shareM2}m-${season}#kalkulacka');
+    expect(calc, "oversized se sdílí jako oversized")
+      .toContain("const shareM2 = oversized ? (bucketsFor(size).find((b) => b.id === bucket)?.minM2 ?? m2) : m2;");
+    // A opačně: čtení odkazu nesmí brát zděděné klíče Object.prototype jako čtvrť.
+    const ctx = readFileSync("src/contexts/CalcContext.tsx", "utf8");
+    expect(ctx, "čtvrť z odkazu přes hasOwn, ne `in`").toContain("Object.hasOwn(MARKET_CTVRT, p)");
+    expect(ctx, "`in` by chytlo i constructor/toString").not.toContain("p in MARKET_CTVRT");
+    // Bez komentářů: varovná poznámka v CalcContext ten vzorec cituje schválně.
+    const ctxCode = ctx.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+    expect(ctxCode, "null se nesmí srovnat na undefined").not.toContain("initial?.ctvrt ?? undefined");
+    expect(ctxCode, "tři stavy čtvrti se drží").toContain("initial ? initial.ctvrt : undefined");
     // Kapacita NENÍ veřejné tvrzení (rozhodnutí 31. 8. 2026). Počet lůžek závisí
     // na proporcích pokojů, ne na celkových m²; z jednoho čísla se tvrdit nedá.
     // Model ji používá jen jako důvod pro mísení pásma, web ji neukazuje nikde:
@@ -511,10 +556,42 @@ describe("model výnosu", () => {
     expect(mcp, "guestsFor v MCP nástroji nemá co dělat").not.toContain("guestsFor");
     const bundle = readFileSync("supabase/functions/mcp/index.ts", "utf8");
     expect(bundle, "ani v vygenerovaném bundlu").not.toContain("assumedGuests");
-    for (const k of ["calc_range_to", "calc_range_label", "calc_derived_note", "calc_terms_note", "calc_rent_src"]) {
+    for (const k of ["calc_derived_note", "calc_terms_note", "calc_rent_src"]) {
       expect(strip(cs[k]).length).toBeGreaterThan(0);
       expect(strip(vi[k]).length).toBeGreaterThan(0);
     }
+  });
+
+  it("sdílený odkaz zachová „Ostatní Praha X“ jako vědomou volbu, ne jako nezodpovězeno", () => {
+    // Čtvrť má TŘI stavy a odkaz musí rozlišit všechny tři. Do 1. 9. 2026 se
+    // „Ostatní Praha 1“ serializovalo do „-“, ale při čtení spadlo na undefined,
+    // takže Share na PLATNÝ výsledek poslal příjemci „Vyberte prosím lokalitu“.
+    const shared = parseShare("praha1---2kk-63m-year");
+    expect(shared).not.toBeNull();
+    expect(shared!.ctvrt, "„-“ = Ostatní, tedy null").toBeNull();
+    expect(shared!.ctvrt, "a rozhodně ne undefined").not.toBeUndefined();
+    expect(shared!.location).toBe("praha1");
+    expect(shared!.size).toBe("2kk");
+    expect(shared!.m2).toBe(63);
+    expect(shared!.season).toBe("year");
+
+    // undefined zůstává vyhrazené pro „krok nezodpovězen“: starý odkaz bez slotu.
+    expect(parseShare("praha2-2kk-year")!.ctvrt, "starý odkaz = nezodpovězeno").toBeUndefined();
+    // vybraná čtvrť se pořád čte jako čtvrť
+    expect(parseShare("praha1-stare_mesto-2kk-63m-year")!.ctvrt).toBe("stare_mesto");
+    // zděděné klíče Object.prototype nejsou čtvrť (a nesmí shodit stránku)
+    for (const junk of ["constructor", "toString", "valueOf", "hasOwnProperty"]) {
+      expect(parseShare(`praha1-${junk}-2kk-63m-year`)!.ctvrt, `${junk} není čtvrť`).toBeUndefined();
+    }
+    expect(parseShare(null)).toBeNull();
+
+    // A hlavně: obnovený stav musí dát TOTÉŽ číslo jako přímá volba „Ostatní“.
+    const fromLink = ownerMonthly("praha1", "2kk", { m2: 63, ctvrt: shared!.ctvrt, season: "year" });
+    const direct = ownerMonthly("praha1", "2kk", { m2: 63, ctvrt: null, season: "year" });
+    expect(fromLink.supported, "obnovený odkaz je podporovaný výsledek").toBe(true);
+    expect(fromLink).toEqual(direct);
+    expect(rentFor("praha1", "2kk", 63, "mix", shared!.ctvrt ?? undefined))
+      .toBe(rentFor("praha1", "2kk", 63, "mix", null ?? undefined));
   });
 
   it("3+kk se s plochou plynule překlápí do 3BR (HEURISTIC, oprava konzistence)", () => {

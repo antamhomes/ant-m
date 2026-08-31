@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Reveal from "@/components/Reveal";
 import { Send, Loader2, ChevronDown, ShieldCheck, CalendarClock, KeyRound, Receipt } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -61,6 +61,9 @@ const ContactSection = () => {
   // Co kalkulačka ukázala, uložené k leadu. Bez toho se po posunu hranic
   // kbelíků nedá zpětně zjistit, jaké číslo majitel v tu chvíli viděl.
   const [calcSnapshot, setCalcSnapshot] = useState<Record<string, unknown> | null>(null);
+  // Poslední věta, kterou do zprávy vepsala kalkulačka. Bez toho by se po
+  // změně kalkulačky nedala odlišit od textu, který napsal majitel sám.
+  const lastCalcLine = useRef("");
   const [formData, setFormData] = useState(emptyForm);
   const set = (k: keyof typeof emptyForm, v: string | boolean) => setFormData((f) => ({ ...f, [k]: v }));
 
@@ -76,15 +79,34 @@ const ContactSection = () => {
             ? `Z kalkulačky: ${d.size ?? ""} ${d.m2} m².`.replace(":  ", ": ")
             : `Theo phần tính thử: ${d.size ?? ""} ${d.m2} m².`.replace(":  ", ": ")
           : "";
-      setFormData((f) => ({
-        ...f,
-        location: d.location && LOCATIONS.includes(d.location) ? d.location : f.location,
-        size: d.size && SIZES.includes(d.size) ? d.size : f.size,
-        message: f.message || calcLine,
-      }));
+      setFormData((f) => {
+        // Text majitele se NIKDY nepřepisuje. Přepíše se jen věta, kterou tam
+        // vepsala kalkulačka minule: po změně okresu nebo velikosti by jinak
+        // ve zprávě zůstal starý byt.
+        const mine = f.message && f.message !== lastCalcLine.current;
+        return {
+          ...f,
+          location: d.location && LOCATIONS.includes(d.location) ? d.location : f.location,
+          size: d.size && SIZES.includes(d.size) ? d.size : f.size,
+          message: mine ? f.message : calcLine,
+        };
+      });
+      lastCalcLine.current = calcLine;
+    };
+    // Kalkulačka hlásí každou změnu stavu. Snapshot se aktualizuje POUZE tehdy,
+    // když už nějaký je: jinak by se ke každému leadu nalepil výchozí stav
+    // kalkulačky i od člověka, který ji nikdy nerozklikl. Bez tohohle nesl lead
+    // číslo z okamžiku kliknutí na CTA, i když majitel potom kalkulačku přenastavil.
+    const onCalcState = (e: Event) => {
+      const d = (e as CustomEvent<Record<string, unknown>>).detail;
+      if (d) setCalcSnapshot((prev) => (prev ? d : prev));
     };
     window.addEventListener("antam:prefill-contact", onPrefill);
-    return () => window.removeEventListener("antam:prefill-contact", onPrefill);
+    window.addEventListener("antam:calc-state", onCalcState);
+    return () => {
+      window.removeEventListener("antam:prefill-contact", onPrefill);
+      window.removeEventListener("antam:calc-state", onCalcState);
+    };
   }, [lang]);
 
   const locationOptions: Option[] = [
