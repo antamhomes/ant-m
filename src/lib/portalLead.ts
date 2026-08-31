@@ -21,6 +21,12 @@ export type PortalInquiry = {
   energy?: string;
   message?: string;
   lang: string;
+  /** Verze konfigurace kalkulačky, pod kterou majitel číslo viděl. */
+  calc_model_version?: string;
+  /** Co majitel naklikal, včetně kbelíku velikosti a plochy, která šla do modelu. */
+  calc_inputs?: Record<string, unknown>;
+  /** Co mu web ukázal. Spolu s verzí to jde zpětně zrekonstruovat. */
+  calc_result?: Record<string, unknown>;
 };
 
 export async function mirrorInquiryToPortal(row: PortalInquiry): Promise<void> {

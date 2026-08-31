@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
-import { typicalArea, ctvrtiOf, MARKET_CTVRT, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
+import { typicalArea, ctvrtiOf, MARKET_CTVRT, bucketFor, bucketById, CALC_MODEL_VERSION, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
 
 /**
  * Sdílený stav kalkulačky (lokalita, čtvrť, dispozice, plocha, sezóna).
@@ -29,7 +29,14 @@ type CalcState = {
   /** true, když okres má vlastní čtvrti, a krok se tedy nesmí přeskočit */
   needsCtvrt: boolean;
   size: SizeKey; pickSize: (v: SizeKey) => void;
-  m2: number; setM2: (v: number) => void;
+  /** id vybraného kbelíku velikosti ("s" | "m" | "l" | "xl") */
+  bucket: string; pickBucket: (id: string) => void;
+  /** reprezentativní plocha vybraného kbelíku; u "xl" zůstává poslední platná */
+  m2: number;
+  /** true = byt nad p95 stocku, číslo se neextrapoluje a jde se na posouzení */
+  oversized: boolean;
+  /** verze konfigurace, pod kterou se to počítalo; jde do leadu */
+  modelVersion: string;
   season: SeasonKey; setSeason: (v: SeasonKey) => void;
   /** true, když stránka přišla ze sdíleného odkazu ?byt=… */
   fromShare: boolean;
@@ -66,24 +73,31 @@ export const CalcProvider = ({ children }: { children: ReactNode }) => {
   const [location, setLocationRaw] = useState<CalcLoc>(loc0);
   const [ctvrt, setCtvrt] = useState<string | null | undefined>(initial?.ctvrt ?? undefined);
   const [size, setSize] = useState<SizeKey>(size0);
-  const [m2, setM2] = useState<number>(initial?.m2 ?? typicalArea(loc0, size0));
+  const [bucket, setBucket] = useState<string>(bucketFor(size0, initial?.m2 ?? typicalArea(loc0, size0)).id);
   const [season, setSeason] = useState<SeasonKey>(initial?.season ?? "year");
+
+  // m² už není vstup: plyne z vybraného kbelíku. Sdílené odkazy se ale pořád
+  // nesou v m², takže se při načtení namapují na kbelík, který je obsahuje.
+  const picked = bucketById(size, bucket);
+  const oversized = picked.representativeM2 === null;
+  const m2 = picked.representativeM2 ?? typicalArea(location, size);
 
   const needsCtvrt = ctvrtiOf(location).length > 0;
   /** Změna okresu vrací krok 2 na „nezodpovězeno“ a plochu na typickou pro nový okres. */
   const setLocation = (v: CalcLoc) => {
     setLocationRaw(v);
     setCtvrt(undefined);
-    setM2(typicalArea(v, size));
+    setBucket(bucketFor(size, typicalArea(v, size)).id);
   };
-  /** Změna dispozice přenastaví plochu na typickou pro tu dispozici. */
-  const pickSize = (v: SizeKey) => { setSize(v); setM2(typicalArea(location, v)); };
+  /** Změna dispozice vybere kbelík, do kterého padne typická plocha té dispozice. */
+  const pickSize = (v: SizeKey) => { setSize(v); setBucket(bucketFor(v, typicalArea(location, v)).id); };
 
   const value = useMemo<CalcState>(() => ({
     location, setLocation, ctvrt, setCtvrt, needsCtvrt,
-    size, pickSize, m2, setM2,
+    size, pickSize, bucket, pickBucket: setBucket, m2, oversized,
+    modelVersion: CALC_MODEL_VERSION,
     season, setSeason, fromShare: initial !== null,
-  }), [location, ctvrt, needsCtvrt, size, m2, season, initial]);
+  }), [location, ctvrt, needsCtvrt, size, bucket, m2, oversized, season, initial]);
 
   return <CalcContext.Provider value={value}>{children}</CalcContext.Provider>;
 };

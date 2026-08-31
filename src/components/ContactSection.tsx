@@ -58,6 +58,9 @@ const ContactSection = () => {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [sendError, setSendError] = useState(false);
+  // Co kalkulačka ukázala, uložené k leadu. Bez toho se po posunu hranic
+  // kbelíků nedá zpětně zjistit, jaké číslo majitel v tu chvíli viděl.
+  const [calcSnapshot, setCalcSnapshot] = useState<Record<string, unknown> | null>(null);
   const [formData, setFormData] = useState(emptyForm);
   const set = (k: keyof typeof emptyForm, v: string | boolean) => setFormData((f) => ({ ...f, [k]: v }));
 
@@ -65,7 +68,8 @@ const ContactSection = () => {
   // twice; the floor area lands visibly (and editably) in the message field.
   useEffect(() => {
     const onPrefill = (e: Event) => {
-      const d = (e as CustomEvent<{ location?: string; size?: string; m2?: number }>).detail || {};
+      const d = (e as CustomEvent<{ location?: string; size?: string; m2?: number; calc?: Record<string, unknown> }>).detail || {};
+      if (d.calc) setCalcSnapshot(d.calc);
       const calcLine =
         d.m2
           ? lang === "cs"
@@ -160,6 +164,25 @@ const ContactSection = () => {
           .filter(Boolean)
           .join("\n"),
         lang,
+        ...(calcSnapshot
+          ? {
+              calc_model_version: calcSnapshot.model_version as string,
+              calc_inputs: {
+                district: calcSnapshot.district,
+                ctvrt: calcSnapshot.ctvrt,
+                dispozice: calcSnapshot.dispozice,
+                size_bucket_id: calcSnapshot.size_bucket_id,
+                representative_m2: calcSnapshot.representative_m2,
+                bucket_label: calcSnapshot.bucket_label,
+                oversized: calcSnapshot.oversized,
+              },
+              calc_result: {
+                owner_low: calcSnapshot.owner_low,
+                owner_high: calcSnapshot.owner_high,
+                ltr_month: calcSnapshot.ltr_month,
+              },
+            }
+          : {}),
       });
       trackEvent("lead_submit", { form: "contact", status: formData.status || "n/a" });
       setSuccess(true);

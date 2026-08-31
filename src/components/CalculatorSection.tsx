@@ -4,7 +4,7 @@ import { Calculator, MapPin, Home, Share2, Pencil, Ruler } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
-import { BAND_LABEL, ownerMonthly, rentFor, ctvrtiOf, SIZE_SLIDER, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
+import { BAND_LABEL, ownerMonthly, rentFor, ctvrtiOf, ctvrtRentFactor, bucketsFor, CALC_MODEL_VERSION, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
 import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/CalcContext";
 
 /** Lokalita v kalkulačce: pražské čtvrti + „jinde". U čtvrtí bez vlastních dat
@@ -35,7 +35,7 @@ const CalculatorSection = () => {
     l === "jinde" ? t(lang, "calc_loc_other") : `Praha ${l.replace("praha", "")}`;
   // Stav (lokalita, dispozice, plocha, sezóna, vybavení) žije v CalcContext,
   // aby s ním počítal i pětiletý graf v sekci Horizont.
-  const { location, setLocation, ctvrt, setCtvrt, needsCtvrt, size, pickSize, m2, setM2, season, setSeason, fromShare } = useCalc();
+  const { location, setLocation, ctvrt, setCtvrt, needsCtvrt, size, pickSize, bucket, pickBucket, m2, oversized, season, setSeason, fromShare } = useCalc();
   const [shared, setShared] = useState(false);
 
   useEffect(() => {
@@ -64,7 +64,9 @@ const CalculatorSection = () => {
   // Nájem řídí PLOCHA (rentFor).
   const result = useMemo(() => {
     const r = ownerMonthly(location, size, { season, m2, ctvrt });
-    const ltr = location === "jinde" ? 0 : rentFor(location as LocationKey, size, m2);
+    // Nájem bere TÉŽ čtvrť jako STR strana. Bez toho by se lokální čitatel
+    // dělil okresním jmenovatelem a násobek by se u silných čtvrtí nafoukl.
+    const ltr = location === "jinde" ? 0 : rentFor(location as LocationKey, size, m2, "mix", ctvrt);
     // Násobek se počítá z čísla, které je v headline (vršek), aby si to
     // navzájem neodporovalo. Od 31. 8. 2026 je headline POTENCIÁL, ne střed.
     const ratio = r.supported && ltr > 0 ? r.high / ltr : 0;
@@ -72,7 +74,9 @@ const CalculatorSection = () => {
     // okres se ignoruje). Ve shrnutí výsledku musí být vidět, protože mění číslo.
     const used = r.supported ? r.trace.ctvrt : null;
     const ctvrtLabel = used ? ctvrtiOf(location).find((c) => c.id === used)?.label ?? null : null;
-    return { r, ltr, ratio, ctvrtLabel };
+    // Jaký čtvrťový faktor nájmu se opravdu použil (1 = žádný). Do stopy i do leadu.
+    const rentCtvrtFactor = location === "jinde" ? 1 : ctvrtRentFactor(location, ctvrt);
+    return { r, ltr, ratio, ctvrtLabel, rentCtvrtFactor };
   }, [location, ctvrt, size, m2, season]);
 
   // Pětiletka se v kartě výsledku ZÁMĚRNĚ neukazuje (31. 8. 2026). Roční rozdíl
@@ -87,7 +91,21 @@ const CalculatorSection = () => {
       ? `${(n / 1e6).toFixed(1).replace(".", ",")}\u00a0${lang === "cs" ? "mil." : "triệu"}`
       : `${Math.round(n / 1000)}\u00a0${lang === "cs" ? "tis." : "nghìn"}`;
   const answered = !needsCtvrt || ctvrt !== undefined;
-  const supported = result.r.supported && answered;
+  // Label kbelíku PŘESNĚ tak, jak ho majitel viděl. Ukládá se k leadu, aby šlo
+  // zpětně zrekonstruovat, co mu web ukázal, i když se hranice později posunou.
+  const bucketLabel = (() => {
+    const b = bucketsFor(size).find((x) => x.id === bucket);
+    if (!b) return "";
+    const range = b.maxM2 === null
+      ? t(lang, "calc_size_over").replace("{n}", String((b.minM2 ?? 1) - 1))
+      : b.minM2 === null
+        ? t(lang, "calc_size_upto").replace("{n}", String(b.maxM2))
+        : `${b.minM2}\u2013${b.maxM2} m²`;
+    return `${t(lang, b.labelKey as "calc_size_s")} (${range})`;
+  })();
+  // Byt nad p95 stocku se NEEXTRAPOLUJE: místo pochybného čísla jde na
+  // individuální posouzení, stejně jako čtvrť nebo pásmo bez dat.
+  const supported = result.r.supported && answered && !oversized;
 
   return (
     <section id="kalkulacka" className="section bg-secondary scroll-mt-16">
@@ -189,30 +207,44 @@ const CalculatorSection = () => {
               </div>
             </div>
 
-            {/* Plocha (zpět 31. 8. 2026): rozhoduje o tom, jestli se 2+kk počítá
-                jako 1BR nebo 2BR produkt, a jde rovnou do nájmu. Výchozí hodnota
-                je medián dispozice v dané čtvrti, rozsah podle dispozice. */}
+            {/* Velikost se od 31. 8. 2026 vybírá TLAČÍTKY. Posuvník na jeden metr
+                předstíral přesnost, kterou veřejně nemáme: majitel svoje m² zná, ale
+                o čísle nerozhoduje 79 vs 81, rozhoduje menší/běžný/větší. Kbelík jen
+                pošle reprezentativní plochu do TÉHOŽ modelu, ekonomika se nemění.
+                Poslední volba se neextrapoluje a jde na individuální posouzení. */}
             <div>
-              <label htmlFor="calc-m2" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
+              <p className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
                 <Ruler className="w-4 h-4 text-gold" />
                 {t(lang, "calc_m2")}
-              </label>
-              <div className="flex items-center gap-4">
-                <input
-                  id="calc-m2"
-                  type="range"
-                  min={SIZE_SLIDER[size][0]}
-                  max={SIZE_SLIDER[size][1]}
-                  step={1}
-                  value={Math.min(Math.max(m2, SIZE_SLIDER[size][0]), SIZE_SLIDER[size][1])}
-                  onChange={(e) => setM2(Number(e.target.value))}
-                  className="h-1 w-full min-w-0 cursor-pointer appearance-none rounded-full bg-border accent-gold"
-                />
-                <span className="w-20 shrink-0 text-right font-body text-lg font-semibold text-foreground tnum">
-                  {m2}&nbsp;m²
-                </span>
+              </p>
+              <div id="calc-size" className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {bucketsFor(size).map((b) => {
+                  // Rozsah se SKLÁDÁ z konfigurace. V komponentě nesmí být žádná
+                  // hranice natvrdo: jinak by se s novou verzí modelu rozešla
+                  // tlačítka s tím, co model opravdu počítá.
+                  const range = b.maxM2 === null
+                    ? t(lang, "calc_size_over").replace("{n}", String((b.minM2 ?? 1) - 1))
+                    : b.minM2 === null
+                      ? t(lang, "calc_size_upto").replace("{n}", String(b.maxM2))
+                      : `${b.minM2}\u2013${b.maxM2} m²`;
+                  return (
+                    <button key={b.id} type="button" onClick={() => pickBucket(b.id)}
+                      aria-pressed={bucket === b.id}
+                      className={`flex flex-col items-start px-3 py-2.5 min-w-0 rounded-sm font-body transition-all border ${
+                        bucket === b.id
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-card border-border text-foreground hover:border-gold/50"
+                      }`}
+                    >
+                      <span className="text-sm font-semibold">{t(lang, b.labelKey as "calc_size_s")}</span>
+                      <span className={`text-[11.5px] tnum ${bucket === b.id ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                        {range}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
-              {/* Nápověda patří pod posuvník, ne nad dispozici: mluví o ploše. */}
+              {/* Nápověda patří pod výběr velikosti: mluví o ploše. */}
               <p className="mt-2 font-body text-[12.5px] text-muted-foreground leading-snug">{t(lang, "calc_size_hint")}</p>
             </div>
 
@@ -254,10 +286,10 @@ const CalculatorSection = () => {
                     {t(lang, "calc_net")}
                   </p>
                   <p className="font-display text-2xl sm:text-[1.75rem] font-semibold text-primary-foreground leading-snug text-balance">
-                    {t(lang, answered ? "calc_unsupported_title" : "calc_pick_area_title")}
+                    {t(lang, !answered ? "calc_pick_area_title" : oversized ? "calc_oversized_title" : "calc_unsupported_title")}
                   </p>
                   <p className="font-body text-[14.5px] text-primary-foreground/80 leading-relaxed">
-                    {t(lang, answered ? "calc_unsupported_text" : "calc_pick_area_text")}
+                    {t(lang, !answered ? "calc_pick_area_text" : oversized ? "calc_oversized_text" : "calc_unsupported_text")}
                   </p>
                   <p className="md:hidden flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
                     <span>{locLabel(location)}</span>
@@ -271,7 +303,19 @@ const CalculatorSection = () => {
                     onClick={() => {
                       trackEvent("cta_click", { location: "calculator_unsupported", target: "contact", district: location, size });
                       window.dispatchEvent(new CustomEvent("antam:prefill-contact", {
-                        detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2 },
+                        detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2,
+                          calc: {
+                            model_version: CALC_MODEL_VERSION,
+                            district: location, ctvrt: ctvrt ?? null, dispozice: size,
+                            size_bucket_id: bucket,
+                            representative_m2: oversized ? null : m2,
+                            bucket_label: bucketLabel,
+                            oversized,
+                            owner_low: result.r.supported ? result.r.low : null,
+                            owner_high: result.r.supported ? result.r.high : null,
+                            ltr_month: result.ltr || null,
+                            ltr_ctvrt_factor: result.rentCtvrtFactor,
+                          } },
                       }));
                     }}
                     className="btn btn-primary-inverse w-full"
@@ -400,7 +444,19 @@ const CalculatorSection = () => {
                         trackEvent("cta_click", { location: "calculator", target: "contact", district: location, size });
                         window.dispatchEvent(
                           new CustomEvent("antam:prefill-contact", {
-                            detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2 },
+                            detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2,
+                          calc: {
+                            model_version: CALC_MODEL_VERSION,
+                            district: location, ctvrt: ctvrt ?? null, dispozice: size,
+                            size_bucket_id: bucket,
+                            representative_m2: oversized ? null : m2,
+                            bucket_label: bucketLabel,
+                            oversized,
+                            owner_low: result.r.supported ? result.r.low : null,
+                            owner_high: result.r.supported ? result.r.high : null,
+                            ltr_month: result.ltr || null,
+                            ltr_ctvrt_factor: result.rentCtvrtFactor,
+                          } },
                           })
                         );
                       }}

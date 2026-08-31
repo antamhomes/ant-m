@@ -100,6 +100,19 @@ var bandForSize = (size, m2) => {
   const b = BAND_BLEND[size];
   return b.next && bandWeight(size, m2) >= 0.5 ? b.next : b.base;
 };
+var B = (id, minM2, maxM2, representativeM2) => ({ id, labelKey: `calc_size_${id}`, minM2, maxM2, representativeM2, supported: representativeM2 !== null });
+var SIZE_BUCKETS_BY_VERSION = {
+  "2026-08-31.1": {
+    // p25 30 · p50 34 · p75 40 · p95 49 — bez překlopení, dělí rozložení
+    "1kk": [B("s", null, 30, 28), B("m", 31, 40, 35), B("l", 41, 49, 45), B("xl", 50, null, null)],
+    // překlopení 1BR→2BR na 40 a 55 · p95 80
+    "2kk": [B("s", null, 40, 38), B("m", 41, 55, 50), B("l", 56, 80, 63), B("xl", 81, null, null)],
+    // překlopení 2BR→3BR na 65 a 95 · p95 120
+    "3kk": [B("s", null, 65, 63), B("m", 66, 95, 78), B("l", 96, 120, 106), B("xl", 121, null, null)],
+    // p25 93 · p50 115 · p75 132 · p95 151 — bez překlopení (chybí pásmo 4BR)
+    "4kk": [B("s", null, 93, 85), B("m", 94, 132, 116), B("l", 133, 151, 142), B("xl", 152, null, null)]
+  }
+};
 var LOW_BLEND = 0.5;
 var SPREAD = { low: 0.92, high: 1.08, minWidth: 0.08, derivedWiden: 1.6 };
 var MARKET_CTVRT = {
@@ -172,7 +185,23 @@ var FURN_RENT = {
   none: 0.938,
   mix: 1
 };
-var rentFor = (loc, size, m2 = MEDIAN_AREA[size], furn = "mix") => Math.round(m2 * Math.exp(RENT_INTERCEPT[loc]) * Math.pow(m2, RENT_SLOPE) * FURN_RENT[furn]);
+var CTVRT_RENT = {
+  praha1: { nove_mesto: { effect: -77e-4, n: 41 } },
+  praha2: { vinohrady: { effect: 6e-3, n: 63 }, nove_mesto: { effect: -0.0222, n: 26 } },
+  praha3: { zizkov: { effect: -0.0381, n: 79 }, vinohrady: { effect: 0.0347, n: 32 } },
+  praha4: { nusle: { effect: 0.0407, n: 48 }, chodov: { effect: -4e-4, n: 24 }, michle: { effect: 47e-4, n: 22 }, modrany: { effect: 46e-4, n: 22 }, krc: { effect: -91e-4, n: 21 }, branik: { effect: -0.01, n: 16 } },
+  praha5: { smichov: { effect: 0.0773, n: 101 }, stodulky: { effect: -0.0455, n: 48 }, hlubocepy: { effect: -0.0129, n: 37 }, kosire: { effect: 0.0338, n: 30 } },
+  praha6: { bubenec: { effect: 0.0144, n: 16 }, brevnov: { effect: 33e-4, n: 15 }, dejvice: { effect: 0.0234, n: 15 }, ruzyne: { effect: -63e-4, n: 12 } },
+  praha7: { holesovice: { effect: 8e-4, n: 62 } },
+  praha8: { karlin: { effect: 0.1143, n: 36 }, liben: { effect: -0.0235, n: 29 }, kobylisy: { effect: -0.03, n: 19 }, troja: { effect: -81e-4, n: 14 } },
+  praha9: { vysocany: { effect: 82e-4, n: 37 }, hloubetin: { effect: 22e-4, n: 19 }, prosek: { effect: -0.012, n: 14 }, liben: { effect: -63e-4, n: 13 }, cerny_most: { effect: -0.012, n: 12 } },
+  praha10: { vrsovice: { effect: 0.0282, n: 40 }, strasnice: { effect: -37e-4, n: 37 }, hostivar: { effect: 5e-4, n: 18 }, zabehlice: { effect: -0.0182, n: 18 } }
+};
+var ctvrtRentFactor = (loc, ctvrt) => {
+  const e = ctvrt ? CTVRT_RENT[loc]?.[ctvrt]?.effect : void 0;
+  return e === void 0 ? 1 : Math.exp(e);
+};
+var rentFor = (loc, size, m2 = MEDIAN_AREA[size], furn = "mix", ctvrt) => Math.round(m2 * Math.exp(RENT_INTERCEPT[loc]) * Math.pow(m2, RENT_SLOPE) * FURN_RENT[furn] * ctvrtRentFactor(loc, ctvrt));
 var locKeyOf = (loc) => {
   const m = /^Praha (\d+)$/.exec(loc);
   return m ? `praha${m[1]}` : null;

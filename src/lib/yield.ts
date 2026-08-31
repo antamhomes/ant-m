@@ -296,11 +296,74 @@ export const bandForSize = (size: SizeKey, m2: number): Band => {
   const b = BAND_BLEND[size];
   return b.next && bandWeight(size, m2) >= 0.5 ? b.next : b.base;
 };
-/** Rozsah posuvníku plochy podle dispozice. Výchozí hodnota není tady: bere se
- *  typicalArea(čtvrť, dispozice), tedy medián Sreality pro danou lokalitu. */
-export const SIZE_SLIDER: Record<SizeKey, [number, number]> = {
-  "1kk": [20, 55], "2kk": [35, 85], "3kk": [50, 115], "4kk": [70, 140],
+/**
+ * Velikost bytu se veřejně vybírá TLAČÍTKY, ne posuvníkem na jeden metr
+ * (31. 8. 2026). Posuvník předstíral, že rozdíl mezi 79 a 81 m² se dá veřejně
+ * underwritovat; majitel to neví a stejně to nerozhoduje. Rozhoduje, jestli je
+ * byt na svou dispozici menší, běžný nebo větší.
+ *
+ * Kbelík je JEN VSTUPNÍ ROZHRANÍ. Pošle do modelu reprezentativní plochu `m2`
+ * a dál se počítá úplně stejně jako dřív. Žádná nová ekonomika, žádný kbelík
+ * nekóduje počet osob.
+ *
+ * Hranice jsou ODVOZENÉ, ne vymyšlené:
+ *  - kde dispozice překlápí pásmo (2+kk, 3+kk), dělí se přesně na `lo` a `hi`
+ *    z BAND_BLEND, protože tam se opravdu mění komerční produkt;
+ *  - kde překlopení není (1+kk, 4+kk), ekonomický zlom neexistuje a dělí se
+ *    podle rozložení skutečného pražského stocku (p25 a p75, Sreality n=1354);
+ *  - poslední uzavřená hranice je vždy p95 stocku a `m2` v kbelíku je medián
+ *    inzerátů, které do něj spadají.
+ *
+ * Poslední volba má `m2: null`: byt nad p95 se NEEXTRAPOLUJE, jde na
+ * individuální posouzení. Týká se 3 až 5 % bytů podle dispozice.
+ */
+export type SizeBucket = {
+  id: string;
+  /** klíč do překladů; kbelík si NEDRŽÍ hotový text, web je dvojjazyčný */
+  labelKey: string;
+  minM2: number | null;
+  maxM2: number | null;
+  /** plocha, která jde do modelu; null = mimo podložená data */
+  representativeM2: number | null;
+  /** false = neextrapoluje se, jde se na individuální posouzení */
+  supported: boolean;
 };
+
+/**
+ * VERZOVANÁ konfigurace. Kbelíky se časem posunou (přibude pásmo 4BR, dořeší se
+ * ploché zóny, přijdou další čtvrtě), ale historická verze se NESMÍ přepisovat:
+ * u leadu je uložené `calc_model_version` a musí jít zpětně zrekonstruovat, co
+ * přesně majitel viděl. Nová hranice = NOVÁ VERZE, ne editace staré.
+ * `facts.test.ts` obsah verze 2026-08-31.1 zamyká; když ho někdo změní, test
+ * spadne a připomene, že má přidat verzi.
+ */
+export const CALC_MODEL_VERSION = "2026-08-31.1";
+
+const B = (id: string, minM2: number | null, maxM2: number | null, representativeM2: number | null): SizeBucket =>
+  ({ id, labelKey: `calc_size_${id}`, minM2, maxM2, representativeM2, supported: representativeM2 !== null });
+
+export const SIZE_BUCKETS_BY_VERSION: Record<string, Record<SizeKey, SizeBucket[]>> = {
+  "2026-08-31.1": {
+    // p25 30 · p50 34 · p75 40 · p95 49 — bez překlopení, dělí rozložení
+    "1kk": [B("s", null, 30, 28), B("m", 31, 40, 35), B("l", 41, 49, 45), B("xl", 50, null, null)],
+    // překlopení 1BR→2BR na 40 a 55 · p95 80
+    "2kk": [B("s", null, 40, 38), B("m", 41, 55, 50), B("l", 56, 80, 63), B("xl", 81, null, null)],
+    // překlopení 2BR→3BR na 65 a 95 · p95 120
+    "3kk": [B("s", null, 65, 63), B("m", 66, 95, 78), B("l", 96, 120, 106), B("xl", 121, null, null)],
+    // p25 93 · p50 115 · p75 132 · p95 151 — bez překlopení (chybí pásmo 4BR)
+    "4kk": [B("s", null, 93, 85), B("m", 94, 132, 116), B("l", 133, 151, 142), B("xl", 152, null, null)],
+  },
+};
+
+/** Kbelíky dispozice pro danou verzi modelu; výchozí je ta aktuální. */
+export const bucketsFor = (size: SizeKey, version: string = CALC_MODEL_VERSION): SizeBucket[] =>
+  (SIZE_BUCKETS_BY_VERSION[version] ?? SIZE_BUCKETS_BY_VERSION[CALC_MODEL_VERSION])[size];
+/** Kbelík, do kterého padne daná plocha (mapuje starší sdílené odkazy v m²). */
+export const bucketFor = (size: SizeKey, m2: number, version?: string): SizeBucket =>
+  bucketsFor(size, version).find((b) => (b.maxM2 === null || m2 <= b.maxM2) && (b.minM2 === null || m2 >= b.minM2))
+  ?? bucketsFor(size, version)[1];
+export const bucketById = (size: SizeKey, id: string, version?: string): SizeBucket =>
+  bucketsFor(size, version).find((b) => b.id === id) ?? bucketsFor(size, version)[1];
 
 /**
  * Co se na prohlídce OPRAVDU zjistilo. Není to posuvník „horší/lepší": je to
@@ -440,10 +503,53 @@ export type FurnRent = "furnished" | "partly" | "none" | "mix";
 export const FURN_RENT: Record<FurnRent, number> = {
   furnished: 1.114, partly: 0.99, none: 0.938, mix: 1,
 };
+/**
+ * Čtvrťová vrstva nájmu (31. 8. 2026). Okresní křivka výš se NEPŘEFITOVALA:
+ * tohle je jen průměrné REZIDUUM čtvrti proti ní, takže bez vybrané čtvrti se
+ * nájem nezmění ani o korunu. Zdroj: surový export téhož scrapu Sreality
+ * (sreality_listings.csv, katastr vyplněný u 3 350 z 3 429 inzerátů), stejné
+ * filtry jako u okresní křivky. Kontrola: průměrné reziduum stávajícího modelu
+ * po okresech vychází −0,029 až +0,028, tedy okresní vrstva sedí.
+ *
+ * PROČ to je potřeba: čtvrťová vrstva existovala jen na STR straně, takže se
+ * lokální čitatel dělil okresním jmenovatelem. U Karlína je to +12 % nájmu
+ * proti průměru Prahy 8; bez téhle vrstvy by se jeho násobek nafoukl.
+ *
+ * Sdílené čtvrti mají PRO KAŽDÝ OKRES vlastní hodnotu (Vinohrady +1 % v Praze 2
+ * ale +4 % v Praze 3), takže se klíčuje okresem a cizí čtvrť se sama ignoruje.
+ *
+ * HEURISTIC: schody shrinkage 100 / 50 / 25 / 12 nejsou změřený zákon, je to
+ * volba. Směr je správný (tenký vzorek se stahuje k okresu), ale ta konkrétní
+ * čísla ne. První tři stupně jsou převzaté z ctvrtWeight u STR, čtvrtý je
+ * přidaný, protože nájemní vzorky jsou o řád menší. Čtvrti pod 12 inzerátů se
+ * sem vůbec nedostanou — proto tu není Staré Město (n=11) a jeho faktor je 1,000.
+ * Uložené hodnoty jsou UŽ PO shrinkage.
+ */
+export const CTVRT_RENT: Partial<Record<LocationKey, Record<string, { effect: number; n: number }>>> = {
+  praha1: { nove_mesto: { effect: -0.0077, n: 41 } },
+  praha2: { vinohrady: { effect: 0.006, n: 63 }, nove_mesto: { effect: -0.0222, n: 26 } },
+  praha3: { zizkov: { effect: -0.0381, n: 79 }, vinohrady: { effect: 0.0347, n: 32 } },
+  praha4: { nusle: { effect: 0.0407, n: 48 }, chodov: { effect: -0.0004, n: 24 }, michle: { effect: 0.0047, n: 22 }, modrany: { effect: 0.0046, n: 22 }, krc: { effect: -0.0091, n: 21 }, branik: { effect: -0.01, n: 16 } },
+  praha5: { smichov: { effect: 0.0773, n: 101 }, stodulky: { effect: -0.0455, n: 48 }, hlubocepy: { effect: -0.0129, n: 37 }, kosire: { effect: 0.0338, n: 30 } },
+  praha6: { bubenec: { effect: 0.0144, n: 16 }, brevnov: { effect: 0.0033, n: 15 }, dejvice: { effect: 0.0234, n: 15 }, ruzyne: { effect: -0.0063, n: 12 } },
+  praha7: { holesovice: { effect: 0.0008, n: 62 } },
+  praha8: { karlin: { effect: 0.1143, n: 36 }, liben: { effect: -0.0235, n: 29 }, kobylisy: { effect: -0.03, n: 19 }, troja: { effect: -0.0081, n: 14 } },
+  praha9: { vysocany: { effect: 0.0082, n: 37 }, hloubetin: { effect: 0.0022, n: 19 }, prosek: { effect: -0.012, n: 14 }, liben: { effect: -0.0063, n: 13 }, cerny_most: { effect: -0.012, n: 12 } },
+  praha10: { vrsovice: { effect: 0.0282, n: 40 }, strasnice: { effect: -0.0037, n: 37 }, hostivar: { effect: 0.0005, n: 18 }, zabehlice: { effect: -0.0182, n: 18 } },
+};
+/** Násobek nájmu za čtvrť. 1 = bez čtvrti, cizí čtvrť nebo tenký vzorek. */
+export const ctvrtRentFactor = (loc: string, ctvrt?: string | null): number => {
+  const e = ctvrt ? CTVRT_RENT[loc as LocationKey]?.[ctvrt]?.effect : undefined;
+  return e === undefined ? 1 : Math.exp(e);
+};
+
 /** Nájem konkrétní plochy v dané lokalitě. JEDINÁ funkce na nájem na webu.
- *  Dispozice jen dodá výchozí plochu, když m² chybí. */
-export const rentFor = (loc: LocationKey, size: SizeKey, m2 = MEDIAN_AREA[size], furn: FurnRent = "mix") =>
-  Math.round(m2 * Math.exp(RENT_INTERCEPT[loc]) * Math.pow(m2, RENT_SLOPE) * FURN_RENT[furn]);
+ *  Dispozice jen dodá výchozí plochu, když m² chybí. Čtvrť je nepovinná a bez
+ *  ní se výsledek nemění. */
+export const rentFor = (
+  loc: LocationKey, size: SizeKey, m2 = MEDIAN_AREA[size], furn: FurnRent = "mix", ctvrt?: string | null,
+) =>
+  Math.round(m2 * Math.exp(RENT_INTERCEPT[loc]) * Math.pow(m2, RENT_SLOPE) * FURN_RENT[furn] * ctvrtRentFactor(loc, ctvrt));
 
 /** Lokalita karty („Praha 1“) → klíč nájmu; Mladá Boleslav nájemní data nemá. */
 export const locKeyOf = (loc: string): LocationKey | null => {

@@ -20,8 +20,8 @@ import {
   OCCUPANCY_BY_FLAT, MEDIAN_AREA, rentFor,
   MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor,
   operatorFactor, OPERATOR_EVIDENCE, publicFactorFrom, AVAILABILITY, BAND_BLEND, bandWeight, bandForSize, ctvrtiOf, MARKET_CTVRT,
-  marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, SPREAD, marketCell, guestsFor, BASE_GUESTS,
-  RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, RENT_GROWTH, STR_GROWTH, TYPICAL_AREA, typicalArea, type LocationKey,
+  marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, SPREAD, SIZE_BUCKETS_BY_VERSION, CALC_MODEL_VERSION, bucketsFor, bucketFor, marketCell, guestsFor, BASE_GUESTS,
+  RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, RENT_GROWTH, STR_GROWTH, CTVRT_RENT, ctvrtRentFactor, TYPICAL_AREA, typicalArea, type LocationKey,
   type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
@@ -33,6 +33,9 @@ const net = (r: ReturnType<typeof ownerMonthly>) => {
 };
 /** Dispozice, která spadne do daného pásma trhu. */
 const sizeOf = (band: string): SizeKey => band === "1BR" ? "1kk" : band === "2BR" ? "2kk" : "4kk";
+/** Stejný tvar jako tovární funkce v yield.ts; drží snapshot verze čitelný. */
+const B = (id: string, minM2: number | null, maxM2: number | null, representativeM2: number | null) =>
+  ({ id, labelKey: `calc_size_${id}`, minM2, maxM2, representativeM2, supported: representativeM2 !== null });
 
 const cs = translations.cs as Record<string, string>;
 const vi = translations.vi as Record<string, string>;
@@ -349,7 +352,96 @@ describe("model výnosu", () => {
     expect(r.supported && r.guests).toBe(6);
     const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
     expect(calc, "posuvník hostů se do kalkulačky nesmí vrátit").not.toContain("calc-guests");
-    expect(calc, "posuvník plochy je zpět (31. 8. 2026): rozhoduje o pásmu i o nájmu").toContain('id="calc-m2"');
+    // Velikost se vybírá TLAČÍTKY, ne posuvníkem na jeden metr (31. 8. 2026).
+    // Kbelík je jen vstupní rozhraní: pošle reprezentativní plochu do TÉHOŽ modelu.
+    expect(calc, "posuvník plochy se nesmí vrátit").not.toContain('type="range"');
+    expect(calc, "velikost se vybírá tlačítky").toContain('id="calc-size"');
+    for (const size of ["1kk", "2kk", "3kk", "4kk"] as const) {
+      const bs = bucketsFor(size);
+      expect(bs.length, `${size}: tři velikosti + individuální`).toBe(4);
+      expect(bs[0].minM2, `${size}: první kbelík je otevřený dolů`).toBe(null);
+      expect(bs[3].representativeM2, `${size}: poslední se NEEXTRAPOLUJE`).toBe(null);
+      expect(bs[3].maxM2, `${size}: poslední je otevřený nahoru`).toBe(null);
+      // kbelíky na sebe navazují bez děr a bez překryvu
+      for (let i = 1; i < bs.length; i++) expect(bs[i].minM2, `${size} #${i}`).toBe((bs[i - 1].maxM2 as number) + 1);
+      // reprezentativní plocha leží uvnitř svého kbelíku
+      for (const b of bs.slice(0, 3)) {
+        expect(b.representativeM2!).toBeGreaterThanOrEqual(b.minM2 ?? 0);
+        expect(b.representativeM2!).toBeLessThanOrEqual(b.maxM2 as number);
+        expect(bucketFor(size, b.representativeM2!).id, `${size}: ${b.representativeM2} padne zpět`).toBe(b.id);
+      }
+    }
+    // Kde dispozice překlápí pásmo, dělí se PŘESNĚ na lo/hi z BAND_BLEND:
+    // tam se opravdu mění komerční produkt, jinde by to byla náhodná čísla.
+    for (const size of ["2kk", "3kk"] as const) {
+      const b = BAND_BLEND[size];
+      expect(bucketsFor(size)[0].maxM2, `${size}: první hranice = lo překlopení`).toBe(b.lo);
+      expect(bucketsFor(size)[1].maxM2, `${size}: druhá hranice = hi překlopení`).toBe(b.hi);
+    }
+    // Tlačítka musí dávat ROZLIŠITELNÁ čísla, jinak je to jen hezčí UI.
+    for (const size of ["2kk", "3kk"] as const) {
+      const [s1, s2, s3] = bucketsFor(size).slice(0, 3).map((b) => {
+        const r = ownerMonthly("praha1", size, { m2: b.representativeM2! });
+        return r.supported ? r.high : 0;
+      });
+      expect(s2, `${size}: běžný > menší`).toBeGreaterThan(s1);
+      expect(s3, `${size}: větší > běžný`).toBeGreaterThan(s2);
+    }
+    // Atypicky velký byt nesmí dostat hlášku o chybějících datech LOKALITY.
+    expect(calc, "vlastní panel pro atypickou velikost").toContain("calc_oversized_title");
+    for (const d of [cs, vi]) {
+      expect(strip(d.calc_oversized_title).length).toBeGreaterThan(10);
+      expect(strip(d.calc_oversized_text).length).toBeGreaterThan(30);
+      expect(strip(d.calc_oversized_title), "nemluví o lokalitě").not.toMatch(/lokalit|khu này/i);
+    }
+    // (10) V komponentě NESMÍ být žádná hranice velikosti natvrdo. Všechno se
+    // skládá z verzované konfigurace, jinak by se tlačítka s novou verzí modelu
+    // rozešla s tím, co se opravdu počítá.
+    expect(calc, "tlačítka se renderují z konfigurace").toContain("bucketsFor(size)");
+    expect(calc, "žádná plocha natvrdo v JSX").not.toMatch(/\d+\s*m²/);
+    // Skenuje se JEN kód, ne komentáře a ne třídy Tailwindu (ty nesou 50, 65, 80
+    // jako krytí barvy, ne jako metry). Zbyde to, co komponenta opravdu počítá.
+    const code = calc
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/^\s*\/\/.*$/gm, "")
+      .replace(/className=(?:"[^"]*"|\{`[^`]*`\})/g, "")
+      .replace(/text-\[[^\]]*\]/g, "");
+    const allEdges = new Set<number>();
+    for (const v of Object.values(SIZE_BUCKETS_BY_VERSION))
+      for (const bs of Object.values(v))
+        for (const b of bs) [b.minM2, b.maxM2, b.representativeM2].forEach((x) => x !== null && allEdges.add(x));
+    for (const e of allEdges)
+      expect(code, `hranice ${e} nesmí být v komponentě natvrdo`).not.toMatch(new RegExp(`[^\\w.-]${e}[^\\w.%-]`));
+    // a nesahá si na konfiguraci přímo, jde přes bucketsFor(version)
+    expect(calc, "komponenta nečte verze napřímo").not.toContain("SIZE_BUCKETS_BY_VERSION");
+
+    // (5+6) Verze se nese k leadu, aby šlo zrekonstruovat, co majitel viděl.
+    expect(calc).toContain("CALC_MODEL_VERSION");
+    expect(calc).toContain("size_bucket_id");
+    expect(calc).toContain("representative_m2");
+    expect(calc).toContain("bucket_label");
+    const contactSrc = readFileSync("src/components/ContactSection.tsx", "utf8");
+    for (const f of ["calc_model_version", "calc_inputs", "calc_result", "size_bucket_id", "representative_m2", "bucket_label"])
+      expect(contactSrc, `lead musí nést ${f}`).toContain(f);
+
+    // (5) Historická verze se NEPŘEPISUJE. Když někdo změní obsah 2026-08-31.1,
+    // spadne tohle a připomene, že má přidat NOVOU verzi.
+    expect(CALC_MODEL_VERSION).toBe("2026-08-31.1");
+    expect(SIZE_BUCKETS_BY_VERSION["2026-08-31.1"]).toEqual({
+      "1kk": [B("s", null, 30, 28), B("m", 31, 40, 35), B("l", 41, 49, 45), B("xl", 50, null, null)],
+      "2kk": [B("s", null, 40, 38), B("m", 41, 55, 50), B("l", 56, 80, 63), B("xl", 81, null, null)],
+      "3kk": [B("s", null, 65, 63), B("m", 66, 95, 78), B("l", 96, 120, 106), B("xl", 121, null, null)],
+      "4kk": [B("s", null, 93, 85), B("m", 94, 132, 116), B("l", 133, 151, 142), B("xl", 152, null, null)],
+    });
+    // (9) Kbelík nesmí nikde nést ani odvozovat počet osob.
+    for (const v of Object.values(SIZE_BUCKETS_BY_VERSION))
+      for (const bs of Object.values(v))
+        for (const b of bs) expect(Object.keys(b).join(","), "kbelík nekóduje kapacitu").not.toMatch(/guest|host|capac|osob/i);
+
+    for (const k of ["calc_size_s", "calc_size_m", "calc_size_l", "calc_size_xl", "calc_size_upto", "calc_size_over"]) {
+      expect(strip(cs[k]).length).toBeGreaterThan(0);
+      expect(strip(vi[k]).length).toBeGreaterThan(0);
+    }
     // Značka poskytovatele dat nepatří do headline výsledku (31. 8. 2026); zdroj
     // zůstává v metodice pod výsledkem.
     expect(calc, "PriceLabs pryč z veřejného řádku s cenou za noc").not.toContain("PriceLabs");
@@ -752,12 +844,50 @@ describe("model výnosu", () => {
     expect(ctvrt.supported && ctvrt.adr).toBeLessThanOrEqual(smAdr);
   });
 
+  it("čtvrťová vrstva nájmu: bez čtvrti nula, cizí čtvrť se ignoruje, sdílená má vlastní hodnotu", () => {
+    // Okresní křivka se NEPŘEFITOVALA: tohle je jen reziduum čtvrti proti ní.
+    // Bez vybrané čtvrti se proto nesmí hnout ani koruna.
+    for (const loc of Object.keys(RENT_INTERCEPT) as LocationKey[])
+      for (const size of ["1kk", "2kk", "3kk", "4kk"] as const)
+        for (const m2 of [30, 55, 80, 120]) {
+          expect(rentFor(loc, size, m2, "mix", null), `${loc} ${m2}`).toBe(rentFor(loc, size, m2));
+          expect(rentFor(loc, size, m2, "mix", undefined), `${loc} ${m2}`).toBe(rentFor(loc, size, m2));
+        }
+    expect(ctvrtRentFactor("praha1", null)).toBe(1);
+    expect(ctvrtRentFactor("praha8", "neznama_ctvrt")).toBe(1);
+    // cizí čtvrť pod jiným okresem se ignoruje, stejně jako na STR straně
+    expect(ctvrtRentFactor("praha1", "karlin"), "Karlín nepatří pod Prahu 1").toBe(1);
+    expect(rentFor("praha1", "2kk", 52, "mix", "karlin")).toBe(rentFor("praha1", "2kk", 52));
+    // Karlín je důvod, proč vrstva vznikla: bez ní by se jeho násobek nafoukl
+    expect(ctvrtRentFactor("praha8", "karlin")).toBeGreaterThan(1.1);
+    expect(rentFor("praha8", "2kk", 53, "mix", "karlin")).toBeGreaterThan(rentFor("praha8", "2kk", 53));
+    // sdílená čtvrť má PRO KAŽDÝ OKRES vlastní hodnotu
+    expect(ctvrtRentFactor("praha2", "vinohrady")).not.toBe(ctvrtRentFactor("praha3", "vinohrady"));
+    expect(ctvrtRentFactor("praha8", "liben")).not.toBe(ctvrtRentFactor("praha9", "liben"));
+    // Staré Město má n=11, tedy pod prahem: dnes nemění nic
+    expect(ctvrtRentFactor("praha1", "stare_mesto"), "n=11 je pod prahem shrinkage").toBe(1);
+    // HEURISTIC: uložené hodnoty jsou UŽ po shrinkage, takže žádná není extrémní
+    for (const [loc, cs2] of Object.entries(CTVRT_RENT))
+      for (const [id, v] of Object.entries(cs2!)) {
+        expect(Math.abs(v.effect), `${loc}/${id}`).toBeLessThan(0.2);
+        expect(v.n, `${loc}/${id} pod prahem se sem nedostane`).toBeGreaterThanOrEqual(12);
+      }
+    // kalkulačka i graf posílají do nájmu TÉŽ čtvrť jako do STR
+    expect(readFileSync("src/components/CalculatorSection.tsx", "utf8")).toContain('rentFor(location as LocationKey, size, m2, "mix", ctvrt)');
+    expect(readFileSync("src/lib/horizon.ts", "utf8")).toContain('rentFor(location as LocationKey, size, m2, "mix", ctvrt)');
+    // a použitý faktor je vidět ve výstupu, ne jen schovaný v čísle
+    for (const [loc, ct, exp1] of [["praha8", "karlin", true], ["praha1", "stare_mesto", false]] as const) {
+      const d = fiveYear(loc, "2kk", 53, ct);
+      expect(d && (d.rentCtvrtFactor > 1) === exp1, `${loc}/${ct}`).toBe(true);
+    }
+  });
+
   it("nájemní benchmark je JEDEN na celé stránce a růst cen se nehádá", () => {
     // Do 31. 8. 2026 kalkulačka ukazovala nájem "mix" a graf tiše měřil proti
     // "furnished" (+11,4 %), takže stránka uváděla pro tentýž byt dva nájmy.
     expect(FURN_RENT.mix, "mix = fit celého vzorku, běžný pražský inzerát").toBe(1);
     const hzSrc = readFileSync("src/lib/horizon.ts", "utf8");
-    expect(hzSrc, "graf musí brát týž nájem jako kalkulačka").toContain('rentFor(location as LocationKey, size, m2, "mix")');
+    expect(hzSrc, "graf musí brát týž nájem jako kalkulačka").toContain('rentFor(location as LocationKey, size, m2, "mix", ctvrt)');
     expect(hzSrc, "furnished se do výpočtu grafu nesmí vrátit").not.toMatch(/rentFor\([^)]*"furnished"/);
     for (const loc of ["praha1", "praha4", "praha9"] as const)
       for (const size of ["2kk", "3kk"] as const) {

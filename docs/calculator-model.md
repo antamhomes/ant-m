@@ -41,6 +41,14 @@ kalibrované překlopení 2+kk mezi 40 a 55 m².
 deklaruje na Airbnb. Důkaz: v každém comp setu je pásmo Studio o 10 až 27
 nabídkách vedle 1BR o 200 až 280, tedy pražští hostitelé listují 1+kk jako 1BR.
 
+**Čtvrťový efekt na nájem.** Průměrné REZIDUUM čtvrti proti okresní křivce
+(surový export téhož scrapu, katastr u 3 350 z 3 429 inzerátů, stejné filtry).
+Kontrola: reziduum stávajícího modelu po okresech vychází −0,029 až +0,028,
+takže okresní vrstva sedí a nepřefitovávala se. Po shrinkage: Karlín +12 %,
+Smíchov +8 %, Nusle +4 %, Vinohrady v Praze 3 +4 %, Žižkov −4 %, Stodůlky −4 %,
+Kobylisy −3 %, Libeň −2 %. Sdílená čtvrť má pro každý okres vlastní hodnotu
+(Vinohrady +1 % v Praze 2, +4 % v Praze 3).
+
 **Dlouhodobý nájem.** 1 354 vyčištěných inzerátů Sreality (scrape 30. 8. 2026).
 `base_rent(m2, okres) = m2 * exp(a) * m2^-0,2565`, intercepty po okresech,
 kotva Deloitte Rent Index Q2/2026 v testu ±12 %. Faktor vybavenosti
@@ -88,6 +96,17 @@ dat než Praha 5; čistě vzorkové pravidlo by krátilo Prahu 5, ne Prahu 3.
 **Meze kalibrační pojistky** 0,70 a 1,00. Smoke test proti tomu, aby se model
 tiše rozbil, ne důkaz správnosti.
 
+**Schody shrinkage u čtvrťového nájmu 100 / 50 / 25 / 12.** NENÍ to změřený
+zákon, je to volba. Směr je správný (tenký vzorek se stahuje k okresu), ta
+konkrétní čísla ne. První tři stupně jsou převzaté z `ctvrtWeight` u STR,
+čtvrtý je přidaný, protože nájemní vzorky jsou o řád menší. Čtvrti pod
+12 inzerátů se do tabulky vůbec nedostanou, proto tam není Staré Město (n=11).
+
+**Že se nepřidal člen za dispozici.** Reziduum po dispozicích je u „+kk" bytů
+do ±5 %, ale u „+1" variant −10 až −12 %. Ten signál není o dispozici, ale
+o starším bytovém fondu, a přidání členu by hnulo VŠEMI dnešními nájmy. Zvlášť,
+ne v téhle vrstvě.
+
 **`RENT_GROWTH = 0` a `STR_GROWTH = 0`.** Není to tvrzení, že trh poroste nulou.
 Je to odmítnutí hádat, kterým směrem se rozejdou dva trhy, když pro to nemáme
 data. Pětiletka drží dnešní podmínky a web to říká nahlas.
@@ -133,22 +152,76 @@ musí umět srazit pod veřejný odhad. Hlídají dva testy.
 **Jeden engine.** `src/lib/yield.ts` počítá kalkulačku, pětiletý graf, karty
 portfolia i MCP nástroj. Druhý engine se nezakládá.
 
-**Plánováno, neimplementováno:** posuvník m² nahradí diskrétní kategorie
-velikosti. Uzavřené kbelíky, každý s reprezentativní plochou do TÉHOŽ enginu,
-plus poslední volba „větší / atypický byt" vedoucí na individuální posouzení
-místo extrapolace otevřeného pásma. Kbelíky jsou vstupní rozhraní, ne nová
-ekonomika, a nesmí kódovat ani zobrazovat počty osob. Hranice se zamknou až
-po dořešení sekce 4.
+**Velikost se vybírá tlačítky, ne posuvníkem** (`SIZE_BUCKETS`). Tři velikosti
+plus „ještě větší", které vede na individuální posouzení místo extrapolace.
+Kbelík je jen vstupní rozhraní: pošle reprezentativní plochu do TÉHOŽ enginu,
+ekonomika se nemění a žádný kbelík nekóduje počet osob.
+
+Hranice jsou odvozené, ne vymyšlené. Kde dispozice překlápí pásmo, dělí se
+přesně na `lo` a `hi` z `BAND_BLEND`, protože tam se mění komerční produkt.
+Kde překlopení není (1+kk, 4+kk), ekonomický zlom neexistuje a dělí se podle
+rozložení stocku (p25 a p75, Sreality n=1354). Poslední uzavřená hranice je
+vždy p95 a `m2` v kbelíku je medián inzerátů, které do něj spadají.
+
+| | menší | běžný | větší | individuálně |
+|---|---|---|---|---|
+| 1+kk | do 30 (28) | 31–40 (35) | 41–49 (45) | nad 49, 4 % |
+| 2+kk | do 40 (38) | 41–55 (50) | 56–80 (63) | nad 80, 4 % |
+| 3+kk | do 65 (63) | 66–95 (78) | 96–120 (106) | nad 120, 5 % |
+| 4+kk | do 93 (85) | 94–132 (116) | 133–151 (142) | nad 151, 3 % |
+
+V závorce reprezentativní plocha. U 2+kk a 3+kk dávají tlačítka rozlišitelná
+čísla (test to hlídá); u 1+kk a 4+kk se mění jen nájem, protože pásmo se nemá
+kam překlopit, což je jedna z otevřených věcí v sekci 4.
+
+**Konfigurace je VERZOVANÁ** (`CALC_MODEL_VERSION`, `SIZE_BUCKETS_BY_VERSION`).
+Historická verze se nepřepisuje: u každého leadu je uložené `calc_model_version`,
+`calc_inputs` (okres, čtvrť, dispozice, `size_bucket_id`, `representative_m2`,
+`bucket_label`, `oversized`) a `calc_result`, takže jde zpětně zrekonstruovat,
+co přesně majitel viděl. **Nová hranice = nová verze, ne editace staré.**
+`facts.test.ts` obsah verze `2026-08-31.1` zamyká snapshotem; kdo ho změní,
+shodí test a ten mu připomene, že má přidat verzi.
+
+Komponenta nesmí obsahovat žádnou hranici natvrdo, renderuje se z
+`bucketsFor(size)`. Hlídá to test, který skenuje kód komponenty (bez komentářů
+a Tailwind tříd) na všechna čísla použitá v konfiguraci.
+
+**Hranice se přepočítají**, až se dořeší ploché zóny a přibude pásmo 4BR.
 
 ---
 
 ## 4. OPEN / WAITING FOR DATA
 
-**Čtvrťový nájem.** Čtvrťová vrstva existuje jen na STR straně. Staré Město
+**Čtvrťový nájem: HOTOVO 31. 8. 2026** (`CTVRT_RENT`, `rentFor(..., ctvrt?)`).
+Viz sekce 1 a 2. Obě strany porovnání jsou tím geograficky sladěné a Karlín
+a Libeň se dají pouštět bez nafouknutého násobku. Staré Město
 zvedne STR o 10 %, ale nájem zůstane okresní, takže násobek vyskočí z 1,62 na
 1,78 jen tím, že jsme zpřesnili jednu stranu zlomku. Sreality dataset nemá
 sloupec čtvrti. Řešení: re-scrape s čtvrtí a lokální intercepty se shrinkage
 k okresu. **Tohle má přednost před dalšími čtvrťovými STR pully.**
+
+**OPRAVA ranního tvrzení o Starém Městě.** Ráno tu stálo, že skok násobku
+z 1,62 na 1,78 při výběru Starého Města je „z velké části umělý, protože
+skutečný nájem ve Starém Městě je nad mediánem Prahy 1". **Data to
+nepodporují.** Surové reziduum Starého Města je −1 %, tedy nájem zhruba na
+úrovni průměru Prahy 1. Vzorek je ale jen n=11, takže správný závěr je
+„nevíme dost", ne „nájem je určitě vyšší" a ani ne „ten uplift je falešný".
+Případ, který tu vrstvu obhajuje, je Karlín (+12 %), ne Staré Město.
+
+**Až přijde první čtvrť s STR daty, ve STEJNÉM patchi přidat párovací guard.**
+Obě vrstvy se klíčují slugem a nic je dnes nedrží pohromadě, takže se dá tiše
+spadnout zpět na `Karlín STR / Praha 8 nájem` jen tím, že se v `MARKET_CTVRT`
+napíše jiný slug než v `CTVRT_RENT`. Test má hlídat obojí:
+
+1. každá čtvrť v `MARKET_CTVRT` má buď odpovídající klíč v `CTVRT_RENT` pod
+   TÝMŽ okresem, nebo výslovně deklarovaný fallback na okres i s důvodem;
+2. kde čtvrť má obě vrstvy, musí kalkulačka použít OBĚ naráz — tedy
+   `rentFor(..., ctvrt)` se nesmí lišit od okresního nájmu, pokud
+   `ctvrtRentFactor` pro tu čtvrť není 1.
+
+Dnes je jediný takový případ Staré Město: má STR data, ale nájemní vzorek
+n=11 je pod prahem, takže na nájmu spadne na okres. To je ZÁMĚRNÝ fallback
+a v guardu musí být deklarovaný, ne jen tolerovaný.
 
 **Karlín a Libeň.** Praha 8 vychází na 1,71 až 2,08× a není to divný datapoint:
 uvnitř okresu je Karlín, který okresní STR benchmark legitimně táhne nahoru,

@@ -1,5 +1,5 @@
 import {
-  ROOMS, ENERGY, ownerMonthly, rentFor, typicalArea,
+  ROOMS, ENERGY, ownerMonthly, rentFor, typicalArea, ctvrtRentFactor,
   LAUNCH_FEE, RENEW_PER_ROOM_YEAR,
   YEAR_ONE_RAMP, RENT_GROWTH, STR_GROWTH,
   type LocationKey, type SizeKey,
@@ -61,7 +61,7 @@ export const fiveYear = (
   // fit celého vzorku Sreality (zařízené i nezařízené), tedy to, co majitel
   // reálně dostane, když byt pronajme běžně. To je ta správná alternativa:
   // porovnávají se dvě strategie využití bytu, ne dva stejně provozované produkty.
-  const rent = rentFor(location as LocationKey, size, m2, "mix");
+  const rent = rentFor(location as LocationKey, size, m2, "mix", ctvrt);
   const setup = LAUNCH_FEE;
   const lt = [0], str = [-setup], strMarket = [-setup], strHigh = [-setup];
   for (let i = 1; i <= HORIZON_MONTHS; i++) {
@@ -76,7 +76,7 @@ export const fiveYear = (
     if (payback === null && str[i] >= 0) payback = i;
     if (cross === null && str[i] >= lt[i]) cross = i;
   }
-  return { lt, str, strMarket, strHigh, rent, m2, y2, net, netMarket, netHigh, basis, guests: year.guests, setup, energy, renew, payback, cross, gap: str[HORIZON_MONTHS] - lt[HORIZON_MONTHS] };
+  return { lt, str, strMarket, strHigh, rent, rentCtvrtFactor: ctvrtRentFactor(location, ctvrt), m2, y2, net, netMarket, netHigh, basis, guests: year.guests, setup, energy, renew, payback, cross, gap: str[HORIZON_MONTHS] - lt[HORIZON_MONTHS] };
 };
 
 export type FiveYear = NonNullable<ReturnType<typeof fiveYear>>;
