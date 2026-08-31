@@ -1,0 +1,39 @@
+{
+ "extract_of": "sreality_listings.csv",
+ "extract_rows": 3429,
+ "extract_sha256": "92225dc623eb24f0e555253b262a7afbe023a4ae528120608de97b45c4d5881f",
+ "source_scrape": {
+  "collected": "2026-08-30T18:46:50Z",
+  "endpoint": "https://www.sreality.cz/api/v1/estates/search + /estates/{hash_id}",
+  "query": "category_main_cb=1, category_type_cb=2, locality_region_id=10, sort=-date, limit=500",
+  "api_reported_total": 3429,
+  "raw_files": [
+   "sreality_listings.csv",
+   "sreality_flagged.csv",
+   "sreality_raw.json (69 MB)"
+  ],
+  "raw_listings_sha256": "a86472b3ae96d44437d8b764d2806d73491133c7b69b40252a3646ef8f44a3f9"
+ },
+ "why_this_extract": "Jen sloupce, které používají filtry a fit CTVRT_RENT. Surový 69MB JSON se do repa nedává; hash výš ho identifikuje.",
+ "columns": [
+  "listing_id",
+  "prague_district",
+  "cadastral_area",
+  "city_part",
+  "area_m2",
+  "base_rent",
+  "rent_price_quality",
+  "listing_since",
+  "furnished",
+  "layout_normalized",
+  "possible_duplicate",
+  "possible_short_term_rental",
+  "possible_serviced_apartment",
+  "possible_room_rental",
+  "possible_luxury_outlier",
+  "suspicious_price",
+  "suspicious_area",
+  "rent_may_include_charges",
+  "reserved_or_sold"
+ ]
+}

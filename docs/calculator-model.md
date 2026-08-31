@@ -65,6 +65,40 @@ tržního ADR. Proto je efekt Antam vidět na tržbě, ne na obsazenosti.
 
 ---
 
+## 1b. STAV DAT VE ČTYŘECH VRSTVÁCH
+
+Čtyři různé vrstvy, které se nesmí slévat do „máme data o Praze". Každá má jiné
+pokrytí, jiný zdroj a jinou spolehlivost.
+
+| vrstva | zdroj | pokrytí dnes |
+|---|---|---|
+| **Okresní STR** | PriceLabs, `data/pricelabs-2026-08/praha1..9.json` | 9 okresů, 20 buněk pásem z 27 možných. Praha 10 nemá NIC. |
+| **Čtvrťové STR** | PriceLabs | **prakticky chybí.** Staré Město = rekonstruované, Nové Město = `partial`. Žádný jiný čtvrťový artefakt v repu není. |
+| **Okresní LTR** | Sreality 8/2026, 1 354 vyčištěných inzerátů | všech 10 okresů, `RENT_INTERCEPT`. |
+| **Čtvrťové LTR** | týž scrape, reziduum proti okresní křivce | 34 kontextů nad 31 geometriemi, 33 s vlastním efektem, 1 deklarovaný fallback. |
+
+Asymetrie mezi řádky 2 a 4 je celý důvod, proč existuje plán pullů z PriceLabs
+po čtvrtích: na nájemní straně čtvrť rozlišit umíme (Karlín +12 % proti Kobylisy
+−3 % v jednom okrese), na STR straně ne, takže se čtvrťový rozdíl v STR dnes
+tiše nahrazuje okresním průměrem. **Plán pullů je návrh, ne stav** — k dnešnímu
+dni neproběhl žádný nový pull a nesmí proběhnout před hotovým a otestovaným
+Step 0 (idempotence prokázaná na opakovaném běhu / dry-run).
+
+Dvě buňky, které nejsou plnohodnotná data a musí se tak i chovat:
+`stare_mesto` je REKONSTRUOVANÁ (pull přes `market_research`, měsíční řada se
+neuložila, `nMin` neznámé, takže bránou spolehlivosti neprojde a reprodukovat
+ji ze surového artefaktu nejde), `praha1_nove_mesto` je `partial` (ne všechna
+pásma). Ani jedna nesmí být použita jako důkaz, že čtvrťová vrstva funguje.
+
+**Poměr 1,35× → 1,51× není zjištění o Praze.** Medián poměru STR/LTR, který
+kalkulačka vydává, se posunul kvůli NAŠIM rozhodnutím o prezentaci a faktorech
+(headline z prostředku rozpětí na horní okraj označený jako potenciál, revize
+operátorských faktorů, sjednocení nájemního benchmarku na `mix`). Vstupní tržní
+data se přitom nezměnila. Je to tedy vlastnost VÝSTUPU kalkulačky, ne empirický
+nález o ekonomice pražského STR, a takhle se o tom musí mluvit i navenek.
+
+---
+
 ## 2. HEURISTIC
 
 Vědomá volba, ne měření. Smí se změnit, ale musí se u toho říct proč.
@@ -76,6 +110,12 @@ ležel na váze 0,87 až 1,00, typický 3+kk na 0,20 až 0,64 a v Praze 9 na 0,0
 přestože 3+kk má o samostatný pokoj a o 25 až 30 m² víc. Střed 80 m² je medián
 typické plochy 3+kk přes okresy. Zůstává HEURISTIC, dokud nebude vlastní historie.
 
+Nezkracovat na „oprava konzistence". Ta věta sama o sobě neříká nic a příště
+svede k tomu hranice posunout znovu „pro konzistenci". Konkrétní důvod byl ten
+nepoměr blend vah výše: 3+kk sedělo skoro celé na 2BR baseline, přestože má
+o pokoj a o 25 až 30 m² víc než 2+kk, které na téže škále leželo nahoře.
+Posun 75–100 → 65–95 ten nepoměr srovnal. Nezměřil ho.
+
 **Že zlomy leží zrovna na 40/55 a 65/95.** Že rozhoduje kapacita, je změřené.
 Že hranice jsou přesně tam, změřené není.
 
@@ -85,13 +125,34 @@ váhy vzorku. Praha 3 tak vychází na 1,155 místo naměřených 1,21. Je to Z�
 veřejná opatrnost, ne statistika. Na počet provozních dní má Praha 3 dokonce víc
 dat než Praha 5; čistě vzorkové pravidlo by krátilo Prahu 5, ne Prahu 3.
 
-**Praha 2 = 0,95.** Žádný vlastní byt. Nedědí 0,99 z Prahy 1.
+NIKDY z toho nedělej odhad podle velikosti vzorku. `publicFactorFrom` se tak
+tváří, ale není to estimátor: `weight` není statistická váha, je to míra
+ochoty ukázat naměřený upside veřejně. Kdyby to byl vzorkový estimátor, musel
+by být symetrický — a symetrický vědomě není. Kdo ho zesymetrizuje „pro
+konzistenci", zvedne veřejná čísla, aniž by přibyl jediný den měření.
+
+**Praha 2 = 0,95.** Žádné vlastní provozní měření v okrese. Drží se pod
+výchozí 1,10, protože nemáme čím doložit, že tam umíme nadprůměr.
+Nedědí 0,99 z Prahy 1 a dědit ho nesmí: Praha 1 a Praha 2 spolu sousedí a mají
+podobný bytový fond, ale geografická podobnost není měření. Operátorský faktor
+je poměr NAŠÍ tržby k trhu, a ten se přenáší jen s vlastním provozem, ne
+s polohou. Až v Praze 2 pojede vlastní byt, nahradí 0,95 měření — do té doby
+je to volba, ne odhad.
 
 **Výchozí 1,10 mimo změřené okresy** (Praha 4, 6, 7, 8, 9).
 
 **Prezentační konstanty.** `LOW_BLEND 0.5` · `SPREAD` 0,92 / 1,08, minimální
 šířka 8 %, rozšíření odvozeného pásma ×1,6 · `YEAR_ONE_RAMP 0.85` ·
 `LAUNCH_FEE 25 000` · `ENERGY` a `RENEW_PER_ROOM_YEAR`.
+
+**Rozšíření odvozeného pásma ×1,6.** Buňka, která se nepullovala, ale odvodila
+jedním krokem z nejbližšího spolehlivého pásma, nese navíc chybu toho poměru —
+rozptyl 2BR→3BR je 3,4 %, 1BR→3BR 7,2 %, a to je rozptyl PŘES OKRESY, ne
+nejistota jednoho okresu. Široké rozpětí je tedy přiznání „tohle číslo jsme
+neviděli, dopočítali jsme ho", ne tvrzení o volatilitě trhu. Násobek 1,6 sám
+změřený není; má jen řád odpovídat tomu, o kolik je odvozená buňka horší než
+pullnutá. Až se pásmo pullne, rozšíření musí zmizet — ne zůstat „pro jistotu".
+Test hlídá, že se aplikuje; test neříká, že 1,6 je správně.
 
 **Meze kalibrační pojistky** 0,70 a 1,00. Smoke test proti tomu, aby se model
 tiše rozbil, ne důkaz správnosti.
@@ -107,9 +168,27 @@ do ±5 %, ale u „+1" variant −10 až −12 %. Ten signál není o dispozici,
 o starším bytovém fondu, a přidání členu by hnulo VŠEMI dnešními nájmy. Zvlášť,
 ne v téhle vrstvě.
 
-**`RENT_GROWTH = 0` a `STR_GROWTH = 0`.** Není to tvrzení, že trh poroste nulou.
-Je to odmítnutí hádat, kterým směrem se rozejdou dva trhy, když pro to nemáme
-data. Pětiletka drží dnešní podmínky a web to říká nahlas.
+**`RENT_GROWTH = 0` a `STR_GROWTH = 0`.** NENÍ to předpověď, že nájmy ani STR
+neporostou. Nula neznamená „očekáváme 0 %", znamená „nehádáme". Rozhodující
+veličina totiž není růst jednoho trhu, ale ROZDÍL v růstu obou; ten neumíme
+doložit a dřív jsme si ho tiše vymysleli (3 % proti 5 %) a nechali rozhodovat
+výsledek. Pětiletka proto drží dnešní tržní podmínky konstantní a porovnává
+dnešní STR proti dnešnímu nájmu. Web to říká nahlas.
+Kdyby se růst někdy vracel, musí se vrátit oběma stranám a s doloženým zdrojem,
+ne jako dvě různá čísla.
+
+**`RELIABLE_MIN_N = 50` je nekalibrovaná hranice.** Prohledali jsme repo, docs
+i historii: pro hodnotu 50 není nikde zaznamenaný empirický důvod. Nejstarší
+stopa je POPISNÁ, ne zvolená — komentář u `MARKET_STR` říká „chybějící pásmo =
+vzorek pod ~50 nabídek nebo anomálie v řadě", tedy 50 s vlnovkou jako
+pozorování, kdy pásmo nemá smysl ukazovat (P9 2BR n=24), ne jako práh
+odvozený z rozptylu. Totéž číslo se objevuje i ve schodech `ctvrtWeight`
+(100/50/25); že je to tentýž práh, nikde doloženo není.
+Co doloženo JE: přesun prahu z `nMean` na `nMin` (31. 8. 2026) byl na dnešních
+okresních buňkách číselně neutrální — nepřeklopil ani jednu (viz sekce 5). To
+ověřuje ten PŘESUN, ne tu HODNOTU. 50 zůstává beze změny a schválně se k němu
+nedopisuje hezky znějící statistické zdůvodnění; kalibruje se, až budou nové pully
+z čtvrtí, kde se dá porovnat rozptyl tenkých a tlustých buněk.
 
 ---
 
@@ -252,6 +331,43 @@ na kartách portfolia · odvozené `ltr_rent` pro Prahu 4, 6 a 8 v DB.
 
 ---
 
+## 4b. DATOVÁ PIPELINE (úklid 31. 8. 2026)
+
+**Hierarchie zdrojů, tři patra, nezaměňovat:**
+
+1. **Autorita = surový verzovaný artefakt v repu.** `data/pricelabs-2026-08/*.json`
+   a `data/sreality-2026-08/ltr-source.csv` (+ `.meta.json` se sha256
+   a provenience). Jen tohle je zdroj pravdy. Číslo, které z něčeho takového
+   nejde přepočítat, se do modelu nedostane — to byla chyba, kterou jsme
+   u čtvrťových nájmů udělali a opravili až dodatečným commitem extraktu.
+2. **Odvozený, reprodukovatelný stav modelu = `yield.ts`.** Konstanty tam musí
+   jít z patra 1 přepočítat a `facts.test.ts` to vynucuje. Je to jediný engine;
+   druhý (edge `public-calculator`) byl proto retirován.
+3. **Downstream mirror = Supabase `str_market`.** NENÍ autorita modelu, slouží
+   MCP a reportingu. Má to napsané v komentáři tabulky. Když se rozejde s repem,
+   platí repo a opravuje se mirror — nikdy naopak.
+
+**Dvě identity geografie** (`GEO`, `geoContext`):
+`id` = model, čtvrť v kontextu okresu (`praha3/vinohrady`), protože sdílené
+čtvrti mají v každém okresu jinou hodnotu. `sourceGeometry` = fyzický polygon
+u dodavatele, sdílený kontexty, aby se kvóta neutratila dvakrát za totéž.
+Dnes 34 kontextů nad 31 geometriemi. **Join jde přes registr, ne přes shodu
+řetězců**, a `ltr` je vždycky vyplněné (efekt, nebo deklarovaný fallback
+s důvodem), takže test rozliší schválený fallback od zapomenutého napojení.
+
+**Dvě čísla vzorku.** `nMean` (průměr přes měsíce) k vážení, protože adr
+i revpar jsou taky průměry. `nMin` (nejtenčí měsíc) **výhradně** jako brána
+spolehlivosti. Do úklidu bylo jedno pole `listings` a Supabase pod týmž názvem
+drželo minimum, takže dvě úložiště hlásila pro tentýž pull jiné n.
+
+**Idempotence.** Přirozený klíč `(geo_id, source, period_start, period_end,
+band)`. Opakovaný pull téhož klíče přepisuje, nikdy nepřidává; `n` se nikdy
+nesčítá napříč pully. Před zápisem se hlásí `raw → unique → usable` a existující
+řádek s jinými hodnotami je zastavení, ne tichý přepis.
+Kontrola překryvu čtvrtí proti okresu je **diagnostika, ne invariant**:
+geometrie se můžou překrývat a zasahovat víc okresů a PriceLabs vrací agregát
+bez listing ID, takže součet čtvrtí okres legitimně přerůst může.
+
 ## 5. SUPERSEDED / DO NOT REINTRODUCE
 
 Tohle bylo vědomě zrušeno. Když to někde uvidíš, je to relikt, ne rozhodnutí.
@@ -268,5 +384,9 @@ Tohle bylo vědomě zrušeno. Když to někde uvidíš, je to relikt, ne rozhodn
 | **Donor „nejvíc nabídek"** | Odvozuje se z NEJBLIŽŠÍHO spolehlivého pásma, vzorek rozhoduje až při shodě. Poměr 2BR→3BR má rozptyl 3,4 %, 1BR→3BR 7,2 %. |
 | **Střed rozpětí jako veřejný headline** | Headline je vršek označený jako potenciál, rozpětí zůstává pod ním. |
 | **`furnished` jako nájemní benchmark v grafu** | Stránka tím pro tentýž byt uváděla dva různé nájmy. Všude `mix`. |
+| **`reliable` uložené jako hodnota** | Odporovalo si: praha8/3BR n=41 `true`, praha3/3BR n=42 `false`. Odvozuje se pravidlem `n_min >= 50`. |
+| **Práh spolehlivosti na PRŮMĚRU** | NOVÉ PRAVIDLO: práh 50 se aplikuje na `nMin`, ne na `nMean`. Není to přejmenování. Ověřeno, že se tím nepřeklopí ani jedna z 27 buněk, takže změna byla číselně neutrální — ale při dalším pullu rozhodne jinak. |
+| **Dvě zaokrouhlení `nMean` v jednom souboru** | praha4 1BR 183,5 → 184, ale praha6 1BR 154,5 → 154. Sjednoceno nahoru; praha6 1BR šlo 154 → 155 bez vlivu na jakékoli zobrazené číslo. |
+| **Čtvrť jako holý řetězec** | `vinohrady` neidentifikuje nic, protože má v Praze 2 a 3 jinou hodnotu. Identita je dvojice okres + geometrie. |
 | **Klíč `calc_basis`** | Nic ho nerenderovalo, ale nesl zrušený uplift i opuštěný invariant a pořád se dostával do bundlu. Smazán. |
 | **Závěry sešitu v5 až v7 k Booking.com** | Vycházely z domněnky, že Hospitable posílá Booking jako jednu částku. 307 z 312 rezervací je rozepsaných. Nahradila je itemizovaná rekonciliace v8. |

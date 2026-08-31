@@ -20,15 +20,15 @@ var BASE_GUESTS = { "1kk": 4, "2kk": 6, "3kk": 8, "4kk": 10 };
 var guestsFor = (size) => BASE_GUESTS[size];
 var isMeasured = (loc) => loc in MARKET_STR;
 var MARKET_STR = {
-  praha1: { "1BR": { adr: 2917, revpar: 2207.5, listings: 1675 }, "2BR": { adr: 4507, revpar: 3399.3, listings: 904 }, "3BR": { adr: 6576, revpar: 4924.8, listings: 320 } },
-  praha2: { "1BR": { adr: 2419, revpar: 1739.9, listings: 920 }, "2BR": { adr: 3748, revpar: 2831.4, listings: 361 }, "3BR": { adr: 5874, revpar: 4278.2, listings: 128 } },
-  praha3: { "1BR": { adr: 2130, revpar: 1568.9, listings: 626 }, "2BR": { adr: 3085, revpar: 2303.5, listings: 179 } },
-  praha4: { "1BR": { adr: 1810, revpar: 1254, listings: 184 }, "2BR": { adr: 2539, revpar: 1697, listings: 69 } },
-  praha5: { "1BR": { adr: 2259, revpar: 1579.7, listings: 452 }, "2BR": { adr: 3378, revpar: 2363.4, listings: 183 }, "3BR": { adr: 5599, revpar: 3710.5, listings: 74 } },
-  praha6: { "1BR": { adr: 1873, revpar: 1286.6, listings: 154 }, "2BR": { adr: 2913, revpar: 1878.9, listings: 83 } },
-  praha7: { "1BR": { adr: 2105, revpar: 1507, listings: 215 }, "2BR": { adr: 3336, revpar: 2087.1, listings: 98 } },
-  praha8: { "1BR": { adr: 2532, revpar: 1902.3, listings: 350 }, "2BR": { adr: 3654, revpar: 2508, listings: 92 } },
-  praha9: { "1BR": { adr: 2065, revpar: 1363.9, listings: 76 } }
+  praha1: { "1BR": { adr: 2917, revpar: 2207.5, nMean: 1675, nMin: 1606 }, "2BR": { adr: 4507, revpar: 3399.3, nMean: 904, nMin: 866 }, "3BR": { adr: 6576, revpar: 4924.8, nMean: 320, nMin: 308 } },
+  praha2: { "1BR": { adr: 2419, revpar: 1739.9, nMean: 920, nMin: 869 }, "2BR": { adr: 3748, revpar: 2831.4, nMean: 361, nMin: 346 }, "3BR": { adr: 5874, revpar: 4278.2, nMean: 128, nMin: 120 } },
+  praha3: { "1BR": { adr: 2130, revpar: 1568.9, nMean: 626, nMin: 592 }, "2BR": { adr: 3085, revpar: 2303.5, nMean: 179, nMin: 162 } },
+  praha4: { "1BR": { adr: 1810, revpar: 1254, nMean: 184, nMin: 158 }, "2BR": { adr: 2539, revpar: 1697, nMean: 69, nMin: 60 } },
+  praha5: { "1BR": { adr: 2259, revpar: 1579.7, nMean: 452, nMin: 408 }, "2BR": { adr: 3378, revpar: 2363.4, nMean: 183, nMin: 158 }, "3BR": { adr: 5599, revpar: 3710.5, nMean: 74, nMin: 65 } },
+  praha6: { "1BR": { adr: 1873, revpar: 1286.6, nMean: 155, nMin: 144 }, "2BR": { adr: 2913, revpar: 1878.9, nMean: 83, nMin: 79 } },
+  praha7: { "1BR": { adr: 2105, revpar: 1507, nMean: 215, nMin: 196 }, "2BR": { adr: 3336, revpar: 2087.1, nMean: 98, nMin: 91 } },
+  praha8: { "1BR": { adr: 2532, revpar: 1902.3, nMean: 350, nMin: 336 }, "2BR": { adr: 3654, revpar: 2508, nMean: 92, nMin: 86 } },
+  praha9: { "1BR": { adr: 2065, revpar: 1363.9, nMean: 76, nMin: 64 } }
 };
 var SIZE_RATIO = {
   "2BR/1BR": { adr: 1.525, revpar: 1.517 },
@@ -51,7 +51,7 @@ var marketCell = (loc, band) => {
   const target = BAND_ORDER.indexOf(band);
   const donors = BAND_ORDER.filter((b) => b !== band && MARKET_STR[loc][b]).sort((a, b) => {
     const da = Math.abs(BAND_ORDER.indexOf(a) - target), db = Math.abs(BAND_ORDER.indexOf(b) - target);
-    return da !== db ? da - db : MARKET_STR[loc][b].listings - MARKET_STR[loc][a].listings;
+    return da !== db ? da - db : MARKET_STR[loc][b].nMean - MARKET_STR[loc][a].nMean;
   });
   for (const from of donors) {
     const up = BAND_ORDER.indexOf(from) < BAND_ORDER.indexOf(band);
@@ -61,7 +61,8 @@ var marketCell = (loc, band) => {
     return {
       adr: Math.round(up ? src.adr * k.adr : src.adr / k.adr),
       revpar: up ? src.revpar * k.revpar : src.revpar / k.revpar,
-      listings: src.listings,
+      nMean: src.nMean,
+      nMin: src.nMin,
       derived: true
     };
   }
@@ -120,9 +121,9 @@ var MARKET_CTVRT = {
     label: "Star\xE9 M\u011Bsto",
     parents: ["praha1"],
     bands: {
-      "1BR": { adr: 3206, revpar: 2467.4, listings: 533 },
-      "2BR": { adr: 4886, revpar: 3733.7, listings: 297 },
-      "3BR": { adr: 6353, revpar: 4809.4, listings: 110 }
+      "1BR": { adr: 3206, revpar: 2467.4, nMean: 533, nMin: null },
+      "2BR": { adr: 4886, revpar: 3733.7, nMean: 297, nMin: null },
+      "3BR": { adr: 6353, revpar: 4809.4, nMean: 110, nMin: null }
     }
   }
 };
@@ -133,12 +134,13 @@ var localCell = (loc, band, ctvrt) => {
   if (!c || !c.parents.includes(loc)) return district;
   const own = c.bands[band];
   if (!own || !district) return district;
-  const w = ctvrtWeight(own.listings);
+  const w = ctvrtWeight(own.nMean);
   if (w === 0) return district;
   return {
     adr: Math.round(own.adr * w + district.adr * (1 - w)),
     revpar: own.revpar * w + district.revpar * (1 - w),
-    listings: own.listings,
+    nMean: own.nMean,
+    nMin: own.nMin,
     derived: district.derived && w < 1
   };
 };
@@ -185,21 +187,46 @@ var FURN_RENT = {
   none: 0.938,
   mix: 1
 };
-var CTVRT_RENT = {
-  praha1: { nove_mesto: { effect: -77e-4, n: 41 } },
-  praha2: { vinohrady: { effect: 6e-3, n: 63 }, nove_mesto: { effect: -0.0222, n: 26 } },
-  praha3: { zizkov: { effect: -0.0381, n: 79 }, vinohrady: { effect: 0.0347, n: 32 } },
-  praha4: { nusle: { effect: 0.0407, n: 48 }, chodov: { effect: -4e-4, n: 24 }, michle: { effect: 47e-4, n: 22 }, modrany: { effect: 46e-4, n: 22 }, krc: { effect: -91e-4, n: 21 }, branik: { effect: -0.01, n: 16 } },
-  praha5: { smichov: { effect: 0.0773, n: 101 }, stodulky: { effect: -0.0455, n: 48 }, hlubocepy: { effect: -0.0129, n: 37 }, kosire: { effect: 0.0338, n: 30 } },
-  praha6: { bubenec: { effect: 0.0144, n: 16 }, brevnov: { effect: 33e-4, n: 15 }, dejvice: { effect: 0.0234, n: 15 }, ruzyne: { effect: -63e-4, n: 12 } },
-  praha7: { holesovice: { effect: 8e-4, n: 62 } },
-  praha8: { karlin: { effect: 0.1143, n: 36 }, liben: { effect: -0.0235, n: 29 }, kobylisy: { effect: -0.03, n: 19 }, troja: { effect: -81e-4, n: 14 } },
-  praha9: { vysocany: { effect: 82e-4, n: 37 }, hloubetin: { effect: 22e-4, n: 19 }, prosek: { effect: -0.012, n: 14 }, liben: { effect: -63e-4, n: 13 }, cerny_most: { effect: -0.012, n: 12 } },
-  praha10: { vrsovice: { effect: 0.0282, n: 40 }, strasnice: { effect: -37e-4, n: 37 }, hostivar: { effect: 5e-4, n: 18 }, zabehlice: { effect: -0.0182, n: 18 } }
-};
+var GEO = [
+  { id: "praha1/nove_mesto", district: "praha1", sourceGeometry: "nove_mesto", label: "Nov\xE9 M\u011Bsto", ltr: { effect: -77e-4, n: 41 } },
+  { id: "praha1/stare_mesto", district: "praha1", sourceGeometry: "stare_mesto", label: "Star\xE9 M\u011Bsto", ltr: { fallback: "district", reason: "n=11 pod prahem shrinkage" } },
+  { id: "praha2/nove_mesto", district: "praha2", sourceGeometry: "nove_mesto", label: "Nov\xE9 M\u011Bsto", ltr: { effect: -0.0222, n: 26 } },
+  { id: "praha2/vinohrady", district: "praha2", sourceGeometry: "vinohrady", label: "Vinohrady", ltr: { effect: 6e-3, n: 63 } },
+  { id: "praha3/vinohrady", district: "praha3", sourceGeometry: "vinohrady", label: "Vinohrady", ltr: { effect: 0.0347, n: 32 } },
+  { id: "praha3/zizkov", district: "praha3", sourceGeometry: "zizkov", label: "\u017Di\u017Ekov", ltr: { effect: -0.0381, n: 79 } },
+  { id: "praha4/branik", district: "praha4", sourceGeometry: "branik", label: "Bran\xEDk", ltr: { effect: -0.01, n: 16 } },
+  { id: "praha4/chodov", district: "praha4", sourceGeometry: "chodov", label: "Chodov", ltr: { effect: -4e-4, n: 24 } },
+  { id: "praha4/krc", district: "praha4", sourceGeometry: "krc", label: "Kr\u010D", ltr: { effect: -91e-4, n: 21 } },
+  { id: "praha4/michle", district: "praha4", sourceGeometry: "michle", label: "Michle", ltr: { effect: 47e-4, n: 22 } },
+  { id: "praha4/modrany", district: "praha4", sourceGeometry: "modrany", label: "Mod\u0159any", ltr: { effect: 46e-4, n: 22 } },
+  { id: "praha4/nusle", district: "praha4", sourceGeometry: "nusle", label: "Nusle", ltr: { effect: 0.0407, n: 48 } },
+  { id: "praha5/hlubocepy", district: "praha5", sourceGeometry: "hlubocepy", label: "Hlubo\u010Depy", ltr: { effect: -0.0129, n: 37 } },
+  { id: "praha5/kosire", district: "praha5", sourceGeometry: "kosire", label: "Ko\u0161\xED\u0159e", ltr: { effect: 0.0338, n: 30 } },
+  { id: "praha5/smichov", district: "praha5", sourceGeometry: "smichov", label: "Sm\xEDchov", ltr: { effect: 0.0773, n: 101 } },
+  { id: "praha5/stodulky", district: "praha5", sourceGeometry: "stodulky", label: "Stod\u016Flky", ltr: { effect: -0.0455, n: 48 } },
+  { id: "praha6/brevnov", district: "praha6", sourceGeometry: "brevnov", label: "B\u0159evnov", ltr: { effect: 33e-4, n: 15 } },
+  { id: "praha6/bubenec", district: "praha6", sourceGeometry: "bubenec", label: "Bubene\u010D", ltr: { effect: 0.0144, n: 16 } },
+  { id: "praha6/dejvice", district: "praha6", sourceGeometry: "dejvice", label: "Dejvice", ltr: { effect: 0.0234, n: 15 } },
+  { id: "praha6/ruzyne", district: "praha6", sourceGeometry: "ruzyne", label: "Ruzyn\u011B", ltr: { effect: -63e-4, n: 12 } },
+  { id: "praha7/holesovice", district: "praha7", sourceGeometry: "holesovice", label: "Hole\u0161ovice", ltr: { effect: 8e-4, n: 62 } },
+  { id: "praha8/karlin", district: "praha8", sourceGeometry: "karlin", label: "Karl\xEDn", ltr: { effect: 0.1143, n: 36 } },
+  { id: "praha8/kobylisy", district: "praha8", sourceGeometry: "kobylisy", label: "Kobylisy", ltr: { effect: -0.03, n: 19 } },
+  { id: "praha8/liben", district: "praha8", sourceGeometry: "liben", label: "Libe\u0148", ltr: { effect: -0.0235, n: 29 } },
+  { id: "praha8/troja", district: "praha8", sourceGeometry: "troja", label: "Troja", ltr: { effect: -81e-4, n: 14 } },
+  { id: "praha9/cerny_most", district: "praha9", sourceGeometry: "cerny_most", label: "\u010Cern\xFD Most", ltr: { effect: -0.012, n: 12 } },
+  { id: "praha9/hloubetin", district: "praha9", sourceGeometry: "hloubetin", label: "Hloub\u011Bt\xEDn", ltr: { effect: 22e-4, n: 19 } },
+  { id: "praha9/liben", district: "praha9", sourceGeometry: "liben", label: "Libe\u0148", ltr: { effect: -63e-4, n: 13 } },
+  { id: "praha9/prosek", district: "praha9", sourceGeometry: "prosek", label: "Prosek", ltr: { effect: -0.012, n: 14 } },
+  { id: "praha9/vysocany", district: "praha9", sourceGeometry: "vysocany", label: "Vyso\u010Dany", ltr: { effect: 82e-4, n: 37 } },
+  { id: "praha10/hostivar", district: "praha10", sourceGeometry: "hostivar", label: "Hostiva\u0159", ltr: { effect: 5e-4, n: 18 } },
+  { id: "praha10/strasnice", district: "praha10", sourceGeometry: "strasnice", label: "Stra\u0161nice", ltr: { effect: -37e-4, n: 37 } },
+  { id: "praha10/vrsovice", district: "praha10", sourceGeometry: "vrsovice", label: "Vr\u0161ovice", ltr: { effect: 0.0282, n: 40 } },
+  { id: "praha10/zabehlice", district: "praha10", sourceGeometry: "zabehlice", label: "Z\xE1b\u011Bhlice", ltr: { effect: -0.0182, n: 18 } }
+];
+var geoContext = (district, sourceGeometry) => sourceGeometry ? GEO.find((g) => g.district === district && g.sourceGeometry === sourceGeometry) : void 0;
 var ctvrtRentFactor = (loc, ctvrt) => {
-  const e = ctvrt ? CTVRT_RENT[loc]?.[ctvrt]?.effect : void 0;
-  return e === void 0 ? 1 : Math.exp(e);
+  const g = geoContext(loc, ctvrt);
+  return g && "effect" in g.ltr ? Math.exp(g.ltr.effect) : 1;
 };
 var rentFor = (loc, size, m2 = MEDIAN_AREA[size], furn = "mix", ctvrt) => Math.round(m2 * Math.exp(RENT_INTERCEPT[loc]) * Math.pow(m2, RENT_SLOPE) * FURN_RENT[furn] * ctvrtRentFactor(loc, ctvrt));
 var locKeyOf = (loc) => {

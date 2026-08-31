@@ -80,16 +80,16 @@ export const isMeasured = (loc: string): loc is MeasuredLocation =>
  * (velikost vzorku). Chybějící pásmo = vzorek pod ~50 nabídek nebo anomálie
  * v řadě, takové číslo NEukazujeme (P1 3BR má 320 nabídek, P9 2BR jen 24).
  */
-export const MARKET_STR: Record<MeasuredLocation, Partial<Record<Band, { adr: number; revpar: number; listings: number }>>> = {
-  praha1: { "1BR": { adr: 2917, revpar: 2207.5, listings: 1675 }, "2BR": { adr: 4507, revpar: 3399.3, listings: 904 }, "3BR": { adr: 6576, revpar: 4924.8, listings: 320 } },
-  praha2: { "1BR": { adr: 2419, revpar: 1739.9, listings: 920 },  "2BR": { adr: 3748, revpar: 2831.4, listings: 361 }, "3BR": { adr: 5874, revpar: 4278.2, listings: 128 } },
-  praha3: { "1BR": { adr: 2130, revpar: 1568.9, listings: 626 },  "2BR": { adr: 3085, revpar: 2303.5, listings: 179 } },
-  praha4: { "1BR": { adr: 1810, revpar: 1254.0, listings: 184 },  "2BR": { adr: 2539, revpar: 1697.0, listings: 69 } },
-  praha5: { "1BR": { adr: 2259, revpar: 1579.7, listings: 452 },  "2BR": { adr: 3378, revpar: 2363.4, listings: 183 }, "3BR": { adr: 5599, revpar: 3710.5, listings: 74 } },
-  praha6: { "1BR": { adr: 1873, revpar: 1286.6, listings: 154 },  "2BR": { adr: 2913, revpar: 1878.9, listings: 83 } },
-  praha7: { "1BR": { adr: 2105, revpar: 1507.0, listings: 215 },  "2BR": { adr: 3336, revpar: 2087.1, listings: 98 } },
-  praha8: { "1BR": { adr: 2532, revpar: 1902.3, listings: 350 },  "2BR": { adr: 3654, revpar: 2508.0, listings: 92 } },
-  praha9: { "1BR": { adr: 2065, revpar: 1363.9, listings: 76 } },
+export const MARKET_STR: Record<MeasuredLocation, Partial<Record<Band, MarketRow>>> = {
+  praha1: { "1BR": { adr: 2917, revpar: 2207.5, nMean: 1675, nMin: 1606 }, "2BR": { adr: 4507, revpar: 3399.3, nMean: 904, nMin: 866 }, "3BR": { adr: 6576, revpar: 4924.8, nMean: 320, nMin: 308 } },
+  praha2: { "1BR": { adr: 2419, revpar: 1739.9, nMean: 920, nMin: 869 },  "2BR": { adr: 3748, revpar: 2831.4, nMean: 361, nMin: 346 }, "3BR": { adr: 5874, revpar: 4278.2, nMean: 128, nMin: 120 } },
+  praha3: { "1BR": { adr: 2130, revpar: 1568.9, nMean: 626, nMin: 592 },  "2BR": { adr: 3085, revpar: 2303.5, nMean: 179, nMin: 162 } },
+  praha4: { "1BR": { adr: 1810, revpar: 1254.0, nMean: 184, nMin: 158 },  "2BR": { adr: 2539, revpar: 1697.0, nMean: 69, nMin: 60 } },
+  praha5: { "1BR": { adr: 2259, revpar: 1579.7, nMean: 452, nMin: 408 },  "2BR": { adr: 3378, revpar: 2363.4, nMean: 183, nMin: 158 }, "3BR": { adr: 5599, revpar: 3710.5, nMean: 74, nMin: 65 } },
+  praha6: { "1BR": { adr: 1873, revpar: 1286.6, nMean: 155, nMin: 144 },  "2BR": { adr: 2913, revpar: 1878.9, nMean: 83, nMin: 79 } },
+  praha7: { "1BR": { adr: 2105, revpar: 1507.0, nMean: 215, nMin: 196 },  "2BR": { adr: 3336, revpar: 2087.1, nMean: 98, nMin: 91 } },
+  praha8: { "1BR": { adr: 2532, revpar: 1902.3, nMean: 350, nMin: 336 },  "2BR": { adr: 3654, revpar: 2508.0, nMean: 92, nMin: 86 } },
+  praha9: { "1BR": { adr: 2065, revpar: 1363.9, nMean: 76, nMin: 64 } },
 };
 
 /**
@@ -109,7 +109,47 @@ export const SIZE_RATIO = {
    *  31. 8. 2026 po rekonciliaci jedenácti bytů. */
   "3BR/1BR": { adr: 2.329, revpar: 2.304 },
 } as const;
-export type MarketCell = { adr: number; revpar: number; listings: number; derived: boolean };
+/**
+ * Řádek trhu. Počet nabídek má DVĚ různá čísla a každé odpovídá na jinou otázku:
+ *  - `nMean` = průměr aktivních nabídek přes 12 měsíců. Používá se tam, kde se
+ *    VÁŽÍ (donor při shodné vzdálenosti pásma, shrinkage čtvrti), protože adr
+ *    i revpar jsou taky průměry přes měsíce — míchat průměrné metriky
+ *    s minimálním počtem by bylo nekoherentní.
+ *  - `nMin` = minimum přes těch 12 měsíců, tedy nejtenčí měsíc. Používá se
+ *    VÝHRADNĚ jako brána spolehlivosti.
+ * Do 31. 8. 2026 tu bylo jedno pole `listings` (průměr) a Supabase pod týmž
+ * názvem drží minimum, takže dvě úložiště hlásila pro tentýž pull jiné n.
+ * `nMin: null` = surový artefakt chybí, hodnota je rekonstruovaná (viz
+ * RECONSTRUCTED_CELLS).
+ *
+ * Zaokrouhlení `nMean`: půlka VŽDY nahoru (JS Math.round). Repo mělo do
+ * 31. 8. 2026 dvě různá: praha4 1BR 183,5 → 184, ale praha6 1BR 154,5 → 154.
+ * Sjednoceno nahoru, praha6 1BR tím jde 154 → 155. Na žádné zobrazené číslo to
+ * nemá vliv: nMean rozhoduje jen o donorovi při SHODNÉ vzdálenosti pásma
+ * (což u praha6 nenastává) a o shrinkage čtvrti (praha6 čtvrť nemá).
+ */
+export type MarketRow = { adr: number; revpar: number; nMean: number; nMin: number | null };
+export type MarketCell = { adr: number; revpar: number; nMean: number; nMin: number | null; derived: boolean };
+
+/**
+ * JEDINÉ pravidlo spolehlivosti. NOVÉ PRAVIDLO od 31. 8. 2026, ne přejmenování:
+ * dřív se práh 50 aplikoval na PRŮMĚR, nově na MINIMUM. Ověřeno, že se tím
+ * nepřeklopí ani jedna z 27 buněk, takže je změna číselně neutrální — ale
+ * je to jiné pravidlo a při dalším pullu se rozhodne jinak.
+ * `reliable` se nikde NEUKLÁDÁ, vždycky se odvozuje odsud.
+ */
+export const RELIABLE_MIN_N = 50;
+export const isReliableN = (nMin: number | null): boolean => nMin !== null && nMin >= RELIABLE_MIN_N;
+
+/**
+ * Buňky bez surového artefaktu v repu. Nejsou zakázané, ale musí být PŘIZNANÉ:
+ * test je z dat přepočítat nemůže. Staré Město přišlo přes market_research
+ * a měsíční řada se neuložila, takže se nedá spočítat nMin ani ověřit adr.
+ * Až se čtvrť pullne znovu i s řadou, řádek odsud zmizí.
+ */
+export const RECONSTRUCTED_CELLS: Record<string, string> = {
+  "stare_mesto": "pull 30. 8. 2026 přes market_research, měsíční řada neuložena; nMin neznámé",
+};
 /**
  * Buňka trhu pro čtvrť a pásmo. Když čtvrť pásmo nemá dost velké, odvodí se
  * JEDNÍM krokem z nejbližšího spolehlivého pásma téže čtvrti přímým poměrem.
@@ -133,7 +173,7 @@ export const marketCell = (loc: MeasuredLocation, band: Band): MarketCell | null
     .filter((b) => b !== band && MARKET_STR[loc][b])
     .sort((a, b) => {
       const da = Math.abs(BAND_ORDER.indexOf(a) - target), db = Math.abs(BAND_ORDER.indexOf(b) - target);
-      return da !== db ? da - db : MARKET_STR[loc][b]!.listings - MARKET_STR[loc][a]!.listings;
+      return da !== db ? da - db : MARKET_STR[loc][b]!.nMean - MARKET_STR[loc][a]!.nMean;
     });
   for (const from of donors) {
     const up = BAND_ORDER.indexOf(from) < BAND_ORDER.indexOf(band);
@@ -143,7 +183,8 @@ export const marketCell = (loc: MeasuredLocation, band: Band): MarketCell | null
     return {
       adr: Math.round(up ? src.adr * k.adr : src.adr / k.adr),
       revpar: up ? src.revpar * k.revpar : src.revpar / k.revpar,
-      listings: src.listings,
+      nMean: src.nMean,
+      nMin: src.nMin,
       derived: true,
     };
   }
@@ -393,14 +434,14 @@ export const SPREAD = { low: 0.92, high: 1.08, minWidth: 0.08, derivedWiden: 1.6
  * míň = okres. Sdílené čtvrti (Vinohrady, Nové Město) patří pod víc okresů;
  * rodičem je vždycky okres, který si člověk vybral.
  */
-export type CtvrtCell = { adr: number; revpar: number; listings: number };
+export type CtvrtCell = { adr: number; revpar: number; nMean: number; nMin: number | null };
 export const MARKET_CTVRT: Record<string, { label: string; parents: LocationKey[]; bands: Partial<Record<Band, CtvrtCell>> }> = {
   stare_mesto: {
     label: "Staré Město", parents: ["praha1"],
     bands: {
-      "1BR": { adr: 3206, revpar: 2467.4, listings: 533 },
-      "2BR": { adr: 4886, revpar: 3733.7, listings: 297 },
-      "3BR": { adr: 6353, revpar: 4809.4, listings: 110 },
+      "1BR": { adr: 3206, revpar: 2467.4, nMean: 533, nMin: null },
+      "2BR": { adr: 4886, revpar: 3733.7, nMean: 297, nMin: null },
+      "3BR": { adr: 6353, revpar: 4809.4, nMean: 110, nMin: null },
     },
   },
 };
@@ -416,12 +457,13 @@ export const localCell = (loc: MeasuredLocation, band: Band, ctvrt?: string | nu
   if (!c || !c.parents.includes(loc as LocationKey)) return district;
   const own = c.bands[band];
   if (!own || !district) return district;
-  const w = ctvrtWeight(own.listings);
+  const w = ctvrtWeight(own.nMean);
   if (w === 0) return district;
   return {
     adr: Math.round(own.adr * w + district.adr * (1 - w)),
     revpar: own.revpar * w + district.revpar * (1 - w),
-    listings: own.listings,
+    nMean: own.nMean,
+    nMin: own.nMin,
     derived: district.derived && w < 1,
   };
 };
@@ -504,43 +546,73 @@ export const FURN_RENT: Record<FurnRent, number> = {
   furnished: 1.114, partly: 0.99, none: 0.938, mix: 1,
 };
 /**
- * Čtvrťová vrstva nájmu (31. 8. 2026). Okresní křivka výš se NEPŘEFITOVALA:
- * tohle je jen průměrné REZIDUUM čtvrti proti ní, takže bez vybrané čtvrti se
- * nájem nezmění ani o korunu. Zdroj: surový export téhož scrapu Sreality
- * (sreality_listings.csv, katastr vyplněný u 3 350 z 3 429 inzerátů), stejné
- * filtry jako u okresní křivky. Kontrola: průměrné reziduum stávajícího modelu
- * po okresech vychází −0,029 až +0,028, tedy okresní vrstva sedí.
+ * REGISTR GEOGRAFIÍ. Jediné místo, kde čtvrť vzniká, a jediný způsob, jak se
+ * STR a LTR spojují. Nikdy ne shodou řetězců.
  *
- * PROČ to je potřeba: čtvrťová vrstva existovala jen na STR straně, takže se
- * lokální čitatel dělil okresním jmenovatelem. U Karlína je to +12 % nájmu
- * proti průměru Prahy 8; bez téhle vrstvy by se jeho násobek nafoukl.
+ * DVĚ IDENTITY, protože to nejsou tytéž věci:
+ *  - `id` = MODELOVÁ identita, čtvrť V KONTEXTU okresu ("praha3/vinohrady").
+ *    Čtyři čtvrti patří pod dva okresy naráz a mají v každém jinou hodnotu:
+ *    Vinohrady +1 % v Praze 2, ale +4 % v Praze 3. Samotné "vinohrady"
+ *    neidentifikuje nic.
+ *  - `sourceGeometry` = FYZICKÁ geometrie u dodavatele. Jeden polygon, jeden
+ *    artefakt, jeden pull. Praha 2 a Praha 3 sdílejí TÝŽ polygon Vinohrad,
+ *    takže se kvóta PriceLabs nesmí utratit dvakrát za totéž. Tímhle klíčem
+ *    se klíčuje i MARKET_CTVRT.
  *
- * Sdílené čtvrti mají PRO KAŽDÝ OKRES vlastní hodnotu (Vinohrady +1 % v Praze 2
- * ale +4 % v Praze 3), takže se klíčuje okresem a cizí čtvrť se sama ignoruje.
+ * `ltr` je VŽDYCKY vyplněné: buď vlastní efekt, nebo výslovně deklarovaný pád
+ * na okres i s důvodem. Chybět nesmí, aby test uměl rozlišit „fallback
+ * schválený" od „zapomněli jsme to napojit".
  *
- * HEURISTIC: schody shrinkage 100 / 50 / 25 / 12 nejsou změřený zákon, je to
- * volba. Směr je správný (tenký vzorek se stahuje k okresu), ale ta konkrétní
- * čísla ne. První tři stupně jsou převzaté z ctvrtWeight u STR, čtvrtý je
- * přidaný, protože nájemní vzorky jsou o řád menší. Čtvrti pod 12 inzerátů se
- * sem vůbec nedostanou — proto tu není Staré Město (n=11) a jeho faktor je 1,000.
- * Uložené hodnoty jsou UŽ PO shrinkage.
+ * Efekt je průměrné reziduum čtvrti proti okresní křivce, UŽ PO shrinkage.
+ * Reprodukovatelné z data/sreality-2026-08/ltr-source.csv.
+ * HEURISTIC: schody shrinkage 100 / 50 / 25 / 12 nejsou změřený zákon.
  */
-export const CTVRT_RENT: Partial<Record<LocationKey, Record<string, { effect: number; n: number }>>> = {
-  praha1: { nove_mesto: { effect: -0.0077, n: 41 } },
-  praha2: { vinohrady: { effect: 0.006, n: 63 }, nove_mesto: { effect: -0.0222, n: 26 } },
-  praha3: { zizkov: { effect: -0.0381, n: 79 }, vinohrady: { effect: 0.0347, n: 32 } },
-  praha4: { nusle: { effect: 0.0407, n: 48 }, chodov: { effect: -0.0004, n: 24 }, michle: { effect: 0.0047, n: 22 }, modrany: { effect: 0.0046, n: 22 }, krc: { effect: -0.0091, n: 21 }, branik: { effect: -0.01, n: 16 } },
-  praha5: { smichov: { effect: 0.0773, n: 101 }, stodulky: { effect: -0.0455, n: 48 }, hlubocepy: { effect: -0.0129, n: 37 }, kosire: { effect: 0.0338, n: 30 } },
-  praha6: { bubenec: { effect: 0.0144, n: 16 }, brevnov: { effect: 0.0033, n: 15 }, dejvice: { effect: 0.0234, n: 15 }, ruzyne: { effect: -0.0063, n: 12 } },
-  praha7: { holesovice: { effect: 0.0008, n: 62 } },
-  praha8: { karlin: { effect: 0.1143, n: 36 }, liben: { effect: -0.0235, n: 29 }, kobylisy: { effect: -0.03, n: 19 }, troja: { effect: -0.0081, n: 14 } },
-  praha9: { vysocany: { effect: 0.0082, n: 37 }, hloubetin: { effect: 0.0022, n: 19 }, prosek: { effect: -0.012, n: 14 }, liben: { effect: -0.0063, n: 13 }, cerny_most: { effect: -0.012, n: 12 } },
-  praha10: { vrsovice: { effect: 0.0282, n: 40 }, strasnice: { effect: -0.0037, n: 37 }, hostivar: { effect: 0.0005, n: 18 }, zabehlice: { effect: -0.0182, n: 18 } },
-};
-/** Násobek nájmu za čtvrť. 1 = bez čtvrti, cizí čtvrť nebo tenký vzorek. */
+export type GeoLtr = { effect: number; n: number } | { fallback: "district"; reason: string };
+export type GeoContext = { id: string; district: LocationKey; sourceGeometry: string; label: string; ltr: GeoLtr };
+export const GEO: GeoContext[] = [
+  { id: "praha1/nove_mesto", district: "praha1", sourceGeometry: "nove_mesto", label: "Nové Město", ltr: { effect: -0.0077, n: 41 } },
+  { id: "praha1/stare_mesto", district: "praha1", sourceGeometry: "stare_mesto", label: "Staré Město", ltr: { fallback: "district", reason: "n=11 pod prahem shrinkage" } },
+  { id: "praha2/nove_mesto", district: "praha2", sourceGeometry: "nove_mesto", label: "Nové Město", ltr: { effect: -0.0222, n: 26 } },
+  { id: "praha2/vinohrady", district: "praha2", sourceGeometry: "vinohrady", label: "Vinohrady", ltr: { effect: 0.006, n: 63 } },
+  { id: "praha3/vinohrady", district: "praha3", sourceGeometry: "vinohrady", label: "Vinohrady", ltr: { effect: 0.0347, n: 32 } },
+  { id: "praha3/zizkov", district: "praha3", sourceGeometry: "zizkov", label: "Žižkov", ltr: { effect: -0.0381, n: 79 } },
+  { id: "praha4/branik", district: "praha4", sourceGeometry: "branik", label: "Braník", ltr: { effect: -0.01, n: 16 } },
+  { id: "praha4/chodov", district: "praha4", sourceGeometry: "chodov", label: "Chodov", ltr: { effect: -0.0004, n: 24 } },
+  { id: "praha4/krc", district: "praha4", sourceGeometry: "krc", label: "Krč", ltr: { effect: -0.0091, n: 21 } },
+  { id: "praha4/michle", district: "praha4", sourceGeometry: "michle", label: "Michle", ltr: { effect: 0.0047, n: 22 } },
+  { id: "praha4/modrany", district: "praha4", sourceGeometry: "modrany", label: "Modřany", ltr: { effect: 0.0046, n: 22 } },
+  { id: "praha4/nusle", district: "praha4", sourceGeometry: "nusle", label: "Nusle", ltr: { effect: 0.0407, n: 48 } },
+  { id: "praha5/hlubocepy", district: "praha5", sourceGeometry: "hlubocepy", label: "Hlubočepy", ltr: { effect: -0.0129, n: 37 } },
+  { id: "praha5/kosire", district: "praha5", sourceGeometry: "kosire", label: "Košíře", ltr: { effect: 0.0338, n: 30 } },
+  { id: "praha5/smichov", district: "praha5", sourceGeometry: "smichov", label: "Smíchov", ltr: { effect: 0.0773, n: 101 } },
+  { id: "praha5/stodulky", district: "praha5", sourceGeometry: "stodulky", label: "Stodůlky", ltr: { effect: -0.0455, n: 48 } },
+  { id: "praha6/brevnov", district: "praha6", sourceGeometry: "brevnov", label: "Břevnov", ltr: { effect: 0.0033, n: 15 } },
+  { id: "praha6/bubenec", district: "praha6", sourceGeometry: "bubenec", label: "Bubeneč", ltr: { effect: 0.0144, n: 16 } },
+  { id: "praha6/dejvice", district: "praha6", sourceGeometry: "dejvice", label: "Dejvice", ltr: { effect: 0.0234, n: 15 } },
+  { id: "praha6/ruzyne", district: "praha6", sourceGeometry: "ruzyne", label: "Ruzyně", ltr: { effect: -0.0063, n: 12 } },
+  { id: "praha7/holesovice", district: "praha7", sourceGeometry: "holesovice", label: "Holešovice", ltr: { effect: 0.0008, n: 62 } },
+  { id: "praha8/karlin", district: "praha8", sourceGeometry: "karlin", label: "Karlín", ltr: { effect: 0.1143, n: 36 } },
+  { id: "praha8/kobylisy", district: "praha8", sourceGeometry: "kobylisy", label: "Kobylisy", ltr: { effect: -0.03, n: 19 } },
+  { id: "praha8/liben", district: "praha8", sourceGeometry: "liben", label: "Libeň", ltr: { effect: -0.0235, n: 29 } },
+  { id: "praha8/troja", district: "praha8", sourceGeometry: "troja", label: "Troja", ltr: { effect: -0.0081, n: 14 } },
+  { id: "praha9/cerny_most", district: "praha9", sourceGeometry: "cerny_most", label: "Černý Most", ltr: { effect: -0.012, n: 12 } },
+  { id: "praha9/hloubetin", district: "praha9", sourceGeometry: "hloubetin", label: "Hloubětín", ltr: { effect: 0.0022, n: 19 } },
+  { id: "praha9/liben", district: "praha9", sourceGeometry: "liben", label: "Libeň", ltr: { effect: -0.0063, n: 13 } },
+  { id: "praha9/prosek", district: "praha9", sourceGeometry: "prosek", label: "Prosek", ltr: { effect: -0.012, n: 14 } },
+  { id: "praha9/vysocany", district: "praha9", sourceGeometry: "vysocany", label: "Vysočany", ltr: { effect: 0.0082, n: 37 } },
+  { id: "praha10/hostivar", district: "praha10", sourceGeometry: "hostivar", label: "Hostivař", ltr: { effect: 0.0005, n: 18 } },
+  { id: "praha10/strasnice", district: "praha10", sourceGeometry: "strasnice", label: "Strašnice", ltr: { effect: -0.0037, n: 37 } },
+  { id: "praha10/vrsovice", district: "praha10", sourceGeometry: "vrsovice", label: "Vršovice", ltr: { effect: 0.0282, n: 40 } },
+  { id: "praha10/zabehlice", district: "praha10", sourceGeometry: "zabehlice", label: "Záběhlice", ltr: { effect: -0.0182, n: 18 } },
+];
+/** Kontext podle okresu a fyzické geometrie. Cizí kombinace vrací undefined. */
+export const geoContext = (district: string, sourceGeometry?: string | null): GeoContext | undefined =>
+  sourceGeometry ? GEO.find((g) => g.district === district && g.sourceGeometry === sourceGeometry) : undefined;
+
+/** Násobek nájmu za čtvrť. 1 = bez čtvrti, cizí čtvrť, nebo deklarovaný fallback. */
 export const ctvrtRentFactor = (loc: string, ctvrt?: string | null): number => {
-  const e = ctvrt ? CTVRT_RENT[loc as LocationKey]?.[ctvrt]?.effect : undefined;
-  return e === undefined ? 1 : Math.exp(e);
+  const g = geoContext(loc, ctvrt);
+  return g && "effect" in g.ltr ? Math.exp(g.ltr.effect) : 1;
 };
 
 /** Nájem konkrétní plochy v dané lokalitě. JEDINÁ funkce na nájem na webu.

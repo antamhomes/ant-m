@@ -20,8 +20,8 @@ import {
   OCCUPANCY_BY_FLAT, MEDIAN_AREA, rentFor,
   MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor,
   operatorFactor, OPERATOR_EVIDENCE, publicFactorFrom, AVAILABILITY, BAND_BLEND, bandWeight, bandForSize, ctvrtiOf, MARKET_CTVRT,
-  marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, SPREAD, SIZE_BUCKETS_BY_VERSION, CALC_MODEL_VERSION, bucketsFor, bucketFor, marketCell, guestsFor, BASE_GUESTS,
-  RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, RENT_GROWTH, STR_GROWTH, CTVRT_RENT, ctvrtRentFactor, TYPICAL_AREA, typicalArea, type LocationKey,
+  marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, isReliableN, RELIABLE_MIN_N, RECONSTRUCTED_CELLS, SPREAD, SIZE_BUCKETS_BY_VERSION, CALC_MODEL_VERSION, bucketsFor, bucketFor, marketCell, guestsFor, BASE_GUESTS,
+  RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, RENT_GROWTH, STR_GROWTH, GEO, geoContext, ctvrtRentFactor, TYPICAL_AREA, typicalArea, type LocationKey,
   type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
@@ -322,13 +322,32 @@ describe("model výnosu", () => {
         expect(cell.revpar / cell.adr).toBeGreaterThan(0.5);
         expect(cell.revpar / cell.adr).toBeLessThan(0.85);
         // buňky jen se solidním vzorkem
-        expect(cell.listings, `${loc} ${band} vzorek`).toBeGreaterThanOrEqual(50);
+        // Dvě různá n, každé na jinou otázku, obě ověřená proti surové řadě.
+        const al = r.active_listings as number[];
+        expect(cell.nMean, `${loc} ${band} nMean`).toBe(Math.round(al.reduce((a: number, b: number) => a + b, 0) / al.length));
+        expect(cell.nMin, `${loc} ${band} nMin`).toBe(Math.min(...al));
+        // JEDINÉ pravidlo spolehlivosti: práh se aplikuje na nMin, ne na nMean.
+        expect(isReliableN(cell.nMin), `${loc} ${band} musí projít bránou`).toBe(true);
       }
     }
-    // tenké buňky zůstávají venku (P3 3BR: 46 nabídek, P9 2BR: 24, P4 3BR: 6)
+    // A OPAČNĚ: každá buňka, která v MARKET_STR chybí, musí bránou opravdu
+    // propadnout. Bez toho by šlo cell tiše vynechat a nikdo by si nevšiml.
+    for (const loc of Object.keys(MARKET_STR) as MeasuredLocation[]) {
+      const raw = JSON.parse(readFileSync(`data/pricelabs-2026-08/${loc}.json`, "utf8"));
+      for (const band of ["1BR", "2BR", "3BR"] as const) {
+        if (MARKET_STR[loc][band]) continue;
+        const al = raw[band].active_listings as number[];
+        expect(isReliableN(Math.min(...al)), `${loc} ${band} chybí, ale prošlo by bránou`).toBe(false);
+      }
+    }
     expect(MARKET_STR.praha3["3BR"]).toBeUndefined();
     expect(MARKET_STR.praha9["2BR"]).toBeUndefined();
     expect(MARKET_STR.praha4["3BR"]).toBeUndefined();
+    // Buňky bez surového artefaktu musí být PŘIZNANÉ, ne jen tiše bez nMin.
+    for (const [id, c] of Object.entries(MARKET_CTVRT))
+      for (const [band, cell] of Object.entries(c.bands))
+        if (cell.nMin === null)
+          expect(RECONSTRUCTED_CELLS[id], `${id} ${band}: nMin chybí a není přiznané`).toBeTruthy();
   });
 
   it("kapacitu majitel nezadává: odvodí se z dispozice a plochy a určí pásmo trhu (tři vstupy)", () => {
@@ -867,11 +886,34 @@ describe("model výnosu", () => {
     // Staré Město má n=11, tedy pod prahem: dnes nemění nic
     expect(ctvrtRentFactor("praha1", "stare_mesto"), "n=11 je pod prahem shrinkage").toBe(1);
     // HEURISTIC: uložené hodnoty jsou UŽ po shrinkage, takže žádná není extrémní
-    for (const [loc, cs2] of Object.entries(CTVRT_RENT))
-      for (const [id, v] of Object.entries(cs2!)) {
-        expect(Math.abs(v.effect), `${loc}/${id}`).toBeLessThan(0.2);
-        expect(v.n, `${loc}/${id} pod prahem se sem nedostane`).toBeGreaterThanOrEqual(12);
+    for (const g of GEO) {
+      if ("effect" in g.ltr) {
+        expect(Math.abs(g.ltr.effect), g.id).toBeLessThan(0.2);
+        expect(g.ltr.n, `${g.id} pod prahem se sem nedostane`).toBeGreaterThanOrEqual(12);
+      } else {
+        expect(g.ltr.reason.length, `${g.id}: fallback musí mít důvod`).toBeGreaterThan(5);
       }
+    }
+    // REGISTR: dvě identity a jejich pravidla
+    expect(new Set(GEO.map((g) => g.id)).size, "id kontextu je unikátní").toBe(GEO.length);
+    for (const g of GEO) {
+      expect(g.id, `${g.id} má tvar okres/geometrie`).toBe(`${g.district}/${g.sourceGeometry}`);
+      expect(g.sourceGeometry, "slug bez diakritiky a mezer").toMatch(/^[a-z0-9_]+$/);
+    }
+    // sdílená geometrie: JEDEN polygon, víc kontextů, různé LTR hodnoty
+    const shared = ["vinohrady", "nove_mesto", "liben"];
+    for (const geom of shared) {
+      const ctxs = GEO.filter((g) => g.sourceGeometry === geom);
+      expect(ctxs.length, `${geom} má být sdílená`).toBeGreaterThan(1);
+      const effects = ctxs.map((g) => ("effect" in g.ltr ? g.ltr.effect : null));
+      expect(new Set(effects).size, `${geom}: kontexty mají mít vlastní hodnoty`).toBe(ctxs.length);
+    }
+    // JOIN: každá STR čtvrť musí mít pro KAŽDÝ svůj rodičovský okres kontext
+    // v registru. Tím je tiché rozpojení STR/LTR nemožné.
+    for (const [geom, c] of Object.entries(MARKET_CTVRT))
+      for (const parent of c.parents)
+        expect(geoContext(parent, geom), `${parent}/${geom}: STR čtvrť bez kontextu v registru`).toBeTruthy();
+    expect(geoContext("praha1", "karlin"), "cizí kombinace neexistuje").toBeUndefined();
     // kalkulačka i graf posílají do nájmu TÉŽ čtvrť jako do STR
     expect(readFileSync("src/components/CalculatorSection.tsx", "utf8")).toContain('rentFor(location as LocationKey, size, m2, "mix", ctvrt)');
     expect(readFileSync("src/lib/horizon.ts", "utf8")).toContain('rentFor(location as LocationKey, size, m2, "mix", ctvrt)');
