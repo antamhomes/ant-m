@@ -360,6 +360,49 @@ i revpar jsou taky průměry. `nMin` (nejtenčí měsíc) **výhradně** jako br
 spolehlivosti. Do úklidu bylo jedno pole `listings` a Supabase pod týmž názvem
 drželo minimum, takže dvě úložiště hlásila pro tentýž pull jiné n.
 
+**Step 0 je HOTOVÝ a vynucený v databázi** (migrace `20260831212202`,
+`20260831212255`, `20260831212841`). Záruky neleží ve skriptu, který jde
+obejít, ale ve schématu:
+
+- **Přirozený klíč pullu** je primární klíč: `(geo_id, source, months_from,
+  months_to, band)`. Období nesou existující sloupce `months_from`/`months_to`,
+  druhou reprezentaci téhož nezavádíme. Pull jiného období = jiný klíč = INSERT.
+- **Opakovaný pull téhož klíče se změněným číslem SE ZASTAVÍ.** Trigger
+  `str_market_no_history_rewrite` vyjmenuje, co se mění, a odmítne zápis.
+  Identický rerun projde a nechá řádek bajt po bajtu stejný. Vědomý přepis jen
+  přes `set local antam.allow_history_rewrite = 'on'`.
+- **`reliable` se nebere od volajícího.** Trigger `str_market_set_reliable` ho
+  vždy přepočítá z `n_min`, check `reliable = (n_min >= 50)` je pojistka.
+  Ověřeno: zápis `reliable = true` při `n_min = 42` skončí uloženým `false`.
+- **Řádek z importní cesty musí nést měsíční řadu** (`import_version is null or
+  monthly is not null`), takže `n_mean` i `n_min` jdou z databáze přepočítat.
+  Staré ruční řádky mají `import_version` NULL a zůstávají, jak jsou.
+- **`pull_state`** je NOT NULL, jen `partial`/`complete`, default `partial`.
+  Na `complete` se přepíná až po všech požadovaných pásmech.
+- **Skutečná spotřeba kvóty** se zapisuje do `pl_pull_log` po pullu.
+  Neodhaduje se dopředu; bez `--requests` importér hlásí varování.
+- **Kontrola překryvu čtvrtí proti okresu zůstává DIAGNOSTIKA**, ne invariant.
+
+**OPRAVA MIRRORU, NE ZMĚNA MODELU: praha3 / 2BR `annual_revpar` 2304 → 2303.**
+Při ověřování Step 0 (31. 8. 2026) se ukázalo, že Supabase drželo 2304, zatímco
+ze surového artefaktu `data/pricelabs-2026-08/praha3.json` vychází 2303. Příčina
+je dvojí zaokrouhlení staré ruční cesty: skutečný průměr ~2303,46 → v repu
+zapsáno 2303,5 → při vkládání do integer sloupce zaokrouhleno podruhé na 2304.
+Artefakt je autorita, mirror byl vedle, tak se srovnal mirror.
+
+Co se tím NEZMĚNILO: `yield.ts` má u praha3 2BR pořád `revpar: 2303.5`, model
+z `str_market` nečte a žádné číslo na webu se nehnulo. Byla to jediná odchylka
+z 27 buněk okresního STR; ostatní seděly na jednotku přesně. Step 0 tedy
+ekonomiku kalkulačky nezměnil — jen srovnal downstream kopii se zdrojem
+a mimochodem ukázal, že staré dvojí zaokrouhlení existovalo.
+Nová cesta zaokrouhluje jen jednou, ze surové řady.
+
+Odvození artefakt → řádky je v `scripts/pl-derive.mjs` (čisté, bez IO),
+CLI je `scripts/pl-import.mjs` (default dry-run, SQL až s `--emit-sql`).
+Importér odmítne artefakt mimo `data/` a artefakt, který není v gitu — surový
+artefakt se ukládá PŘED odvozeným zápisem. `src/test/import.test.ts` hlídá, že
+odvození z artefaktů dává přesně `nMean`/`nMin`, které jsou v `yield.ts`.
+
 **Idempotence.** Přirozený klíč `(geo_id, source, period_start, period_end,
 band)`. Opakovaný pull téhož klíče přepisuje, nikdy nepřidává; `n` se nikdy
 nesčítá napříč pully. Před zápisem se hlásí `raw → unique → usable` a existující
