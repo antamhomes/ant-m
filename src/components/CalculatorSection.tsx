@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import Reveal from "@/components/Reveal";
-import { Calculator, MapPin, Home, Users, Share2, Pencil, ChevronRight, Ruler } from "lucide-react";
+import { Calculator, MapPin, Home, Share2, Pencil, ChevronRight, Ruler } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
@@ -59,14 +59,19 @@ const CalculatorSection = () => {
   };
 
   // Jediný zdroj výpočtu je lib/yield: reálná tržní cena za noc pro čtvrť
-  // a pásmo ložnic × sezóna. Dvě čísla z téže ceny: průměr trhu (tržní
-  // obsazenost) a s Antam Homes (obsazenost zvednutá, strop 85 %); minus
-  // provize platformy, dělení 70/30. Nájem řídí PLOCHA (rentFor).
+  // a pásmo × sezóna. Rozpětí drží OBA konce na tržní obsazenosti čtvrti;
+  // liší se vahou překlopení do vyššího pásma (dispozice + plocha) a
+  // naměřeným operátorským faktorem. Minus provize platformy, dělení 70/30.
+  // Nájem řídí PLOCHA (rentFor).
   const result = useMemo(() => {
     const r = ownerMonthly(location, size, { season, m2, ctvrt });
     const ltr = location === "jinde" ? 0 : rentFor(location as LocationKey, size, m2);
     const ratio = r.supported && ltr > 0 ? r.mid / ltr : 0;
-    return { r, ltr, ratio };
+    // Čtvrť, se kterou model OPRAVDU počítal (ne stav: čtvrť patřící pod jiný
+    // okres se ignoruje). Ve shrnutí výsledku musí být vidět, protože mění číslo.
+    const used = r.supported ? r.trace.ctvrt : null;
+    const ctvrtLabel = used ? ctvrtiOf(location).find((c) => c.id === used)?.label ?? null : null;
+    return { r, ltr, ratio, ctvrtLabel };
   }, [location, ctvrt, size, m2, season]);
 
   // Pětiletý rozdíl pro teaser; sám graf je v sekci Horizont (#horizont) a
@@ -166,7 +171,6 @@ const CalculatorSection = () => {
                 <Home className="w-4 h-4 text-gold" />
                 {t(lang, "calc_size")}
               </label>
-              <p className="font-body text-[12.5px] text-muted-foreground leading-snug mb-3">{t(lang, "calc_size_hint")}</p>
               <div className="grid grid-cols-4 gap-2">
                 {sizes.map((s) => (
                   <button key={s.value} type="button" onClick={() => pickSize(s.value)}
@@ -205,6 +209,8 @@ const CalculatorSection = () => {
                   {m2}&nbsp;m²
                 </span>
               </div>
+              {/* Nápověda patří pod posuvník, ne nad dispozici: mluví o ploše. */}
+              <p className="mt-2 font-body text-[12.5px] text-muted-foreground leading-snug">{t(lang, "calc_size_hint")}</p>
             </div>
 
             {/* Rok je výchozí rozhodnutí; sezónu si rozklikne, kdo ji chce. */}
@@ -262,7 +268,7 @@ const CalculatorSection = () => {
                     onClick={() => {
                       trackEvent("cta_click", { location: "calculator_unsupported", target: "contact", district: location, size });
                       window.dispatchEvent(new CustomEvent("antam:prefill-contact", {
-                        detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2, guests: result.r.guests },
+                        detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2 },
                       }));
                     }}
                     className="btn btn-primary-inverse w-full"
@@ -294,24 +300,34 @@ const CalculatorSection = () => {
                       <p className="mt-1 font-body text-[13px] text-primary-foreground/70 tnum">
                         {t(lang, "calc_range_label")} {Math.round(result.r.low / 1000)}&nbsp;{t(lang, "calc_range_to")}&nbsp;{Math.round(result.r.high / 1000)}&nbsp;{lang === "cs" ? "tis." : "nghìn"}&nbsp;Kč
                       </p>
-                      {/* S kolika hosty počítáme: odvozeno z dispozice a plochy, ne zadáváno. */}
-                      <p className="mt-2 flex items-center gap-1.5 font-body text-[13px] text-primary-foreground/85 tnum">
-                        <Users className="w-3.5 h-3.5 text-gold" aria-hidden="true" />
-                        {t(lang, "calc_guests_1")} {result.r.guests} {t(lang, "calc_guests_2")}
-                      </p>
+                      {/* Kapacita se majiteli ZÁMĚRNĚ neukazuje (rozhodnutí 31. 8. 2026).
+                          Pásmo trhu se bere z dispozice a plochy, ale kolik lůžek se do bytu
+                          opravdu vejde, závisí na proporcích pokojů, ne na celkových m².
+                          Tvrdit konkrétní počet z jednoho čísla byla falešná přesnost;
+                          určuje se při prohlídce a patří do interního podkladu, ne na web.
+                          Hlídá to facts.test.ts, tady i v grafu a v poptávce. */}
                       {result.r.derived && (
                         <p className="mt-1.5 font-body text-[12px] text-primary-foreground/60 leading-relaxed">
                           {t(lang, "calc_derived_note")}
                         </p>
                       )}
-                      {/* Reálná cena za noc: jeden tichý řádek, ověřitelný proti
-                          PriceLabs/AirDNA. Obsazenost nese rozpětí a rozklik metodiky
-                          (box s „75 % → s námi 85 %“ zrušen 30. 8. 2026: cringe). */}
+                      {/* Reálná cena za noc: jeden tichý řádek. Značka poskytovatele dat
+                          jde z veřejného výsledku pryč (31. 8. 2026): zdroj patří do
+                          metodiky pod výsledkem, ne do headline. */}
                       <p className="mt-3 font-body text-[13px] text-primary-foreground/70 tnum">
-                        {t(lang, "calc_market_line")} ({BAND_LABEL[result.r.band][lang]}): {result.r.adr.toLocaleString("cs-CZ")}&nbsp;Kč&nbsp;·&nbsp;PriceLabs
+                        {t(lang, "calc_market_line")} ({BAND_LABEL[result.r.band][lang]}): {result.r.adr.toLocaleString("cs-CZ")}&nbsp;Kč
                       </p>
                       <p className="md:hidden mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
                         <span>{locLabel(location)}</span>
+                        {/* Čtvrť mění číslo, takže musí být ve shrnutí vidět. Bereme ji
+                            z trace, ne ze stavu: je to ta, se kterou model opravdu počítal
+                            (čtvrť patřící pod jiný okres se ignoruje). */}
+                        {result.ctvrtLabel && (
+                          <>
+                            <span aria-hidden="true">·</span>
+                            <span>{result.ctvrtLabel}</span>
+                          </>
+                        )}
                         <span aria-hidden="true">·</span>
                         <span>{t(lang, `calc_season_${season}` as const)}</span>
                         <a href="#kalkulacka-zadani" className="ml-1 inline-flex items-center gap-1 underline underline-offset-4 decoration-primary-foreground/30 hover:text-primary-foreground">
@@ -371,7 +387,7 @@ const CalculatorSection = () => {
                         trackEvent("cta_click", { location: "calculator", target: "contact", district: location, size });
                         window.dispatchEvent(
                           new CustomEvent("antam:prefill-contact", {
-                            detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2, guests: result.r.guests },
+                            detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2 },
                           })
                         );
                       }}

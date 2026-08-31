@@ -20,7 +20,7 @@ import {
   OCCUPANCY_BY_FLAT, MEDIAN_AREA, rentFor,
   MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor,
   operatorFactor, AVAILABILITY, BAND_BLEND, bandWeight, bandForSize, ctvrtiOf, MARKET_CTVRT,
-  marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, marketCell, guestsFor, BASE_GUESTS,
+  marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, SPREAD, marketCell, guestsFor, BASE_GUESTS,
   RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, TYPICAL_AREA, typicalArea, type LocationKey,
   type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
@@ -255,6 +255,38 @@ describe("garance výnosu", () => {
     // Kalkulačka je odhad. Garance vzniká až písemným ujednáním pro konkrétní byt.
     expect(strip(cs.calc_disclaimer)).toMatch(/[Gg]arance výnosu vzniká až/);
     expect(strip(vi.calc_disclaimer)).toMatch(/[Cc]am kết doanh thu chỉ có khi/);
+    // Disclaimer NESMÍ popisovat model, který web nepočítá. Zrušeno 31. 8. 2026:
+    // starý mechanismus „obsazenost trhu +15 %, strop 85 %" (nahrazen naměřeným
+    // operátorským faktorem) a staré mapování „pásmo = počet ložnic dispozice"
+    // (pásmo se bere z dispozice A plochy). Ani jedno se nesmí vrátit, ani do
+    // nápovědy u posuvníku. Zároveň se ven nepouštějí interní kalibrační detaily
+    // (počet kalibračních bytů, okno dat, naše obsazenost, naše ADR proti trhu).
+    // Sweep přes VŠECHNY texty obou jazyků, ne jen přes disclaimer: zrušená
+    // formulace se naposledy schovala v klíči calc_basis, který nic
+    // nerenderovalo, ale pořád se dostával do bundlu.
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const [key, raw] of Object.entries(dict)) {
+        if (typeof raw !== "string") continue;
+        const text = strip(raw);
+        expect(text, `${lang}.${key}: zrušený occupancy uplift`).not.toMatch(/zvednut|nejvýš 85|cộng 15|tối đa 85/i);
+        expect(text, `${lang}.${key}: naše obsazenost ven nepatří`).not.toMatch(/85 až 97|85 đến 97/);
+        expect(text, `${lang}.${key}: staré mapování pásma na ložnice`).not.toMatch(/určuje počet ložnic|lấy theo số phòng ngủ/i);
+        // Rozpětí NENÍ příběh o obsazenosti: oba konce jedou na tržní obsazenosti
+        // (yield.ts dává split() u obou variant tentýž marketOcc). Liší se vahou
+        // překlopení do vyššího pásma a operátorským faktorem.
+        expect(text, `${lang}.${key}: rozpětí se nesmí vysvětlovat obsazeností`)
+          .not.toMatch(/naši obsazenost|naše obsazenost|podle obsazenosti|kín phòng của Antam|tùy mức kín phòng/i);
+        expect(text, `${lang}.${key}: kapacita není veřejné tvrzení`).not.toMatch(/počet hostů|kolik hostů|mấy khách|số khách/i);
+        // Nástroje smí zaznít jinde (svc_systems: „jedeme na Hospitable a PriceLabs"),
+        // ale v copy KALKULAČKY se model nevysvětluje přes interní kalibraci.
+        if (key.startsWith("calc_"))
+          expect(text, `${lang}.${key}: interní kalibrace ven nepatří`).not.toMatch(/PriceLabs|jedenácti|mười một|Deloitte/i);
+      }
+      // co v disclaimeru naopak zůstat MUSÍ
+      const d = strip(dict.calc_disclaimer);
+      expect(d, `${lang}: rámec „orientační, ne nabídka"`).toMatch(/orientační|tham khảo/i);
+      expect(d, `${lang}: provize platforem`).toMatch(/17/);
+    }
   });
 
   it("blokace: 14 nocí zdarma, dál poměrná úprava", () => {
@@ -318,12 +350,100 @@ describe("model výnosu", () => {
     const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
     expect(calc, "posuvník hostů se do kalkulačky nesmí vrátit").not.toContain("calc-guests");
     expect(calc, "posuvník plochy je zpět (31. 8. 2026): rozhoduje o pásmu i o nájmu").toContain('id="calc-m2"');
-    expect(calc).toContain("result.r.guests");
+    // Značka poskytovatele dat nepatří do headline výsledku (31. 8. 2026); zdroj
+    // zůstává v metodice pod výsledkem.
+    expect(calc, "PriceLabs pryč z veřejného řádku s cenou za noc").not.toContain("PriceLabs");
+    // Čtvrť mění číslo, takže se musí ve shrnutí výsledku objevit.
+    expect(calc, "čtvrť se echuje ve shrnutí").toContain("result.ctvrtLabel");
+    expect(calc, "a bere se z trace, ne ze stavu").toContain("r.supported ? r.trace.ctvrt : null");
     expect(calc).toContain('?byt=${location}-${ctvrt ?? "-"}-${size}-${m2}m-${season}#kalkulacka');
-    for (const k of ["calc_guests_1", "calc_guests_2", "calc_range_to", "calc_range_label", "calc_derived_note", "calc_terms_note", "calc_rent_src"]) {
+    // Kapacita NENÍ veřejné tvrzení (rozhodnutí 31. 8. 2026). Počet lůžek závisí
+    // na proporcích pokojů, ne na celkových m²; z jednoho čísla se tvrdit nedá.
+    // Model ji používá jen jako důvod pro mísení pásma, web ji neukazuje nikde:
+    // ani v kalkulačce, ani v grafu, ani v textu, který jde do poptávky.
+    const horizon = readFileSync("src/components/HorizonSection.tsx", "utf8");
+    const contact = readFileSync("src/components/ContactSection.tsx", "utf8");
+    for (const [name, src] of [["kalkulačka", calc], ["graf Za 5 let", horizon], ["poptávka", contact]] as const) {
+      expect(src, `${name} nesmí tvrdit kapacitu`).not.toContain("calc_guests");
+      expect(src, `${name} nesmí tvrdit kapacitu`).not.toMatch(/\.guests\b/);
+      expect(src, `${name}: žádné „hostů" ani „khách" v textu`).not.toMatch(/hostů|khách/);
+    }
+    for (const k of ["calc_guests_1", "calc_guests_2"]) {
+      expect(cs[k], `${k} má být z překladů pryč`).toBeUndefined();
+      expect(vi[k], `${k} má být z překladů pryč`).toBeUndefined();
+    }
+    // MCP počítá s TOUŽ plochou jako web: m² rozhoduje o pásmu, ne jen o nájmu.
+    const mcp = readFileSync("src/lib/mcp/tools/estimate-yield.ts", "utf8");
+    expect(mcp, "MCP musí předat m² do ownerMonthly").toContain("{ season: seasonKey, m2 }");
+    expect(mcp, "a označit dopočítanou plochu").toContain("floorAreaAssumed");
+    // MCP kapacitu nevrací ze stejného důvodu jako web: LLM by orientační číslo
+    // podalo majiteli jako tvrdý fakt. Zůstává jen floorAreaAssumed.
+    expect(mcp, "MCP nesmí vracet kapacitu").not.toContain("assumedGuests");
+    expect(mcp, "ani ji psát v textu").not.toMatch(/assumed \$\{guests\}|guests, band/);
+    expect(mcp, "guestsFor v MCP nástroji nemá co dělat").not.toContain("guestsFor");
+    const bundle = readFileSync("supabase/functions/mcp/index.ts", "utf8");
+    expect(bundle, "ani v vygenerovaném bundlu").not.toContain("assumedGuests");
+    for (const k of ["calc_range_to", "calc_range_label", "calc_derived_note", "calc_terms_note", "calc_rent_src"]) {
       expect(strip(cs[k]).length).toBeGreaterThan(0);
       expect(strip(vi[k]).length).toBeGreaterThan(0);
     }
+  });
+
+  it("3+kk se s plochou plynule překlápí do 3BR (HEURISTIC, oprava konzistence)", () => {
+    // Posunuto 31. 8. 2026 z 75–100 na 65–95. NENÍ to změřená kalibrace: pro
+    // 3+kk nemáme vlastní byt s historií. Je to srovnání s prahem u 2+kk,
+    // který změřený je: typický 2+kk okresu ležel na váze 0,87–1,00, typický
+    // 3+kk na 0,20–0,64 a v Praze 9 na 0,00. Střed 80 m² = medián typické
+    // plochy 3+kk přes okresy. Kapacita do peněz vstupuje JEN takhle, přes
+    // volbu a mísení pásma; žádný násobitel za hosty ani za m² navíc.
+    expect(BAND_BLEND["3kk"]).toEqual({ base: "2BR", next: "3BR", lo: 65, hi: 95 });
+    expect(bandWeight("3kk", 65)).toBe(0);
+    expect(bandWeight("3kk", 80)).toBeCloseTo(0.5, 3);
+    expect(bandWeight("3kk", 95)).toBe(1);
+    expect(bandForSize("3kk", 79)).toBe("2BR");
+    expect(bandForSize("3kk", 80)).toBe("3BR");
+    // váha roste s plochou a nikdy nevyleze z <0,1>
+    let prev = -1;
+    for (let m2 = 50; m2 <= 115; m2++) {
+      const w = bandWeight("3kk", m2);
+      expect(w, `${m2} m²`).toBeGreaterThanOrEqual(prev);
+      expect(w, `${m2} m²`).toBeLessThanOrEqual(1);
+      prev = w;
+    }
+    // typický 3+kk okresu leží nově kolem poloviny překlopení, ne na nule
+    expect(bandWeight("3kk", typicalArea("praha9", "3kk"))).toBeGreaterThan(0);
+    expect(bandWeight("3kk", typicalArea("praha5", "3kk"))).toBeCloseTo(0.5, 2);
+    // veřejná kalkulačka se na kapacitu neptá a neukazuje ji jako číslo z m²
+    const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
+    expect(calc, "posuvník hostů se do kalkulačky nesmí vrátit").not.toContain("calc-guests");
+  });
+
+  it("3+kk nikdy nevydělá míň než 2+kk stejné plochy (invariant je na STŘEDU)", () => {
+    // Invariant platí na středu odhadu. Spodek ani vršek monotonní být nemusí:
+    // u dopočítaného pásma se rozpětí záměrně rozšiřuje (SPREAD.derivedWiden),
+    // takže vršek 2+kk může přerůst vršek 3+kk, aniž by byl model špatně.
+    for (const loc of Object.keys(MARKET_STR) as MeasuredLocation[])
+      for (let m2 = 50; m2 <= 115; m2++) {
+        const a = ownerMonthly(loc, "2kk", { m2 });
+        const b = ownerMonthly(loc, "3kk", { m2 });
+        if (!a.supported || !b.supported) throw new Error(`${loc} ${m2}`);
+        expect(b.mid, `${loc} ${m2} m²`).toBeGreaterThanOrEqual(a.mid);
+      }
+  });
+
+  it("dopočítané pásmo rozšiřuje rozpětí přesně o SPREAD.derivedWiden", () => {
+    // Nejistota musí být na výstupu vidět: kde se pásmo dopočítává, je rozpětí
+    // širší. Tohle je i pojistka proti tomu, aby se widening aplikoval dvakrát.
+    const width = (r: ReturnType<typeof ownerMonthly>) => {
+      if (!r.supported) throw new Error("unsupported");
+      return (r.antam.gross - r.market.gross) / ((r.antam.gross + r.market.gross) / 2);
+    };
+    const solid = ownerMonthly("praha1", "4kk", { m2: 105 });   // P1 3BR je změřené
+    const derived = ownerMonthly("praha9", "4kk", { m2: 105 }); // P9 3BR se dopočítává
+    expect(solid.supported && solid.derived).toBe(false);
+    expect(derived.supported && derived.derived).toBe(true);
+    expect(width(solid)).toBeCloseTo(SPREAD.high - SPREAD.low, 3);
+    expect(width(derived)).toBeCloseTo((SPREAD.high - SPREAD.low) * SPREAD.derivedWiden, 3);
   });
 
   it("nájem v kalkulačce jede na typické ploše dispozice v té čtvrti (Sreality mediány)", () => {
@@ -354,24 +474,30 @@ describe("model výnosu", () => {
   });
 
   it("výsledek je rozpětí (průměr trhu až s Antam) a publikované karty do něj padají", () => {
-    // Backtest: skutečné karty proti pásmu čtvrti pro jejich kapacitu. Hlídá,
-    // že rozpětí je poctivé: spodek nesmí přestřelit žádnou kartu o víc než
-    // 10 % a vršek nesmí být pod žádnou kartou o víc než 20 %.
+    // Backtest: skutečné karty proti pásmu jejich lokality. Hlídá, že rozpětí
+    // je poctivé: spodek nesmí přestřelit žádnou kartu o víc než 10 % a vršek
+    // nesmí být pod žádnou kartou o víc než 20 %.
+    //
+    // Dispozice A plocha jsou SKUTEČNÉ (PortfolioSection), ne zástupné. Do
+    // 31. 8. 2026 tu Čelakovského 402 a 405 stály jako "3kk" a Mozart jako
+    // "1kk" — to byla zástupka za komerční pásmo, ne fyzická dispozice, a
+    // pletla dvě různé věci dohromady. Fyzicky jsou to 2+kk o 52 m² a 2+kk
+    // o 40 m². Počet hostů se tu nekontroluje: kapacita je důvod, proč se
+    // pásmo mísí, ale veřejný model ji nezobrazuje ani neverifikuje.
     const cards: [string, SizeKey, number, number][] = [
-      ["praha1", "3kk", 64000, 8], // 402
-      ["praha1", "3kk", 57000, 8], // 405
-      ["praha3", "2kk", 50000, 6], // Modern AC
-      ["praha3", "2kk", 42000, 6], // zahrada
-      ["praha5", "1kk", 30000, 4], // Mozart
+      ["praha1", "2kk", 52, 64000], // Čelakovského 402
+      ["praha1", "2kk", 52, 57000], // Čelakovského 405
+      ["praha3", "2kk", 55, 50000], // Modern AC
+      ["praha3", "2kk", 60, 42000], // Moderní apartmán se zahradou
+      ["praha5", "2kk", 40, 30000], // My Mozart studio
     ];
-    for (const [loc, size, owner, guests] of cards) {
-      const r = ownerMonthly(loc, size);
+    for (const [loc, size, m2, owner] of cards) {
+      const r = ownerMonthly(loc, size, { m2 });
       if (!r.supported) throw new Error(loc);
-      expect(r.guests, `${loc} ${size}`).toBe(guests);
       expect(r.low).toBeLessThanOrEqual(r.mid);
       expect(r.mid).toBeLessThanOrEqual(r.high);
-      expect(owner / r.low, `${loc} ${size} karta/spodek`).toBeGreaterThan(0.9);
-      expect(owner / r.high, `${loc} ${size} karta/vršek`).toBeGreaterThan(0.8);
+      expect(owner / r.low, `${loc} ${size} ${m2} m² karta/spodek`).toBeGreaterThan(0.9);
+      expect(owner / r.high, `${loc} ${size} ${m2} m² karta/vršek`).toBeGreaterThan(0.8);
     }
   });
 

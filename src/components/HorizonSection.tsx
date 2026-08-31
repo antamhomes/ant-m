@@ -74,7 +74,7 @@ const FiveYearChart = () => {
     <Reveal delay={0.05} className="max-w-3xl mx-auto rounded-md border border-border bg-card p-4 sm:p-6 space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <p className="font-body text-[13px] text-muted-foreground tnum">
-          {locLabel} · {sizeLabel} · ~{d.m2} m² · {d.guests}{lang === "vi" ? " khách" : " hostů"}
+          {locLabel} · {sizeLabel} · ~{d.m2} m²
           {" "}
           <a href="#kalkulacka-zadani" className="underline underline-offset-4 decoration-border hover:text-foreground">{t(lang, "calc_edit")}</a>
         </p>

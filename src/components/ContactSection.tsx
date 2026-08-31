@@ -65,12 +65,12 @@ const ContactSection = () => {
   // twice; the floor area lands visibly (and editably) in the message field.
   useEffect(() => {
     const onPrefill = (e: Event) => {
-      const d = (e as CustomEvent<{ location?: string; size?: string; m2?: number; guests?: number }>).detail || {};
+      const d = (e as CustomEvent<{ location?: string; size?: string; m2?: number }>).detail || {};
       const calcLine =
         d.m2
           ? lang === "cs"
-            ? `Z kalkulačky: ${d.size ?? ""} ${d.m2} m²${d.guests ? `, počítáno s ${d.guests} hosty` : ""}.`.replace(":  ", ": ")
-            : `Theo phần tính thử: ${d.size ?? ""} ${d.m2} m²${d.guests ? `, tính với ${d.guests} khách` : ""}.`.replace(":  ", ": ")
+            ? `Z kalkulačky: ${d.size ?? ""} ${d.m2} m².`.replace(":  ", ": ")
+            : `Theo phần tính thử: ${d.size ?? ""} ${d.m2} m².`.replace(":  ", ": ")
           : "";
       setFormData((f) => ({
         ...f,

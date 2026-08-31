@@ -159,9 +159,10 @@ export const marketCell = (loc: MeasuredLocation, band: Band): MarketCell | null
  * vyšel v Praze 1 na 0,99 (402 1,08, 405 0,95, 302 0,94), v Praze 3 na 1,21
  * (Modern AC 1,31) a v Praze 5 na 1,08 (Mozart).
  *
- * Na web jde ZÁMĚRNĚ nižší číslo než naměřený stav v centru, aby vlastní
- * portfolio veřejný odhad překonalo (pravidlo z 30. 8. 2026). Interní
- * podklad pro nabídku majiteli počítá s 1,00.
+ * Veřejný faktor 0,95 v centru je ZÁMĚRNÝ konzervativní výhled dopředu proti
+ * naměřenému poměru ~0,99. NENÍ kalibrovaný na historii a NENÍ to pravidlo,
+ * že každý náš byt musí veřejný odhad překonat — to pravidlo bylo 31. 8. 2026
+ * opuštěno. Interní podklad pro nabídku majiteli počítá s naměřenou 1,00.
  */
 export const OPERATOR_FACTOR_PUBLIC: Partial<Record<LocationKey, number>> = {
   praha1: 0.95, praha2: 0.95,
@@ -207,10 +208,30 @@ export const operatorFactor = (loc: string, scope: "public" | "internal" = "publ
  * 52 m². Ponecháno 55 m² záměrně: 52 by celý zlom pověsilo na jeden bod
  * a veřejné číslo má být spíš pod skutečností.
  */
+/**
+ * 3+kk: prahy posunuty 31. 8. 2026 z 75–100 na 65–95. HEURISTIC / OPRAVA
+ * KONZISTENCE, NE změřená kalibrace. Pro 3+kk nemáme ANI JEDEN vlastní byt
+ * s historií (Secret Garden Loft jede od 7/2026, Klement je Mladá Boleslav),
+ * takže tohle číslo změřené není a nesmí se tak popisovat.
+ *
+ * Důvodem je vnitřní rozpor s prahem u 2+kk, který změřený JE: typický 2+kk
+ * okresu ležel na váze 0,87 až 1,00, kdežto typický 3+kk na 0,20 až 0,64 a
+ * v Praze 9 (72 m²) rovnou na 0,00. Model tedy tvrdil, že třípokojový byt
+ * nemůže být 3BR produkt, přestože má o samostatný pokoj a o 25 až 30 m² víc
+ * než 2+kk, který do vyššího pásma pouští úplně. Střed 80 m² je medián typické
+ * plochy 3+kk přes okresy, typický 3+kk je tedy nově půl na půl.
+ *
+ * Kapacita (malý 3+kk ~8, běžný ~10, velký ~12 lůžek) je DŮVOD téhle úvahy,
+ * ne vstup výpočtu: do peněz vstupuje výhradně přes výběr a mísení pásma,
+ * žádný násobitel za hosty ani další násobitel za m². Počet hostů se z plochy
+ * veřejně NEODVOZUJE a NEUKAZUJE — celková plocha na to není dost přesná
+ * (rozhodnutí 31. 8. 2026). Zůstává HEURISTIC, dokud nebude vlastní 3+kk
+ * historie; 4+kk se tímhle nemění a zůstává otevřený (chybí pásmo 4BR).
+ */
 export const BAND_BLEND: Record<SizeKey, { base: Band; next?: Band; lo?: number; hi?: number }> = {
   "1kk": { base: "1BR" },
   "2kk": { base: "1BR", next: "2BR", lo: 40, hi: 55 },
-  "3kk": { base: "2BR", next: "3BR", lo: 75, hi: 100 },
+  "3kk": { base: "2BR", next: "3BR", lo: 65, hi: 95 },
   "4kk": { base: "3BR" },
 };
 /** Váha překlopení do vyššího pásma podle plochy (0 = základní pásmo, 1 = vyšší). */
