@@ -10,7 +10,11 @@ const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
 const CalculatorSection = lazy(() => import("@/components/CalculatorSection"));
 const GaranceSection = lazy(() => import("@/components/GaranceSection"));
 const PricingSection = lazy(() => import("@/components/PricingSection"));
-const HorizonSection = lazy(() => import("@/components/HorizonSection"));
+// HorizonSection zůstává v repu (čte ho facts.test.ts), ale od 2B se
+// nemountuje: generický pětiletý model a rozpětí patří do personalizovaného
+// decku, ne na homepage. Odsud odešel i poslední veřejný výskyt low/high.
+const ComparisonSection = lazy(() => import("@/components/ComparisonSection"));
+const ServicesSection = lazy(() => import("@/components/ServicesSection"));
 const OwnerReportSection = lazy(() => import("@/components/OwnerReportSection"));
 const AboutSection = lazy(() => import("@/components/AboutSection"));
 const ProcessSection = lazy(() => import("@/components/ProcessSection"));
@@ -56,18 +60,21 @@ const Index = () => {
       <main id="obsah">
         <CalcProvider>
         <HeroSection />
-        {/* Question chain: claim → proof → my number → downside → price → long run
-            → what we do → long run → visibility → fit → people → process → form → FAQ.
-            Each section has its own boundary, so a slow chunk never holds the others back. */}
+        {/* Prodejní řetěz (2B): slib → důkaz → moje číslo → „nájem je ale
+            jednodušší" → co si berete → co když to nevyjde → co za to reálně
+            děláte → vidím ten výsledek → kdo jste → jak se začne → poptávka.
+            Každá sekce odpovídá na otázku, kterou vyvolala ta předchozí.
+            Vlastní Suspense hranice: pomalý chunk nikdy nedrží ostatní. */}
         <Suspense fallback={null}><PortfolioSection /></Suspense>
         <Suspense fallback={null}><CalculatorSection /></Suspense>
-        <Suspense fallback={null}><GaranceSection /></Suspense>
+        <Suspense fallback={null}><ComparisonSection /></Suspense>
         <Suspense fallback={null}><PricingSection /></Suspense>
+        <Suspense fallback={null}><GaranceSection /></Suspense>
+        <Suspense fallback={null}><ServicesSection /></Suspense>
         <Suspense fallback={null}><OwnerReportSection /></Suspense>
         <Suspense fallback={null}><AboutSection /></Suspense>
         <Suspense fallback={null}><ProcessSection /></Suspense>
         <Suspense fallback={null}><ContactSection /></Suspense>
-        <Suspense fallback={null}><HorizonSection /></Suspense>
         <Suspense fallback={null}><FAQSection /></Suspense>
         <Suspense fallback={null}><FinalCtaSection /></Suspense>
         <ScrollToHash />

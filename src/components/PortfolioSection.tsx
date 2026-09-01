@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { MapPin, Users, Ruler, Sparkles, ChevronDown } from "lucide-react";
 import Reveal, { stagger } from "@/components/Reveal";
-import ReviewsBlock from "@/components/ReviewsBlock";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MARKET_OCC, ratioFor } from "@/lib/yield";
 import byt1 from "@/assets/byt-1.jpg.asset.json";
@@ -63,8 +62,8 @@ const fmtCzk = (n: number) => n.toLocaleString("cs-CZ").replace(/\s/g, "\u00a0")
 const copy = {
   cs: {
     eyebrow: "Výsledky",
-    title: "Výsledky našich bytů",
-    desc: "Výsledky z měsíčních vyúčtování.",
+    title: "Stejný trh. Jiná čísla.",
+    desc: "Skutečné částky pro majitele z měsíčních vyúčtování a obsazenost proti průměru okolí.",
     guests: (n: number) => `až ${n} host${n === 4 ? "é" : "ů"}`,
     soonTitle: "Tady může být váš byt",
     soonDesc: "Každý byt nejdřív posoudíme, a\u00a0když unese písemné minimum, vezmeme ho. Napište nám a\u00a0do 24 hodin víte, jak je na\u00a0tom ten váš.",
@@ -168,15 +167,36 @@ const PortfolioSection = () => {
               <figcaption className={lead ? "px-4 py-4 sm:px-5 sm:py-4 sm:self-center" : "px-2.5 py-2.5 sm:px-5 sm:py-4"}>
                 {/* Below the photo the story continues in one line: the multiple of long-term rent.
                     Then the flat as context, then occupancy against the locality. */}
-                {ratioOf(item) && (
-                  <p className={`mb-1.5 sm:mb-2 font-body ${lead ? "text-sm" : "text-[11px]"} sm:text-sm font-semibold text-gold-deep leading-snug`}>
-                    {c.statRatio(ratioOf(item)!)}
-                  </p>
-                )}
+                {/* Násobek nájmu z karty odešel (2C): tenhle argument dělá
+                    kalkulačka, a to osobně, na bytě návštěvníka. Na kartě má
+                    vést důkaz, který jinde nemáme: obsazenost proti trhu. */}
                 <h3 className={`font-display ${lead ? "text-base" : "text-[13px]"} sm:text-base font-semibold text-foreground leading-snug text-balance`}>
                   {item.name}
                 </h3>
-                <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 font-body text-xs sm:text-sm text-muted-foreground">
+                {/* Occupancy as plain typography: the flat's number leads, the locality's market
+                    number follows in muted text. No bars, no chart. New flats get a note instead. */}
+                {item.stats && (
+                  <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border tnum">
+                    <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-none">
+                      <span className={`font-display ${lead ? "text-xl" : "text-base"} sm:text-xl font-semibold text-foreground`}>
+                        {item.stats.occupancy}{lang === "cs" ? "\u00a0%" : "%"}
+                      </span>
+                      <span className="font-body text-[9.5px] sm:text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
+                        {c.statOcc}
+                      </span>
+                      <span className="basis-full font-body text-[12.5px] sm:text-[13.5px] font-medium text-foreground/75 tnum mt-1">
+                        {c.barMarket(item.loc)}&nbsp;{item.stats.market}{lang === "cs" ? "\u00a0%" : "%"}
+                      </span>
+                    </p>
+                    <p className="mt-2 font-body text-[10.5px] sm:text-xs text-muted-foreground leading-snug">
+                      {item.stats.since ? c.statPeriodSince(item.stats.since) : c.statPeriod12}
+                    </p>
+                  </div>
+                )}
+                {/* 2D: metadata bytu jdou AŽ ZA výkon. Pořadí na kartě je
+                    výplata majiteli, obsazenost proti trhu, teprve pak lokalita,
+                    kapacita a plocha. */}
+                <p className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 font-body text-xs sm:text-sm text-muted-foreground">
                   <span className="inline-flex items-center gap-1.5">
                     <MapPin className="w-3.5 h-3.5 text-gold" />
                     {item.loc}
@@ -192,26 +212,6 @@ const PortfolioSection = () => {
                     </span>
                   )}
                 </p>
-                {/* Occupancy as plain typography: the flat's number leads, the locality's market
-                    number follows in muted text. No bars, no chart. New flats get a note instead. */}
-                {item.stats && (
-                  <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border tnum">
-                    <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-none">
-                      <span className={`font-display ${lead ? "text-xl" : "text-base"} sm:text-xl font-semibold text-foreground`}>
-                        {item.stats.occupancy}{lang === "cs" ? "\u00a0%" : "%"}
-                      </span>
-                      <span className="font-body text-[9.5px] sm:text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-                        {c.statOcc}
-                      </span>
-                      <span className={`${lead ? "basis-auto ml-auto" : "basis-full sm:basis-auto sm:ml-auto"} font-body text-[10.5px] sm:text-xs text-muted-foreground`}>
-                        {c.barMarket(item.loc)}&nbsp;{item.stats.market}{lang === "cs" ? "\u00a0%" : "%"}
-                      </span>
-                    </p>
-                    <p className="mt-2 font-body text-[10.5px] sm:text-xs text-muted-foreground leading-snug">
-                      {item.stats.since ? c.statPeriodSince(item.stats.since) : c.statPeriod12}
-                    </p>
-                  </div>
-                )}
                 {item.newSince && (
                   <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border">
                     <span className="inline-flex items-center rounded-full bg-gold/10 text-gold-deep font-body text-[9.5px] sm:text-[11px] font-semibold uppercase tracking-[0.08em] px-2 sm:px-2.5 py-0.5 sm:py-1">
@@ -276,11 +276,9 @@ const PortfolioSection = () => {
           </details>
         </Reveal>
 
-        {/* Recenze hostů se přestěhovaly ze zrušené sekce Služby (patch 144):
-            social proof patří k výsledkům. */}
-        <Reveal delay={0.08} className="mt-10 sm:mt-12 border-t border-gold/15 pt-2">
-          <ReviewsBlock />
-        </Reveal>
+        {/* Recenze hostů odsud odešly do sekce Co za vás řešíme (2B):
+            520+ hodnocení není důkaz výsledku, ale důkaz provozu. Tady by
+            navíc konkurovaly kartám, které mají sekci nést samy. */}
 
       </div>
     </section>

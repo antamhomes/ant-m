@@ -29,11 +29,11 @@ const MORE_ROWS: Row[] = [
 const PricingSection = () => {
   const { lang } = useLanguage();
   return (
-    <section id="cenik" className="section bg-secondary scroll-mt-16">
+    <section id="cenik" className="section-cont bg-secondary scroll-mt-16">
       <div className="container-narrow">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "pricing_label")}</p>
-          <h2 className="h-section-sm text-foreground">{t(lang, "pricing_title")}</h2>
+          <h2 className="h-section-xs text-foreground">{t(lang, "pricing_title")}</h2>
           <p className="lead">{t(lang, "pricing_desc")}</p>
         </Reveal>
 
@@ -138,6 +138,18 @@ const PricingSection = () => {
               ))}
             </dl>
           </details>
+        </Reveal>
+
+        {/* „Proč 30 %?" — odpověď v repu byla, ale nerenderovala se nikde.
+            Je to jediná námitka, kterou tahle sekce sama vyvolá, tak ať na ni
+            odpoví na místě, ne až na schůzce. (2B: přesunuto z faq17.) */}
+        <Reveal delay={0.12} className="mt-10 md:mt-12 max-w-prose mx-auto text-center">
+          <p className="font-display text-[1.15rem] md:text-[1.3rem] font-semibold text-foreground mb-2">
+            {t(lang, "faq17_q")}
+          </p>
+          <p className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed text-pretty">
+            {t(lang, "faq17_a")}
+          </p>
         </Reveal>
 
         <Reveal delay={0.15}>

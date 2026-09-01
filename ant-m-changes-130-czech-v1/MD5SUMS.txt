@@ -1,0 +1,2 @@
+2450dcdbda0044ab8309627103c91351  src/components/ContactSection.tsx
+ec920a5e0d418334bfff5a7ffe766b1b  src/i18n/translations.ts

@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, type CSSProperties } from "react";
 import Reveal from "@/components/Reveal";
 import { Calculator, MapPin, Home, Share2, Pencil, Ruler } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -196,7 +196,7 @@ const CalculatorSection = () => {
             {/* Čtvrť: jen tam, kde pro ni máme vlastní tržní data. Krok se nedá
                 přeskočit, „Ostatní“ je vědomá volba, ne výchozí stav. */}
             {needsCtvrt && (
-              <div>
+              <div id="kalkulacka-ctvrt" className="scroll-mt-24">
                 <p id="calc-area-label" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
                   <MapPin className="w-4 h-4 text-gold" />
                   {t(lang, "calc_area")}
@@ -321,7 +321,23 @@ const CalculatorSection = () => {
 
           </Reveal>
 
-          <Reveal delay={0.1} className="flex items-start order-1 md:order-2 md:sticky md:top-24">
+          {/* POŘADÍ NA MOBILU (2A): karta výsledku šla na telefonu PŘED vstupy
+              (order-1), takže sekce začínala tmavým panelem „Vyberte prosím
+              lokalitu“ a teprve pod ním byly ovladače, kterými se ta lokalita
+              vybírá. Dokud číslo není, patří karta ZA vstupy; jakmile je
+              (nebo jde o poctivé zavření pro nepodporovanou lokalitu či
+              nadměrný byt), zůstává nahoře jako vrchol sekce. Na desktopu se
+              nemění nic: vstupy vlevo, karta vpravo.
+              className MUSÍ zůstat konstantní: .is-in přidává na tenhle prvek
+              IntersectionObserver z Reveal.tsx přímo do classListu, takže
+              kdyby React při změně stavu přepsal class atribut, karta by se
+              schovala (opacity 0) přesně ve chvíli, kdy se objeví číslo.
+              Pořadí proto jde přes --calc-order a .calc-result v index.css. */}
+          <Reveal
+            delay={0.1}
+            style={{ "--calc-order": answered ? 1 : 2 } as CSSProperties}
+            className="calc-result flex items-start md:sticky md:top-24"
+          >
             <div className="w-full bg-gradient-dark rounded-md p-5 sm:p-7 md:p-9 space-y-4 sm:space-y-5">
               {!supported ? (
                 /* Lokalita bez vlastních tržních dat: žádné číslo, poctivé
@@ -343,19 +359,43 @@ const CalculatorSection = () => {
                       {t(lang, "calc_edit")}
                     </a>
                   </p>
-                  <a
-                    href="#kontakt"
-                    onClick={() => {
-                      trackEvent("cta_click", { location: "calculator_unsupported", target: "contact", district: location, size });
-                      window.dispatchEvent(new CustomEvent("antam:prefill-contact", {
-                        detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2,
-                          calc: calcPayload },
-                      }));
-                    }}
-                    className="btn btn-primary-inverse w-full"
-                  >
-                    {t(lang, "calc_cta")}
-                  </a>
+                  {/* NEZODPOVĚZENÝ STAV (2A): dokud chybí čtvrť, tohle tlačítko
+                      vedlo na #kontakt. Návštěvník tedy mohl kliknout na
+                      nejnápadnější prvek kalkulačky, přeskočit ji a přistát na
+                      formuláři, aniž by kdy viděl číslo. Teď míří na výběr
+                      čtvrti a přesune na něj fokus, takže chybějící krok je
+                      vidět. Nepodporovaná lokalita a nadměrný byt vedou na
+                      #kontakt dál: tam je to poctivé zavření, ne obejití. */}
+                  {!answered ? (
+                    <a
+                      href="#kalkulacka-ctvrt"
+                      onClick={() => {
+                        trackEvent("cta_click", { location: "calculator_pick_area", target: "calculator_area", district: location, size });
+                        window.setTimeout(() => {
+                          document
+                            .querySelector<HTMLButtonElement>("#kalkulacka-ctvrt [role='group'] button")
+                            ?.focus({ preventScroll: true });
+                        }, 350);
+                      }}
+                      className="btn btn-primary-inverse w-full"
+                    >
+                      {t(lang, "calc_cta")}
+                    </a>
+                  ) : (
+                    <a
+                      href="#kontakt"
+                      onClick={() => {
+                        trackEvent("cta_click", { location: "calculator_unsupported", target: "contact", district: location, size });
+                        window.dispatchEvent(new CustomEvent("antam:prefill-contact", {
+                          detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2,
+                            calc: calcPayload },
+                        }));
+                      }}
+                      className="btn btn-primary-inverse w-full"
+                    >
+                      {t(lang, "calc_cta")}
+                    </a>
+                  )}
                 </div>
               ) : (
                 <>
@@ -468,9 +508,10 @@ const CalculatorSection = () => {
                       )}
                     </div>
 
-                    <p className="font-body text-[12px] text-primary-foreground/60 leading-relaxed border-t border-primary-foreground/10 pt-4">
-                      {t(lang, "calc_terms_note")}
-                    </p>
+                    {/* Odměna, úklid a energie se z karty vypustily (2B):
+                        vlastní je Ceník, který stojí hned za Srovnáním. Karta
+                        drží jen to, co je o BYTĚ návštěvníka: číslo, roční
+                        rozdíl proti nájmu, násobek a shrnutí vstupů. */}
                   </div>
                   )}
 

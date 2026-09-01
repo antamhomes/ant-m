@@ -1,0 +1,4 @@
+a30b77a3f6d652e22cee153226f2a878  src/i18n/translations.ts
+7c783df3a8ca4ede189b5c4395d7e6e5  src/components/ServicesSection.tsx
+a748c1ca396467f0eac822cdd2aaa6de  src/components/AboutSection.tsx
+1f0b458a25d8448d5b9110412337e6d2  src/test/facts.test.ts

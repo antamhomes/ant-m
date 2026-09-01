@@ -9,13 +9,32 @@ const StickyMobileCTA = () => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // #kontakt se načítá lazy, takže při mountu ještě nemusí existovat.
+    // Hledá se proto při scrollu, dokud se nenajde, a pak se drží.
+    let contact: HTMLElement | null = null;
     const onScroll = () => {
       // Zobrazit po scrollu pod hero (~70 % viewportu)
-      setVisible(window.scrollY > window.innerHeight * 0.6);
+      const belowHero = window.scrollY > window.innerHeight * 0.6;
+      // SCHOVAT NAD FORMULÁŘEM (2A): lišta je fixed bottom-0 a zabírala 76 px,
+      // tedy 9 % viewportu, po celý zbytek stránky včetně vyplňování poptávky.
+      // Nad formulářem tak stálo druhé tlačítko se stejným popiskem jako
+      // odesílací, které z formuláře odkazovalo pryč. Když je #kontakt na
+      // obrazovce, lišta mizí; nad ním i pod ním se vrací.
+      if (!contact) contact = document.getElementById("kontakt");
+      let contactInView = false;
+      if (contact) {
+        const r = contact.getBoundingClientRect();
+        contactInView = r.top < window.innerHeight && r.bottom > 0;
+      }
+      setVisible(belowHero && !contactInView);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   return (

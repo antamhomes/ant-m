@@ -40,6 +40,11 @@ const ReviewsBlock = () => {
   return (
     <Reveal delay={0.1} className="mt-12 md:mt-14 pt-10 md:pt-12 border-t border-gold/15">
       {/* No second eyebrow inside the section (patch 126): one line of proof, then the quotes. */}
+      {/* POZADÍ: 2A přebarvila blok na světlé tokeny, protože se tehdy
+          renderoval v krémovém #portfolio a vycházel kontrast 1,04:1.
+          Ve 2B se přestěhoval do sekce o provozu a ve 2D je ta sekce zase
+          tmavá, jak ji navrhl původní design. Tokeny se proto vracejí na
+          on-dark sadu; kontrast se měří v ověření, ne odhaduje. */}
       <div className="text-center mb-6 md:mb-8">
         <p
           className="font-display text-xl md:text-2xl font-semibold text-primary-foreground mx-auto max-w-[24ch] md:max-w-none"
@@ -55,13 +60,13 @@ const ReviewsBlock = () => {
         {reviews[lang].map((r) => (
           <blockquote
             key={r.meta}
-            className="snap-start shrink-0 w-[82%] sm:w-[60%] md:w-auto rounded-md bg-primary-foreground/[0.04] border border-gold/20 p-5 md:p-6"
+            className="snap-start shrink-0 w-[82%] sm:w-[60%] md:w-auto rounded-md bg-primary-foreground/[0.06] border border-gold/25 p-5 md:p-6"
           >
             <Quote className="w-5 h-5 text-gold mb-3" aria-hidden="true" />
             <p className="font-body text-sm md:text-base text-primary-foreground/85 leading-relaxed text-pretty">
               „{r.text}“
             </p>
-            <footer className="mt-3 font-body text-xs text-primary-foreground/60">{r.meta}</footer>
+            <footer className="mt-3 font-body text-xs text-primary-foreground/65">{r.meta}</footer>
           </blockquote>
         ))}
       </div>

@@ -150,6 +150,12 @@ html {
   .section { padding-top: 3rem; padding-bottom: 3rem; }
   @media (min-width: 640px) { .section { padding-top: 4rem; padding-bottom: 4rem; } }
   .section-tight { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+  /* .section-cont: sekce, která pokračuje v TÉŽE úvaze jako ta nad ní.
+     Menší horní odsazení říká „tohle je další věta“, ne „nová kapitola“.
+     Používá to Ceník a Garance: Srovnání otevře otázku, oni na ni odpovídají. */
+  .section-cont { padding-top: 2rem; padding-bottom: 3rem; }
+  @media (min-width: 640px) { .section-cont { padding-top: 2.5rem; padding-bottom: 4rem; } }
+  @media (min-width: 1024px) { .section-cont { padding-top: 3.5rem; padding-bottom: 6rem; } }
   @media (min-width: 768px) {
     .section { padding-top: 6rem; padding-bottom: 6rem; }
     .section-tight { padding-top: 5rem; padding-bottom: 5rem; }
@@ -193,6 +199,15 @@ html {
     letter-spacing: -0.015em;
     text-wrap: balance;
   }
+  /* Třetí stupeň (2D): beat uvnitř jedné úvahy, ne samostatná kapitola. */
+  .h-section-xs {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(1.5rem, 1.05rem + 1.3vw, 2rem);
+    line-height: 1.15;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+  }
   .lead {
     font-family: var(--font-body);
     font-size: 1.0625rem;
@@ -206,6 +221,16 @@ html {
   }
   @media (min-width: 768px) { .lead { font-size: 1.1875rem; line-height: 1.55; } }
   .lead-on-dark { color: hsl(var(--primary-foreground) / 0.72); }
+
+  /* KARTA VÝSLEDKU KALKULAČKY — pořadí na mobilu.
+     Dokud číslo není, patří karta ZA vstupy; jakmile je, jde PŘED ně jako
+     vrchol sekce. Řídí se custom property, ne přepínáním třídy: <Reveal>
+     dostává třídu .is-in imperativně z IntersectionObserveru, takže kdyby se
+     měnila className, React by ji při překreslení přepsal a kartu by schoval
+     přesně ve chvíli, kdy se číslo objeví. Atribut style React aktualizuje
+     zvlášť, class zůstane. Na desktopu je pořadí vždycky 2 (vstupy vlevo). */
+  .calc-result { order: var(--calc-order, 2); }
+  @media (min-width: 768px) { .calc-result { order: 2; } }
 
   .tnum { font-variant-numeric: tabular-nums lining-nums; }
 
@@ -299,6 +324,12 @@ html {
     background: hsl(var(--gold-deep));
     opacity: 0.8;
   }
+
+  /* Eyebrow na tmavém podkladu (2D, sekce Co za vás řešíme). Hluboká zlatá
+     je na zelené nečitelná, proto světlejší odstín, který už na webu je
+     (text-gold-on-dark). Linka jde s ním. */
+  .eyebrow-on-dark { color: #C2A46D; }
+  .eyebrow-on-dark::before, .eyebrow-on-dark::after { background: #C2A46D; }
   .eyebrow.eyebrow-center {
     justify-content: center;
   }

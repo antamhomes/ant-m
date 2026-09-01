@@ -30,6 +30,9 @@ const STEPS = [
 /** Two protections, said once, side by side: the income floor and the flat itself. */
 const PAIR = [
   { label: "g_pair1_label", text: "g_pair1_text" },
+  // 2C: krytí škod z hlavní hierarchie garance pryč. Vysvětlení výjimek
+  // dělá garanci slabší, ne silnější; mechanika žije ve FAQ (faq11_a)
+  // a v podrobném ceníku (pr7_note).
   { label: "g_pair2_label", text: "g_pair2_text" },
 ] as const;
 
@@ -45,11 +48,12 @@ const GaranceSection = () => {
   const last = nums.length - 1;
 
   return (
-    <section id="garance" className="section bg-background scroll-mt-16">
+    <section id="garance" className="section-cont bg-background scroll-mt-16">
       <div className="container-narrow">
         <Reveal className="section-head">
-          <p className="eyebrow eyebrow-center">{t(lang, "g_label")}</p>
-          <h2 className="h-section-sm text-foreground">
+          {/* 2D: bez eyebrow. Garance není nová kapitola, je to třetí věta
+              jedné úvahy: proč krátkodobě, co si bereme, co když to nevyjde. */}
+          <h2 className="h-section-xs text-foreground">
             {t(lang, "g_title1")}
             <span className="text-gradient-gold">{t(lang, "g_title2")}</span>
           </h2>
@@ -153,9 +157,11 @@ const GaranceSection = () => {
             {t(lang, "g_cta")}
             <ChevronRight className="w-4 h-4" />
           </a>
-          <p className="mt-4 font-body text-xs text-muted-foreground leading-relaxed max-w-xl mx-auto">
+          {t(lang, "g_small") && (
+            <p className="mt-4 font-body text-xs text-muted-foreground leading-relaxed max-w-xl mx-auto">
             {t(lang, "g_small")}
           </p>
+          )}
         </Reveal>
       </div>
     </section>
