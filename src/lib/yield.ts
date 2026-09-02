@@ -473,6 +473,27 @@ export const MARKET_CTVRT: Record<string, { label: string; parents: LocationKey[
       "3BR": { adr: 6353, revpar: 4809.4, nMean: 110, nMin: null, basis: "measured" },
     },
   },
+  /**
+   * Nové Město leží v Praze 1 I v Praze 2 — katastr je rozdělený, takže
+   * `parents` má obě. Není to kompromis kvůli UX: kdyby tu byla jen praha1,
+   * majitel bytu v novoměstské části Prahy 2 by dostal okresní číslo, aniž
+   * by se ho kdokoli zeptal.
+   *
+   * Všechna tři pásma PŘÍMO MĚŘENÁ, jeden pull 2. 9. 2026, geometrie
+   * „New Town official boundary (openstreetmap)", okno 2025_08..2026_07.
+   * Surová odpověď PriceLabs je v repu a artefakt se z ní reprodukuje:
+   * data/pricelabs-raw/nove_mesto.{1BR,2BR,3BR}.raw.json,
+   * artefakt data/pricelabs-2026-09/nove_mesto.json.
+   * Vzorky jsou velké (nMin 1226 / 608 / 219), takže váha je u všech 1,0.
+   */
+  nove_mesto: {
+    label: "Nové Město", parents: ["praha1", "praha2"],
+    bands: {
+      "1BR": { adr: 2627, revpar: 1959.9, nMean: 1288, nMin: 1226, basis: "measured" },
+      "2BR": { adr: 4031, revpar: 3045.7, nMean: 619, nMin: 608, basis: "measured" },
+      "3BR": { adr: 6503, revpar: 4851.3, nMean: 231, nMin: 219, basis: "measured" },
+    },
+  },
 };
 export const ctvrtiOf = (loc: string) =>
   Object.entries(MARKET_CTVRT)

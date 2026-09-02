@@ -96,7 +96,13 @@ const CalculatorSection = () => {
     Math.abs(n) >= 1e6
       ? `${(n / 1e6).toFixed(1).replace(".", ",")}\u00a0${lang === "cs" ? "mil." : "triệu"}`
       : `${Math.round(n / 1000)}\u00a0${lang === "cs" ? "tis." : "nghìn"}`;
-  const answered = !needsCtvrt || ctvrt !== undefined;
+  // PRAVIDLO: čtvrť je nepovinné zpřesnění, ne další povinný krok.
+  // Do 2. 9. 2026 tenhle řádek blokoval výsledek, dokud se čtvrť nevybrala.
+  // Jenže pak by každý nový pull dat prodloužil trychtýř: přidáním Nového
+  // Města (Praha 1 I Praha 2) by najednou musela odpovídat i Praha 2, která
+  // se do té doby neptala na nic. Víc dat má dávat víc přesnosti, ne víc
+  // otázek. Bez volby platí okresní odhad úplně stejně jako dřív —
+  // `localCell` vrací pro `undefined` i `null` tutéž okresní buňku.
   // JEDNA podmínka pro obě věty o nájmu. Do 1. 9. 2026 měl násobek práh
   // „po zaokrouhlení nad 1×“, kdežto Kč/rok jen „high > ltr“, takže mezi
   // 1,00× a 1,05× (8 z 832 kombinací, typicky zimní sezóna) stránka psala
@@ -119,7 +125,7 @@ const CalculatorSection = () => {
   })();
   // Byt nad p95 stocku se NEEXTRAPOLUJE: místo pochybného čísla jde na
   // individuální posouzení, stejně jako čtvrť nebo pásmo bez dat.
-  const supported = result.r.supported && answered && !oversized;
+  const supported = result.r.supported && !oversized;
 
   // Co se ukládá k leadu. JEDNA definice pro obě CTA (dřív byl tentýž objekt
   // opsaný dvakrát a mohl se rozejít). low/high se sem posílají DÁL, i když se
@@ -193,8 +199,10 @@ const CalculatorSection = () => {
               </div>
             </div>
 
-            {/* Čtvrť: jen tam, kde pro ni máme vlastní tržní data. Krok se nedá
-                přeskočit, „Ostatní“ je vědomá volba, ne výchozí stav. */}
+            {/* Čtvrť: jen tam, kde pro ni máme vlastní tržní data. NEPOVINNÉ
+                zpřesnění — bez volby platí okresní odhad. Nabídka se řídí
+                `ctvrtiOf(location)`, takže další čtvrti (Žižkov, Smíchov,
+                Karlín…) se objeví samy, aniž by komukoli přibyl krok. */}
             {needsCtvrt && (
               <div id="kalkulacka-ctvrt" className="scroll-mt-24">
                 <p id="calc-area-label" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
@@ -335,7 +343,7 @@ const CalculatorSection = () => {
               Pořadí proto jde přes --calc-order a .calc-result v index.css. */}
           <Reveal
             delay={0.1}
-            style={{ "--calc-order": answered ? 1 : 2 } as CSSProperties}
+            style={{ "--calc-order": 1 } as CSSProperties}
             className="calc-result flex items-start md:sticky md:top-24"
           >
             <div className="w-full bg-gradient-dark rounded-md p-5 sm:p-7 md:p-9 space-y-4 sm:space-y-5">
@@ -347,10 +355,10 @@ const CalculatorSection = () => {
                       ohlašoval potenciál nad větou, že pro tuhle lokalitu číslo
                       nemáme. Titulek si stav řekne sám. */}
                   <p className="font-display text-2xl sm:text-[1.75rem] font-semibold text-primary-foreground leading-snug text-balance">
-                    {t(lang, !answered ? "calc_pick_area_title" : oversized ? "calc_oversized_title" : "calc_unsupported_title")}
+                    {t(lang, oversized ? "calc_oversized_title" : "calc_unsupported_title")}
                   </p>
                   <p className="font-body text-[14.5px] text-primary-foreground/80 leading-relaxed">
-                    {t(lang, !answered ? "calc_pick_area_text" : oversized ? "calc_oversized_text" : "calc_unsupported_text")}
+                    {t(lang, oversized ? "calc_oversized_text" : "calc_unsupported_text")}
                   </p>
                   <p className="flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
                     <span>{locLabel(location)}</span>
@@ -359,43 +367,23 @@ const CalculatorSection = () => {
                       {t(lang, "calc_edit")}
                     </a>
                   </p>
-                  {/* NEZODPOVĚZENÝ STAV (2A): dokud chybí čtvrť, tohle tlačítko
-                      vedlo na #kontakt. Návštěvník tedy mohl kliknout na
-                      nejnápadnější prvek kalkulačky, přeskočit ji a přistát na
-                      formuláři, aniž by kdy viděl číslo. Teď míří na výběr
-                      čtvrti a přesune na něj fokus, takže chybějící krok je
-                      vidět. Nepodporovaná lokalita a nadměrný byt vedou na
-                      #kontakt dál: tam je to poctivé zavření, ne obejití. */}
-                  {!answered ? (
-                    <a
-                      href="#kalkulacka-ctvrt"
-                      onClick={() => {
-                        trackEvent("cta_click", { location: "calculator_pick_area", target: "calculator_area", district: location, size });
-                        window.setTimeout(() => {
-                          document
-                            .querySelector<HTMLButtonElement>("#kalkulacka-ctvrt [role='group'] button")
-                            ?.focus({ preventScroll: true });
-                        }, 350);
-                      }}
-                      className="btn btn-primary-inverse w-full"
-                    >
-                      {t(lang, "calc_cta")}
-                    </a>
-                  ) : (
-                    <a
-                      href="#kontakt"
-                      onClick={() => {
-                        trackEvent("cta_click", { location: "calculator_unsupported", target: "contact", district: location, size });
-                        window.dispatchEvent(new CustomEvent("antam:prefill-contact", {
-                          detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2,
-                            calc: calcPayload },
-                        }));
-                      }}
-                      className="btn btn-primary-inverse w-full"
-                    >
-                      {t(lang, "calc_cta")}
-                    </a>
-                  )}
+                  {/* Nepodporovaná lokalita a nadměrný byt vedou na #kontakt: tam
+                      je to poctivé zavření, ne obejití. Větev „nevybraná čtvrť“
+                      tu byla do 2. 9. 2026, kdy čtvrť přestala být povinná —
+                      nezodpovězený stav už žádný není. */}
+                  <a
+                    href="#kontakt"
+                    onClick={() => {
+                      trackEvent("cta_click", { location: "calculator_unsupported", target: "contact", district: location, size });
+                      window.dispatchEvent(new CustomEvent("antam:prefill-contact", {
+                        detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2,
+                          calc: calcPayload },
+                      }));
+                    }}
+                    className="btn btn-primary-inverse w-full"
+                  >
+                    {t(lang, "calc_cta")}
+                  </a>
                 </div>
               ) : (
                 <>

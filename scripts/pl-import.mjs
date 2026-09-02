@@ -331,8 +331,13 @@ if (flag("emit-sql")) {
     L.push(`    import_version = excluded.import_version, updated_at = now();`);
   }
   if (pullState === "complete") {
+    // FILTR NA PASMO JE POVINNY. Bez nej by se na "complete" prepnul i kazdy
+    // jiny radek te same geografie a okna — treba stary souhrnny radek pasma
+    // "all", ktery v tomhle artefaktu neni a jehoz uplnost nikdo nedolozil.
+    // Nachytano 2. 9. 2026 pri inspekci SQL pred importem Noveho Mesta.
     L.push(`update str_market set pull_state = 'complete'`);
-    L.push(`  where geo_id = ${q(geoId)} and source = ${q(source)} and months_from = ${q(monthsFrom)} and months_to = ${q(monthsTo)};`);
+    L.push(`  where geo_id = ${q(geoId)} and source = ${q(source)} and months_from = ${q(monthsFrom)} and months_to = ${q(monthsTo)}`);
+    L.push(`    and band in (${usable.map((u) => q(u.band)).join(", ")});`);
   }
   L.push(`update pl_pull_log set outcome = ${q(pullState)}, finished_at = now()`);
   L.push(`  where id = (select id from pl_pull_log where slug = ${q(slug)} order by started_at desc limit 1);`);
