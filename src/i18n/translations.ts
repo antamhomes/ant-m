@@ -256,8 +256,10 @@ const translations = {
 
     // Ceník
     pricing_label: "Ceník",
-    pricing_title: "70 % vám. 30 % nám.",
-    pricing_desc: "Z čistého výnosu, to znamená po provizi platforem a po odečtení úklidu, který platí host. Čím víc byt vydělá, tím víc dostanete vy i my. Bez měsíčního paušálu, uvedení bytu do provozu je jednorázově 25 000 Kč.",
+    pricing_title: "Naše odměna",
+    pricing_split1: "Z čistého výnosu zůstává 70 % majiteli.",
+    pricing_split2: "Naše odměna za správu je 30 %.",
+    pricing_desc: "Čistý výnos je to, co pošlou platformy po své provizi, minus úklid, který platí hosté zvlášť. Bez měsíčního paušálu, uvedení bytu do provozu je jednorázově 25 000 Kč.",
     pr1_name: "Správa",
     pr1_price: "30 % z čistého výnosu",
     pr1_note: "Čísla ve schématu jsou vzor pro 90 000 Kč na účtu, ne konkrétní byt. Úklidový poplatek platí hosté zvlášť a kryje úklid a prádlo. Ze samotného výnosu je naše odměna 30 % a je konečná; energie hradí majitel.",
@@ -669,6 +671,8 @@ const translations = {
     // Bảng giá
     pricing_label: "Bảng giá",
     pricing_title: "Chủ nhà phải chi những gì",
+    pricing_split1: "Từ doanh thu ròng, chủ nhà giữ 70%.",
+    pricing_split2: "Phí quản lý của Antam là 30%.",
     pricing_desc: "Không có khoản nào để đến lúc ký mới biết.",
     pr1_name: "Phí quản lý",
     pr1_price: "30% trên doanh thu ròng",

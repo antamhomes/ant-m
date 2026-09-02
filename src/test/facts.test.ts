@@ -59,9 +59,12 @@ describe("odměna za správu", () => {
     }
     // AD 2. 9. 2026: faq17 („Proč 30 %?") je celý pryč. Obhajoba ceny staví
     // čtenáře do cenového srovnání a druhá věta shazovala levnější správce
-    // bez důkazu. Sazbu drží nadpis sekce a vzorový výpočet pod ním.
-    expect(strip(cs.pricing_title), "cs.pricing_title").toMatch(/30\s?%/);
-    expect(strip(cs.pricing_title), "cs.pricing_title").toMatch(/70\s?%/);
+    // bez důkazu. Sazbu drží dvě věty nad výpočtem, ne nadpis: dobrý argument
+    // ještě není slogan, a "70 % vám, 30 % nám" v nadpisu znělo jako dělení kořisti.
+    expect(strip(cs.pricing_split1), "cs.pricing_split1").toMatch(/70\s?%/);
+    expect(strip(cs.pricing_split2), "cs.pricing_split2").toMatch(/30\s?%/);
+    expect(strip(vi.pricing_split1), "vi.pricing_split1").toMatch(/70\s?%/);
+    expect(strip(vi.pricing_split2), "vi.pricing_split2").toMatch(/30\s?%/);
   });
 
   it("nikde nezůstalo staré 25 % a 28 % ani dělení 75/25 a 72/28", () => {

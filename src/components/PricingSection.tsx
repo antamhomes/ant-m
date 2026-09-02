@@ -28,19 +28,27 @@ const PricingSection = () => {
   return (
     <section id="cenik" className="section-cont bg-secondary scroll-mt-16">
       <div className="container-wide">
-        {/* AD 2. 9. 2026: model, ne obhajoba. Nadpis je zároveň to největší
-            číslo v sekci: 70/30 řekne celý ceník dřív, než začne výpočet.
-            Samotné obří „30 %" nutilo číst sazbu jako cenu k porovnání. */}
+        {/* AD 2. 9. 2026: model, ne obhajoba, ale ani slogan. „70 % vám,
+            30 % nám" v nadpisu znělo jako dělení kořisti vedle vážného zbytku
+            stránky. Nadpis je obyčejný, dělení řeknou dvě věty a závěr si
+            čtenář udělá z výpočtu pod nimi. */}
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "pricing_label")}</p>
-          <h2 className="font-display font-semibold text-foreground leading-[1.02] tracking-[-0.03em] text-[clamp(2.4rem,5.4vw,4.4rem)] tnum text-balance">
-            {t(lang, "pricing_title")}
-          </h2>
+          <h2 className="h-section-xs text-foreground">{t(lang, "pricing_title")}</h2>
         </Reveal>
 
         <div className="max-w-3xl">
+          <Reveal delay={0.05}>
+            <p className="font-display text-foreground leading-[1.3] tracking-[-0.012em] text-[clamp(1.45rem,2.5vw,2.05rem)] text-balance tnum">
+              {t(lang, "pricing_split1")}
+            </p>
+            <p className="mt-2 font-display text-muted-foreground leading-[1.35] text-[clamp(1.15rem,1.7vw,1.4rem)] text-balance tnum">
+              {t(lang, "pricing_split2")}
+            </p>
+          </Reveal>
+
           <Reveal delay={0.08}>
-            <p className="font-body text-[17px] md:text-[19px] text-foreground leading-relaxed max-w-[46ch]">
+            <p className="mt-7 font-body text-[15.5px] md:text-base text-muted-foreground leading-relaxed max-w-[58ch]">
               {t(lang, "pricing_desc")}
             </p>
 
