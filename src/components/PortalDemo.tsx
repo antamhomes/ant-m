@@ -157,19 +157,20 @@ const PortalDemo = () => {
 
         {/* Kalendář vlevo, panel majitele vpravo, stejně jako v portálu. */}
         <div className="grid lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 lg:gap-7">
-          <div>
+          <div className="flex flex-col">
             <div className="grid grid-cols-7 gap-[2px] mb-1">
               {dows.map((d) => (
                 <span key={d} className="font-body text-[10px] uppercase tracking-[0.06em] text-muted-foreground text-center">{d}</span>
               ))}
             </div>
+            <div className="flex-1 flex flex-col gap-[2px]">
             {weeks.map(({ r, lead, segs }) => (
-              <div key={r} className="grid grid-cols-7 gap-[2px] mb-[2px]">
+              <div key={r} className="grid grid-cols-7 gap-[2px] flex-1 min-h-[2.25rem]">
                 {Array.from({ length: 7 }, (_, col) => {
                   const day = r * 7 + col - lead + 1;
                   return (
                     <span key={col} style={{ gridColumn: col + 1, gridRow: 1 }}
-                      className="h-9 bg-muted/60 rounded-[2px] pl-1 pt-0.5 font-body text-[10px] text-muted-foreground tnum">
+                      className="h-full bg-muted/60 rounded-[2px] pl-1 pt-0.5 font-body text-[10px] text-muted-foreground tnum">
                       {day > 0 && day <= m.days ? day : ""}
                     </span>
                   );
@@ -184,6 +185,7 @@ const PortalDemo = () => {
                 ))}
               </div>
             ))}
+            </div>
             <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1 font-body text-[11px] text-muted-foreground">
               <span className="flex items-center gap-1.5"><i className="w-3 h-2.5 rounded-[2px] bg-[#C2705A]/85 inline-block" aria-hidden="true" />Airbnb</span>
               <span className="flex items-center gap-1.5"><i className="w-3 h-2.5 rounded-[2px] bg-[#5B7FA6]/85 inline-block" aria-hidden="true" />Booking.com</span>
@@ -219,6 +221,30 @@ const PortalDemo = () => {
               ))}
             </dl>
 
+            {/* Denik patri dovnitr boxu, ne pod nej: jinak sekce pokracuje
+                dlouho za kalendarem a prestane cist jako jedna obrazovka. */}
+            <div className="mt-5 border-t border-border pt-3">
+              <p className="font-body text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{t(lang, "pdm_log")}</p>
+              <ul className="m-0 mt-2 p-0 list-none">
+                {m.log.map((e) => {
+                  const good = e.payer !== "owner";
+                  return (
+                    <li key={e.k} className="flex items-baseline justify-between gap-3 py-1.5 border-b border-border last:border-b-0">
+                      <span className="min-w-0 flex items-baseline gap-2">
+                        <span className="font-body text-[11px] text-muted-foreground tnum shrink-0">{e.day}.</span>
+                        <span className="font-body text-[12.5px] text-foreground truncate">{t(lang, `${e.k}_n` as never)}</span>
+                      </span>
+                      <span className={`font-body text-[12px] tnum whitespace-nowrap ${good ? "text-[#3F6B4F]" : "text-foreground"}`}>
+                        {e.amount === 0 ? t(lang, "pdm_free")
+                          : `${e.payer === "income" ? "+" : e.payer === "owner" ? "\u2212" : ""}${czk(Math.abs(e.amount))} Kč`}
+                        <span className="ml-1.5 text-[10.5px] text-muted-foreground">{t(lang, `pdm_short_${e.payer}` as never)}</span>
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+
             {/* Rozpočet Antamu: kolik z ročního limitu bytu je vyčerpáno. */}
             <div className="mt-5 border-t border-border pt-3">
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
@@ -232,57 +258,9 @@ const PortalDemo = () => {
               </div>
             </div>
 
-            <div className="mt-5 border-t border-border pt-3">
-              <p className="font-body text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{t(lang, "pdm_stays")}</p>
-              <ul className="m-0 mt-2 p-0 list-none">
-                {c.paid.slice(0, 4).map((b, i) => (
-                  <li key={i} className="flex items-baseline justify-between gap-4 py-1.5 border-b border-border last:border-b-0">
-                    <span className="min-w-0">
-                      <span className="block font-body text-[13px] text-foreground truncate">{b.guest}</span>
-                      <span className="block font-body text-[11px] text-muted-foreground tnum">
-                        {b.start}. → {b.start + b.nights}. · {b.nights} {t(lang, "pdm_nights")}
-                      </span>
-                    </span>
-                    <span className="font-display text-[14px] text-foreground tnum whitespace-nowrap">{czk(b.amount ?? 0)}&nbsp;Kč</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         </div>
 
-        {/* Deník bytu: co se v bytě dělo a kdo to platil. Zeleně je to, co
-            majitele nestojí nic; červenou schválně nepoužíváme, vlastní náklad
-            majitele není chyba a zelená s červenou je nejhorší dvojice pro
-            barvoslepé. Rozlišuje proto štítek a znaménko, barva jen doplňuje. */}
-        <div className="mt-6 border-t border-border pt-4">
-          <p className="font-body text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{t(lang, "pdm_log")}</p>
-          <ul className="m-0 mt-2 p-0 list-none">
-            {m.log.map((e) => {
-              const good = e.payer !== "owner";
-              return (
-                <li key={e.k} className="grid grid-cols-[2.6rem_minmax(0,1fr)_auto] gap-x-3 sm:gap-x-5 items-baseline py-2.5 border-b border-border last:border-b-0">
-                  <span className="font-body text-[11.5px] text-muted-foreground tnum">{e.day}.&nbsp;8.</span>
-                  <span className="min-w-0">
-                    <span className="block font-body text-[13.5px] text-foreground leading-snug">{t(lang, `${e.k}_n` as never)}</span>
-                    <span className="block font-body text-[11.5px] text-muted-foreground leading-snug">{t(lang, `${e.k}_d` as never)}</span>
-                  </span>
-                  <span className="text-right whitespace-nowrap">
-                    <span className={`block font-body text-[10px] uppercase tracking-[0.1em] ${good ? "text-[#3F6B4F]" : "text-muted-foreground"}`}>
-                      {t(lang, `pdm_pay_${e.payer}` as never)}
-                    </span>
-                    <span className={`mt-0.5 block font-display tnum ${
-                      e.payer === "income" ? "text-[15px] font-semibold text-[#3F6B4F]"
-                      : e.payer === "owner" ? "text-[15px] text-foreground" : "text-[13px] text-muted-foreground"}`}>
-                      {e.amount === 0 ? t(lang, "pdm_free")
-                        : `${e.payer === "income" ? "+" : e.payer === "owner" ? "−" : ""}${czk(Math.abs(e.amount))} Kč`}
-                    </span>
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
       </div>
     </div>
   );
