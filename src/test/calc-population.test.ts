@@ -35,11 +35,22 @@ export function population() {
     for (const size of SIZES)
       for (const b of bucketsFor(size))
         for (const season of SEASONS) {
-          const m2 = b.presetM2 ?? undefined;
+          // DVĚ DŘÍVĚJŠÍ CHYBY HARNESSU, obě opravené 2. 9. 2026:
+          //  1) pole se jmenuje representativeM2, ne presetM2. S překlepem šlo
+          //     do modelu m2 = undefined, model spadl na typicalArea a všechny
+          //     čtyři kbelíky vracely TOTÉŽ číslo — baseline tedy vůbec
+          //     neprověřovala překlopení pásem ani nic závislého na ploše.
+          //  2) kbelík "xl" má representativeM2 null (nadměrný byt). Volat s ním
+          //     rentFor znamenalo dělit nulou a dostat Infinity. Za běhu takový
+          //     stav nenastane — web ho blokuje jako „posoudíme individuálně" —
+          //     a baseline to musí zrcadlit, ne vyrábět nesmysl.
+          const id = `${st.loc}|${st.ctvrt === undefined ? "?" : st.ctvrt ?? "-"}|${size}|${b.id}|${season}`;
+          const m2 = b.representativeM2 ?? null;
+          if (m2 === null) { rows.push({ id, oversized: true, supported: false }); continue; }
           const r = ownerMonthly(st.loc, size, { season, m2, ctvrt: st.ctvrt });
           const ltr = st.loc === "jinde" ? 0 : rentFor(st.loc as LocationKey, size, m2, "mix", st.ctvrt);
           rows.push({
-            id: `${st.loc}|${st.ctvrt === undefined ? "?" : st.ctvrt ?? "-"}|${size}|${b.id}|${season}`,
+            id, oversized: false, m2,
             supported: r.supported, band: r.band, guests: r.guests,
             // POZOR: OwnerMonthly nemá pole czk/gross/occ. Do 2. 9. 2026 se tu
             // zachytávaly jako null, takže baseline NEHLÍDALA částky pro majitele.
