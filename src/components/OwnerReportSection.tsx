@@ -1,5 +1,5 @@
-import Reveal, { stagger } from "@/components/Reveal";
-import PortalDiary from "@/components/PortalDiary";
+import Reveal from "@/components/Reveal";
+import PortalDemo from "@/components/PortalDemo";
 import { ChevronRight, Wallet, Receipt, BedDouble, FileBarChart } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
@@ -44,21 +44,15 @@ const OwnerReportSection = () => {
           </p>
         </Reveal>
 
-        <dl className="mt-8 mb-12 sm:mb-14 border-t border-border">
-          {(["portal_f1", "portal_f2", "portal_f3", "portal_f4", "portal_f5"] as const).map((k, i) => (
-            <Reveal key={k} delay={stagger(i, 0.05)} as="div"
-              className="grid sm:grid-cols-[minmax(0,15rem)_minmax(0,1fr)] gap-x-10 gap-y-1 border-b border-border py-4">
-              <dt className="font-display text-[17px] text-foreground">{t(lang, `${k}_name` as const)}</dt>
-              <dd className="m-0 font-body text-[14.5px] md:text-[15px] text-muted-foreground leading-relaxed text-pretty">
-                {t(lang, `${k}_text` as const)}
-              </dd>
-            </Reveal>
-          ))}
-        </dl>
+        <Reveal className="mt-7"><PortalDemo /></Reveal>
 
-        <PortalDiary />
+        <Reveal className="mt-4 mb-9">
+          <p className="font-body text-[12.5px] text-muted-foreground leading-relaxed max-w-[78ch]">
+            {t(lang, "portal_note")}
+          </p>
+        </Reveal>
 
-        <Reveal className="mt-10 mb-12 sm:mb-16 flex flex-wrap items-baseline gap-x-6 gap-y-2">
+        <Reveal className="mb-12 sm:mb-16 flex flex-wrap items-baseline gap-x-6 gap-y-2">
           <a href="/portal" className="font-body text-[15px] font-medium text-gold-deep no-underline border-b border-gold/40 pb-0.5">
             {t(lang, "portal_open")}
           </a>
