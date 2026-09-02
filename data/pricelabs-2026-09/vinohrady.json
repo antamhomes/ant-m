@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "pulled": "2026-09-02",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Vinohrady official boundary (openstreetmap)",
+  "slug": "vinohrady",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR",
+   "2BR",
+   "3BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   },
+   "2BR": {
+    "basis": "measured"
+   },
+   "3BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/vinohrady.1BR.raw.json",
+    "raw_sha256": "194dea24a859807f974102959a71ed5a38f67ef42a67dedfcc8ffd760cbaa24b",
+    "captured_at": "2026-09-02T17:13:39.575Z",
+    "question_sha256": "4cce57800f1d839060d15cf8590552da67290451a434e94f110a0fd8d2dd4a7a",
+    "geometry_label": "Vinohrady official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_JgFzb-PoT_i3F1JWy0PI79gFk8iMsMzS",
+    "geometry_token": null
+   },
+   "2BR": {
+    "file": "data/pricelabs-raw/vinohrady.2BR.raw.json",
+    "raw_sha256": "3bcd36a3a95e8e01981588aa388f75fad969b36af5af8dd2c95b56f58298e395",
+    "captured_at": "2026-09-02T17:20:39.227Z",
+    "question_sha256": "69ed93147dcae4727073f58c2a88c939a737c10be647b6edfe291e6501a10e44",
+    "geometry_label": "Vinohrady official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_JgFzb-PoT_i3F1JWy0PI79gFk8iMsMzS",
+    "geometry_token": null
+   },
+   "3BR": {
+    "file": "data/pricelabs-raw/vinohrady.3BR.raw.json",
+    "raw_sha256": "cadd680064ec8f6aa66ad9f566610a572500b666bfa6af2eaf483058413d34d0",
+    "captured_at": "2026-09-02T17:23:09.714Z",
+    "question_sha256": "201d8bee0fcc12d1451725773dbaf2c58f968f8922194590bbcb28bfa7c20138",
+    "geometry_label": "Vinohrady official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_JgFzb-PoT_i3F1JWy0PI79gFk8iMsMzS",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   77.2,
+   77.5,
+   79.8,
+   67,
+   78.3,
+   51.4,
+   59.6,
+   63.5,
+   72.5,
+   75.8,
+   70,
+   74.2
+  ],
+  "adr": [
+   2252.55,
+   2195.32,
+   2310.02,
+   1995.7,
+   3412.83,
+   2025.98,
+   1600.84,
+   2087.01,
+   2628.52,
+   2827.36,
+   2308.43,
+   2378.19
+  ],
+  "revpar": [
+   1739.75,
+   1700.71,
+   1842.83,
+   1336.34,
+   2672.67,
+   1040.75,
+   954.51,
+   1325.06,
+   1905.16,
+   2141.87,
+   1614.79,
+   1763.5
+  ],
+  "active_listings": [
+   592,
+   598,
+   586,
+   600,
+   617,
+   628,
+   617,
+   620,
+   626,
+   622,
+   641,
+   650
+  ],
+  "avg_revenue": [
+   50891.21,
+   47575.48,
+   52851.99,
+   37242.31,
+   74596.47,
+   30537.44,
+   27130.67,
+   38350.89,
+   52149.72,
+   59708.04,
+   45317,
+   50220.71
+  ]
+ },
+ "2BR": {
+  "occ": [
+   81.7,
+   77,
+   81.4,
+   66.2,
+   81.2,
+   54,
+   63.8,
+   67.3,
+   75.3,
+   75.3,
+   72.5,
+   79.9
+  ],
+  "adr": [
+   3653.52,
+   3380.27,
+   3616.71,
+   3052.29,
+   5355.08,
+   2937.98,
+   2316.16,
+   3083.7,
+   4334.47,
+   4545.43,
+   3643.94,
+   3949.99
+  ],
+  "revpar": [
+   2985.18,
+   2602.94,
+   2942.87,
+   2020.09,
+   4350.62,
+   1586.09,
+   1477.12,
+   2073.95,
+   3265.21,
+   3422.91,
+   2640.87,
+   3156.56
+  ],
+  "active_listings": [
+   215,
+   219,
+   219,
+   217,
+   227,
+   234,
+   219,
+   224,
+   231,
+   233,
+   238,
+   242
+  ],
+  "avg_revenue": [
+   85857.79,
+   72666.57,
+   85071.32,
+   55969.68,
+   123336.75,
+   45028.36,
+   40822.32,
+   58733.27,
+   89361.93,
+   95664.97,
+   74105.92,
+   90751.05
+  ]
+ },
+ "3BR": {
+  "occ": [
+   78.4,
+   78.4,
+   81.4,
+   65.5,
+   80.7,
+   54.8,
+   62.6,
+   67.4,
+   74.8,
+   73.8,
+   68.2,
+   77.3
+  ],
+  "adr": [
+   5123.12,
+   4677.75,
+   4728.31,
+   3946.77,
+   7206.07,
+   4710.22,
+   4412.14,
+   5069.13,
+   6129.74,
+   6943,
+   6107.58,
+   6188.87
+  ],
+  "revpar": [
+   4016.14,
+   3667.27,
+   3847.48,
+   2585.5,
+   5816.54,
+   2583.32,
+   2762.18,
+   3418.29,
+   4584.1,
+   5122.58,
+   4168.28,
+   4781.05
+  ],
+  "active_listings": [
+   72,
+   72,
+   69,
+   72,
+   70,
+   72,
+   63,
+   71,
+   68,
+   72,
+   73,
+   72
+  ],
+  "avg_revenue": [
+   107745.52,
+   101860.42,
+   107569,
+   69808.57,
+   159200.85,
+   72840.26,
+   82928.17,
+   101166.86,
+   130225.74,
+   140017.16,
+   117175.08,
+   133613.3
+  ]
+ }
+}

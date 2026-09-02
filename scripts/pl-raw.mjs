@@ -64,21 +64,41 @@ export const FIELD_MAP = {
 export function extractFromResponse(verbatim, months) {
   const rows = verbatim?.data;
   if (!Array.isArray(rows)) throw new Error("odpoved nema pole data[] — proza se jako zdroj nepouziva");
-  if (rows.length !== months.length)
-    throw new Error(`data[] ma ${rows.length} zaznamu, ceka se ${months.length}`);
   const got = rows.map((r) => String(r?.month ?? "").replace("-", "_"));
-  if (got.join(",") !== months.join(","))
-    throw new Error(`mesice v data[] nesedi na okno:\n  data:    ${got.join(",")}\n  pravidlo: ${months.join(",")}`);
-  const out = {};
+
+  // 1. Kazdy POZADOVANY mesic prave jednou. Chybejici i zdvojeny = tvrdy fail.
+  const at = {};
+  for (const m of months) {
+    const hits = got.reduce((a, g, i) => (g === m ? [...a, i] : a), []);
+    if (hits.length === 0) throw new Error(`v odpovedi chybi pozadovany mesic ${m}`);
+    if (hits.length > 1) throw new Error(`mesic ${m} je v odpovedi ${hits.length}x`);
+    at[m] = hits[0];
+  }
+
+  // 2. NADBYTECNE radky smi lezet jen STRIKTNE MIMO okno.
+  // Okno urcuje pullWindow() PREDEM, nezavisle na tom, co provider vrati;
+  // proto je vyrazeni mesice mimo nej aplikace pravidla, ne uhyb pred daty.
+  // Rozhoduje POZICE V KALENDARI, nikdy ne to, jestli radek "vypada nedojete".
+  const lo = months[0], hi = months[months.length - 1];
+  const excluded = [];
+  got.forEach((g, i) => {
+    if (months.includes(g)) return;
+    if (g >= lo && g <= hi)
+      throw new Error(`mesic ${g} lezi UVNITR okna ${lo}..${hi}, ale nepatri do nej — odpoved nema ocekavany tvar`);
+    excluded.push({ month: g, index: i, reason: `mimo pozadovane okno uzavrenych mesicu ${lo}..${hi}` });
+  });
+
+  // 3. Hodnoty JEN z pozadovanych mesicu, v poradi okna.
+  const values = {};
   for (const [ours, theirs] of Object.entries(FIELD_MAP)) {
-    out[ours] = rows.map((r, i) => {
-      const v = r?.[theirs];
+    values[ours] = months.map((m) => {
+      const v = rows[at[m]]?.[theirs];
       if (typeof v !== "number" || !Number.isFinite(v))
-        throw new Error(`data[${i}] (${got[i]}) nema ciselne pole "${theirs}"`);
+        throw new Error(`data[${at[m]}] (${m}) nema ciselne pole "${theirs}"`);
       return v;
     });
   }
-  return out;
+  return { values, excluded };
 }
 
 /** Všechna čísla kdekoli v odpovědi, zaokrouhlená na 2 des. místa. */
@@ -164,8 +184,14 @@ if (isMain) {
   // Rady se VZDYCKY ctou ze strukturovanych zaznamu. Rucne dodany seznam
   // se prijme jen jako kontrola a musi se shodovat do posledniho cisla.
   let extracted;
-  try { extracted = { currency: verbatim?.display_currency ?? null, values: extractFromResponse(verbatim, win.months) }; }
+  try {
+    const ex = extractFromResponse(verbatim, win.months);
+    extracted = { currency: verbatim?.display_currency ?? null, values: ex.values, excluded_rows: ex.excluded };
+  }
   catch (e) { fail(e.message); }
+  if (extracted.excluded_rows.length)
+    for (const e of extracted.excluded_rows)
+      console.log(`    vyrazeno  ${e.month}: ${e.reason}`);
   const handed = fxDoc.extracted?.values ?? fxDoc.extracted?.usd;
   if (handed) {
     for (const [k, arr] of Object.entries(extracted.values)) {

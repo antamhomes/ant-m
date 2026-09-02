@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/vinohrady.json",
+ "sha256": "372fe56849e5a3a71ed1a7a57ba2a51877d2888ada311265bd32203dbe2a9e47",
+ "bytes": 4505,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "vinohrady",
+ "geometry": "Vinohrady official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-02"
+}
