@@ -57,11 +57,11 @@ describe("odměna za správu", () => {
       expect(strip(cs[key]), `cs.${key}`).toMatch(/30\s?%/);
       expect(strip(vi[key]), `vi.${key}`).toMatch(/30\s?%/);
     }
-    // QA-09 (1. 9. 2026): faq17_a už sazbu neuvádí — poslední věta („V odměně
-    // 30 % je i písemné roční minimum a krytí menších škod") jen opakovala dvě
-    // karty přímo nad sebou. Sazba zůstává v otázce, tak ji hlídáme tam.
-    expect(strip(cs.faq17_q), "cs.faq17_q").toMatch(/30\s?%/);
-    expect(strip(vi.faq17_q), "vi.faq17_q").toMatch(/30\s?%/);
+    // AD 2. 9. 2026: faq17 („Proč 30 %?") je celý pryč. Obhajoba ceny staví
+    // čtenáře do cenového srovnání a druhá věta shazovala levnější správce
+    // bez důkazu. Sazbu drží nadpis sekce a vzorový výpočet pod ním.
+    expect(strip(cs.pricing_title), "cs.pricing_title").toMatch(/30\s?%/);
+    expect(strip(cs.pricing_title), "cs.pricing_title").toMatch(/70\s?%/);
   });
 
   it("nikde nezůstalo staré 25 % a 28 % ani dělení 75/25 a 72/28", () => {
@@ -70,11 +70,7 @@ describe("odměna za správu", () => {
         if (typeof value !== "string") continue;
         const v = strip(value);
         // 25 000 Kč (uvedení do provozu) je jiné číslo a zůstává.
-        // faq17_a smí 25 % zmínit: je to vědomá srovnávací matematika základů
-        // ("25 % z tržeb před provizí"), ne stará sazba.
-        if (key !== "faq17_a") {
-          expect(v.replace(/25 000/g, ""), `${lang}.${key}`).not.toMatch(/25\s?%/);
-        }
+        expect(v.replace(/25 000/g, ""), `${lang}.${key}`).not.toMatch(/25\s?%/);
         expect(v, `${lang}.${key}`).not.toMatch(/28\s?%/);
         expect(v, `${lang}.${key}`).not.toMatch(/75\s?\/\s?25/);
         expect(v, `${lang}.${key}`).not.toMatch(/72\s?\/\s?28/);

@@ -28,22 +28,17 @@ const PricingSection = () => {
   return (
     <section id="cenik" className="section-cont bg-secondary scroll-mt-16">
       <div className="container-wide">
+        {/* AD 2. 9. 2026: model, ne obhajoba. Nadpis je zároveň to největší
+            číslo v sekci: 70/30 řekne celý ceník dřív, než začne výpočet.
+            Samotné obří „30 %" nutilo číst sazbu jako cenu k porovnání. */}
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "pricing_label")}</p>
-          <h2 className="h-section-xs text-foreground">{t(lang, "pricing_title")}</h2>
+          <h2 className="font-display font-semibold text-foreground leading-[1.02] tracking-[-0.03em] text-[clamp(2.4rem,5.4vw,4.4rem)] tnum text-balance">
+            {t(lang, "pricing_title")}
+          </h2>
         </Reveal>
 
-        <div className="grid gap-x-14 gap-y-9 lg:grid-cols-[auto_minmax(0,1fr)] items-start">
-          <Reveal>
-            <p className="tnum font-display font-semibold text-foreground leading-[0.82] tracking-[-0.048em] text-[clamp(6rem,12.5vw,10.75rem)]">
-              30
-              <span className="align-super text-[0.28em] tracking-normal text-gold-deep ml-[0.02em]">%</span>
-            </p>
-            <p className="mt-1 font-body text-[11px] sm:text-xs uppercase tracking-[0.14em] text-muted-foreground">
-              {t(lang, "pr1_price_short")}
-            </p>
-          </Reveal>
-
+        <div className="max-w-3xl">
           <Reveal delay={0.08}>
             <p className="font-body text-[17px] md:text-[19px] text-foreground leading-relaxed max-w-[46ch]">
               {t(lang, "pricing_desc")}
@@ -136,18 +131,7 @@ const PricingSection = () => {
               </dl>
             </details>
 
-            {/* „Proč 30 %?" — jediná námitka, kterou tahle sekce sama vyvolá,
-                tak ať na ni odpoví na místě, ne až na schůzce. (2B: z faq17.) */}
-            <div className="mt-10 pt-7 border-t border-border">
-              <p className="font-display text-[1.15rem] md:text-[1.3rem] font-semibold text-foreground mb-2">
-                {t(lang, "faq17_q")}
-              </p>
-              <p className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed text-pretty max-w-[62ch]">
-                {t(lang, "faq17_a")}
-              </p>
-            </div>
-
-            <p className="mt-6 font-body text-[13px] text-muted-foreground leading-relaxed text-pretty max-w-[68ch]">
+            <p className="mt-10 pt-7 border-t border-border font-body text-[13px] text-muted-foreground leading-relaxed text-pretty max-w-[68ch]">
               {t(lang, "pricing_foot")}
             </p>
           </Reveal>
