@@ -254,3 +254,52 @@ Zbývá jedna úzká výjimka: **Staré Město** má 11 nájemních inzerátů, 
 12, takže do `GEO` nespadlo — čtvrťové STR proti okresnímu nájmu, násobek
 nahoře. Scrape to nespraví, tam se dlouhodobě pronajímá málo. Řeší se to
 rozhodnutím o té jedné čtvrti, ne dalším sběrem dat.
+
+---
+
+## 12. Krok 0: zachyť surovou odpověď (od 2. 9. 2026 povinné)
+
+**Než se s odpovědí cokoli udělá**, uloží se tak, jak přišla. Zpětně to
+nejde: `market_research` stejný dotaz podruhé nevrátí identicky a kvóta je 20
+dotazů na 24 h.
+
+```
+node scripts/pl-raw.mjs --band 2BR --slug nove_mesto \
+  --question "<položená otázka DOSLOVA>" \
+  --response /tmp/resp.json --fx /tmp/fx.json \
+  --geometry-label "New Town official boundary" \
+  --geometry-source openstreetmap \
+  --session-id <...> --geometry-token <...>
+```
+
+`--fx` nese kurzy po měsících **a** `extracted.usd` — řady vytažené
+z odpovědi před převodem. Artefakt se pak musí z těch dvou věcí reprodukovat
+na setinu, jinak `pl-artifact.mjs` skončí STOPem.
+
+`geometry_token` se ukládá vždycky, i když se zrovna nezdá potřeba. Vyšlo to
+z toho, že u Nového Města chyběl a obnovení pullu kvůli tomu možná musí projít
+novým kolem výběru geometrie. Provenience navíc nic nestojí.
+
+### Pořadí u jedné čtvrti
+
+```
+market_research  ->  pl-raw.mjs  ->  pl-artifact.mjs --raw BAND=...  ->  pl-import.mjs
+   (kvóta)          (haš)            (rekonciliace)                     (rekonciliace znovu)
+```
+
+Bez prostředního kroku nemá `measured` co doložit a produkční import neprojde.
+
+## 13. Reprodukovatelnost okresních dat — ověřeno 2. 9. 2026
+
+Při diagnostice 3BR Prahy 2 vyšlo srovnání s commitnutým `praha2.json`
+(pull 30. 8. 2026, totéž okno). Shoda **12/12 u všech pěti řad** —
+occ, adr, revpar, active_listings, avg_revenue. Šedesát hodnot, tři dny
+odstup, bez jediného rozdílu.
+
+Neříká to nic o zbylých osmi okresech, ale jeden nahodile užitečný re-pull,
+který sedne na doraz, je slušná kontrola potrubí: `pullWindow()` drží
+a strukturovaná data PriceLabs jsou v čase stabilní.
+
+Okresní artefakty pořád nemají surovou provenienci (vznikly před záchytem).
+Tohle jim ji nenahrazuje — jen ukazuje, že jejich čísla živý PriceLabs
+potvrzuje.

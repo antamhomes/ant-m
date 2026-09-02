@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/nove_mesto.json",
+ "sha256": "5a45943ce88d79f69a90fdb591032cb3e5b98b28835c557689ea7a1ced65928e",
+ "bytes": 4534,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "nove_mesto",
+ "geometry": "New Town official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-02"
+}

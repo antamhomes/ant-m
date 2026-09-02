@@ -100,3 +100,113 @@ výsledku bez toho, že je označená jako odvozená.
 
 Dokud tenhle sloupec není, platí tvrdší pravidlo: **do `MARKET_CTVRT` smí jen
 pásma pullnutá přímo.** Rozpady zůstávají v analýze, ne v modelu.
+
+---
+
+# Body 19 a 20 — surová provenience (přidáno 2. 9. 2026)
+
+## Proč přibyly
+
+Do 2. 9. 2026 přejímka dokazovala tohle: *artefakt je dobře tvarovaný
+a tvrdí správnou provenienci.* Nedokazovala tohle: *ta čísla opravdu přišla
+z toho PriceLabs pullu.*
+
+Rozdíl není teoretický. V `_to_delete/gate-test/pricelabs-2026-07/` ležely
+soubory `nove_mesto.json` a `stare_mesto.json`, které byly **doslovné kopie
+`praha3.json` a `praha1.json`** s podvrženým labelem geometrie, `pulled`
+dnešního data a `bands_basis: measured`. Prošly by body 1–18 bez jediného
+zaškobrtnutí: pásma jsou, dvanáct měsíců bez děr, okno sedí, basis je
+measured, řetězec geometrie je přesně ten schválený.
+
+Bod 18 (`původ pásem`) byl vynutitelný jen čestným slovem toho, kdo psal
+`--basis`. Body 19 a 20 to mění.
+
+## 19. Surová odpověď — TVRDÝ STOP u čtvrtí
+
+`pl-raw.mjs` zachytí odpověď PriceLabs **před** jakoukoli transformací:
+verbatim odpověď, položená otázka a její haš, pásmo, požadované okno,
+`session_id`, `geometry_token`, vrácený label a source geometrie, kurzy
+po měsících a řady v USD vytažené z odpovědi. Envelope se zahašuje.
+
+`pl-artifact.mjs` pak `--basis measured` bez `--raw` **odmítne** a u každého
+pásma ověří tři věci:
+
+1. **Obsažitelnost** — každé tvrzené USD číslo se musí v surové odpovědi
+   doslova vyskytovat. Vymyšlená nebo zkopírovaná řada tímhle neprojde.
+2. **Nepřepočítávaná pole** (`occ`, `active_listings`) musí sedět přesně.
+3. **Kurz** — `artefakt = round2(usd × kurz měsíce)`. Chytá i tiše špatnou
+   tabulku kurzů, což je chyba, kterou by jinak nikdo nenašel.
+
+`pl-import.mjs` to celé ověřuje **znovu** při importu: soubor existuje, jeho
+haš sedí na to, co si artefakt zapsal, a artefakt se z něj pořád reprodukuje.
+
+Ověřeno na deseti případech: chybějící `--raw`, nesedící geometrie, **jedno
+změněné číslo o setinu**, surová odpověď změněná až po vzniku artefaktu,
+čtvrťový artefakt bez `raw_provenance` — všechno tvrdý STOP.
+
+**Co to NEdokazuje:** že PriceLabs mluví pravdu. Dokazuje, že náš artefakt
+odpovídá tomu, co PriceLabs vrátil. To je celý rozsah tvrzení.
+
+## 20. Shodný payload pod jinou geometrií — SEKUNDÁRNÍ pojistka
+
+Haš řady pásma proti všem ostatním artefaktům v `data/`. Shoda pod **jinou**
+geometrií zastaví import; vědomé povolení chce `--allow-duplicate-payload
+"<důvod>"` a důvod se vytiskne do přejímky.
+
+**Tohle není důkaz původu a nesmí se tak číst.** Chytne doslovnou kopii —
+tedy přesně tu kontaminaci, která se stala. Kopie s jedním změněným číslem
+projde. Proto stojí *za* bodem 19, ne místo něj.
+
+## Co body 19 a 20 NEJSOU
+
+Nejsou to statistické prahy. Předregistrované okresní poměry
+(`2BR/1BR` 1,335–1,606, `3BR/1BR` 1,431–2,706) zůstávají **diagnostickým
+spouštěčem vyšetřování**, ne kritériem přijetí. Naměřené 2BR na 1,65× 1BR
+neznamená, že se PriceLabs mýlí — znamená, že se před přijetím prověří
+geometrie, filtr, velikost vzorku a surová odpověď.
+
+## Vynutitelnost po změně
+
+| | dřív | teď |
+|---|---|---|
+| mechanicky vynuceno | 10 | **12** |
+| částečně | 4 | 4 |
+| jen lidsky | 4 | **2** |
+
+Body 3 (schválení geometrie) a kvóta zůstávají lidské. Bod 18 (`původ pásem`)
+přestal být čestné slovo — opírá se o bod 19.
+
+---
+
+# Bod 21 — vyprávěná část odpovědi NENÍ zdroj (2. 9. 2026)
+
+`market_research` vrací dvě věci: strukturované `data[]` a vyprávěné shrnutí.
+**Shrnutí prokazatelně lže.** Tři případy z jediného dne:
+
+| co próza tvrdila | jak to bylo |
+|---|---|
+| Praha 2 3BR: „136 active listings on average" | průměr je **127** (136 je červenec) |
+| Nové Město: „July 2025 to August 2026" | data byla `2025_08 … 2026_07` |
+| kruh 15 km: „New Town (Nove Mesto), Prague" | `selected_geometry_label` = **Prague Main Station circle (15 km)** |
+
+Pokaždé bylo `data[]` správně. Próza je dekorace, ne datový zdroj.
+
+## Jak se to vynucuje
+
+Rady se **nepřebírají, nýbrž čtou**. `pl-raw.mjs` má
+`extractFromResponse()`, která bere hodnoty výhradně z `verbatim.data[]`
+podle pevné mapy polí a ověří, že měsíce v záznamech přesně odpovídají oknu.
+
+- Odpověď bez `data[]` → STOP („próza se jako zdroj nepoužívá").
+- Počet záznamů ≠ 12, nesedící měsíce, nečíselné pole → STOP.
+- Ručně dodaný seznam čísel se smí předat jen jako **kontrola** a musí
+  sedět do posledního čísla; jinak STOP s uvedením obou hodnot.
+
+Ten poslední bod zavírá skutečnou díru: dřív seznam čísel do envelope psal
+člověk, a to je přesně místo, kudy by věta z prózy prolezla do artefaktu.
+
+## Poznámka k hašům
+
+`raw_sha256` a soubor `.sha256` nesou haš **kanonické** podoby envelope
+(klíče seřazené), ne bajtů souboru. `sha256sum` na tom souboru proto vrátí
+jiné číslo. Není to poškození; importer ověřuje kanonický haš.

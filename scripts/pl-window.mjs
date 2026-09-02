@@ -29,6 +29,24 @@ export function pullWindow(today = new Date(), lagDays = CLOSE_LAG_DAYS) {
   return { from: months[0], to: months[months.length - 1], months };
 }
 
+/**
+ * Adresář artefaktu. Řídí se DATEM PULLU, ne koncem okna.
+ *
+ * Repo tak ukládá od začátku: `data/pricelabs-2026-08/` drží pull z 30. 8.
+ * 2026, jehož okno končí `2026_07`. Default `pl-artifact.mjs` se dřív bral
+ * z konce okna, takže by zářijový pull mlčky spadl do `pricelabs-2026-07`
+ * a mísil se s jiným pullem. Nachytáno 2. 9. 2026 při Novém Městě, kde to
+ * zachránil ruční `--out` — což je přesně ta záchrana, na kterou se nedá
+ * spoléhat. Default musí sedět sám.
+ *
+ * @param {string} pulled datum pullu ve tvaru YYYY-MM-DD
+ */
+export function artifactDir(pulled) {
+  const m = /^(\d{4})-(\d{2})-\d{2}$/.exec(String(pulled));
+  if (!m) throw new Error(`artifactDir: ceka YYYY-MM-DD, dostal "${pulled}"`);
+  return `data/pricelabs-${m[1]}-${m[2]}`;
+}
+
 if (import.meta.url === `file://${process.argv[1]}`) {
   const w = pullWindow(process.argv[2] ? new Date(process.argv[2]) : new Date());
   console.log(`${w.from} .. ${w.to}  (${w.months.length} mesicu)`);
