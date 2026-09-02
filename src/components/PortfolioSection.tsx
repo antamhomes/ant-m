@@ -69,7 +69,7 @@ const copy = {
     soonTitle: "Tady může být váš byt",
     soonDesc: "Napište nám a\u00a0do 24 hodin víte, jak je na\u00a0tom ten váš. Zdarma a\u00a0nezávazně.",
     soonDescShort: "Napište nám a\u00a0do 24 hodin víte, jak je na\u00a0tom ten váš.",
-    showAll: "Další výsledky",
+    showAll: "Zobrazit další výsledky",
     prevFlat: "Předchozí byt",
     nextFlat: "Další byt",
     featOwner: "průměrně měsíčně majiteli",
@@ -95,7 +95,7 @@ const copy = {
     soonTitle: "Căn của anh chị có thể ở đây",
     soonDesc: "Nhắn cho Antam, trong 24 giờ anh chị biết căn nhà mình thế nào. Miễn phí, không ràng buộc.",
     soonDescShort: "Nhắn cho Antam, trong 24 giờ anh chị biết căn nhà mình thế nào.",
-    showAll: "Kết quả các căn khác",
+    showAll: "Xem thêm kết quả",
     prevFlat: "Căn trước",
     nextFlat: "Căn sau",
     featOwner: "trung bình mỗi tháng chủ nhà nhận",
@@ -180,7 +180,7 @@ const PortfolioSection = () => {
           </div>
         </figure>
         <div className="flex flex-col px-6 pt-5 sm:pt-6 lg:block lg:px-0 lg:py-0 lg:pl-14 lg:pr-[max(1.5rem,calc((100vw-75rem)/2+1.5rem))]">
-          <div className="flex items-center gap-2 mb-5 max-lg:order-2 max-lg:mt-7 max-lg:mb-0">
+          <div className="flex items-center gap-2 mb-5 max-lg:order-2 max-lg:mt-6 max-lg:mb-0">
             <button type="button" onClick={() => step(-1)} aria-label={c.prevFlat}
               className="p-2.5 rounded-sm border border-border text-muted-foreground hover:border-foreground/40 transition-colors">
               <ChevronLeft className="w-4 h-4" aria-hidden="true" />
@@ -248,7 +248,7 @@ const PortfolioSection = () => {
             argument o velikosti, ne o výsledku, a stál hned pod jediným bytem,
             který má sekci nést. Na jeho místě je věta, která čtenáři řekne, co
             právě viděl a co ho čeká v kalkulačce. Závěr si udělá sám. */}
-        <Reveal className="mt-9 sm:mt-12 pt-7 border-t border-border">
+        <Reveal className="mt-6 sm:mt-12 pt-5 sm:pt-7 border-t border-border">
           <p className="font-body text-[14.5px] sm:text-[15px] text-muted-foreground leading-relaxed text-pretty max-w-[58ch]">
             {c.calcBridge}
           </p>

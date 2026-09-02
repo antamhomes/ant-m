@@ -23,13 +23,18 @@ import { t, type TranslationKey } from "@/i18n/translations";
  * Sekci uzavírají recenze hostů: 520+ hodnocení tady nejsou popularita,
  * ale doklad, že hostitelská část provozu opravdu funguje.
  */
+/* AD 2. 9. 2026: emoji jen tady a jen jako orientační značka provozu.
+   Pravidlo: emoji = co se v bytě dělá, nikdy ne peníze, garance, nadpis
+   ani CTA. Vlastní zlaté line-ikony by z toho udělaly šablonu na správu
+   nemovitostí; emoji jsou neformálnější a na telefonu se skenují rychleji.
+   Pro odečítačky jsou aria-hidden, význam nesou nadpisy. */
 const items = [
-  { title: "svc3_title", desc: "svc3_desc" }, // ceny a obsazenost — nejsilnější, jde první
-  { title: "svc2_title", desc: "svc2_desc" }, // fotky a prezentace
-  { title: "svc4_title", desc: "svc4_desc" }, // hosté
-  { title: "svc5_title", desc: "svc5_desc" }, // úklid a provoz
-  { title: "svc1_title", desc: "svc1_desc" }, // příprava bytu
-  { title: "svc6_title", desc: "svc6_desc" }, // vyúčtování
+  { emoji: "📈", title: "svc3_title", desc: "svc3_desc" }, // ceny a obsazenost — nejsilnější, jde první
+  { emoji: "📸", title: "svc2_title", desc: "svc2_desc" }, // fotky a prezentace
+  { emoji: "💬", title: "svc4_title", desc: "svc4_desc" }, // hosté
+  { emoji: "🧹", title: "svc5_title", desc: "svc5_desc" }, // úklid a provoz
+  { emoji: "🛠️", title: "svc1_title", desc: "svc1_desc" }, // příprava bytu
+  { emoji: "📊", title: "svc6_title", desc: "svc6_desc" }, // vyúčtování
 ] as const;
 
 /**
@@ -79,7 +84,10 @@ const ServicesSection = () => {
               delay={stagger(i, 0.05)}
               className="py-5 sm:py-6 border-t border-gold/25"
             >
-              <h3 className="font-display text-[1.15rem] md:text-[1.2rem] font-semibold text-primary-foreground mb-2 leading-snug">
+              <h3 className="flex items-baseline gap-2.5 font-display text-[1.15rem] md:text-[1.2rem] font-semibold text-primary-foreground mb-2 leading-snug">
+                <span aria-hidden="true" className="shrink-0 text-[18px] md:text-[19px] leading-none not-italic font-normal">
+                  {it.emoji}
+                </span>
                 {t(lang, it.title)}
               </h3>
               <p className="font-body text-[15px] md:text-[15.5px] text-primary-foreground/70 leading-relaxed text-pretty">
