@@ -1,3 +1,5 @@
+import type { ComponentType, SVGProps } from "react";
+import { Camera, ChartNoAxesCombined, FileChartColumn, MessageCircleMore, Wrench } from "lucide-react";
 import Reveal, { stagger } from "@/components/Reveal";
 import ReviewsBlock from "@/components/ReviewsBlock";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -23,19 +25,35 @@ import { t, type TranslationKey } from "@/i18n/translations";
  * Sekci uzavírají recenze hostů: 520+ hodnocení tady nejsou popularita,
  * ale doklad, že hostitelská část provozu opravdu funguje.
  */
-/* AD 2. 9. 2026: emoji jen tady a jen jako orientační značka provozu.
-   Pravidlo: emoji = co se v bytě dělá, nikdy ne peníze, garance, nadpis
-   ani CTA. Vlastní zlaté line-ikony by z toho udělaly šablonu na správu
-   nemovitostí; emoji jsou neformálnější a na telefonu se skenují rychleji.
-   Pro odečítačky jsou aria-hidden, význam nesou nadpisy. */
-const items = [
-  { emoji: "📈", title: "svc3_title", desc: "svc3_desc" }, // ceny a obsazenost — nejsilnější, jde první
-  { emoji: "📸", title: "svc2_title", desc: "svc2_desc" }, // fotky a prezentace
-  { emoji: "💬", title: "svc4_title", desc: "svc4_desc" }, // hosté
-  { emoji: "🧹", title: "svc5_title", desc: "svc5_desc" }, // úklid a provoz
-  { emoji: "🛠️", title: "svc1_title", desc: "svc1_desc" }, // příprava bytu
-  { emoji: "📊", title: "svc6_title", desc: "svc6_desc" }, // vyúčtování
-] as const;
+type IconProps = SVGProps<SVGSVGElement> & { strokeWidth?: number };
+type Icon = ComponentType<IconProps>;
+
+/** Lucide koště nemá; stejná mřížka 24 px, stejný tah, dva odlesky jako
+ *  v návrhu. Ručně kreslený je jen tenhle jeden. */
+const Broom: Icon = ({ strokeWidth = 1.5, ...props }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={strokeWidth}
+    strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M20 3 11.5 11.5" />
+    <path d="M13.5 9.5 6.2 16.8a3.2 3.2 0 0 0 0 4.5l.5.5 7.8-7.8" />
+    <path d="M3.5 18.5 6 21" />
+    <path d="M6.5 15.5 9 18" />
+    <path d="M17 13h.01M20 16h.01M19 19h.01" />
+  </svg>
+);
+
+/* AD 2. 9. 2026: šest zlatých line-ikon vlevo od nadpisu, jen tady.
+   Ikona = orientační značka provozu (co se v bytě dělá), nikdy ne peníze,
+   garance, nadpis ani CTA; tam by z toho byl bonus list. Stejný tah 1,5 px,
+   stejná mřížka 24 px, barva eyebrow na tmavé. Pro odečítačky aria-hidden,
+   význam nesou nadpisy. */
+const items: ReadonlyArray<{ icon: Icon; title: TranslationKey; desc: TranslationKey }> = [
+  { icon: ChartNoAxesCombined, title: "svc3_title", desc: "svc3_desc" }, // ceny a obsazenost — nejsilnější, jde první
+  { icon: Camera, title: "svc2_title", desc: "svc2_desc" }, // fotky a prezentace
+  { icon: MessageCircleMore, title: "svc4_title", desc: "svc4_desc" }, // hosté
+  { icon: Broom, title: "svc5_title", desc: "svc5_desc" }, // úklid a provoz
+  { icon: Wrench, title: "svc1_title", desc: "svc1_desc" }, // příprava bytu
+  { icon: FileChartColumn, title: "svc6_title", desc: "svc6_desc" }, // vyúčtování
+];
 
 /**
  * QA-08: v češtině sekce říkala jednu myšlenku třikrát za sebou — nadpis
@@ -82,17 +100,17 @@ const ServicesSection = () => {
             <Reveal
               key={it.title}
               delay={stagger(i, 0.05)}
-              className="py-5 sm:py-6 border-t border-gold/25"
+              className="py-6 sm:py-7 border-t border-gold/25 flex items-start gap-5 md:gap-6"
             >
-              <h3 className="flex items-baseline gap-2.5 font-display text-[1.15rem] md:text-[1.2rem] font-semibold text-primary-foreground mb-2 leading-snug">
-                <span aria-hidden="true" className="shrink-0 text-[18px] md:text-[19px] leading-none not-italic font-normal">
-                  {it.emoji}
-                </span>
-                {t(lang, it.title)}
-              </h3>
-              <p className="font-body text-[15px] md:text-[15.5px] text-primary-foreground/70 leading-relaxed text-pretty">
-                {t(lang, it.desc)}
-              </p>
+              <it.icon aria-hidden="true" strokeWidth={1.5} className="shrink-0 w-9 h-9 md:w-10 md:h-10 text-gold-on-dark mt-0.5" />
+              <div className="min-w-0">
+                <h3 className="font-display text-[1.15rem] md:text-[1.2rem] font-semibold text-primary-foreground mb-2 leading-snug">
+                  {t(lang, it.title)}
+                </h3>
+                <p className="font-body text-[15px] md:text-[15.5px] text-primary-foreground/70 leading-relaxed text-pretty">
+                  {t(lang, it.desc)}
+                </p>
+              </div>
             </Reveal>
           ))}
         </div>
