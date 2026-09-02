@@ -147,6 +147,28 @@ var MARKET_CTVRT = {
       "2BR": { adr: 4031, revpar: 3045.7, nMean: 619, nMin: 608, basis: "measured" },
       "3BR": { adr: 6503, revpar: 4851.3, nMean: 231, nMin: 219, basis: "measured" }
     }
+  },
+  /**
+   * Vinohrady leží v Praze 2 i v Praze 3, takže jeden pull (2. 9. 2026)
+   * obsluhuje oba kontexty: praha2/vinohrady (LTR +0,6 %, n=63) i
+   * praha3/vinohrady (+3,5 %, n=32). Geometrie
+   * „Vinohrady official boundary (openstreetmap)", okno 2025_08..2026_07,
+   * surové odpovědi v data/pricelabs-raw/vinohrady.{1BR,2BR,3BR}.raw.json.
+   *
+   * POZOR na 3BR: nMean 71 spadá do pásma 50–99, takže `ctvrtWeight` dá
+   * váhu 0,75 — je to PRVNÍ čtvrťové pásmo, které nejede na plnou váhu.
+   * Výsledek je 75 % Vinohrad + 25 % okresu, a protože geometrie patří
+   * dvěma obvodům, vyjde pro Prahu 2 a Prahu 3 jiné číslo. Tak to pravidlo
+   * má fungovat; není to výjimka ani chyba.
+   */
+  vinohrady: {
+    label: "Vinohrady",
+    parents: ["praha2", "praha3"],
+    bands: {
+      "1BR": { adr: 2335, revpar: 1669.8, nMean: 616, nMin: 586, basis: "measured" },
+      "2BR": { adr: 3656, revpar: 2710.4, nMean: 227, nMin: 215, basis: "measured" },
+      "3BR": { adr: 5437, revpar: 3946.1, nMean: 71, nMin: 63, basis: "measured" }
+    }
   }
 };
 var ctvrtWeight = (n) => n >= 100 ? 1 : n >= 50 ? 0.75 : n >= 25 ? 0.5 : 0;
