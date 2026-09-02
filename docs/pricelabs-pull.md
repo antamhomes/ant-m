@@ -341,3 +341,20 @@ tuhle práci odvádí brána, ne důvěra v session. A protože prázdné obálk
 (`{"success":false,"error":""}`) chodí nahodile — 3BR Nového Města prošlo
 až na čtvrtý pokus, beze změny čehokoli — počítej s tím, že pásmo může
 selhat i s živou session. Selhání ≠ chybějící data.
+
+## 15. Sdílená geometrie: dva kontexty, jeden zápis
+
+Když geometrii sdílí víc kontextů (Nové Město P1+P2, Vinohrady P2+P3),
+`pl-import.mjs` se pouští **zvlášť pro každý** `--geo`, protože každý má
+vlastní LTR kontext, který se musí vypsat do přejímky.
+
+U Vinohrad z toho vznikly dva skripty lišící se **jen v `geo_id`**
+(ověřeno diffem: `sed s/praha2_vinohrady/GEO/` proti
+`sed s/praha3_vinohrady/GEO/` nedal žádný rozdíl). Aplikovaly se jako
+**jedna transakce** přes `unnest(array[...]) as g`, aby dvojice řádků
+byla atomická — buď oba kontexty, nebo žádný.
+
+**Není to bajt v bajt výstup `--emit-sql`.** Je to legitimní jen s tímhle
+postupem: nejdřív vygenerovat oba skripty, diffem doložit, že se liší
+pouze v `geo_id`, teprve pak sloučit. Bez toho diffu se skripty pouštějí
+jednotlivě.
