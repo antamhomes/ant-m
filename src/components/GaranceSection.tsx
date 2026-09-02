@@ -48,7 +48,7 @@ const GaranceSection = () => {
   const last = nums.length - 1;
 
   return (
-    <section id="garance" className="section-cont bg-background scroll-mt-16">
+    <section id="garance" className="section-cont chapter-edge bg-background scroll-mt-16">
       <div className="container-wide">
         <Reveal className="section-head">
           {/* 2D: bez eyebrow. Garance není nová kapitola, je to třetí věta

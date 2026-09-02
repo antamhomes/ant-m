@@ -22,7 +22,7 @@ const translations = {
 
     // Services — Co za vás řešíme (bento)
     services_label: "Co za vás řešíme",
-    services_title: "Už to dávno není jen „pronajmout byt“.",
+    services_title: "Co se s bytem děje každý den.",
     services_desc: "Stejný byt ve stejném domě může mít výrazně jiný výsledek podle toho, jak se každý den pracuje s cenou, dostupností, prezentací a provozem.",
     svc1_title: "Příprava bytu",
     svc1_desc: "Navrhneme potřebné úpravy a vybavení před spuštěním.",
@@ -75,16 +75,16 @@ const translations = {
     step3_desc: "Byt připravený k\u00a0provozu spouštíme rovnou. Pokud je potřeba něco doladit, domluvíme úpravy, vybavení a\u00a0prezentaci.",
     step4_title: "Spustíme pronájem",
     step4_desc: "Převezmeme rezervace, hosty, ceny i provoz. První hosté chodí do 14 dnů od přípravy bytu.",
-    process_cta: "Nechat si byt posoudit",
+    process_cta: "Poslat nám byt",
     process_season: "Byt spuštěný na podzim stihne prosinec, kdy jsou ceny v našich lokalitách až 1,5× nad ročním průměrem.",
 
     // About — Kdo za tím stojí (REVIEW: nahradit vlastními slovy + fotkou)
     about_label: "Kdo za tím stojí",
-    about_title: "Každý byt bereme jako samostatný byznys.",
+    about_title: "Začínali jsme na vlastních a rodinných bytech.",
     about_p1: "Krátkodobým pronájmem se\u00a0zabýváme každý den, už\u00a0přes pět let. Spravujeme apartmány různých velikostí, v\u00a0různých lokalitách a\u00a0pro různé typy hostů. Napříč nimi dosahujeme lepších výsledků než srovnatelné nabídky v\u00a0okolí.",
     about_p2: "Dnes nestačí byt jen vystavit na Airbnb nebo Booking. Rozhoduje správné nastavení ceny, prezentace, fotografie, hodnocení, rychlost komunikace, práce s obsazeností i desítky malých rozhodnutí během celého roku.",
     about_p3: "Sledujeme výsledky každý den a podle nich měníme, jak se každý byt nabízí a řídí.",
-    about_p4: "Začínali jsme na\u00a0vlastních a\u00a0rodinných bytech. Dnes spravujeme jedenáct apartmánů v\u00a0Praze a\u00a0okolí a\u00a0máme za\u00a0sebou přes 520 hodnocení od\u00a0hostů.",
+    about_p4: "Dnes spravujeme jedenáct apartmánů v Praze a okolí a máme za sebou přes 520 hodnocení od hostů.",
     about_scale: "Spravujeme jednotlivé byty i více jednotek jednoho majitele.",
     about_p5: "Neřešíme jen každodenní správu. U každého bytu hlídáme, co ho brzdí a kde má ještě rezervu.",
     about_stat1_value: "11",
@@ -96,8 +96,8 @@ const translations = {
 
     // Garance výnosu
     g_label: "Garance",
-    g_title1: "Vyšší výnos. ",
-    g_title2: "Bez\u00a0sázky naslepo.",
+    g_title1: "Spodní hranice výnosu je ",
+    g_title2: "daná dopředu.",
     g_desc: "Než byt převezmeme, písemně si stanovíme minimální roční výsledek pro majitele.",
     g_num1_label: "Dlouhodobý nájem",
     g_num1_value: "28 000 Kč",
@@ -119,7 +119,7 @@ const translations = {
     g_pair2_label: "",
     g_pair2_text: "",
     g_small: "",
-    g_cta: "Nechat si byt posoudit",
+    g_cta: "Poslat nám byt",
     // Assurance (contact)
     assure1: "Nezávazná poptávka",
     assure2: "Garance výnosu",
@@ -322,7 +322,7 @@ const translations = {
     pricing_desc: "Čistý výnos je to, co pošlou platformy po své provizi, minus úklid, který platí hosté zvlášť. Bez měsíčního paušálu, uvedení bytu do provozu je jednorázově 25 000 Kč.",
     pr1_name: "Správa",
     pr1_price: "30 % z čistého výnosu",
-    pr1_note: "Čísla ve schématu jsou vzor pro 90 000 Kč na účtu, ne konkrétní byt. Úklidový poplatek platí hosté zvlášť a kryje úklid a prádlo. Ze samotného výnosu je naše odměna 30 % a je konečná; energie hradí majitel.",
+    pr1_note: "Čísla ve schématu jsou vzor pro 90 000 Kč na účtu, ne konkrétní byt. Ze samotného výnosu je naše odměna 30 % a je konečná.",
     pr1_split_owner: "70 % pro vás",
     pr1_split_fee: "30 % Antam Homes",
     pr1_flow1: "Přijde na účet od Airbnb a Booking.com",
@@ -503,7 +503,7 @@ const translations = {
 
     // Services
     services_label: "Quản lý cho thuê ngắn hạn chuyên nghiệp",
-    services_title: "Cho thuê ngắn hạn bây giờ là một nghề.",
+    services_title: "Việc phải làm với căn hộ mỗi ngày.",
     services_desc: "Nhà là để thêm thu nhập, không phải thêm việc. Nội thất gọn đẹp. Ảnh sáng sủa. Giá đặt theo mùa. Khách được chăm chu đáo. Việc nào Antam cũng lo đến nơi đến chốn.",
     svc1_title: "Chuẩn bị nhà và nội thất",
     svc1_desc: "Nội thất gọn gàng, đẹp mắt, đủ để nhà mình không thua kém những căn khác. Không bảo chủ nhà mua thừa.",
@@ -575,8 +575,8 @@ const translations = {
 
     // Cam kết doanh thu
     g_label: "Cam kết doanh thu",
-    g_title1: "Thu nhiều hơn. ",
-    g_title2: "Không phải đánh cược.",
+    g_title1: "Mức sàn thu nhập ",
+    g_title2: "được ấn định trước.",
     g_desc: "Trước khi nhận nhà, Antam ghi vào hợp đồng mức thu tối thiểu mỗi năm cho chủ nhà: ít nhất bằng tiền thuê dài hạn cộng tiền điện nước.",
     g_num1_label: "Thuê dài hạn",
     g_num1_value: "28 000 Kč",

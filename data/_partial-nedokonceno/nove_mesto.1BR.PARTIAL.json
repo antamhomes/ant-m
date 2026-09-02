@@ -1,0 +1,25 @@
+{
+ "_VAROVANI": "NEUPLNY PULL. Jen pasmo 1BR. 2BR a 3BR se nestahly (market_research vratil prazdnou chybu). NENI to platny artefakt: neprosel pl-artifact.mjs a NESMI se importovat. Chybejici pasma se NEDOPOCITAVAJI.",
+ "meta": {
+  "pulled": "2026-09-02",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "New Town official boundary (openstreetmap)",
+  "selected_geometry_label": "New Town official boundary",
+  "selected_geometry_source": "openstreetmap",
+  "slug": "nove_mesto",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": ["2025_08","2025_09","2025_10","2025_11","2025_12","2026_01","2026_02","2026_03","2026_04","2026_05","2026_06","2026_07"],
+  "bands_requested": ["1BR","2BR","3BR"],
+  "bands_received": ["1BR"],
+  "bands_basis": { "1BR": { "basis": "measured" } },
+  "pull_state": "partial",
+  "session_id": "lg_sess_53qgh-PThu5VQ8KTERikDHMu3STZ2-zH"
+ },
+ "1BR": {
+  "occ":             [79.4, 81.6, 83.5, 70.8, 82.7, 54.3, 64.1, 67.9, 74.4, 76.8, 70.7, 77.5],
+  "adr":             [2608.06, 2474.33, 2568.45, 2194.27, 3850.61, 2216.38, 1777.97, 2254.39, 3055.30, 3211.85, 2653.02, 2658.19],
+  "revpar":          [2070.85, 2018.70, 2144.52, 1553.37, 3185.33, 1202.52, 1139.02, 1529.85, 2273.06, 2466.37, 1875.34, 2060.01],
+  "active_listings": [1239, 1244, 1226, 1247, 1277, 1312, 1289, 1306, 1294, 1316, 1327, 1373],
+  "avg_revenue":     [58926.24, 55924.33, 61309.52, 42595.91, 87885.63, 34771.56, 30589.17, 43110.48, 61711.32, 68725.85, 51967.00, 58610.75]
+ }
+}

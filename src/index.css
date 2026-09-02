@@ -27,7 +27,7 @@ html {
     --primary-foreground: 0 0% 100%;
 
     /* Very light neutral surface #F2EFEA */
-    --secondary: 36 18% 94%;
+    --secondary: 36 18% 92.5%;
     --secondary-foreground: 168 49% 14%;
 
     --muted: 36 14% 96%;
@@ -364,6 +364,12 @@ html {
   @media (prefers-reduced-motion: reduce) {
     .feat-swap { animation: none; }
   }
+
+  /* Hranice kapitoly (2. 9. 2026). Prostřední čtyři sekce jedou krémová na
+     krémové a při scrollu splývají v jednu dlouhou plochu. Tmavá sekce navíc
+     tam nepatří, tak je odděluje vlas na horní hraně. Používat jen tam, kde se
+     potkají dvě světlé sekce; před tmavou a za ní ne, ta se oddělí sama. */
+  .chapter-edge { border-top: 1px solid hsl(var(--border)); }
 
   .bg-gradient-dark {
     background: linear-gradient(180deg, hsl(var(--charcoal)) 0%, hsl(var(--charcoal-light)) 100%);

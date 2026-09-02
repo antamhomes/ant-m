@@ -15,9 +15,13 @@ import { t, type TranslationKey } from "@/i18n/translations";
  * o chování, ne štítek. Sekce se drží jednoho tvrzení nahoře (services_desc)
  * a šesti důkazů pod ním.
  *
- * Na konci sedí odpověď „proč to nedělat sám" (faq14) a recenze hostů:
- * 520+ hodnocení tady nejsou popularita, ale doklad, že hostitelská část
- * provozu opravdu funguje.
+ * 2. 9. 2026: blok „Proč to nedělat sám přes Airbnb?" odsud pryč. Otázka
+ * v display řezu uprostřed stránky nečte jako otázka návštěvníka, ale jako
+ * obhajoba proti alternativě; šest položek nad ní tu práci ukazuje samo.
+ * Klíč faq14 v translations.ts zůstává pro schůzku a MCP.
+ *
+ * Sekci uzavírají recenze hostů: 520+ hodnocení tady nejsou popularita,
+ * ale doklad, že hostitelská část provozu opravdu funguje.
  */
 const items = [
   { title: "svc3_title", desc: "svc3_desc" }, // ceny a obsazenost — nejsilnější, jde první
@@ -93,16 +97,6 @@ const ServicesSection = () => {
           </Reveal>
         )}
 
-        {/* „Proč to nedělat sám?" — do 2B se tahle odpověď nezobrazovala nikde.
-            Je to nejkonkrétnější věta o tom, kolik té práce reálně je. */}
-        <Reveal delay={0.2} className="mt-10 md:mt-14 max-w-prose mx-auto text-center">
-          <p className="font-display text-[1.15rem] md:text-[1.3rem] font-semibold text-primary-foreground mb-2">
-            {t(lang, "faq14_q")}
-          </p>
-          <p className="font-body text-[15px] md:text-base text-primary-foreground/75 leading-relaxed text-pretty">
-            {t(lang, "faq14_a")}
-          </p>
-        </Reveal>
 
         <ReviewsBlock />
       </div>

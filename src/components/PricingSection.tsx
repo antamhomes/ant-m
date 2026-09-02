@@ -26,7 +26,7 @@ const PricingSection = () => {
   const stack = ([1, 2, 3, 4, 5, 6] as const).filter((n) => t(lang, `pr1_stack_${n}` as const));
 
   return (
-    <section id="cenik" className="section-cont bg-secondary scroll-mt-16">
+    <section id="cenik" className="section-cont chapter-edge bg-secondary scroll-mt-16">
       <div className="container-wide">
         {/* AD 2. 9. 2026: model, ne obhajoba, ale ani slogan. „70 % vám,
             30 % nám" v nadpisu znělo jako dělení kořisti vedle vážného zbytku
@@ -34,21 +34,20 @@ const PricingSection = () => {
             čtenář udělá z výpočtu pod nimi. */}
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "pricing_label")}</p>
-          <h2 className="h-section-xs text-foreground">{t(lang, "pricing_title")}</h2>
+          {/* Nadpisem je rovnou ta věta o dělení. Samostatné "Naše odměna"
+              nad ní bylo menší než ona, takže hierarchie šla obráceně a sekce
+              působila nedodělaně. Eyebrow "Ceník" štítek stejně nese. */}
+          <h2 className="h-section-xs text-foreground tnum text-balance max-w-[22ch]">
+            {t(lang, "pricing_split1")}
+          </h2>
         </Reveal>
 
         <div className="max-w-3xl">
           <Reveal delay={0.05}>
-            <p className="font-display text-foreground leading-[1.3] tracking-[-0.012em] text-[clamp(1.45rem,2.5vw,2.05rem)] text-balance tnum">
-              {t(lang, "pricing_split1")}
-            </p>
-            <p className="mt-2 font-display text-muted-foreground leading-[1.35] text-[clamp(1.15rem,1.7vw,1.4rem)] text-balance tnum">
+            <p className="font-display text-muted-foreground leading-[1.35] text-[clamp(1.1rem,1.6vw,1.35rem)] text-balance tnum">
               {t(lang, "pricing_split2")}
             </p>
-          </Reveal>
-
-          <Reveal delay={0.08}>
-            <p className="mt-7 font-body text-[15.5px] md:text-base text-muted-foreground leading-relaxed max-w-[58ch]">
+            <p className="mt-5 font-body text-[15.5px] md:text-base text-muted-foreground leading-relaxed max-w-[58ch]">
               {t(lang, "pricing_desc")}
             </p>
 

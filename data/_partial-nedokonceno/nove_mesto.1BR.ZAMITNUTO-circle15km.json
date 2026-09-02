@@ -1,0 +1,102 @@
+{
+ "_VAROVANI": "ZAMITNUTY PULL. Geometrie NESEDI na schvaleny polygon. PriceLabs sam vybral 'Prague Main Station circle (15 km)', coz je cela metropole, ne Nove Mesto. NENI to Nove Mesto a nesmi se tak pouzit ani analyticky.",
+ "_DUKAZ": "active_listings 2025_08 = 4802 > soucet 1BR pres praha1..praha9 (4402). Vetsi nez cele mesto.",
+ "meta": {
+  "pulled": "2026-09-02",
+  "source": "PriceLabs MCP market_research",
+  "pozadovana_geometrie": "New Town official boundary (openstreetmap)",
+  "vracena_geometrie": "Prague Main Station circle (15 km)",
+  "selected_geometry_label": "Prague Main Station circle (15 km)",
+  "selected_geometry_source": "circle",
+  "market_label_echo": "New Town (Nove Mesto), Prague - 1BR",
+  "session_id": "lg_sess_MI7-V7HS-DtLXRiib38hDmFJeWmNbp5k",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "band": "1BR",
+  "pull_state": "rejected_geometry_mismatch"
+ },
+ "1BR": {
+  "occ": [
+   78.2,
+   79.9,
+   81.7,
+   69.1,
+   80.7,
+   52.7,
+   61.2,
+   65.4,
+   74.0,
+   76.5,
+   70.0,
+   74.8
+  ],
+  "adr": [
+   2419.54,
+   2322.11,
+   2407.04,
+   2110.35,
+   3522.78,
+   2160.53,
+   1730.12,
+   2182.31,
+   2856.53,
+   2983.07,
+   2514.83,
+   2520.24
+  ],
+  "revpar": [
+   1892.16,
+   1855.05,
+   1966.19,
+   1458.8,
+   2841.34,
+   1138.76,
+   1058.69,
+   1427.08,
+   2114.88,
+   2282.9,
+   1761.08,
+   1884.14
+  ],
+  "active_listings": [
+   4802,
+   4883,
+   4834,
+   4958,
+   5083,
+   5219,
+   5052,
+   5101,
+   5118,
+   5153,
+   5219,
+   5337
+  ],
+  "avg_revenue": [
+   54301.43,
+   51790.55,
+   56152.06,
+   40023.5,
+   78113.35,
+   32813.09,
+   29154.6,
+   40443.62,
+   57386.91,
+   63411.08,
+   48869.9,
+   54100.97
+  ]
+ }
+}
