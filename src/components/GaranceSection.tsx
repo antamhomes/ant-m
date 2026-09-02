@@ -48,11 +48,13 @@ const GaranceSection = () => {
   const last = nums.length - 1;
 
   return (
-    <section id="garance" className="section-cont chapter-edge bg-background scroll-mt-16">
+    <section id="garance" className="section-cont chapter-edge bg-background scroll-mt-20">
       <div className="container-wide">
         <Reveal className="section-head">
-          {/* 2D: bez eyebrow. Garance není nová kapitola, je to třetí věta
-              jedné úvahy: proč krátkodobě, co si bereme, co když to nevyjde. */}
+          {/* AD 2. 9. 2026: eyebrow zpátky. Bez něj byla Garance jediná sekce
+              na stránce, která začíná rovnou nadpisem, a vedle Ceníku (stejná
+              kapitola, stejná hranice) to nečetlo jako záměr, ale jako výpadek. */}
+          <p className="eyebrow eyebrow-center">{t(lang, "g_label")}</p>
           <h2 className="h-section-xs text-foreground">
             {t(lang, "g_title1")}
             <span className="text-gradient-gold">{t(lang, "g_title2")}</span>
@@ -83,7 +85,7 @@ const GaranceSection = () => {
                   }`}
                 >
                   {t(lang, value)}
-                  <span className="ml-2 font-body text-[0.24em] font-normal tracking-normal text-muted-foreground whitespace-nowrap">
+                  <span className="ml-2 font-body text-[13px] font-normal tracking-normal text-muted-foreground whitespace-nowrap">
                     {t(lang, "calc_month_suffix")}
                   </span>
                 </p>
@@ -140,7 +142,7 @@ const GaranceSection = () => {
           </div>
         </Reveal>
 
-        <Reveal delay={0.1} className="mt-8 text-center">
+        <Reveal delay={0.1} className="mt-8">
           <a
             href="#kontakt"
             onClick={() => trackEvent("cta_click", { location: "garance", target: "contact" })}
@@ -150,7 +152,7 @@ const GaranceSection = () => {
             <ChevronRight className="w-4 h-4" />
           </a>
           {t(lang, "g_small") && (
-            <p className="mt-4 font-body text-xs text-muted-foreground leading-relaxed max-w-xl mx-auto">
+            <p className="mt-4 font-body text-xs text-muted-foreground leading-relaxed max-w-xl">
             {t(lang, "g_small")}
           </p>
           )}

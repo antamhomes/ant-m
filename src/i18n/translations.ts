@@ -81,7 +81,7 @@ const translations = {
     // About — Kdo za tím stojí (REVIEW: nahradit vlastními slovy + fotkou)
     about_label: "Kdo za tím stojí",
     about_title: "Začínali jsme na vlastních a rodinných bytech.",
-    about_p1: "Krátkodobým pronájmem se\u00a0zabýváme každý den, už\u00a0přes pět let. Spravujeme apartmány různých velikostí, v\u00a0různých lokalitách a\u00a0pro různé typy hostů. Napříč nimi dosahujeme lepších výsledků než srovnatelné nabídky v\u00a0okolí.",
+    about_p1: "Krátkodobým pronájmem se\u00a0zabýváme každý den, už\u00a0přes pět let. Spravujeme apartmány různých velikostí, v\u00a0různých lokalitách a\u00a0pro různé typy hostů.",
     about_p2: "Dnes nestačí byt jen vystavit na Airbnb nebo Booking. Rozhoduje správné nastavení ceny, prezentace, fotografie, hodnocení, rychlost komunikace, práce s obsazeností i desítky malých rozhodnutí během celého roku.",
     about_p3: "Sledujeme výsledky každý den a podle nich měníme, jak se každý byt nabízí a řídí.",
     about_p4: "Dnes spravujeme jedenáct apartmánů v Praze a okolí a máme za sebou přes 520 hodnocení od hostů.",

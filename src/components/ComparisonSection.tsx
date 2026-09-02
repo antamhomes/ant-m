@@ -26,8 +26,9 @@ const ComparisonSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section id="srovnani" className="section chapter-edge bg-background scroll-mt-16">
-      <div className="container-narrow">
+    <section id="srovnani" className="section chapter-edge bg-background scroll-mt-20">
+      <div className="container-wide">
+        <div className="max-w-[56rem]">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "cmp_label")}</p>
           <h2 className="h-section-sm text-foreground">{t(lang, "cmp_title")}</h2>
@@ -93,6 +94,7 @@ const ComparisonSection = () => {
             {t(lang, "faq13_a")}
           </p>
         </Reveal>
+        </div>
       </div>
     </section>
   );

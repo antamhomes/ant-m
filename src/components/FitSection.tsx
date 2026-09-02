@@ -19,7 +19,7 @@ const FitSection = () => {
   const yesItems = YES.filter((key) => t(lang, key));
 
   return (
-    <section id="pro-koho" className="section bg-secondary scroll-mt-16">
+    <section id="pro-koho" className="section bg-secondary scroll-mt-20">
       <div className="container-narrow">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "fit_label")}</p>

@@ -54,7 +54,7 @@ const ServicesSection = () => {
   // tuhle sekci tmavou měl, proto na ni ReviewsBlock celou dobu nesl tokeny
   // pro tmavé pozadí.
   return (
-    <section id="sluzby" className="section bg-gradient-dark scroll-mt-16">
+    <section id="sluzby" className="section bg-gradient-dark scroll-mt-20">
       <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center eyebrow-on-dark">{t(lang, "services_label")}</p>
@@ -63,7 +63,7 @@ const ServicesSection = () => {
         </Reveal>
 
         {INTRO_KEY[lang] && (
-          <Reveal delay={0.03} className="max-w-prose mx-auto text-center -mt-2 mb-10 md:mb-12">
+          <Reveal delay={0.03} className="max-w-prose -mt-2 mb-10 md:mb-12">
             <p className="font-body text-[15px] md:text-base text-primary-foreground/70 leading-relaxed text-pretty">
               {t(lang, INTRO_KEY[lang]!)}
             </p>
@@ -90,7 +90,7 @@ const ServicesSection = () => {
         </div>
 
         {t(lang, "about_p3") && (
-          <Reveal delay={0.18} className="max-w-prose mx-auto text-center mt-10 md:mt-12">
+          <Reveal delay={0.18} className="max-w-prose mt-10 md:mt-12">
             <p className="font-body text-[15px] md:text-base text-primary-foreground/90 leading-relaxed text-pretty">
               {t(lang, "about_p3")}
             </p>

@@ -143,29 +143,29 @@ const PortalDemo = () => {
           </div>
           <div className="flex items-center gap-1">
             <button type="button" onClick={() => setMonthIdx((i) => Math.max(0, i - 1))} disabled={monthIdx === 0}
-              aria-label={t(lang, "pdm_prev")} className="p-1.5 rounded-sm border border-border text-muted-foreground disabled:opacity-35">
+              aria-label={t(lang, "pdm_prev")} className="p-2.5 rounded-sm border border-border text-muted-foreground disabled:opacity-35">
               <ChevronLeft className="w-4 h-4" aria-hidden="true" />
             </button>
             <span className="font-display text-[15px] text-foreground min-w-[8.5rem] text-center tnum">{t(lang, m.key)}</span>
             <button type="button" onClick={() => setMonthIdx((i) => Math.min(flat.months.length - 1, i + 1))}
               disabled={monthIdx === flat.months.length - 1} aria-label={t(lang, "pdm_next")}
-              className="p-1.5 rounded-sm border border-border text-muted-foreground disabled:opacity-35">
+              className="p-2.5 rounded-sm border border-border text-muted-foreground disabled:opacity-35">
               <ChevronRight className="w-4 h-4" aria-hidden="true" />
             </button>
           </div>
         </div>
 
         {/* Kalendář vlevo, panel majitele vpravo, stejně jako v portálu. */}
-        <div className="grid lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 lg:gap-7">
-          <div className="flex flex-col">
-            <div className="grid grid-cols-7 gap-[2px] mb-1">
+        <div className="grid lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-5 lg:gap-7 min-w-0">
+          <div className="flex flex-col min-w-0">
+            <div className="grid grid-cols-7 gap-[2px] mb-1 min-w-0">
               {dows.map((d) => (
                 <span key={d} className="font-body text-[10px] uppercase tracking-[0.06em] text-muted-foreground text-center">{d}</span>
               ))}
             </div>
             <div className="flex-1 flex flex-col gap-[2px]">
             {weeks.map(({ r, lead, segs }) => (
-              <div key={r} className="grid grid-cols-7 gap-[2px] flex-1 min-h-[2.25rem]">
+              <div key={r} className="grid grid-cols-7 gap-[2px] flex-1 min-h-[2.25rem] min-w-0">
                 {Array.from({ length: 7 }, (_, col) => {
                   const day = r * 7 + col - lead + 1;
                   return (
@@ -177,7 +177,7 @@ const PortalDemo = () => {
                 })}
                 {segs.map(({ b, col, span, head }, i) => (
                   <span key={i} style={{ gridColumn: `${col} / span ${span}`, gridRow: 1 }}
-                    className={`self-end mb-1 mx-[2px] h-4 rounded-[2px] flex items-center px-1.5 overflow-hidden whitespace-nowrap font-body text-[9.5px] ${
+                    className={`self-end mb-1 mx-[2px] h-4 min-w-0 rounded-[2px] flex items-center px-1.5 overflow-hidden whitespace-nowrap font-body text-[9.5px] ${
                       b.src === "own" ? "border border-dashed border-gold text-gold-deep"
                       : b.src === "A" ? "bg-[#C2705A]/85 text-white" : "bg-[#5B7FA6]/85 text-white"}`}>
                     {head ? (b.src === "own" ? t(lang, "pdm_you") : b.guest) : ""}
@@ -193,7 +193,7 @@ const PortalDemo = () => {
             </div>
           </div>
 
-          <div>
+          <div className="min-w-0">
             <div className="bg-gradient-dark rounded-sm px-4 py-4">
               <p className="font-body text-[10px] uppercase tracking-[0.14em] text-white/45">
                 {t(lang, flat.locKey)} · {t(lang, "pdm_payout")}

@@ -153,7 +153,7 @@ const CalculatorSection = () => {
   });
 
   return (
-    <section id="kalkulacka" className="section bg-secondary scroll-mt-16">
+    <section id="kalkulacka" className="section bg-secondary scroll-mt-20">
       <div className="container-narrow">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "calc_label")}</p>
@@ -523,7 +523,7 @@ const CalculatorSection = () => {
                     <button
                       type="button"
                       onClick={shareResult}
-                      className="mx-auto flex items-center gap-1.5 font-body text-xs text-primary-foreground/60 hover:text-primary-foreground transition-colors underline underline-offset-4 decoration-primary-foreground/25"
+                      className="flex items-center gap-1.5 font-body text-xs text-primary-foreground/60 hover:text-primary-foreground transition-colors underline underline-offset-4 decoration-primary-foreground/25"
                     >
                       <Share2 className="w-3.5 h-3.5" aria-hidden="true" />
                       {shared ? t(lang, "calc_share_done") : t(lang, "calc_share")}
@@ -538,10 +538,10 @@ const CalculatorSection = () => {
         {/* Metodika za rozklikem na všech šířkách (brief 8/2026, bod 2); viditelná
             zůstává jen krátká věta, bez které by odhad mohl mást. */}
         <div className="mt-6 sm:mt-8 max-w-prose mx-auto border-t border-border/60 pt-4 sm:pt-5 space-y-2.5">
-          <p className="font-body text-xs md:text-[13px] text-foreground/75 text-center leading-relaxed">
+          <p className="font-body text-xs md:text-[13px] text-foreground/75 leading-relaxed">
             {t(lang, "calc_disclaimer_short")}
           </p>
-          <details className="group text-center">
+          <details className="group">
             <summary className="list-none cursor-pointer inline-block font-body text-xs text-muted-foreground underline underline-offset-4 decoration-border [&::-webkit-details-marker]:hidden">
               {t(lang, "calc_disclaimer_toggle")}
             </summary>

@@ -33,7 +33,7 @@ const AboutSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section id="kdo-jsme" className="section bg-secondary scroll-mt-16">
+    <section id="kdo-jsme" className="section bg-secondary scroll-mt-20">
       <div className="container-wide">
         <div className="max-w-4xl">
           <Reveal className="section-head">

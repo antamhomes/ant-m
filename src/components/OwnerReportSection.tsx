@@ -23,7 +23,7 @@ const OwnerReportSection = () => {
   ];
 
   return (
-    <section id="vyuctovani" className="section bg-background scroll-mt-16">
+    <section id="vyuctovani" className="section bg-background scroll-mt-20">
       <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "report_label")}</p>

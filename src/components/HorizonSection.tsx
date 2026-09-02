@@ -212,7 +212,7 @@ const FiveYearChart = () => {
 const HorizonSection = () => {
   const { lang } = useLanguage();
   return (
-    <section id="horizont" className="section bg-background scroll-mt-16">
+    <section id="horizont" className="section bg-background scroll-mt-20">
       <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "whyBetter_label")}</p>

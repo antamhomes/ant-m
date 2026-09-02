@@ -45,9 +45,9 @@ const ReviewsBlock = () => {
           Ve 2B se přestěhoval do sekce o provozu a ve 2D je ta sekce zase
           tmavá, jak ji navrhl původní design. Tokeny se proto vracejí na
           on-dark sadu; kontrast se měří v ověření, ne odhaduje. */}
-      <div className="text-center mb-6 md:mb-8">
+      <div className="mb-6 md:mb-8">
         <p
-          className="font-display text-xl md:text-2xl font-semibold text-primary-foreground mx-auto max-w-[24ch] md:max-w-none"
+          className="font-display text-xl md:text-2xl font-semibold text-primary-foreground max-w-[24ch] md:max-w-none"
           style={{ textWrap: "balance" }}
         >
           {c.pre}

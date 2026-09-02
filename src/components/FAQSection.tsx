@@ -48,7 +48,7 @@ const FAQSection = () => {
   const total = groups.reduce((n, g) => n + g.items.length, 0);
 
   return (
-    <section id="faq" className="section bg-background scroll-mt-16">
+    <section id="faq" className="section bg-background scroll-mt-20">
       <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "faq_label")}</p>
@@ -111,7 +111,7 @@ const FAQSection = () => {
         </Reveal>
 
         {/* Mobile only: the rest of the questions on demand */}
-        <div className="md:hidden mt-5 text-center">
+        <div className="md:hidden mt-5">
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}

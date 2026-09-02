@@ -7,7 +7,7 @@ const Footer = () => {
   const { lang, goTo } = useLanguage();
 
   return (
-    <footer className="bg-gradient-dark border-t border-primary-foreground/10 pb-[max(2rem,env(safe-area-inset-bottom))] pt-10 sm:pt-16 px-6">
+    <footer className="bg-gradient-dark border-t border-primary-foreground/10 pt-10 sm:pt-16 px-6 pb-[max(7rem,calc(env(safe-area-inset-bottom)+6rem))] md:pb-[max(2rem,env(safe-area-inset-bottom))]">
       <div className="max-w-6xl mx-auto">
         {/* Top: brand + nav + contact */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-7 md:gap-8 pb-8 md:pb-10 border-b border-primary-foreground/10">
@@ -112,7 +112,7 @@ const Footer = () => {
 
         {/* Operator identification (required for a business website) + language links */}
         <div className="mt-6 md:mt-8 pt-5 md:pt-6 border-t border-primary-foreground/10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-          <div className="text-center md:text-left">
+          <div>
             <p className="font-body text-[11px] leading-relaxed text-primary-foreground/45 max-w-2xl">
               {t(lang, "footer_legal")}
             </p>
@@ -121,7 +121,7 @@ const Footer = () => {
               {t(lang, "footer_updated") ? ` · ${t(lang, "footer_updated")}` : ""}
             </p>
           </div>
-          <nav aria-label={lang === "cs" ? "Jazyk" : "Ngôn ngữ"} className="flex justify-center md:justify-end gap-4 font-body text-xs">
+          <nav aria-label={lang === "cs" ? "Jazyk" : "Ngôn ngữ"} className="flex md:justify-end gap-4 font-body text-xs">
             <a
               href="/"
               onClick={(e) => { e.preventDefault(); goTo("/"); }}

@@ -15,7 +15,7 @@ const ProcessSection = () => {
   const { lang } = useLanguage();
 
   return (
-    <section id="jak-zacina" className="section bg-background scroll-mt-16">
+    <section id="jak-zacina" className="section bg-background scroll-mt-20">
       <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "process_label")}</p>

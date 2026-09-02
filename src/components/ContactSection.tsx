@@ -226,7 +226,7 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="kontakt" className="section bg-secondary scroll-mt-16">
+    <section id="kontakt" className="section bg-secondary scroll-mt-20">
       <div className="container-prose md:max-w-[calc(46rem+3rem)]">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "contact_label")}</p>
@@ -275,7 +275,7 @@ const ContactSection = () => {
                     placeholder={t(lang, "contact_phone_placeholder") as string}
                   />
                 </div>
-                <div>
+                <div className="sm:col-span-2">
                   <label htmlFor="c-email" className={labelCls}>
                     {t(lang, "contact_email")}{" "}
                     {emailRequired ? (
@@ -405,7 +405,7 @@ const ContactSection = () => {
                 </span>
               </label>
 
-              <button type="submit" disabled={submitting} className="btn btn-primary w-full py-4">
+              <button type="submit" disabled={submitting} className="btn btn-primary w-full max-sm:px-4 max-sm:tracking-[0.08em] max-sm:text-[12.5px] py-4">
                 {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
                 {t(lang, "contact_submit")}
               </button>

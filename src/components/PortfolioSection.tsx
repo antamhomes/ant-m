@@ -73,8 +73,7 @@ const copy = {
     prevFlat: "Předchozí byt",
     nextFlat: "Další byt",
     featOwner: "průměrně měsíčně majiteli",
-    restLabel: (n: number) => `Dalších ${n} bytů ve\u00a0správě, měsíčně majiteli`,
-    restNew: (n: number) => `a\u00a0${n} nové bez celé sezóny`,
+    calcBridge: "Odhad v\u00a0kalkulačce vychází z\u00a0trhu. Výsledky výš jsou skutečné byty z\u00a0naší správy.",
     statNoteToggle: "Jak počítáme částky na kartách",
     showLess: "Zobrazit méně",
     statOwner: "majiteli měsíčně",
@@ -100,8 +99,7 @@ const copy = {
     prevFlat: "Căn trước",
     nextFlat: "Căn sau",
     featOwner: "trung bình mỗi tháng chủ nhà nhận",
-    restLabel: (n: number) => `Còn ${n} căn nữa Antam lo, mỗi tháng chủ nhà nhận`,
-    restNew: (n: number) => `và ${n} căn mới chưa đủ một mùa`,
+    calcBridge: "Ước tính trong máy tính dựa trên thị trường. Kết quả ở trên là những căn thật Antam đang quản lý.",
     statNoteToggle: "Antam tính số trên thẻ thế nào",
     showLess: "Thu gọn",
     statOwner: "chủ nhà nhận / tháng",
@@ -130,11 +128,10 @@ const PortfolioSection = () => {
   const featured = items[featIdx];
   const step = (d: number) => setFeatIdx((i) => (i + d + items.length) % items.length);
   const rest = items.filter((i) => i !== featured);
-  const restStats = rest.filter((i) => i.stats);
   const visible = showAll ? rest : [];
 
   return (
-    <section id="portfolio" className="section bg-background scroll-mt-16">
+    <section id="portfolio" className="section bg-background scroll-mt-20">
       <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{c.eyebrow}</p>
@@ -185,11 +182,11 @@ const PortfolioSection = () => {
         <div className="flex flex-col px-6 pt-5 sm:pt-6 lg:block lg:px-0 lg:py-0 lg:pl-14 lg:pr-[max(1.5rem,calc((100vw-75rem)/2+1.5rem))]">
           <div className="flex items-center gap-2 mb-5 max-lg:order-2 max-lg:mt-7 max-lg:mb-0">
             <button type="button" onClick={() => step(-1)} aria-label={c.prevFlat}
-              className="p-1.5 rounded-sm border border-border text-muted-foreground hover:border-foreground/40 transition-colors">
+              className="p-2.5 rounded-sm border border-border text-muted-foreground hover:border-foreground/40 transition-colors">
               <ChevronLeft className="w-4 h-4" aria-hidden="true" />
             </button>
             <button type="button" onClick={() => step(1)} aria-label={c.nextFlat}
-              className="p-1.5 rounded-sm border border-border text-muted-foreground hover:border-foreground/40 transition-colors">
+              className="p-2.5 rounded-sm border border-border text-muted-foreground hover:border-foreground/40 transition-colors">
               <ChevronRight className="w-4 h-4" aria-hidden="true" />
             </button>
             <span className="ml-1.5 font-body text-[11.5px] uppercase tracking-[0.12em] text-muted-foreground tnum">
@@ -247,21 +244,13 @@ const PortfolioSection = () => {
       </Reveal>
 
       <div className="container-wide">
-        {/* Rozpětí zbytku portfolia. Ukazuje, že čísla jdou i dolů, takže hlavní
-            číslo nevypadá jako vybraná třešnička. Počty se berou z dat, ne z ruky. */}
+        {/* AD 2. 9. 2026: rozpětí zbytku portfolia pryč. „Dalších 8 bytů" byl
+            argument o velikosti, ne o výsledku, a stál hned pod jediným bytem,
+            který má sekci nést. Na jeho místě je věta, která čtenáři řekne, co
+            právě viděl a co ho čeká v kalkulačce. Závěr si udělá sám. */}
         <Reveal className="mt-9 sm:mt-12 pt-7 border-t border-border">
-          <p className="font-body text-[11px] sm:text-xs uppercase tracking-[0.12em] text-muted-foreground">
-            {c.restLabel(rest.length)}
-          </p>
-          <p className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-1.5 tnum">
-            {restStats.map((i) => (
-              <span key={i.name} className="font-display text-lg sm:text-[26px] font-semibold text-muted-foreground/80">
-                {fmtCzk(i.stats!.owner)}
-              </span>
-            ))}
-            <span className="font-body text-[11px] sm:text-xs text-muted-foreground">
-              {c.restNew(rest.length - restStats.length)}
-            </span>
+          <p className="font-body text-[14.5px] sm:text-[15px] text-muted-foreground leading-relaxed text-pretty max-w-[58ch]">
+            {c.calcBridge}
           </p>
         </Reveal>
 
@@ -393,13 +382,13 @@ const PortfolioSection = () => {
         </div>
 
         {!showAll && (
-          <div className="mt-7 sm:mt-9 flex">
+          <div className="mt-6 sm:mt-7 flex">
             <button
               type="button"
               onClick={() => setShowAll(true)}
               aria-expanded={false}
               aria-controls="portfolio-vsechny"
-              className="btn btn-secondary max-sm:px-4 max-sm:tracking-[0.1em]"
+              className="inline-flex items-center gap-1.5 font-body text-sm text-gold-deep underline underline-offset-4 decoration-gold/40 hover:decoration-gold transition-colors"
             >
               {c.showAll}
               <ChevronDown className="w-4 h-4" aria-hidden="true" />
@@ -411,11 +400,11 @@ const PortfolioSection = () => {
             toggle (patch 126), so the proof block is not followed by a 1 000-character
             wall. Same pattern as the calculator's "Jak počítáme". */}
         <Reveal delay={0.05} className="mt-4 sm:mt-5">
-          <details className="group max-w-prose mx-auto">
-            <summary className="list-none cursor-pointer font-body text-xs text-muted-foreground text-center underline underline-offset-4 decoration-border [&::-webkit-details-marker]:hidden">
+          <details className="group max-w-prose">
+            <summary className="list-none cursor-pointer font-body text-xs text-muted-foreground underline underline-offset-4 decoration-border [&::-webkit-details-marker]:hidden">
               {c.statNoteToggle}
             </summary>
-            <p className="mt-3 font-body text-[11px] sm:text-xs text-muted-foreground/90 leading-relaxed text-pretty text-left sm:text-center">
+            <p className="mt-3 font-body text-[11px] sm:text-xs text-muted-foreground/90 leading-relaxed text-pretty">
               {c.statNote(STATS_ASOF[lang])}
             </p>
           </details>

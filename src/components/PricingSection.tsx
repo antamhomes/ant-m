@@ -26,7 +26,7 @@ const PricingSection = () => {
   const stack = ([1, 2, 3, 4, 5, 6] as const).filter((n) => t(lang, `pr1_stack_${n}` as const));
 
   return (
-    <section id="cenik" className="section-cont chapter-edge bg-secondary scroll-mt-16">
+    <section id="cenik" className="section-cont chapter-edge bg-secondary scroll-mt-20">
       <div className="container-wide">
         {/* AD 2. 9. 2026: model, ne obhajoba, ale ani slogan. „70 % vám,
             30 % nám" v nadpisu znělo jako dělení kořisti vedle vážného zbytku
@@ -104,22 +104,30 @@ const PricingSection = () => {
               {t(lang, "pr1_note")}
             </p>
 
-            {/* Garance a krytí škod: jediné místo, kde je vidět, co je v těch 30 % navíc. */}
-            <dl className="mt-8 border-t border-border">
+            {/* Garance a krytí škod: jediné místo, kde je vidět, co je v těch 30 % navíc.
+                AD 2. 9. 2026: o stupeň víc váhy. Jsou to dvě podstatné podmínky
+                obchodu, ale mezi ostatními poznámkami se četly jako další řádek
+                textu. Víc vzduchu, silnější serif v názvu a „v odměně" vpravo
+                jako u řádků toku peněz výš: stejná gramatika, žádná nová karta. */}
+            <dl className="mt-12 md:mt-14 border-t border-foreground/25">
               {CORE_ROWS.map(({ k }) => (
-                <div key={k} className="border-b border-border py-4">
-                  <dt className="font-display text-[17px] text-foreground">
-                    {t(lang, `${k}_name` as const)}
-                    <span className="ml-2 font-body text-[13px] text-muted-foreground">{t(lang, `${k}_price` as const)}</span>
+                <div key={k} className="border-b border-border py-6 md:py-7">
+                  <dt className="flex items-baseline justify-between gap-6">
+                    <span className="font-display text-[20px] md:text-[22px] font-semibold text-foreground leading-snug">
+                      {t(lang, `${k}_name` as const)}
+                    </span>
+                    <span className="shrink-0 font-body text-[11px] uppercase tracking-[0.13em] text-muted-foreground">
+                      {t(lang, `${k}_price` as const)}
+                    </span>
                   </dt>
-                  <dd className="m-0 mt-1 font-body text-[14.5px] text-muted-foreground leading-relaxed max-w-[62ch]">
+                  <dd className="m-0 mt-2 font-body text-[14.5px] text-muted-foreground leading-relaxed max-w-[62ch]">
                     {t(lang, `${k}_note` as const)}
                   </dd>
                 </div>
               ))}
             </dl>
 
-            <details className="group mt-5">
+            <details className="group mt-7">
               <summary className="list-none cursor-pointer font-body text-sm text-gold-deep underline underline-offset-4 decoration-gold/40 [&::-webkit-details-marker]:hidden">
                 {t(lang, "pricing_more")}
               </summary>
