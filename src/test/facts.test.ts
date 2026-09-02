@@ -1302,11 +1302,17 @@ describe("kopie v obou jazycích", () => {
    protože se obsazenost přeměřila, oprav lib/yield i karty, ne test. */
 describe("obsazenost na kartách portfolia", () => {
   const portfolio = readFileSync("src/components/PortfolioSection.tsx", "utf8");
+  /* Byty, které Antam spravuje a měří, ale veřejně je na webu neukazuje
+     (2. 9. 2026: My Mozart studio na Vuongovo přání). Zůstávají v lib/yield,
+     protože nesou kalibraci své čtvrti, jen k nim není karta. Přidávat sem
+     další jen tehdy, když je to vědomé rozhodnutí, ne když spadne test. */
+  const UNLISTED = new Set(["My Mozart studio"]);
+  const listed = OCCUPANCY_BY_FLAT.filter((f) => !UNLISTED.has(f.name));
 
   it("karty ukazují stejnou obsazenost, jakou drží lib/yield", () => {
     const flat = (x: string) => x.replace(/\\u00a0/g, " ").replace(/\u00a0/g, " ");
     const src = flat(portfolio);
-    for (const f of OCCUPANCY_BY_FLAT) {
+    for (const f of listed) {
       const name = flat(f.name).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
       const m = new RegExp(`${name}[^\n]*occupancy: (\\d+), market: MARKET_OCC\\.(\\w+)`).exec(src);
       expect(m, `karta chybí, nemá obsazenost nebo trh: ${f.name}`).not.toBeNull();
@@ -1433,7 +1439,13 @@ describe("nájem podle plochy (Sreality 8/2026)", () => {
 
   it("každý byt v portfoliu má plochu a ta sedí na kartu", () => {
     const src = readFileSync("src/components/PortfolioSection.tsx", "utf8");
+    // Neuvedené byty (viz UNLISTED výš) kartu nemají, plochu ale mít musí.
+    const unlisted = new Set(["My Mozart studio"]);
     for (const f of OCCUPANCY_BY_FLAT) {
+      if (unlisted.has(f.name)) {
+        expect(f.m2, f.name).toBeGreaterThan(15);
+        continue;
+      }
       expect(f.m2, f.name).toBeGreaterThan(15);
       expect(f.m2, f.name).toBeLessThan(200);
       const flat = (x: string) => x.replace(/\\u00a0/g, " ").replace(/\u00a0/g, " ");

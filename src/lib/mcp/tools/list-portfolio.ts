@@ -24,7 +24,6 @@ const apartments: Apt[] = ([
   { name: "Secret garden studio II", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
   { name: "Klement apartment s terasou", location: "Mladá Boleslav", maxGuests: 8, floorAreaM2: 85, ownerMonthlyCzk: 30000, occupancyPct: 91, period: "2026-04 to 2026-07" },
   { name: "Klement apartment", location: "Mladá Boleslav", maxGuests: 8, managedSince: "2026-08", note: "new, results after the first season" },
-  { name: "My Mozart studio", location: "Praha 5", maxGuests: 4, floorAreaM2: 40, ownerMonthlyCzk: 30000, occupancyPct: 97, period: "2026-02 to 2026-07" },
 ] as Apt[]).map((a) => ("ownerMonthlyCzk" in a ? { ...a, vsLongTermRent: ratioFor(a.location, a.floorAreaM2, a.ownerMonthlyCzk) ?? undefined } : a));
 
 export default defineTool({

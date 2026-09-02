@@ -353,6 +353,18 @@ html {
     background: linear-gradient(180deg, hsl(var(--warm-cream)) 0%, hsl(var(--warm-sand)) 100%);
   }
 
+
+  /* Výměna bytu v sekci Výsledky: krátký překlop, ať listování nepůsobí
+     jako skok. Respektuje prefers-reduced-motion. */
+  .feat-swap { animation: featSwap 420ms cubic-bezier(0.22, 0.61, 0.36, 1) both; }
+  @keyframes featSwap {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .feat-swap { animation: none; }
+  }
+
   .bg-gradient-dark {
     background: linear-gradient(180deg, hsl(var(--charcoal)) 0%, hsl(var(--charcoal-light)) 100%);
   }

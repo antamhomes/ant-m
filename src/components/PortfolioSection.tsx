@@ -9,7 +9,6 @@ import byt3 from "@/assets/byt-3.jpg.asset.json";
 import byt4 from "@/assets/byt-4.jpg.asset.json";
 import byt5 from "@/assets/byt-5.jpg.asset.json";
 import byt6 from "@/assets/byt-6.jpg.asset.json";
-import byt7 from "@/assets/byt-7.jpg.asset.json";
 
 /** Results shown on the cards: owner's monthly income, rounded to thousands, plus occupancy.
  *  Method confirmed by the owner 28. 8. 2026: take what the platform actually pays out (already net
@@ -37,7 +36,10 @@ import byt7 from "@/assets/byt-7.jpg.asset.json";
 const STATS_ASOF = { cs: "31. 7. 2026", vi: "31/7/2026" };
 
 type Stats = { owner: number; occupancy: number; market: number; since?: string };
-type Item = { src: string; name: string; loc: string; guests: number; m2?: number; stats?: Stats; newSince?: string };
+/** focus: kam se má ořez fotky držet, když má snímek jiný poměr než rám.
+ *  Default je střed; u fotky, které centrování usekne to podstatné, stačí
+ *  dopsat "top" nebo "bottom", layout se nemění. */
+type Item = { src: string; name: string; loc: string; guests: number; m2?: number; stats?: Stats; newSince?: string; focus?: "top" | "bottom" };
 const ratioOf = (item: Item) => item.stats && item.m2 ? ratioFor(item.loc, item.m2, item.stats.owner) : null;
 
 /** The apartments shown publicly (owner's choice); capacities from Hospitable.
@@ -50,7 +52,6 @@ const items: Item[] = [
   // Praha 3, ne Praha 4: potvrzeno majitelem 28. 8. 2026 i PSČ 130 00 v Hospitable.
   { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 3", m2: 60, guests: 6, stats: { owner: 42000, occupancy: 85, market: MARKET_OCC.praha3, since: "4/2026" } },
   { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", m2: 85, guests: 8, stats: { owner: 30000, occupancy: 91, market: MARKET_OCC.mb, since: "4/2026" } },
-  { src: byt7.url, name: "My Mozart studio", loc: "Praha 5", m2: 40, guests: 4, stats: { owner: 30000, occupancy: 97, market: MARKET_OCC.praha5, since: "2/2026" } },
   { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", m2: 110, guests: 13, newSince: "7/2026" },
   { src: byt1.url, name: "Secret Garden Studio\u00a0I", loc: "Praha 4", m2: 22, guests: 4, newSince: "7/2026" },
   { src: byt2.url, name: "Secret Garden Studio\u00a0II", loc: "Praha 4", m2: 22, guests: 4, newSince: "7/2026" },
@@ -123,10 +124,9 @@ const PortfolioSection = () => {
   /* Listuje se po jednom bytě dokolečka (2. 9. 2026). Kompozice zůstává
      „jeden byt = důkaz"; kdo chce, projde si ostatní, ale sekce se nestane
      galerií, protože pořád vidí jen jeden byt naráz. */
-  const withStats = items.filter((i) => i.stats);
   const [featIdx, setFeatIdx] = useState(0);
-  const featured = withStats[featIdx];
-  const step = (d: number) => setFeatIdx((i) => (i + d + withStats.length) % withStats.length);
+  const featured = items[featIdx];
+  const step = (d: number) => setFeatIdx((i) => (i + d + items.length) % items.length);
   const rest = items.filter((i) => i !== featured);
   const restStats = rest.filter((i) => i.stats);
   const visible = showAll ? rest : [];
@@ -144,13 +144,15 @@ const PortfolioSection = () => {
       {/* Fotka vystupuje z containeru k levému okraji okna, částka stojí vedle ní.
           Pod 1024 px se to skládá pod sebe, asymetrie se nereprodukuje. */}
       <Reveal className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-center">
-        <figure className="relative overflow-hidden bg-secondary">
+        <figure key={`f-${featIdx}`} className="feat-swap relative overflow-hidden bg-secondary">
           <img
             src={featured.src}
             alt={`${featured.name}, ${featured.loc}`}
             loading="lazy"
             decoding="async"
-            className="w-full h-full object-cover aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto lg:min-h-[clamp(24rem,40vw,37.5rem)]"
+            className={`w-full h-full object-cover aspect-[4/3] sm:aspect-[16/10] lg:aspect-[4/3] ${
+              featured.focus === "top" ? "object-top" : featured.focus === "bottom" ? "object-bottom" : "object-center"
+            }`}
           />
         </figure>
         <div className="px-6 pt-7 lg:px-0 lg:py-0 lg:pl-14 lg:pr-[max(1.5rem,calc((100vw-75rem)/2+1.5rem))]">
@@ -164,31 +166,48 @@ const PortfolioSection = () => {
               <ChevronRight className="w-4 h-4" aria-hidden="true" />
             </button>
             <span className="ml-1.5 font-body text-[11.5px] uppercase tracking-[0.12em] text-muted-foreground tnum">
-              {featIdx + 1} / {withStats.length}
+              {featIdx + 1} / {items.length}
             </span>
           </div>
-          <p className="tnum font-display font-semibold text-foreground leading-[0.9] tracking-[-0.028em] text-[clamp(3.25rem,6.8vw,6.5rem)] whitespace-nowrap">
-            {fmtCzk(featured.stats!.owner)}
-            <span className="ml-[0.5em] text-[0.3em] font-normal tracking-normal text-muted-foreground">Kč</span>
-          </p>
+
+          {/* Animuje se jen obsah. Ovládání zůstává namontované, jinak by při
+              každém kliknutí ztratilo fokus a rychlé klikání by propadalo. */}
+          <div key={`d-${featIdx}`} className="feat-swap">
+          {featured.stats ? (
+            <p className="tnum font-display font-semibold text-foreground leading-[0.9] tracking-[-0.028em] text-[clamp(3.25rem,6.8vw,6.5rem)] whitespace-nowrap">
+              {fmtCzk(featured.stats.owner)}
+              <span className="ml-[0.5em] text-[0.3em] font-normal tracking-normal text-muted-foreground">Kč</span>
+            </p>
+          ) : (
+            /* Byt bez celé sezóny nemá co do velkého slotu postavit. Místo
+               vymyšleného čísla tam stojí, od kdy ho spravujeme. */
+            <p className="font-display font-semibold text-foreground leading-[1.05] tracking-[-0.02em] text-[clamp(1.7rem,3vw,2.6rem)] max-w-[16ch]">
+              {c.newBadge(featured.newSince!)}
+            </p>
+          )}
           <p className="mt-3 font-body text-[11px] sm:text-xs uppercase tracking-[0.14em] text-muted-foreground">
-            {c.featOwner}
+            {featured.stats ? c.featOwner : c.newNote}
           </p>
           <h3 className="mt-6 font-display text-xl sm:text-2xl font-semibold text-foreground text-balance">
             {featured.name}
           </h3>
           <ul className="mt-4 space-y-1.5 font-body text-[11px] sm:text-xs uppercase tracking-[0.09em] text-muted-foreground tnum">
-            <li>{featured.loc}&nbsp;· {featured.m2}&nbsp;m²</li>
-            <li>
-              {c.statOcc}{" "}
-              <b className="font-medium text-foreground">
-                {featured.stats!.occupancy}{lang === "cs" ? "\u00a0%" : "%"}
-              </b>{" "}
-              · {c.barMarket(featured.loc)}&nbsp;{featured.stats!.market}
-              {lang === "cs" ? "\u00a0%" : "%"}
-            </li>
-            <li>{featured.stats!.since ? c.statPeriodSince(featured.stats!.since) : c.statPeriod12}</li>
+            <li>{featured.loc}&nbsp;· {featured.m2}&nbsp;m²&nbsp;· {c.guests(featured.guests)}</li>
+            {featured.stats && (
+              <>
+                <li>
+                  {c.statOcc}{" "}
+                  <b className="font-medium text-foreground">
+                    {featured.stats.occupancy}{lang === "cs" ? "\u00a0%" : "%"}
+                  </b>{" "}
+                  · {c.barMarket(featured.loc)}&nbsp;{featured.stats.market}
+                  {lang === "cs" ? "\u00a0%" : "%"}
+                </li>
+                <li>{featured.stats.since ? c.statPeriodSince(featured.stats.since) : c.statPeriod12}</li>
+              </>
+            )}
           </ul>
+          </div>
         </div>
       </Reveal>
 
