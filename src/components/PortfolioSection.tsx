@@ -68,7 +68,10 @@ const copy = {
     soonTitle: "Tady může být váš byt",
     soonDesc: "Každý byt nejdřív posoudíme, a\u00a0když unese písemné minimum, vezmeme ho. Napište nám a\u00a0do 24 hodin víte, jak je na\u00a0tom ten váš.",
     soonDescShort: "Každý byt nejdřív posoudíme. Napište nám a\u00a0do 24 hodin víte, jak je na\u00a0tom ten váš.",
-    showAll: "Zobrazit všechny naše byty",
+    showAll: "Další výsledky",
+    featOwner: "průměrně měsíčně majiteli",
+    restLabel: (n: number) => `Dalších ${n} bytů ve\u00a0správě, měsíčně majiteli`,
+    restNew: (n: number) => `a\u00a0${n} nové bez celé sezóny`,
     statNoteToggle: "Jak počítáme částky na kartách",
     showLess: "Zobrazit méně",
     statOwner: "majiteli měsíčně",
@@ -89,7 +92,10 @@ const copy = {
     soonTitle: "Căn của anh chị có thể ở đây",
     soonDesc: "Căn nào Antam cũng xem kỹ trước, gánh được mức cam kết thì mới nhận. Nhắn cho Antam, trong 24 giờ anh chị biết căn nhà mình thế nào.",
     soonDescShort: "Căn nào Antam cũng xem kỹ trước. Nhắn cho Antam, trong 24 giờ anh chị biết căn nhà mình thế nào.",
-    showAll: "Xem tất cả các căn của Antam",
+    showAll: "Kết quả các căn khác",
+    featOwner: "trung bình mỗi tháng chủ nhà nhận",
+    restLabel: (n: number) => `Còn ${n} căn nữa Antam lo, mỗi tháng chủ nhà nhận`,
+    restNew: (n: number) => `và ${n} căn mới chưa đủ một mùa`,
     statNoteToggle: "Antam tính số trên thẻ thế nào",
     showLess: "Thu gọn",
     statOwner: "chủ nhà nhận / tháng",
@@ -107,9 +113,13 @@ const copy = {
 const PortfolioSection = () => {
   const { lang } = useLanguage();
   const c = copy[lang];
-  // Only the three strongest results load the section; the rest is one tap away.
+  /* AD 1. 9. 2026: jeden byt nese sekci jako důkaz, ne katalog tří karet.
+     Zbytek portfolia je pod tím řádek čísel a teprve po rozkliknutí mřížka. */
   const [showAll, setShowAll] = useState(false);
-  const visible = showAll ? items : items.slice(0, 3);
+  const featured = items[0];
+  const rest = items.slice(1);
+  const restStats = rest.filter((i) => i.stats);
+  const visible = showAll ? rest : [];
 
   return (
     <section id="portfolio" className="section bg-background scroll-mt-16">
@@ -119,8 +129,66 @@ const PortfolioSection = () => {
           <h2 className="h-section-sm text-foreground">{c.title}</h2>
           <p className="lead">{c.desc}</p>
         </Reveal>
+      </div>
 
-        <div id="portfolio-vsechny" className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-6">
+      {/* Fotka vystupuje z containeru k levému okraji okna, částka stojí vedle ní.
+          Pod 1024 px se to skládá pod sebe, asymetrie se nereprodukuje. */}
+      <Reveal className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-center">
+        <figure className="relative overflow-hidden bg-secondary">
+          <img
+            src={featured.src}
+            alt={`${featured.name}, ${featured.loc}`}
+            loading="lazy"
+            decoding="async"
+            className="w-full h-full object-cover aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto lg:min-h-[clamp(24rem,40vw,37.5rem)]"
+          />
+        </figure>
+        <div className="px-6 pt-7 lg:px-0 lg:py-0 lg:pl-14 lg:pr-[max(1.5rem,calc((100vw-75rem)/2+1.5rem))]">
+          <p className="tnum font-display font-semibold text-foreground leading-[0.9] tracking-[-0.028em] text-[clamp(3.25rem,6.8vw,6.5rem)] whitespace-nowrap">
+            {fmtCzk(featured.stats!.owner)}
+            <span className="ml-[0.5em] text-[0.3em] font-normal tracking-normal text-muted-foreground">Kč</span>
+          </p>
+          <p className="mt-3 font-body text-[11px] sm:text-xs uppercase tracking-[0.14em] text-muted-foreground">
+            {c.featOwner}
+          </p>
+          <h3 className="mt-6 font-display text-xl sm:text-2xl font-semibold text-foreground text-balance">
+            {featured.name}
+          </h3>
+          <ul className="mt-4 space-y-1.5 font-body text-[11px] sm:text-xs uppercase tracking-[0.09em] text-muted-foreground tnum">
+            <li>{featured.loc}&nbsp;· {featured.m2}&nbsp;m²</li>
+            <li>
+              {c.statOcc}{" "}
+              <b className="font-medium text-foreground">
+                {featured.stats!.occupancy}{lang === "cs" ? "\u00a0%" : "%"}
+              </b>{" "}
+              · {c.barMarket(featured.loc)}&nbsp;{featured.stats!.market}
+              {lang === "cs" ? "\u00a0%" : "%"}
+            </li>
+            <li>{c.statPeriod12}</li>
+          </ul>
+        </div>
+      </Reveal>
+
+      <div className="container-wide">
+        {/* Rozpětí zbytku portfolia. Ukazuje, že čísla jdou i dolů, takže hlavní
+            číslo nevypadá jako vybraná třešnička. Počty se berou z dat, ne z ruky. */}
+        <Reveal className="mt-9 sm:mt-12 pt-7 border-t border-border">
+          <p className="font-body text-[11px] sm:text-xs uppercase tracking-[0.12em] text-muted-foreground">
+            {c.restLabel(rest.length)}
+          </p>
+          <p className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-1.5 tnum">
+            {restStats.map((i) => (
+              <span key={i.name} className="font-display text-lg sm:text-[26px] font-semibold text-muted-foreground/80">
+                {fmtCzk(i.stats!.owner)}
+              </span>
+            ))}
+            <span className="font-body text-[11px] sm:text-xs text-muted-foreground">
+              {c.restNew(rest.length - restStats.length)}
+            </span>
+          </p>
+        </Reveal>
+
+        <div id="portfolio-vsechny" className={showAll ? "mt-8 sm:mt-10 grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-6" : "hidden"}>
           {visible.map((item, i) => {
             /* K3 (29. 8. 2026), composition under 1024 px: the strongest result leads as a
                full-width card (phone: photo above the numbers; tablet: photo left, numbers
@@ -248,7 +316,7 @@ const PortfolioSection = () => {
         </div>
 
         {!showAll && (
-          <div className="mt-6 sm:mt-8 flex justify-center">
+          <div className="mt-7 sm:mt-9 flex">
             <button
               type="button"
               onClick={() => setShowAll(true)}

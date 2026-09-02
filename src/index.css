@@ -173,7 +173,11 @@ html {
 
   /* One distance from section head to first block, everywhere (patch 126);
      sections must not add their own mt-* on the first block. */
-  .section-head { text-align: center; margin-bottom: 2.25rem; }
+  /* AD 1. 9. 2026: editorial zarovnání vlevo. Kompozice sekce Výsledky je
+     asymetrická, a centrovaný nadpis nad ní čte jako dvě různé stránky.
+     Jedna změna překlápí všech 13 sekcí; zpátky se to vrací jedním řádkem. */
+  .section-head { text-align: left; margin-bottom: 2.25rem; }
+  .section-head .lead { margin-left: 0; margin-right: 0; text-wrap: pretty; }
   @media (min-width: 640px) { .section-head { margin-bottom: 2.75rem; } }
   @media (min-width: 768px) { .section-head { margin-bottom: 3.5rem; } }
   .section-head .eyebrow { margin-bottom: 1.25rem; }
@@ -331,10 +335,10 @@ html {
   .eyebrow-on-dark { color: #C2A46D; }
   .eyebrow-on-dark::before, .eyebrow-on-dark::after { background: #C2A46D; }
   .eyebrow.eyebrow-center {
-    justify-content: center;
+    justify-content: flex-start;
   }
   .eyebrow.eyebrow-center::after {
-    content: "";
+    content: none;
     width: 28px;
     height: 1px;
     background: hsl(var(--gold-deep));
