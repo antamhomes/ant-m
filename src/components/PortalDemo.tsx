@@ -15,12 +15,16 @@ import Wordmark from "@/components/Wordmark";
  * se to nemůže rozejít.
  */
 type Booking = { start: number; nights: number; src: "A" | "B" | "own"; guest?: string; amount?: number };
-type MonthData = { key: "pdm_m07" | "pdm_m08"; days: number; firstDow: number; cleaning: number; bookings: Booking[] };
-type FlatData = { id: string; nameKey: "pdm_flat1" | "pdm_flat2"; locKey: "pdm_loc1" | "pdm_loc2"; blockedYtd: number; months: MonthData[] };
+/** Položka deníku. amount 0 = zdarma; payer "budget" = platí Antam z ročního
+ *  rozpočtu, majiteli se nic nestrhává; "owner" = strženo z výnosu; "income" =
+ *  peníze, které majiteli zůstaly. */
+type Log = { day: number; k: string; amount: number; payer: "free" | "budget" | "owner" | "income" };
+type MonthData = { key: "pdm_m07" | "pdm_m08"; days: number; firstDow: number; cleaning: number; bookings: Booking[]; log: Log[]; budgetUsed: number };
+type FlatData = { id: string; nameKey: "pdm_flat1" | "pdm_flat2"; locKey: "pdm_loc1" | "pdm_loc2"; budgetLimit: number; months: MonthData[] };
 
 const FLATS: FlatData[] = [
   {
-    id: "a1", nameKey: "pdm_flat1", locKey: "pdm_loc1", blockedYtd: 3,
+    id: "a1", nameKey: "pdm_flat1", locKey: "pdm_loc1", budgetLimit: 10000,
     months: [
       { key: "pdm_m07", days: 31, firstDow: 3, cleaning: 7800, bookings: [
         { start: 1, nights: 4, src: "A", guest: "Charlotte", amount: 13200 },
@@ -28,31 +32,49 @@ const FLATS: FlatData[] = [
         { start: 10, nights: 5, src: "A", guest: "Emma", amount: 16400 },
         { start: 16, nights: 3, src: "own" },
         { start: 20, nights: 4, src: "B", guest: "Marco", amount: 13100 },
-        { start: 25, nights: 6, src: "A", guest: "Sofia", amount: 19700 } ] },
+        { start: 25, nights: 6, src: "A", guest: "Sofia", amount: 19700 } ],
+        budgetUsed: 1000,
+        log: [
+          { day: 5, k: "pl_visit", amount: 0, payer: "free" },
+          { day: 12, k: "pl_seal", amount: -1450, payer: "owner" },
+        ] },
       { key: "pdm_m08", days: 31, firstDow: 6, cleaning: 8476, bookings: [
         { start: 1, nights: 5, src: "A", guest: "Ingrid", amount: 16800 },
         { start: 6, nights: 4, src: "B", guest: "Tomás", amount: 13400 },
         { start: 10, nights: 6, src: "A", guest: "Yuki", amount: 20100 },
         { start: 16, nights: 5, src: "B", guest: "Anna", amount: 16600 },
         { start: 21, nights: 4, src: "A", guest: "Diego", amount: 13300 },
-        { start: 25, nights: 6, src: "A", guest: "Noor", amount: 19600 } ] },
+        { start: 25, nights: 6, src: "A", guest: "Noor", amount: 19600 } ],
+        budgetUsed: 1300,
+        log: [
+          { day: 4, k: "pl_visit", amount: 0, payer: "free" },
+          { day: 9, k: "pl_bulb", amount: 300, payer: "budget" },
+          { day: 17, k: "pl_cancel", amount: 8400, payer: "income" },
+        ] },
     ],
   },
   {
-    id: "a2", nameKey: "pdm_flat2", locKey: "pdm_loc2", blockedYtd: 0,
+    id: "a2", nameKey: "pdm_flat2", locKey: "pdm_loc2", budgetLimit: 15000,
     months: [
       { key: "pdm_m07", days: 31, firstDow: 3, cleaning: 5400, bookings: [
         { start: 2, nights: 3, src: "B", guest: "Nora", amount: 7300 },
         { start: 7, nights: 4, src: "A", guest: "Pavel", amount: 9800 },
         { start: 13, nights: 5, src: "A", guest: "Hana", amount: 11900 },
         { start: 20, nights: 3, src: "B", guest: "Luca", amount: 7600 },
-        { start: 25, nights: 4, src: "A", guest: "Mia", amount: 10200 } ] },
+        { start: 25, nights: 4, src: "A", guest: "Mia", amount: 10200 } ],
+        budgetUsed: 0,
+        log: [{ day: 8, k: "pl_visit", amount: 0, payer: "free" }] },
       { key: "pdm_m08", days: 31, firstDow: 6, cleaning: 5000, bookings: [
         { start: 1, nights: 4, src: "A", guest: "Jonas", amount: 9700 },
         { start: 6, nights: 3, src: "B", guest: "Klára", amount: 7400 },
         { start: 11, nights: 5, src: "A", guest: "Ahmed", amount: 12100 },
         { start: 19, nights: 4, src: "A", guest: "Léa", amount: 9900 },
-        { start: 26, nights: 3, src: "B", guest: "Filip", amount: 7500 } ] },
+        { start: 26, nights: 3, src: "B", guest: "Filip", amount: 7500 } ],
+        budgetUsed: 850,
+        log: [
+          { day: 7, k: "pl_visit", amount: 0, payer: "free" },
+          { day: 14, k: "pl_battery", amount: 850, payer: "budget" },
+        ] },
     ],
   },
 ];
@@ -72,9 +94,13 @@ const PortalDemo = () => {
     const nights = paid.reduce((s, b) => s + b.nights, 0);
     const net = revenue - m.cleaning;
     const payout = Math.round(net * 0.7);
-    return { paid, revenue, nights, net, payout, fee: net - payout,
-      adr: Math.round(revenue / nights), occ: Math.round((nights / m.days) * 100),
-      blocked: m.bookings.filter((b) => b.src === "own").reduce((s, b) => s + b.nights, 0) };
+    const adr = Math.round(revenue / nights);
+    const blocked = m.bookings.filter((b) => b.src === "own").reduce((s, b) => s + b.nights, 0);
+    /* Předpověď: potvrzené tržby plus volné noci oceněné průměrnou cenou.
+       Blokované noci se nepočítají, ty se nepronajímají. */
+    const free = m.days - nights - blocked;
+    return { paid, revenue, nights, net, payout, fee: net - payout, adr, occ: Math.round((nights / m.days) * 100),
+      blocked, forecast: revenue + free * adr };
   }, [m]);
 
   const weeks = useMemo(() => {
@@ -181,9 +207,9 @@ const PortalDemo = () => {
             <dl className="mt-4 grid grid-cols-2 gap-x-5 gap-y-3.5">
               {([
                 { k: "pdm_kpi_occ", v: `${c.occ}${pct}`, s: `${c.nights}/${m.days}` },
-                { k: "pdm_kpi_net", v: `${czk(c.net)} Kč`, s: t(lang, "pdm_kpi_net_sub") },
+                { k: "pdm_kpi_forecast", v: `${czk(c.forecast)} Kč`, s: t(lang, "pdm_kpi_forecast_sub") },
                 { k: "pdm_kpi_adr", v: `${czk(c.adr)} Kč`, s: t(lang, "pdm_kpi_adr_sub") },
-                { k: "pdm_kpi_blocked", v: `${c.blocked}`, s: (t(lang, "pdm_kpi_blocked_sub") as string).replace("{y}", String(flat.blockedYtd)) },
+                { k: "pdm_kpi_net", v: `${czk(c.net)} Kč`, s: t(lang, "pdm_kpi_net_sub") },
               ] as const).map(({ k, v, s }) => (
                 <div key={k}>
                   <dt className="font-body text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{t(lang, k)}</dt>
@@ -192,6 +218,19 @@ const PortalDemo = () => {
                 </div>
               ))}
             </dl>
+
+            {/* Rozpočet Antamu: kolik z ročního limitu bytu je vyčerpáno. */}
+            <div className="mt-5 border-t border-border pt-3">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <p className="font-body text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{t(lang, "pdm_budget")}</p>
+                <p className="font-display text-[14px] text-foreground tnum">
+                  {czk(m.budgetUsed)}&nbsp;Kč <span className="text-muted-foreground">/ {czk(flat.budgetLimit)}&nbsp;Kč</span>
+                </p>
+              </div>
+              <div className="mt-2 h-1 w-full bg-muted overflow-hidden rounded-full" aria-hidden="true">
+                <div className="h-full bg-gold" style={{ width: `${Math.min(100, (m.budgetUsed / flat.budgetLimit) * 100)}%` }} />
+              </div>
+            </div>
 
             <div className="mt-5 border-t border-border pt-3">
               <p className="font-body text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{t(lang, "pdm_stays")}</p>
@@ -210,6 +249,39 @@ const PortalDemo = () => {
               </ul>
             </div>
           </div>
+        </div>
+
+        {/* Deník bytu: co se v bytě dělo a kdo to platil. Zeleně je to, co
+            majitele nestojí nic; červenou schválně nepoužíváme, vlastní náklad
+            majitele není chyba a zelená s červenou je nejhorší dvojice pro
+            barvoslepé. Rozlišuje proto štítek a znaménko, barva jen doplňuje. */}
+        <div className="mt-6 border-t border-border pt-4">
+          <p className="font-body text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{t(lang, "pdm_log")}</p>
+          <ul className="m-0 mt-2 p-0 list-none">
+            {m.log.map((e) => {
+              const good = e.payer !== "owner";
+              return (
+                <li key={e.k} className="grid grid-cols-[2.6rem_minmax(0,1fr)_auto] gap-x-3 sm:gap-x-5 items-baseline py-2.5 border-b border-border last:border-b-0">
+                  <span className="font-body text-[11.5px] text-muted-foreground tnum">{e.day}.&nbsp;8.</span>
+                  <span className="min-w-0">
+                    <span className="block font-body text-[13.5px] text-foreground leading-snug">{t(lang, `${e.k}_n` as never)}</span>
+                    <span className="block font-body text-[11.5px] text-muted-foreground leading-snug">{t(lang, `${e.k}_d` as never)}</span>
+                  </span>
+                  <span className="text-right whitespace-nowrap">
+                    <span className={`block font-body text-[10px] uppercase tracking-[0.1em] ${good ? "text-[#3F6B4F]" : "text-muted-foreground"}`}>
+                      {t(lang, `pdm_pay_${e.payer}` as never)}
+                    </span>
+                    <span className={`mt-0.5 block font-display tnum ${
+                      e.payer === "income" ? "text-[15px] font-semibold text-[#3F6B4F]"
+                      : e.payer === "owner" ? "text-[15px] text-foreground" : "text-[13px] text-muted-foreground"}`}>
+                      {e.amount === 0 ? t(lang, "pdm_free")
+                        : `${e.payer === "income" ? "+" : e.payer === "owner" ? "−" : ""}${czk(Math.abs(e.amount))} Kč`}
+                    </span>
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
         </div>
       </div>
     </div>
