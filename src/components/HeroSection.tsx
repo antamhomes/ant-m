@@ -18,6 +18,12 @@ const enter = (y: number, delay: number, duration = 0.7) =>
  * plochu (stejná firemní barva jako sekce Co za vás řešíme) a fotka běží
  * vedle ní v plné kvalitě. Pod textem stojí tři čísla ze stejného zdroje
  * jako sekce Kdo jsme, takže se nemůžou rozejít.
+ *
+ * 2. 9. 2026, mobil: rozdělení se pod lg nereprodukuje doslova. Fotka nad
+ * textem dělala dva bloky za sebou a první obrazovka patřila cizí ložnici,
+ * než návštěvník věděl, kdo Antam je. Pod lg proto fotka drží ~44 vh a zelená
+ * plocha na ni najíždí o 76 px nahoru: tvrdá hrana firemní zelené, ne černý
+ * gradient s bílým textem. Desktop se nemění.
  */
 const HeroSection = () => {
   const { lang } = useLanguage();
@@ -64,7 +70,7 @@ const HeroSection = () => {
     >
       <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.02fr)] lg:min-h-[min(88vh,780px)]">
         {/* Text na vlastní ploše: žádný závoj přes fotku, žádný radiální gradient. */}
-        <div className="order-2 lg:order-1 flex flex-col justify-between px-6 sm:px-10 lg:pl-[max(1.5rem,calc((100vw-75rem)/2+1.5rem))] lg:pr-14 pt-24 sm:pt-28 pb-12 lg:pt-32 lg:pb-16">
+        <div className="order-2 lg:order-1 relative z-10 max-lg:bg-gradient-dark max-lg:-mt-[76px] max-lg:shadow-[0_-26px_50px_-18px_rgba(10,12,11,0.72)] flex flex-col justify-between px-6 sm:px-10 lg:pl-[max(1.5rem,calc((100vw-75rem)/2+1.5rem))] lg:pr-14 pt-9 sm:pt-11 pb-12 lg:pt-32 lg:pb-16">
           <div>
             <p
               {...enter(12, 0.35, 0.6)}
@@ -127,7 +133,7 @@ const HeroSection = () => {
               aby se hero a medailonek nemohly rozejít. */}
           <dl
             {...enter(12, 1.15, 0.6)}
-            className="mt-12 lg:mt-10 flex flex-wrap gap-x-12 gap-y-5 border-t border-white/15 pt-6"
+            className="mt-8 lg:mt-10 flex flex-wrap gap-x-12 gap-y-5 border-t border-white/15 pt-6"
           >
             {(["about_stat1", "about_stat2"] as const).map((k) => (
               <div key={k}>
@@ -144,7 +150,7 @@ const HeroSection = () => {
 
         {/* Fotka bez závoje. Měkký přechod jen na levé hraně, ať se švem
             neřeže tmavá plocha od obrázku. */}
-        <div className="order-1 lg:order-2 relative overflow-hidden h-[46vh] min-h-[280px] lg:h-auto">
+        <div className="order-1 lg:order-2 relative overflow-hidden h-[48vh] min-h-[280px] max-h-[460px] lg:h-auto lg:max-h-none">
           <div ref={mediaRef} className="absolute inset-0 will-change-transform">
             <div className="absolute inset-0 hero-zoom">
               <img
@@ -164,13 +170,13 @@ const HeroSection = () => {
           </div>
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,hsl(var(--charcoal))_0%,hsl(var(--charcoal)/0.35)_9%,transparent_26%)] max-lg:bg-[linear-gradient(0deg,hsl(var(--charcoal))_0%,transparent_22%)]"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,hsl(var(--charcoal))_0%,hsl(var(--charcoal)/0.35)_9%,transparent_26%)] max-lg:bg-none"
           />
           {/* Navigace teď leží nad fotkou, ne nad tmavou plochou: bez tohohle
               se odkazy vpravo ztratí ve světlé části snímku. */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[linear-gradient(180deg,hsl(var(--charcoal)/0.62)_0%,hsl(var(--charcoal)/0.28)_55%,transparent_100%)]"
+            className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[linear-gradient(180deg,hsl(var(--charcoal)/0.80)_0%,hsl(var(--charcoal)/0.40)_55%,transparent_100%)]"
           />
         </div>
       </div>

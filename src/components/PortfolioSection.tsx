@@ -80,6 +80,7 @@ const copy = {
     statOwner: "majiteli měsíčně",
     statOcc: "obsazenost",
     barMarket: (loc: string) => `trh ${loc === "Mladá Boleslav" ? "MB" : loc}`,
+    market: "trh",
     statPeriod12: "průměr 12 měsíců",
     statPeriodSince: (m: string) => `průměr od ${m}`,
     statRatio: (r: number) => `${r.toLocaleString("cs-CZ")}× dlouhodobý nájem`,
@@ -106,6 +107,7 @@ const copy = {
     statOwner: "chủ nhà nhận / tháng",
     statOcc: "lấp phòng",
     barMarket: (loc: string) => `khu ${loc === "Mladá Boleslav" ? "MB" : loc}`,
+    market: "khu",
     statPeriod12: "trung bình 12 tháng",
     statPeriodSince: (m: string) => `trung bình từ ${m}`,
     statRatio: (r: number) => `gấp ${r.toLocaleString("vi-VN")} lần cho thuê dài hạn`,
@@ -154,9 +156,34 @@ const PortfolioSection = () => {
               featured.focus === "top" ? "object-top" : featured.focus === "bottom" ? "object-bottom" : "object-center"
             }`}
           />
+          {/* AD 2. 9. 2026, jen pod lg: částka stojí NA fotce, dole vlevo.
+              Ve sloupci pod fotkou se z toho stávala běžná realitní karta
+              (foto → cena → název → údaje); nahoře na fotce zůstává byt
+              a jeho výsledek jedním předmětem. Nad lg se nic nemění, tam
+              napětí drží asymetrie foto vlevo / číslo vpravo.
+              Gradient sahá jen do spodní části snímku, není to hero scrim. */}
+          <div
+            aria-hidden="true"
+            className="lg:hidden pointer-events-none absolute inset-x-0 bottom-0 h-[54%] bg-[linear-gradient(to_top,rgba(14,13,11,0.88)_0%,rgba(14,13,11,0.78)_18%,rgba(14,13,11,0.48)_46%,rgba(14,13,11,0.16)_76%,rgba(14,13,11,0)_100%)]"
+          />
+          <div className="lg:hidden absolute left-6 right-6 bottom-7 sm:left-8 sm:right-8 sm:bottom-8 tnum">
+            {featured.stats ? (
+              <p className="font-display font-semibold text-white leading-[0.9] tracking-[-0.028em] text-[clamp(2.75rem,12.5vw,4.25rem)] whitespace-nowrap [text-shadow:0_1px_3px_rgba(0,0,0,0.32)]">
+                {fmtCzk(featured.stats.owner)}
+                <span className="ml-2.5 sm:ml-3 text-[0.32em] font-normal tracking-normal text-white/90">Kč</span>
+              </p>
+            ) : (
+              <p className="font-display font-semibold text-white leading-[1.1] text-[clamp(1.45rem,6vw,2rem)] max-w-[16ch] [text-shadow:0_1px_3px_rgba(0,0,0,0.32)]">
+                {c.newBadge(featured.newSince!)}
+              </p>
+            )}
+            <p className="mt-2 font-body text-[11px] uppercase tracking-[0.14em] text-white/85 leading-snug text-pretty">
+              {featured.stats ? c.featOwner : c.newNote}
+            </p>
+          </div>
         </figure>
-        <div className="px-6 pt-7 lg:px-0 lg:py-0 lg:pl-14 lg:pr-[max(1.5rem,calc((100vw-75rem)/2+1.5rem))]">
-          <div className="flex items-center gap-2 mb-5">
+        <div className="flex flex-col px-6 pt-5 sm:pt-6 lg:block lg:px-0 lg:py-0 lg:pl-14 lg:pr-[max(1.5rem,calc((100vw-75rem)/2+1.5rem))]">
+          <div className="flex items-center gap-2 mb-5 max-lg:order-2 max-lg:mt-7 max-lg:mb-0">
             <button type="button" onClick={() => step(-1)} aria-label={c.prevFlat}
               className="p-1.5 rounded-sm border border-border text-muted-foreground hover:border-foreground/40 transition-colors">
               <ChevronLeft className="w-4 h-4" aria-hidden="true" />
@@ -172,35 +199,43 @@ const PortfolioSection = () => {
 
           {/* Animuje se jen obsah. Ovládání zůstává namontované, jinak by při
               každém kliknutí ztratilo fokus a rychlé klikání by propadalo. */}
-          <div key={`d-${featIdx}`} className="feat-swap">
-          {featured.stats ? (
-            <p className="tnum font-display font-semibold text-foreground leading-[0.9] tracking-[-0.028em] text-[clamp(3.25rem,6.8vw,6.5rem)] whitespace-nowrap">
-              {fmtCzk(featured.stats.owner)}
-              <span className="ml-[0.5em] text-[0.3em] font-normal tracking-normal text-muted-foreground">Kč</span>
+          <div key={`d-${featIdx}`} className="feat-swap max-lg:order-1">
+          {/* Pod lg tenhle blok nekreslíme: částka i její popiska sedí na fotce. */}
+          <div className="hidden lg:block">
+            {featured.stats ? (
+              <p className="tnum font-display font-semibold text-foreground leading-[0.9] tracking-[-0.028em] text-[clamp(3.25rem,6.8vw,6.5rem)] whitespace-nowrap">
+                {fmtCzk(featured.stats.owner)}
+                <span className="ml-[0.5em] text-[0.3em] font-normal tracking-normal text-muted-foreground">Kč</span>
+              </p>
+            ) : (
+              /* Byt bez celé sezóny nemá co do velkého slotu postavit. Místo
+                 vymyšleného čísla tam stojí, od kdy ho spravujeme. */
+              <p className="font-display font-semibold text-foreground leading-[1.05] tracking-[-0.02em] text-[clamp(1.7rem,3vw,2.6rem)] max-w-[16ch]">
+                {c.newBadge(featured.newSince!)}
+              </p>
+            )}
+            <p className="mt-3 font-body text-[11px] sm:text-xs uppercase tracking-[0.14em] text-muted-foreground">
+              {featured.stats ? c.featOwner : c.newNote}
             </p>
-          ) : (
-            /* Byt bez celé sezóny nemá co do velkého slotu postavit. Místo
-               vymyšleného čísla tam stojí, od kdy ho spravujeme. */
-            <p className="font-display font-semibold text-foreground leading-[1.05] tracking-[-0.02em] text-[clamp(1.7rem,3vw,2.6rem)] max-w-[16ch]">
-              {c.newBadge(featured.newSince!)}
-            </p>
-          )}
-          <p className="mt-3 font-body text-[11px] sm:text-xs uppercase tracking-[0.14em] text-muted-foreground">
-            {featured.stats ? c.featOwner : c.newNote}
-          </p>
-          <h3 className="mt-6 font-display text-xl sm:text-2xl font-semibold text-foreground text-balance">
+          </div>
+          <h3 className="mt-0 lg:mt-6 font-display text-xl sm:text-2xl font-semibold text-foreground text-balance">
             {featured.name}
           </h3>
           <ul className="mt-4 space-y-1.5 font-body text-[11px] sm:text-xs uppercase tracking-[0.09em] text-muted-foreground tnum">
-            <li>{featured.loc}&nbsp;· {featured.m2}&nbsp;m²&nbsp;· {c.guests(featured.guests)}</li>
+            <li>
+              {featured.loc}&nbsp;· {featured.m2}&nbsp;m²
+              <span className="hidden sm:inline">&nbsp;· {c.guests(featured.guests)}</span>
+            </li>
             {featured.stats && (
               <>
                 <li>
-                  {c.statOcc}{" "}
                   <b className="font-medium text-foreground">
                     {featured.stats.occupancy}{lang === "cs" ? "\u00a0%" : "%"}
                   </b>{" "}
-                  · {c.barMarket(featured.loc)}&nbsp;{featured.stats.market}
+                  {c.statOcc} ·{" "}
+                  <span className="sm:hidden">{c.market}</span>
+                  <span className="hidden sm:inline">{c.barMarket(featured.loc)}</span>
+                  &nbsp;{featured.stats.market}
                   {lang === "cs" ? "\u00a0%" : "%"}
                 </li>
                 <li>{featured.stats.since ? c.statPeriodSince(featured.stats.since) : c.statPeriod12}</li>
