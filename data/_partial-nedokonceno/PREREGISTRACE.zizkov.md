@@ -70,3 +70,20 @@ Podle SOP §14 a §15: výslovné pojmenování hranice v KAŽDÉM dotazu
 `data:null`), ověření `selected_geometry_label` + `_source` u každého
 pásma zvlášť, záchyt syrové odpovědi před transformací, okno se smí
 vrátit jako nadmnožina a ořízne se kalendářním pravidlem.
+
+---
+
+## Pokus 1: KVÓTA VYČERPÁNA — žádná data
+
+```
+success:false  status_code:429  ERR-MCP-RATE-LIMITED
+"You have used all 20 Market Research requests on this account.
+ The 20 are counted over a 24 hour window that starts at your first
+ request, so all of them become available again in 21 hours and 43 minutes."
+```
+
+Odmítnuto **před** jakýmkoli dotazem na trh, takže se nic nestáhlo,
+nic nezachytilo a Žižkov zůstává nedotčený. Předregistrace platí dál.
+
+Zamítnutí přišlo 2026-09-02 17:35 UTC → **kvóta se obnoví
+2026-09-03 v 15:18 UTC**.

@@ -2,6 +2,10 @@
 
 Platí od 2. 9. 2026. **Automatizuje se mechanika, ne úsudek.**
 
+> **Cíl není spotřebovat kvótu. Cíl je získat co nejvíc kompletních,
+> plně ověřených čtvrtí. Nevyužitá kvóta je lepší než rozdělaný nebo
+> pochybný pull.**
+
 Čte se spolu s `docs/pricelabs-pull.md` (SOP, §14 pin geometrie,
 §15 sdílená geometrie, §16 kvóta, §17 dávkování) a
 `docs/pricelabs-acceptance.md` (přejímka 1–21).
@@ -72,6 +76,35 @@ Radši nechat kvótu nevyužitou než vyrobit další rozdělanou čtvrť.
 Známá přechodná selhání (prázdná obálka, `data:null`) **nejsou** nový
 režim. Jeden identický retry tam, kde ho SOP povoluje; počítá se do
 kvóty. **Žádné cyklení přes různé formulace.**
+
+## Další čtyři guardy
+
+**8. Formálně úspěšná odpověď bez dat je spotřebovaný pokus.**
+`success: true` s `data: null` (nebo jinak bez strukturovaného `data[]`)
+se počítá do kvóty a řeší se retry pravidlem ze SOP. **Próza se nikdy
+nebere jako data** — u Vinohrad přesně takhle vypadalo selhání, které
+próza popsala větou „please ensure the relevant geography is selected".
+
+**9. Ořez okna jen schváleným deterministickým pravidlem.**
+Přijde-li víc měsíců než požadované uzavřené okno, smí `pl-raw.mjs`
+a `pl-artifact.mjs` použít **výhradně** kalendářní pravidlo (pozice
+v okně), které je pokryté testy. Syrová odpověď zůstává celá, vyřazené
+řádky se zapisují do `excluded_rows`. **Nikdy neořezávat podle toho, že
+měsíc „vypadá neúplně"** — datově závislé pravidlo by zrušilo smysl
+deterministického okna.
+
+**10. Geometrii potvrzuje každé pásmo samo.**
+`session_id` je pomocný pin, **ne důkaz správné geometrie**. U každého
+pásma zvlášť se ověřuje schválený `selected_geometry_label`
+i `selected_geometry_source`. Že první pásmo sedělo, neznamená nic pro
+druhé — u Vinohrad session geometrii ztratila hned napodruhé.
+
+**11. Nový režim selhání = STOP.**
+Cokoli, co není výslovně pokryté v `pricelabs-autorun.md`,
+`pricelabs-pull.md` nebo `pricelabs-acceptance.md`, znamená zastavit.
+**Během autorunu se pipeline ani pravidla nerozšiřují bez schválení
+člověkem.** Rozšiřovat pravidla uprostřed běhu je přesně ten způsob,
+jak se brána tiše změkčí.
 
 ## Zákaz
 
