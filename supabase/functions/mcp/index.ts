@@ -121,9 +121,9 @@ var MARKET_CTVRT = {
     label: "Star\xE9 M\u011Bsto",
     parents: ["praha1"],
     bands: {
-      "1BR": { adr: 3206, revpar: 2467.4, nMean: 533, nMin: null },
-      "2BR": { adr: 4886, revpar: 3733.7, nMean: 297, nMin: null },
-      "3BR": { adr: 6353, revpar: 4809.4, nMean: 110, nMin: null }
+      "1BR": { adr: 3206, revpar: 2467.4, nMean: 533, nMin: null, basis: "measured" },
+      "2BR": { adr: 4886, revpar: 3733.7, nMean: 297, nMin: null, basis: "measured" },
+      "3BR": { adr: 6353, revpar: 4809.4, nMean: 110, nMin: null, basis: "measured" }
     }
   }
 };
@@ -133,7 +133,7 @@ var localCell = (loc, band, ctvrt) => {
   const c = ctvrt ? MARKET_CTVRT[ctvrt] : void 0;
   if (!c || !c.parents.includes(loc)) return district;
   const own = c.bands[band];
-  if (!own || !district) return district;
+  if (!own || own.basis !== "measured" || !district) return district;
   const w = ctvrtWeight(own.nMean);
   if (w === 0) return district;
   return {
@@ -442,8 +442,7 @@ var apartments = [
   { name: "Secret garden studio I", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
   { name: "Secret garden studio II", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
   { name: "Klement apartment s terasou", location: "Mlad\xE1 Boleslav", maxGuests: 8, floorAreaM2: 85, ownerMonthlyCzk: 3e4, occupancyPct: 91, period: "2026-04 to 2026-07" },
-  { name: "Klement apartment", location: "Mlad\xE1 Boleslav", maxGuests: 8, managedSince: "2026-08", note: "new, results after the first season" },
-  { name: "My Mozart studio", location: "Praha 5", maxGuests: 4, floorAreaM2: 40, ownerMonthlyCzk: 3e4, occupancyPct: 97, period: "2026-02 to 2026-07" }
+  { name: "Klement apartment", location: "Mlad\xE1 Boleslav", maxGuests: 8, managedSince: "2026-08", note: "new, results after the first season" }
 ].map((a) => "ownerMonthlyCzk" in a ? { ...a, vsLongTermRent: ratioFor(a.location, a.floorAreaM2, a.ownerMonthlyCzk) ?? void 0 } : a);
 var list_portfolio_default = defineTool2({
   name: "list_portfolio",

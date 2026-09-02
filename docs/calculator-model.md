@@ -23,6 +23,32 @@ při průměrně ≥ 50 aktivních nabídkách. Surová data v `data/pricelabs-2
 `avg_revenue` je za celý kalendářní měsíc. Rozklad všech 27 segmentů dal 0,92
 (rozptyl 0,88 až 0,98). Aplikuje se právě jednou; hlídá to test.
 
+**Co PriceLabs vlastně měří** (ověřeno přímo u dodavatele 2. 9. 2026, ne odhad
+z paměti). `ADR`, `RevPAR` i `avg_revenue` jsou **hrubé ubytovací tržby PŘED
+provizemi platforem**. Nezahrnují úklid, poplatky za osobu navíc ani daně.
+A jsou to **odhady** z pozorovaných cen a obsazených dat v kalendáři, **ne
+vyúčtované výplaty**.
+
+Z toho plynou tři věci a ani jedna se nesmí zaokrouhlit na „to je v pohodě":
+
+1. **Odečítat provizi od tohoto základu je správně.** Není to dvojí odečet —
+   PriceLabs provizi ještě neodečetl.
+
+2. **`PLATFORM_FEE = 0.17` je EFEKTIVNÍ zjednodušení, ne reprodukce smluvního
+   základu.** Skutečná provize se u části kanálů počítá i z úklidu, tedy
+   z ŠIRŠÍHO základu, než na jaký ji model aplikuje. Model přesný poplatkový
+   základ nereprodukuje a netvrdíme to. Naměřeno na 7 bytech za 12 měsíců:
+   efektivně 17,3 až 20,6 % z ceny pokoje. **0,170 leží těsně POD tím pásmem**,
+   tedy na optimistické straně majitele. Nepiš, že to kalibrace „už řeší" —
+   neřeší, je to vědomě opatrné číslo směrem k vyššímu výsledku.
+
+3. **Operátorský faktor je REALIZOVANÁ tržba Antamu proti ODHADOVANÉMU trhu.**
+   Není to výplata proti výplatě. Je to nejlepší srovnání, které v současnosti
+   držíme; přímé settled-payout benchmarky trhu nemáme. Že se případná
+   systematická chyba odhadu vykrátí, protože týž odhadce stojí v čitateli
+   i jmenovateli každého čtvrťového indexu, je **věrohodné, ale nedoložené**.
+   Kdo na tom bude stavět další vrstvu, musí to ověřit, ne převzít.
+
 **Poměry mezi pásmy.** ADR i RevPAR: 1BR→2BR 1,525 / 1,517 · 2BR→3BR 1,514 /
 1,481 · 1BR→3BR 2,329 / 2,304. Vážené počtem nabídek přes čtvrti, kde jsou obě
 pásma solidní. Poměr 1BR→3BR je změřený přímo, ne součin sousedních.
