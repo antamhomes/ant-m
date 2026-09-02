@@ -434,14 +434,43 @@ export const SPREAD = { low: 0.92, high: 1.08, minWidth: 0.08, derivedWiden: 1.6
  * míň = okres. Sdílené čtvrti (Vinohrady, Nové Město) patří pod víc okresů;
  * rodičem je vždycky okres, který si člověk vybral.
  */
-export type CtvrtCell = { adr: number; revpar: number; nMean: number; nMin: number | null };
+/**
+ * Původ čtvrťového pásma. ČISTÁ METADATA: do žádného výpočtu nevstupují,
+ * jen říkají, čím to číslo je.
+ *
+ *  "measured"      = pásmo pullnuté PŘÍMO pro tuhle geometrii
+ *  "derived_split" = jeden součet přes všechny dispozice rozpadlý poměrem.
+ *                    NENÍ to měření a do produkce nesmí.
+ *
+ * Proč to existuje: 1. 9. 2026 vznikl soubor s deseti čtvrtěmi, kde čtvrťové
+ * SOUČTY jsou měřené, ale jejich 1BR/2BR/3BR ne — vznikly vynásobením
+ * celopražským poměrem 0,779 / 1,221 / 1,891. V `CtvrtCell` do té doby nebylo
+ * kam to napsat, takže by taková buňka seděla v tabulce k nerozeznání od pásma,
+ * které PriceLabs opravdu změřil. Okresní `MarketCell` má `derived`, čtvrťová
+ * neměla nic.
+ *
+ * POZOR, dvě RŮZNÉ osy provenience, nezaměňovat:
+ *   `basis`               = bylo pásmo změřené, nebo rozpadlé z součtu?
+ *   `RECONSTRUCTED_CELLS` = je za tím surový artefakt, ze kterého to jde
+ *                           přepočítat?
+ * Staré Město je `measured` (pásma se pullovala zvlášť, 533/297/110 nabídek)
+ * a ZÁROVEŇ rekonstruované (měsíční řada se neuložila). Jiná otázka, jiná
+ * náprava.
+ */
+export type CellBasis =
+  | { basis: "measured" }
+  | { basis: "derived_split"; from: string; reason: string };
+
+export type CtvrtCell = {
+  adr: number; revpar: number; nMean: number; nMin: number | null;
+} & CellBasis;
 export const MARKET_CTVRT: Record<string, { label: string; parents: LocationKey[]; bands: Partial<Record<Band, CtvrtCell>> }> = {
   stare_mesto: {
     label: "Staré Město", parents: ["praha1"],
     bands: {
-      "1BR": { adr: 3206, revpar: 2467.4, nMean: 533, nMin: null },
-      "2BR": { adr: 4886, revpar: 3733.7, nMean: 297, nMin: null },
-      "3BR": { adr: 6353, revpar: 4809.4, nMean: 110, nMin: null },
+      "1BR": { adr: 3206, revpar: 2467.4, nMean: 533, nMin: null, basis: "measured" },
+      "2BR": { adr: 4886, revpar: 3733.7, nMean: 297, nMin: null, basis: "measured" },
+      "3BR": { adr: 6353, revpar: 4809.4, nMean: 110, nMin: null, basis: "measured" },
     },
   },
 };
@@ -456,7 +485,10 @@ export const localCell = (loc: MeasuredLocation, band: Band, ctvrt?: string | nu
   const c = ctvrt ? MARKET_CTVRT[ctvrt] : undefined;
   if (!c || !c.parents.includes(loc as LocationKey)) return district;
   const own = c.bands[band];
-  if (!own || !district) return district;
+  // Rozpad součtu poměrem se do produkčního výpočtu nedostane. Tichý fail-safe:
+  // vrátí se okres, tedy totéž, co kdyby čtvrť pásmo vůbec neměla. Hlasitá
+  // pojistka je test, který takovou buňku do MARKET_CTVRT vůbec nepustí.
+  if (!own || own.basis !== "measured" || !district) return district;
   const w = ctvrtWeight(own.nMean);
   if (w === 0) return district;
   return {

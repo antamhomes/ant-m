@@ -20,7 +20,7 @@ import {
   OCCUPANCY_BY_FLAT, MEDIAN_AREA, rentFor,
   MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor,
   operatorFactor, OPERATOR_EVIDENCE, publicFactorFrom, AVAILABILITY, BAND_BLEND, bandWeight, bandForSize, ctvrtiOf, MARKET_CTVRT,
-  marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, isReliableN, RELIABLE_MIN_N, RECONSTRUCTED_CELLS, SPREAD, SIZE_BUCKETS_BY_VERSION, CALC_MODEL_VERSION, bucketsFor, bucketFor, marketCell, guestsFor, BASE_GUESTS,
+  marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, isReliableN, RELIABLE_MIN_N, RECONSTRUCTED_CELLS, SPREAD, SIZE_BUCKETS_BY_VERSION, CALC_MODEL_VERSION, bucketsFor, bucketFor, marketCell, localCell, guestsFor, BASE_GUESTS,
   RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, RENT_GROWTH, STR_GROWTH, GEO, geoContext, ctvrtRentFactor, TYPICAL_AREA, typicalArea, type LocationKey,
   type MeasuredLocation, type SizeKey,
 } from "@/lib/yield";
@@ -1043,6 +1043,38 @@ describe("model výnosu", () => {
       for (const parent of c.parents)
         expect(geoContext(parent, geom), `${parent}/${geom}: STR čtvrť bez kontextu v registru`).toBeTruthy();
     expect(geoContext("praha1", "karlin"), "cizí kombinace neexistuje").toBeUndefined();
+
+    // PROVENIENCE ČTVRŤOVÝCH PÁSEM (1. 9. 2026). Dvě různé osy:
+    //   basis               = bylo pásmo změřené, nebo rozpadlé ze součtu?
+    //   RECONSTRUCTED_CELLS = je za tím surový artefakt?
+    // Staré Město je measured a zároveň rekonstruované. Nezaměňovat.
+    //
+    // FAIL-CLOSED: v produkční tabulce smí být jen přímo měřená pásma.
+    // Rozpad součtu celopražským poměrem (0,779 / 1,221 / 1,891) je analýza,
+    // ne měření, a v MARKET_CTVRT by byl k nerozeznání od pullnutého čísla.
+    for (const [geom, c] of Object.entries(MARKET_CTVRT))
+      for (const [band, cell] of Object.entries(c.bands))
+        expect(cell!.basis, `${geom}/${band}: do MARKET_CTVRT smí jen měřené pásmo`).toBe("measured");
+
+    // A kdyby se tam rozpad přece dostal, nesmí ovlivnit výsledek: localCell
+    // ho ignoruje a vrátí okresní buňku, tedy totéž, co kdyby čtvrť pásmo
+    // neměla vůbec. Podvrhneme extrémní hodnoty, aby bylo poznat, že se
+    // NEZAMÍCHALY.
+    const real = MARKET_CTVRT.stare_mesto.bands["2BR"]!;
+    const okres = marketCell("praha1", "2BR");
+    const smiseny = localCell("praha1", "2BR", "stare_mesto");
+    expect(smiseny, "měřená čtvrť se s okresem míchá").not.toEqual(okres);
+    try {
+      (MARKET_CTVRT.stare_mesto.bands as Record<string, unknown>)["2BR"] = {
+        adr: 99999, revpar: 99999, nMean: 500, nMin: 500,
+        basis: "derived_split", from: "praha_cela 2026_08", reason: "test",
+      };
+      expect(localCell("praha1", "2BR", "stare_mesto"), "rozpad výsledek neovlivní")
+        .toEqual(okres);
+    } finally {
+      (MARKET_CTVRT.stare_mesto.bands as Record<string, unknown>)["2BR"] = real;
+    }
+    expect(localCell("praha1", "2BR", "stare_mesto"), "a po testu je tabulka zpět").toEqual(smiseny);
     // kalkulačka i graf posílají do nájmu TÉŽ čtvrť jako do STR
     expect(readFileSync("src/components/CalculatorSection.tsx", "utf8")).toContain('rentFor(location as LocationKey, size, m2, "mix", ctvrt)');
     expect(readFileSync("src/lib/horizon.ts", "utf8")).toContain('rentFor(location as LocationKey, size, m2, "mix", ctvrt)');
