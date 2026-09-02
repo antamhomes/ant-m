@@ -250,11 +250,13 @@ const PortalDemo = () => {
               <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
                 <p className="font-body text-[10px] uppercase tracking-[0.12em] text-muted-foreground">{t(lang, "pdm_budget")}</p>
                 <p className="font-display text-[14px] text-foreground tnum">
-                  {czk(m.budgetUsed)}&nbsp;Kč <span className="text-muted-foreground">/ {czk(flat.budgetLimit)}&nbsp;Kč</span>
+                  {czk(flat.budgetLimit - m.budgetUsed)}&nbsp;Kč <span className="text-muted-foreground">/ {czk(flat.budgetLimit)}&nbsp;Kč</span>
                 </p>
               </div>
               <div className="mt-2 h-1 w-full bg-muted overflow-hidden rounded-full" aria-hidden="true">
-                <div className="h-full bg-gold" style={{ width: `${Math.min(100, (m.budgetUsed / flat.budgetLimit) * 100)}%` }} />
+                {/* Pruh ukazuje ZBYVAJICI cast, ne vycerpanou: majitele zajima,
+                    kolik krytí má ještě k dispozici, a plný pruh čte líp než skoro prázdný. */}
+                <div className="h-full bg-gold" style={{ width: `${Math.max(0, 100 - (m.budgetUsed / flat.budgetLimit) * 100)}%` }} />
               </div>
             </div>
 
