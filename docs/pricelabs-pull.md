@@ -303,3 +303,41 @@ a strukturovaná data PriceLabs jsou v čase stabilní.
 Okresní artefakty pořád nemají surovou provenienci (vznikly před záchytem).
 Tohle jim ji nenahrazuje — jen ukazuje, že jejich čísla živý PriceLabs
 potvrzuje.
+
+---
+
+## 14. Pin geometrie drží SESSION, ne token (SOP)
+
+Nejkřehčí místo celého postupu. Auto-výběr geometrie **není
+deterministický**: 2. 9. 2026 se táž otázka na Nové Město trefila ráno na
+`New Town official boundary (openstreetmap)` a odpoledne na
+`Prague Main Station circle (15 km)` — kruh přes celou metropoli, vrácený
+bez chyby a s `market_label` hlásícím „New Town (Nove Mesto), Prague".
+Popisek trhu lhal, pole `selected_geometry_label` ne.
+
+Kolo výběru geometrie **si nejde vyžádat** — backend ho nabídne, jen když
+sám vyhodnotí místo jako nejednoznačné. `geometry_token` se tedy cíleně
+získat nedá. Zbývá session.
+
+### Postup
+
+1. **První platné pásmo zakládá pin.** Jakmile odpověď vrátí přesně
+   schválený `selected_geometry_label` + `selected_geometry_source`,
+   **ulož `session_id`**. To je jediné, čím se na tentýž polygon vrátíš.
+2. **Další pásma tahej ve stejné session** a geografii **znovu nepopisuj** —
+   odkaž se na „the exact same geography already selected in this session".
+3. **Každé pásmo se kontroluje samo.** Shoda `selected_geometry_label`
+   i `selected_geometry_source` znak po znaku, u každé odpovědi zvlášť.
+   Nestačí, že první pásmo sedělo.
+4. **Neshoda = zamítnout a zastavit.** Žádné druhé znění dotazu, žádné
+   „asi to bylo tím, jak jsem se zeptal". Data ulož zvlášť jako zamítnutá.
+5. **Když session vypadne**, pin je pryč a začíná se od bodu 1 — včetně
+   rizika, že auto-výběr sáhne jinam.
+
+### Co tím SOP nekryje
+
+Že se pin nedá ověřit dopředu. Ověřuje se až tím, co odpověď vrátí, takže
+tuhle práci odvádí brána, ne důvěra v session. A protože prázdné obálky
+(`{"success":false,"error":""}`) chodí nahodile — 3BR Nového Města prošlo
+až na čtvrtý pokus, beze změny čehokoli — počítej s tím, že pásmo může
+selhat i s živou session. Selhání ≠ chybějící data.
