@@ -358,3 +358,65 @@ byla atomická — buď oba kontexty, nebo žádný.
 postupem: nejdřív vygenerovat oba skripty, diffem doložit, že se liší
 pouze v `geo_id`, teprve pak sloučit. Bez toho diffu se skripty pouštějí
 jednotlivě.
+
+## 16. Kvóta: poprvé změřená, ne odhadnutá (2. 9. 2026)
+
+Runbook od začátku říká „měř, neodhaduj", jenže odpovědi PriceLabs žádný
+counter nevracely a spotřeba byla nepozorovatelná. Při vyčerpání limitu
+ale přijde **explicitní 429**, a ten je zdrojem pravdy:
+
+```
+status_code: 429   ERR-MCP-RATE-LIMITED
+"You have used all 20 Market Research requests on this account.
+ The 20 are counted over a 24 hour window that starts at your first
+ request, so all of them become available again in 21 hours and 43 minutes."
+```
+
+Co z toho plyne:
+
+1. **Okno je ukotvené k prvnímu dotazu**, ne klouzavé po jednotlivých
+   voláních. Runbook to předpokládal správně.
+2. **Zpráva vrací zbývající čas**, takže obnovení jde spočítat přesně.
+   Ten 429 stojí za zaznamenání do `pl_pull_log` — je to jediná tvrdá
+   telemetrie, kterou od PriceLabs dostaneme.
+3. **Selhaná volání se zjevně počítají.** 2. 9. 2026 se v této session
+   napočítalo 14 volání (11 úspěšných, 3 prázdné obálky / `data:null`),
+   a přesto limit hlásil 20 vyčerpaných — zbytek padl na dřívější dotazy
+   téhož dne. Prázdná obálka tedy **není zadarmo**, což mění plánování:
+   opakování selhaného pásma stojí stejně jako nový pull.
+4. **Praktický důsledek pro plán:** tři pásma na čtvrť + rezerva na
+   selhání znamená realisticky **4–6 dotazů na čtvrť**, tedy nanejvýš
+   tři až čtyři čtvrti za den, ne šest.
+
+Odhad „~2 dotazy na geometrii" z prvních zápisků je tímhle vyvrácený.
+
+## 17. Dávkování: počítej POKUSY, ne úspěchy
+
+Z §16 plyne rozpočet: **20 dotazů na den**, okno ukotvené k prvnímu,
+a selhaná volání se počítají.
+
+Pravidla plánování:
+
+1. **Eviduje se `pokusů`, ne `stažených pásem.`** Po každém pokusu
+   o pásmo se zbývající denní rozpočet sníží o 1, ať odpověď přišla
+   jakkoli — úspěch, prázdná obálka, `data:null`, špatná geometrie, 429.
+2. **Novou čtvrť nezačínej, dokud nezbývají aspoň 4 dotazy** (tři pásma
+   + jeden retry). Reálný náklad je 4–6 na čtvrť.
+3. **Radši skonči s rezervou, než vsázet na „ještě jedno pásmo".**
+
+Důvod je konkrétní, ne teoretický. 2. 9. 2026 zůstalo Nové Město několik
+hodin na 2/3 pásem, protože 3BR opakovaně padalo; teprve čtvrtý pokus
+prošel. Kdyby v ten moment došla kvóta, čtvrť zůstane nepoužitelná do
+druhého dne — brána ji do produkce nepustí a dopočítat se nesmí.
+
+**Pět rozdělaných čtvrtí je horší než dvě hotové.** Neúplná čtvrť nemá
+žádnou hodnotu: `pl-import.mjs` ji odmítne, `MARKET_CTVRT` ji nedostane
+a majitel pořád vidí okresní číslo.
+
+### Pořadí fronty (stav 2. 9. 2026)
+
+| # | čtvrť | kontexty | proč |
+|---|---|---|---|
+| 1 | Žižkov | praha3 | předregistrace zmrazená, první test heterogenity uvnitř jednoho obvodu |
+| 2 | Smíchov | praha5 | nejlepší vzorek LTR (n=101) i STR, všechna pásma s nenulovou vahou |
+| 3 | Karlín | praha8 | největší efekt nájmu (+11,4 %), ale nejtenčí STR — 3BR skoro jistě váha 0 |
