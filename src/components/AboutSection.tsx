@@ -28,49 +28,33 @@ const BODY_KEYS: Record<"cs" | "vi", readonly TranslationKey[]> = {
 };
 /** Stats with an empty value are skipped: the CZ page dropped the managed-flat
  *  count (a weak proof next to the portfolio itself), the VI page still shows it. */
-const STAT_KEYS = [
-  { value: "about_stat1_value", label: "about_stat1_label" },
-  { value: "about_stat2_value", label: "about_stat2_label" },
-] as const;
 
 const AboutSection = () => {
   const { lang } = useLanguage();
 
   return (
     <section id="kdo-jsme" className="section bg-secondary scroll-mt-16">
-      <div className="container-narrow">
-        <div className="max-w-3xl mx-auto">
+      <div className="container-wide">
+        <div className="max-w-4xl">
           <Reveal className="section-head">
             <p className="eyebrow eyebrow-center">{t(lang, "about_label")}</p>
             <h2 className="h-section-sm text-foreground">{t(lang, "about_title")}</h2>
           </Reveal>
 
-          <div className="grid md:grid-cols-[minmax(0,1fr)_248px] gap-7 md:gap-10 items-start">
-            {/* 2D: pravý sloupec nesl jen dvě čísla a pod nimi dvě třetiny
-                prázdna. Citát zakladatele se sem přesunul z levého sloupce.
-                Je to existující materiál, drží stranu vyváženou a pod čísly
-                se čte jako podpis, ne jako ozdoba. Na mobilu zůstává pořadí
-                stejné jako dřív: čísla nahoře, citát na konci sekce. */}
-            <Reveal delay={0.1} className="order-first md:order-last contents md:block">
-              <div className="flex md:flex-col gap-8 md:gap-7 border-y md:border-y-0 md:border-l border-gold/30 py-4 md:py-1 md:pl-6 order-first">
-                {STAT_KEYS.filter(({ value }) => t(lang, value)).map(({ value, label }) => (
-                  <div key={value}>
-                    <p className="font-display text-3xl md:text-4xl font-semibold text-gold-deep leading-none tnum">
-                      {t(lang, value)}
-                    </p>
-                    <p className="mt-2 font-body text-[11px] uppercase tracking-[0.14em] text-muted-foreground leading-snug">
-                      {t(lang, label)}
-                    </p>
-                  </div>
-                ))}
-              </div>
+          <div className="grid md:grid-cols-[minmax(0,1fr)_300px] gap-7 md:gap-12 items-start">
+            {/* AD 2. 9. 2026: čísla 11 a 520+ odsud pryč. Od té doby, co
+                stojí v heru, byla tahle sekce jejich druhým výskytem na jedné
+                stránce, a opakované číslo působí slaběji než jednou řečené.
+                Sloupec zůstal citátu, který je tu jediným místem, kde mluví
+                člověk, ne firma. */}
+            <Reveal delay={0.1} className="order-first md:order-last">
               {t(lang, "about_quote") && (
-                <div className="border-l-2 border-gold/60 pl-4 mt-7 md:mt-9 md:ml-6 order-last">
-                  <p className="font-display italic text-[17px] md:text-lg text-foreground/90 leading-relaxed text-pretty">
+                <div className="border-l border-gold/50 pl-6">
+                  <p className="font-display italic text-[19px] md:text-[22px] text-foreground/90 leading-[1.45] text-pretty">
                     {t(lang, "about_quote")}
                   </p>
                   {t(lang, "about_sign") && (
-                    <p className="mt-3 font-body text-[12px] uppercase tracking-[0.14em] text-muted-foreground">
+                    <p className="mt-4 font-body text-[11px] uppercase tracking-[0.13em] text-muted-foreground leading-relaxed text-balance">
                       {t(lang, "about_sign")}
                     </p>
                   )}

@@ -1,5 +1,5 @@
 import Reveal from "@/components/Reveal";
-import { FileBarChart, ChevronRight, Wallet, Receipt, BedDouble } from "lucide-react";
+import { ChevronRight, Wallet, Receipt, BedDouble, FileBarChart } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
@@ -30,30 +30,32 @@ const OwnerReportSection = () => {
           <p className="lead">{t(lang, "report_desc")}</p>
         </Reveal>
 
-        <div className={hasSide ? "grid md:grid-cols-2 gap-7 sm:gap-10 md:gap-16 items-center max-w-5xl mx-auto" : "max-w-lg mx-auto space-y-5"}>
-          <Reveal
-            className="reveal-card bg-card border border-border rounded-md p-6 md:p-8 shadow-[0_30px_60px_-30px_hsl(var(--charcoal)/0.35)] will-change-transform"
-          >
-            <div className="flex items-center justify-between pb-4 border-b border-border mb-4">
-              <div className="flex items-center gap-2">
-                <FileBarChart className="w-5 h-5 text-gold" />
-                <span className="font-display text-base font-semibold text-foreground">
-                  {t(lang, "report_period")}
-                </span>
-              </div>
-              <Wordmark on="light" size="sm" className="opacity-80" />
+        <div className={hasSide ? "grid md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-8 md:gap-16 items-start" : "max-w-xl space-y-5"}>
+          {/* AD 2. 9. 2026: bez karty. Tohle je doklad, ne widget: stín,
+              zaoblení a ikonka u každého řádku z něj dělaly UI prvek, zatímco
+              má číst jako výpis, který si majitel přepočítá. */}
+          <Reveal>
+            <div className="flex items-baseline justify-between gap-4 pb-3.5 border-b border-foreground/25">
+              <span className="font-body text-[11px] uppercase tracking-[0.13em] text-muted-foreground">
+                {t(lang, "report_period")}
+              </span>
+              <Wordmark on="light" size="sm" className="opacity-70" />
             </div>
 
-            <ul className="divide-y divide-border">
-              {rows.map(({ icon: Icon, key, value, highlight }) => (
-                <li key={key} className="flex items-center justify-between py-3.5">
-                  <span className="flex items-center gap-3 font-body text-sm text-muted-foreground">
-                    <Icon className="w-4 h-4 text-gold/70" />
+            <ul className="m-0 p-0 list-none">
+              {rows.map(({ key, value, highlight }) => (
+                <li
+                  key={key}
+                  className={`flex items-baseline justify-between gap-6 py-3.5 ${
+                    highlight ? "border-y border-foreground/25 mt-0.5" : "border-b border-border"
+                  }`}
+                >
+                  <span className={`font-body text-[14.5px] ${highlight ? "font-medium text-foreground" : "text-muted-foreground"}`}>
                     {t(lang, key)}
                   </span>
                   <span
-                    className={`font-display text-base font-semibold tnum ${
-                      highlight ? "text-gold-deep" : "text-foreground"
+                    className={`whitespace-nowrap font-display tnum ${
+                      highlight ? "text-[26px] sm:text-[30px] font-semibold text-gold-deep" : "text-[19px] sm:text-[21px] text-foreground/85"
                     }`}
                   >
                     {value}
@@ -61,7 +63,7 @@ const OwnerReportSection = () => {
                 </li>
               ))}
             </ul>
-            <p className="mt-4 font-body text-[12px] text-muted-foreground leading-relaxed text-pretty">
+            <p className="mt-4 font-body text-[12px] text-muted-foreground leading-relaxed text-pretty max-w-[70ch]">
               {t(lang, "report_note")}
             </p>
           </Reveal>
@@ -73,7 +75,7 @@ const OwnerReportSection = () => {
               </p>
             )}
             {/* Multi-property signal: one line, no "enterprise" theatre. */}
-            <p className={`font-body text-[15px] text-muted-foreground leading-relaxed text-pretty ${t(lang, "report_cta") ? "mb-8" : ""} ${hasSide ? "" : "text-center"}`}>
+            <p className={`font-body text-[15px] text-muted-foreground leading-relaxed text-pretty ${t(lang, "report_cta") ? "mb-8" : ""} ${hasSide ? "" : ""}`}>
               {t(lang, "report_multi")}
             </p>
             {/* Přehled je důkaz transparentnosti, ne konverzní sekce. Prázdný
