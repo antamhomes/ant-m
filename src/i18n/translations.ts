@@ -70,7 +70,7 @@ const translations = {
     step1_title: "Pošlete nám byt",
     step1_desc: "Adresa, dispozice a pár vět. Fotky nebo odkaz na inzerát pomůžou.",
     step2_title: "Připravíme propočet",
-    step2_desc: "Do 24 hodin dostanete propočet z realizovaných cen srovnatelných bytů v okolí a výši písemného minima.",
+    step2_desc: "Do 24 hodin dostanete propočet z realizovaných cen srovnatelných bytů v okolí.",
     step3_title: "Domluvíme plán spuštění",
     step3_desc: "Byt připravený k\u00a0provozu spouštíme rovnou. Pokud je potřeba něco doladit, domluvíme úpravy, vybavení a\u00a0prezentaci.",
     step4_title: "Spustíme pronájem",
@@ -320,7 +320,7 @@ const translations = {
     pricing_desc: "Čistý výnos je to, co pošlou platformy po své provizi, minus úklid, který platí hosté zvlášť. Bez měsíčního paušálu, uvedení bytu do provozu je jednorázově 25 000 Kč.",
     pr1_name: "Správa",
     pr1_price: "30 % z čistého výnosu",
-    pr1_note: "Čísla ve schématu jsou vzor pro 90 000 Kč na účtu, ne konkrétní byt. Ze samotného výnosu je naše odměna 30 % a je konečná.",
+    pr1_note: "Čísla ve schématu jsou vzor pro 90 000 Kč na účtu, ne konkrétní byt. Úklidový poplatek platí hosté zvlášť a kryje úklid a prádlo. Ze samotného výnosu je naše odměna 30 % a je konečná.",
     pr1_split_owner: "70 % pro vás",
     pr1_split_fee: "30 % Antam Homes",
     pr1_flow1: "Přijde na účet od Airbnb a Booking.com",
@@ -434,7 +434,7 @@ const translations = {
 
     // Contact (fallback)
     contact_fallback_title: "Podíváme se na váš byt.",
-    contact_fallback_desc: "Pošlete adresu a dispozici. Do 24 hodin od nás máte propočet pro váš konkrétní byt a výši písemného minima.",
+    contact_fallback_desc: "Pošlete adresu a dispozici. Do 24 hodin od nás máte propočet pro váš konkrétní byt.",
     contact_consent_prefix: "Souhlasím se ",
     contact_consent_link: "zpracováním osobních\u00a0údajů",
     contact_consent_suffix: ".",

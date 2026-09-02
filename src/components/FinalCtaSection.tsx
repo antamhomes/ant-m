@@ -25,7 +25,7 @@ const FinalCtaSection = () => {
           onClick={() => trackEvent("cta_click", { location: "final", target: "contact" })}
           className="btn btn-primary-inverse"
         >
-          {t(lang, "hero_cta")}
+          {t(lang, "g_cta")}
           <ChevronRight className="w-4 h-4" />
         </a>
       </Reveal>
