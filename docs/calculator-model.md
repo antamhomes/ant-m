@@ -296,11 +296,25 @@ a Tailwind tříd) na všechna čísla použitá v konfiguraci.
 
 **Čtvrťový nájem: HOTOVO 31. 8. 2026** (`CTVRT_RENT`, `rentFor(..., ctvrt?)`).
 Viz sekce 1 a 2. Obě strany porovnání jsou tím geograficky sladěné a Karlín
-a Libeň se dají pouštět bez nafouknutého násobku. Staré Město
-zvedne STR o 10 %, ale nájem zůstane okresní, takže násobek vyskočí z 1,62 na
-1,78 jen tím, že jsme zpřesnili jednu stranu zlomku. Sreality dataset nemá
-sloupec čtvrti. Řešení: re-scrape s čtvrtí a lokální intercepty se shrinkage
-k okresu. **Tohle má přednost před dalšími čtvrťovými STR pully.**
+a Libeň se dají pouštět bez nafouknutého násobku.
+
+**OPRAVA 2. 9. 2026: věta o re-scrapu je PŘEKONANÁ, nepiš ji sem znovu.**
+Původně tu stálo, že Sreality dataset nemá sloupec čtvrti a že re-scrape má
+přednost před dalšími čtvrťovými STR pully. Obojí padlo ještě 31. 8.: katastr
+v datech JE (3 350 z 3 429 inzerátů v `ltr-source.csv`) a `CTVRT_RENT`
+i registr `GEO` jsou z něj postavené — 33 čtvrťových kontextů s vlastním
+nájemním efektem. Čtvrťový nájem tedy k dispozici je a žádný nový scrape se
+na nic nečeká.
+
+Co zbylo je ÚZKÁ mezera, ne chybějící vrstva: **Staré Město** má 11 nájemních
+inzerátů, tedy pod prahem 12, a do `GEO` se nedostalo. Jeho STR je čtvrťové,
+ale nájem okresní, takže násobek vyskočí z 1,62 na 1,78 jen tím, že je jedna
+strana zlomku ostřejší. Re-scrape by to nespravil: Staré Město je malá čtvrť,
+kde se dlouhodobě pronajímá málo, takže inzerátů tam víc nebude. Buď se čtvrť
+z nájemní strany vynechá, nebo se přizná, že tenhle jeden násobek je nahoře.
+
+Dnes je tenčí strana STR, ne nájem: čtvrťový nájem má 33 kontextů, čtvrťové
+STR jeden (Staré Město, rekonstruovaný) a jeden nedokončený (Nové Město).
 
 **OPRAVA ranního tvrzení o Starém Městě.** Ráno tu stálo, že skok násobku
 z 1,62 na 1,78 při výběru Starého Města je „z velké části umělý, protože

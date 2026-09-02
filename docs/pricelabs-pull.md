@@ -63,9 +63,20 @@ plánuj podle `pl_pull_log`.
 ## 4. Kvóta: měř, neodhaduj
 
 **20 dotazů `market_research` na 24 h, okno se otevírá PRVNÍM dotazem**, ne
-o půlnoci. Změřeno 1. 9. 2026: deset čtvrtí jako jeden agregát spotřebovalo
-celých 20, tedy **cca 2 dotazy na geometrii za jeden agregát**. Pásma jsou
-násobek toho, takže realisticky **tři čtvrti na okno, ne deset.**
+o půlnoci.
+
+**„Cca 2 dotazy na geometrii" je POZOROVÁNÍ Z JEDNOHO BĚHU, ne plánovací
+konstanta.** 1. 9. 2026 spotřebovalo deset čtvrtí jako jeden agregát celých 20,
+z čehož ta dvojka vychází zpětně. Nikdy se to neověřilo na druhém běhu,
+neví se, jestli cena závisí na velikosti polygonu nebo na počtu pásem, a
+chování kvóty už jednou bylo divné: dva dotazy skončily prázdnou chybou
+`{"success":false,"error":""}` a teprve třetí vrátil poctivé
+`ERR-MCP-RATE-LIMITED`. Ty prázdné se možná započítaly, možná ne.
+
+**Provozní pravidlo tedy není „vyděl dvacet dvěma".** Je to:
+zapiš skutečnou spotřebu po KAŽDÉ dokončené geometrii, před další geometrií
+zbytek přepočítej, a zastav se, dokud rezerva ještě je. Odhad slouží jen
+k tomu, aby se běh vůbec rozvrhl; rozhoduje naměřené číslo.
 
 Před každou čtvrtí spočítej zbytek:
 
@@ -229,7 +240,17 @@ Všechny tři už mají čtvrťový nájem v `GEO` (`praha1/nove_mesto`,
 `praha3/zizkov`, `praha5/smichov`), takže po STR pullu budou obě strany
 porovnání na téže geografii.
 
-**Přednost před vším ostatním má ale re-scrape Sreality s čtvrtí.** Staré
-Město má dnes čtvrťové STR proti okresnímu nájmu, takže násobek se nafukuje
-jen tím, že je jedna strana ostřejší. Každá další čtvrť na STR straně to
-zhoršuje. Scrape nestojí žádnou kvótu.
+**Nájemní strana na nic nečeká a nový scrape se NEDĚLÁ.** Čtvrťový nájem je
+hotový od 31. 8. 2026: katastr je v `ltr-source.csv` (3 350 z 3 429 inzerátů),
+`CTVRT_RENT` a registr `GEO` z něj stojí a pokrývají 33 čtvrťových kontextů.
+Kdyby se někde znovu objevilo „nejdřív re-scrape Sreality", je to relikt
+z 30. 8., viz `docs/calculator-model.md` §4.
+
+Tenčí strana je dnes STR: 33 čtvrtí má nájem, ale čtvrťové STR má jedna
+(Staré Město, rekonstruované) a jedna je nedokončená (Nové Město). Proto
+tenhle runbook existuje.
+
+Zbývá jedna úzká výjimka: **Staré Město** má 11 nájemních inzerátů, pod prahem
+12, takže do `GEO` nespadlo — čtvrťové STR proti okresnímu nájmu, násobek
+nahoře. Scrape to nespraví, tam se dlouhodobě pronajímá málo. Řeší se to
+rozhodnutím o té jedné čtvrti, ne dalším sběrem dat.
