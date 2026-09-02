@@ -1,4 +1,5 @@
 import Reveal, { stagger } from "@/components/Reveal";
+import PortalDiary from "@/components/PortalDiary";
 import { ChevronRight, Wallet, Receipt, BedDouble, FileBarChart } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
@@ -55,7 +56,9 @@ const OwnerReportSection = () => {
           ))}
         </dl>
 
-        <Reveal className="mb-12 sm:mb-16 flex flex-wrap items-baseline gap-x-6 gap-y-2">
+        <PortalDiary />
+
+        <Reveal className="mt-10 mb-12 sm:mb-16 flex flex-wrap items-baseline gap-x-6 gap-y-2">
           <a href="/portal" className="font-body text-[15px] font-medium text-gold-deep no-underline border-b border-gold/40 pb-0.5">
             {t(lang, "portal_open")}
           </a>
