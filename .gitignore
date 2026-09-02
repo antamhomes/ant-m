@@ -28,3 +28,6 @@ _to_delete/
 
 # Supabase CLI scratch
 supabase/.temp/
+
+# vite i vitest si vedle sveho configu zapisuji docasny config pri kazdem behu
+*.config.ts.timestamp-*
