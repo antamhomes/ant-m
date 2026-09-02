@@ -1272,15 +1272,12 @@ describe("krytí drobných škod od hostů", () => {
 });
 
 describe("dělící pruh v ceníku", () => {
-  it("kreslí 72/28, ne starší poměry", () => {
+  it("se nekreslí vůbec: poměr je vypsaný v korunách", () => {
     // Pruh v ceníku už jednou zůstal na starém poměru, zatímco popisky vedle něj
-    // říkaly nový. Čísla v kopii hlídají testy výše; tenhle hlídá ten obrázek.
+    // říkaly nový. AD 2. 9. 2026 ho odstranila: 70/30 je o dva řádky níž v korunách,
+    // takže obrázek nic neměřil a mohl jen zestárnout. Test hlídá, ať se nevrátí.
     const src = readFileSync("src/components/PricingSection.tsx", "utf8");
-    expect(src).toContain("w-[70%]");
-    expect(src).toContain("w-[30%]");
-    for (const stale of ["w-[75%]", "w-[25%]", "w-[72%]", "w-[28%]"]) {
-      expect(src, stale).not.toContain(stale);
-    }
+    expect(src).not.toMatch(/w-\[\d{1,3}%\]/);
   });
 });
 

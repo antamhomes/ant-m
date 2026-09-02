@@ -6,157 +6,152 @@ import { t } from "@/i18n/translations";
  * Ceník: všechno, co může majitel zaplatit, na jednom místě a s cenou.
  * Existuje proto, že "žádné vstupní poplatky" přestalo platit ve chvíli,
  * kdy má Uvedení do provozu svou cenu. Radši to říct dřív než na schůzce.
+ *
+ * AD 2. 9. 2026: sazba je největší číslo v sekci a nestojí v kartě. Cenu
+ * neschováváme, tak ji ani vizuálně nebalíme. Rámečky, vyplněné pozadí
+ * a pruh 70/30 šly pryč: ten pruh nic neměřil, jen dekoroval poměr, který
+ * je o dva řádky níž vypsaný v korunách.
  */
-type Row = { k: "pr1" | "pr6" | "pr7" | "pr2" | "pr3" | "pr4" | "pr5" | "pr8"; accent?: boolean };
+type Row = { k: "pr6" | "pr7" };
 
-/** Jádro ekonomiky zůstává vidět: odměna 30 %, garance a krytí škod. */
-const CORE_ROWS: Row[] = [
-  { k: "pr1", accent: true },
-  // Garance a krytí škod hned pod odměnou: jediné místo v ceníku, kde je vidět,
-  // co je v těch 30 % navíc. Obojí je v odměně, proto stojí vedle sebe.
-  { k: "pr6" },
-  { k: "pr7" },
-];
+/** Co je v odměně navíc: garance a krytí škod stojí hned pod sazbou. */
+const CORE_ROWS: Row[] = [{ k: "pr6" }, { k: "pr7" }];
+
 /** Jednorázové a doplňkové položky za rozbalovákem. */
-const MORE_ROWS: Row[] = [
-  { k: "pr2" },
-  { k: "pr3" },
-  { k: "pr4" },
-  { k: "pr5" },
-  { k: "pr8" },
-];
+const MORE_ROWS = ["pr2", "pr3", "pr4", "pr5", "pr8"] as const;
 
 const PricingSection = () => {
   const { lang } = useLanguage();
+  const flows = ([1, 2, 3, 4, 5] as const).filter((n) => t(lang, `pr1_flow${n}` as const));
+  const stack = ([1, 2, 3, 4, 5, 6] as const).filter((n) => t(lang, `pr1_stack_${n}` as const));
+
   return (
     <section id="cenik" className="section-cont bg-secondary scroll-mt-16">
-      <div className="container-narrow">
+      <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "pricing_label")}</p>
           <h2 className="h-section-xs text-foreground">{t(lang, "pricing_title")}</h2>
-          <p className="lead">{t(lang, "pricing_desc")}</p>
         </Reveal>
 
-        <Reveal as="dl" delay={0.1} className="border border-border rounded-md overflow-hidden bg-card">
-          {CORE_ROWS.map(({ k, accent }, i) => (
-            <div
-              key={k}
-              className={`flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 px-5 py-4 ${
-                i ? "border-t border-border" : ""
-              }`}
-            >
-              <dt className="sm:w-[38%] shrink-0">
-                <span className={`font-display text-[17px] ${accent ? "text-gold-deep font-semibold" : "text-foreground"}`}>
-                  {t(lang, `${k}_name` as const)}
-                </span>
-                <span className="block font-body text-[15px] text-foreground mt-0.5 tnum">
-                  {t(lang, `${k}_price` as const)}
-                </span>
-              </dt>
-              <dd className="font-body text-[14.5px] text-muted-foreground leading-relaxed m-0">
-                {/* První řádek nevysvětluje definici, ale ukazuje tok peněz: zastávky ze vzorového
-                   vyúčtování; řádek s prázdným textem se přeskočí (CZ má čtyři, VI pět). */}
-                {k === "pr1" && (
-                  <span className="block mb-3 max-w-sm rounded-sm border border-border bg-muted/40 px-3.5 py-1 tnum">
-                    {([1, 2, 3, 4, 5] as const).filter((n) => t(lang, `pr1_flow${n}` as const)).map((n) => (
-                      <span
-                        key={n}
-                        className={`flex items-baseline justify-between gap-4 py-1.5 ${n > 1 ? "border-t border-border/70" : ""}`}
-                      >
-                        <span className={n === 4 ? "text-foreground" : ""}>{t(lang, `pr1_flow${n}` as const)}</span>
-                        <span className={`whitespace-nowrap font-semibold ${n === 4 ? "text-gold-deep" : "text-foreground/80"}`}>
-                          {t(lang, `pr1_flow${n}_v` as const)}
-                        </span>
-                      </span>
-                    ))}
-                  </span>
-                )}
-                {k === "pr1" && t(lang, "pr1_flow_note") && (
-                  <span className="block mb-3 font-body text-[14.5px] text-foreground">
-                    {t(lang, "pr1_flow_note")}
-                  </span>
-                )}
-                {/* Hodnotový stack: co je v odměně, s tržní cenou tam, kde má veřejný
-                   zdroj (PriceLabs ceník, ceníky fotografů). Bez vymyšlených čísel. */}
-                {k === "pr1" && t(lang, "pr1_stack_title") && (
-                  <span className="block mb-3">
-                    <span className="block font-body text-[13px] uppercase tracking-wide text-muted-foreground mb-1.5">
-                      {t(lang, "pr1_stack_title")}
-                    </span>
-                    <span className="block max-w-sm">
-                      {([1, 2, 3, 4, 5, 6] as const).filter((n) => t(lang, `pr1_stack_${n}` as const)).map((n) => (
-                        <span key={n} className="flex items-baseline gap-2 py-0.5">
-                          <span aria-hidden="true" className="text-gold-deep">·</span>
-                          <span>{t(lang, `pr1_stack_${n}` as const)}</span>
-                        </span>
-                      ))}
-                    </span>
-                  </span>
-                )}
-                {t(lang, `${k}_note` as const)}
-                {/* The 70/30 split, shown where the fee is defined (former PriceStrip). */}
-                {k === "pr1" && (
-                  <span className="block mt-3" aria-label={t(lang, "calc_split_aria") as string}>
-                    <span className="flex h-2 w-full max-w-sm overflow-hidden rounded-full bg-muted">
-                      <span className="block h-full w-[70%] bg-gold" />
-                      <span className="block h-full w-[30%] bg-charcoal/25" />
-                    </span>
-                    <span className="mt-1.5 flex max-w-sm items-baseline justify-between font-body text-[13px] tnum">
-                      <strong className="font-semibold text-gold-deep">{t(lang, "pr1_split_owner")}</strong>
-                      <span className="text-muted-foreground">{t(lang, "pr1_split_fee")}</span>
-                    </span>
-                  </span>
-                )}
-              </dd>
-            </div>
-          ))}
-        </Reveal>
+        <div className="grid gap-x-14 gap-y-9 lg:grid-cols-[auto_minmax(0,1fr)] items-start">
+          <Reveal>
+            <p className="tnum font-display font-semibold text-foreground leading-[0.82] tracking-[-0.048em] text-[clamp(6rem,12.5vw,10.75rem)]">
+              30
+              <span className="align-super text-[0.28em] tracking-normal text-gold-deep ml-[0.02em]">%</span>
+            </p>
+            <p className="mt-1 font-body text-[11px] sm:text-xs uppercase tracking-[0.14em] text-muted-foreground">
+              {t(lang, "pr1_price_short")}
+            </p>
+          </Reveal>
 
-        <Reveal delay={0.12} className="mt-4">
-          <details className="group">
-            <summary className="list-none cursor-pointer font-body text-sm text-gold-deep underline underline-offset-4 decoration-gold/40 [&::-webkit-details-marker]:hidden">
-              {t(lang, "pricing_more")}
-            </summary>
-            <dl className="mt-4 border border-border rounded-md overflow-hidden bg-card">
-              {MORE_ROWS.map(({ k }, i) => (
-                <div
-                  key={k}
-                  className={`flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-6 px-5 py-4 ${
-                    i ? "border-t border-border" : ""
-                  }`}
-                >
-                  <dt className="sm:w-[38%] shrink-0">
-                    <span className="font-display text-[17px] text-foreground">{t(lang, `${k}_name` as const)}</span>
-                    <span className="block font-body text-[15px] text-foreground mt-0.5 tnum">
-                      {t(lang, `${k}_price` as const)}
-                    </span>
+          <Reveal delay={0.08}>
+            <p className="font-body text-[17px] md:text-[19px] text-foreground leading-relaxed max-w-[46ch]">
+              {t(lang, "pricing_desc")}
+            </p>
+
+            {/* Tok peněz ze vzorového vyúčtování. Bez rámečku: je to výpočet,
+                který si má čtenář přepočítat, ne kartička. */}
+            <dl className="mt-7 border-t border-foreground/25">
+              {flows.map((n) => {
+                const owner = n === 4;
+                return (
+                  <div
+                    key={n}
+                    className={`flex items-baseline justify-between gap-6 py-3.5 tnum ${
+                      owner ? "border-y border-foreground/25" : "border-b border-border"
+                    }`}
+                  >
+                    <dt className={`font-body text-[14.5px] sm:text-[15px] ${owner ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+                      {t(lang, `pr1_flow${n}` as const)}
+                    </dt>
+                    <dd
+                      className={`m-0 whitespace-nowrap font-display ${
+                        owner ? "text-[26px] sm:text-[30px] font-semibold text-gold-deep" : "text-[19px] sm:text-[21px] text-foreground/80"
+                      }`}
+                    >
+                      {t(lang, `pr1_flow${n}_v` as const)}
+                    </dd>
+                  </div>
+                );
+              })}
+            </dl>
+
+            {t(lang, "pr1_flow_note") && (
+              <p className="mt-4 font-body text-[14.5px] text-foreground leading-relaxed max-w-[62ch]">
+                {t(lang, "pr1_flow_note")}
+              </p>
+            )}
+
+            {t(lang, "pr1_stack_title") && (
+              <div className="mt-7">
+                <p className="font-body text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                  {t(lang, "pr1_stack_title")}
+                </p>
+                <ul className="mt-2.5 space-y-1">
+                  {stack.map((n) => (
+                    <li key={n} className="flex items-baseline gap-2.5 font-body text-[14.5px] text-muted-foreground">
+                      <span aria-hidden="true" className="text-gold-deep">·</span>
+                      <span>{t(lang, `pr1_stack_${n}` as const)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <p className="mt-5 font-body text-[14.5px] text-muted-foreground leading-relaxed max-w-[62ch]">
+              {t(lang, "pr1_note")}
+            </p>
+
+            {/* Garance a krytí škod: jediné místo, kde je vidět, co je v těch 30 % navíc. */}
+            <dl className="mt-8 border-t border-border">
+              {CORE_ROWS.map(({ k }) => (
+                <div key={k} className="border-b border-border py-4">
+                  <dt className="font-display text-[17px] text-foreground">
+                    {t(lang, `${k}_name` as const)}
+                    <span className="ml-2 font-body text-[13px] text-muted-foreground">{t(lang, `${k}_price` as const)}</span>
                   </dt>
-                  <dd className="font-body text-[14.5px] text-muted-foreground leading-relaxed m-0">
+                  <dd className="m-0 mt-1 font-body text-[14.5px] text-muted-foreground leading-relaxed max-w-[62ch]">
                     {t(lang, `${k}_note` as const)}
                   </dd>
                 </div>
               ))}
             </dl>
-          </details>
-        </Reveal>
 
-        {/* „Proč 30 %?" — odpověď v repu byla, ale nerenderovala se nikde.
-            Je to jediná námitka, kterou tahle sekce sama vyvolá, tak ať na ni
-            odpoví na místě, ne až na schůzce. (2B: přesunuto z faq17.) */}
-        <Reveal delay={0.12} className="mt-10 md:mt-12 max-w-prose mx-auto text-center">
-          <p className="font-display text-[1.15rem] md:text-[1.3rem] font-semibold text-foreground mb-2">
-            {t(lang, "faq17_q")}
-          </p>
-          <p className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed text-pretty">
-            {t(lang, "faq17_a")}
-          </p>
-        </Reveal>
+            <details className="group mt-5">
+              <summary className="list-none cursor-pointer font-body text-sm text-gold-deep underline underline-offset-4 decoration-gold/40 [&::-webkit-details-marker]:hidden">
+                {t(lang, "pricing_more")}
+              </summary>
+              <dl className="mt-4 border-t border-border">
+                {MORE_ROWS.map((k) => (
+                  <div key={k} className="border-b border-border py-4">
+                    <dt className="font-display text-[16px] text-foreground">
+                      {t(lang, `${k}_name` as const)}
+                      <span className="ml-2 font-body text-[13px] text-muted-foreground tnum">{t(lang, `${k}_price` as const)}</span>
+                    </dt>
+                    <dd className="m-0 mt-1 font-body text-[14px] text-muted-foreground leading-relaxed max-w-[62ch]">
+                      {t(lang, `${k}_note` as const)}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </details>
 
-        <Reveal delay={0.15}>
-          <p className="font-body text-[13px] text-muted-foreground leading-relaxed mt-4 text-pretty">
-            {t(lang, "pricing_foot")}
-          </p>
-        </Reveal>
+            {/* „Proč 30 %?" — jediná námitka, kterou tahle sekce sama vyvolá,
+                tak ať na ni odpoví na místě, ne až na schůzce. (2B: z faq17.) */}
+            <div className="mt-10 pt-7 border-t border-border">
+              <p className="font-display text-[1.15rem] md:text-[1.3rem] font-semibold text-foreground mb-2">
+                {t(lang, "faq17_q")}
+              </p>
+              <p className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed text-pretty max-w-[62ch]">
+                {t(lang, "faq17_a")}
+              </p>
+            </div>
+
+            <p className="mt-6 font-body text-[13px] text-muted-foreground leading-relaxed text-pretty max-w-[68ch]">
+              {t(lang, "pricing_foot")}
+            </p>
+          </Reveal>
+        </div>
       </div>
     </section>
   );

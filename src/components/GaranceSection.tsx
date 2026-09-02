@@ -49,7 +49,7 @@ const GaranceSection = () => {
 
   return (
     <section id="garance" className="section-cont bg-background scroll-mt-16">
-      <div className="container-narrow">
+      <div className="container-wide">
         <Reveal className="section-head">
           {/* 2D: bez eyebrow. Garance není nová kapitola, je to třetí věta
               jedné úvahy: proč krátkodobě, co si bereme, co když to nevyjde. */}
@@ -60,53 +60,45 @@ const GaranceSection = () => {
           <p className="lead">{t(lang, "g_desc")}</p>
         </Reveal>
 
-        {/* Two numbers: long-term rent vs. the written minimum. The minimum is the
-            floor the owner keeps either way, so it is the highlighted one. */}
+        {/* AD 2. 9. 2026: dvě čísla bez karet. Stejně velké částky ve dvou
+            rámečcích tvrdí, že jsou srovnatelné; nejsou. Nájem je odrazová
+            čára, minimum je to, co si majitel odnese, tak stojí větší
+            a čtou se na jedné účaří. */}
         <Reveal delay={0.05}>
-          <div className="flex flex-col sm:flex-row items-stretch justify-center gap-2 sm:gap-0 max-w-3xl mx-auto">
+          <div className="grid gap-x-16 gap-y-7 sm:grid-cols-[auto_auto] sm:justify-start items-end pb-7 border-b border-foreground/25">
             {nums.map(({ label, value }, i) => (
-              <div key={label} className="flex flex-col sm:flex-row items-center flex-1">
-                <div
-                  className={`w-full text-center rounded-md border px-4 py-5 sm:py-6 ${
-                    i === last
-                      ? "border-gold/50 bg-gold/[0.07]"
-                      : "border-border bg-card"
+              <div key={label}>
+                <p
+                  className={`font-body text-[11px] uppercase tracking-[0.14em] leading-tight mb-2.5 ${
+                    i === last ? "text-gold-deep" : "text-muted-foreground"
                   }`}
                 >
-                  <p className="font-body text-[11px] uppercase tracking-[0.14em] text-muted-foreground leading-tight mb-2">
-                    {t(lang, label)}
-                  </p>
-                  <p
-                    className={`font-display text-2xl md:text-[1.75rem] font-semibold leading-none tnum ${
-                      i === last ? "text-gold-deep" : "text-muted-foreground"
-                    }`}
-                  >
-                    {t(lang, value)}{" "}
-                    <span className="font-body text-sm font-normal text-muted-foreground whitespace-nowrap">
-                      {t(lang, "calc_month_suffix")}
-                    </span>
-                  </p>
-                </div>
-                {i < last && (
-                  <span
-                    className="font-body text-[11px] uppercase tracking-[0.14em] text-muted-foreground my-1 sm:my-0 sm:mx-3 shrink-0"
-                    aria-hidden="true"
-                  >
-                    vs.
+                  {t(lang, label)}
+                </p>
+                <p
+                  className={`font-display font-semibold leading-[0.9] tnum tracking-[-0.03em] ${
+                    i === last
+                      ? "text-foreground text-[clamp(3rem,6.4vw,5.75rem)]"
+                      : "text-muted-foreground/80 text-[clamp(1.6rem,2.4vw,2rem)]"
+                  }`}
+                >
+                  {t(lang, value)}
+                  <span className="ml-2 font-body text-[0.24em] font-normal tracking-normal text-muted-foreground whitespace-nowrap">
+                    {t(lang, "calc_month_suffix")}
                   </span>
-                )}
+                </p>
               </div>
             ))}
           </div>
-          <p className="mt-3 font-body text-xs text-muted-foreground text-center leading-relaxed">
+          <p className="mt-4 font-body text-xs text-muted-foreground leading-relaxed max-w-[74ch]">
             {t(lang, "g_num_note")}
           </p>
         </Reveal>
 
         {/* Three steps of the mechanism, kept short; the contract carries the rest. */}
-        <div className="grid sm:grid-cols-3 gap-4 sm:gap-6 mt-10 md:mt-12 max-w-3xl mx-auto">
+        <div className="grid sm:grid-cols-3 gap-y-6 sm:gap-x-0 mt-10 md:mt-12 border-t border-border pt-1">
           {STEPS.map(({ title, desc }, i) => (
-            <Reveal key={title} delay={stagger(i, 0.08)}>
+            <Reveal key={title} delay={stagger(i, 0.08)} className="sm:pr-8 sm:border-r sm:border-border sm:last:border-r-0 sm:last:pr-0 pt-6">
               <p className="font-display text-base font-semibold text-foreground mb-1.5 leading-snug">
                 <span className="text-gold-deep tnum mr-2">{i + 1}.</span>
                 {t(lang, title)}
