@@ -496,3 +496,87 @@ Tohle bylo vědomě zrušeno. Když to někde uvidíš, je to relikt, ne rozhodn
 | **Čtvrť jako holý řetězec** | `vinohrady` neidentifikuje nic, protože má v Praze 2 a 3 jinou hodnotu. Identita je dvojice okres + geometrie. |
 | **Klíč `calc_basis`** | Nic ho nerenderovalo, ale nesl zrušený uplift i opuštěný invariant a pořád se dostával do bundlu. Smazán. |
 | **Závěry sešitu v5 až v7 k Booking.com** | Vycházely z domněnky, že Hospitable posílá Booking jako jednu částku. 307 z 312 rezervací je rozepsaných. Nahradila je itemizovaná rekonciliace v8. |
+
+---
+
+## Plochá zóna 1+kk a 4+kk: NENÍ to chyba, je to přiznaná mezera
+
+Zapsáno 2. 9. 2026. **Než to někdo „opraví", ať si přečte tohle.**
+
+### Co se děje
+
+`BAND_BLEND` má pro `1kk` jen `{ base: "1BR" }` a pro `4kk` jen
+`{ base: "3BR" }` — ani jedna dispozice nemá `next`. `bandWeight` je proto
+vždycky 0 a **plocha nemůže u těchto dvou dispozic zvednout STR vůbec**.
+Nájem přitom s m² roste (mocninná křivka v `rentFor`), takže:
+
+- absolutní příjem majitele je napříč kbelíky **stejný**,
+- roční výhoda proti nájmu i násobek **klesají**.
+
+`2kk` a `3kk` tímhle netrpí: mají `next` a `lo`/`hi`, takže STR s plochou
+roste. Někdy roste pomaleji než nájem, ale to už je ekonomika, ne mezera.
+
+### Co audit skutečně ukázal (272 sekvencí stav × dispozice × sezóna)
+
+| | výsledek |
+|---|---|
+| absolutní příjem majitele KLESÁ s větším kbelíkem | **0 případů** |
+| roční výhoda proti nájmu klesá | 360 |
+| příjem plochý | 272 (1kk 136 + 4kk 136) |
+
+**Kalkulačka nikdy neřekne „větší byt vydělá míň".** To je ta obava, která
+se nepotvrdila. Klesá jen srovnání, ne výplata.
+
+### Diagnostika, NE návrh
+
+Aby si větší kbelík udržel násobek toho malého, musel by STR vzrůst
+zhruba o **+18 % u „Běžný" a +42 % u „Větší"** (shodně ve všech devíti
+měřených okresech, protože jde o čistou geometrii nájemní křivky).
+
+**Tahle čísla nejsou navrhovaná přirážka.** Jsou to měřítka velikosti
+nesouladu. Kdo je použije jako koeficient, vymyslel si ekonomiku.
+
+### Proč to PriceLabs nerozhodne
+
+Pásma PriceLabs jsou po počtu ložnic, ne po ploše. Pásmo 1BR už v sobě
+**průměruje malé i velké garsonky dohromady**, takže tržní ADR ten efekt
+částečně obsahuje. Přidat k němu prémii za plochu znamená připočítat
+podruhé něco, co v základu možná už je. Přímý důkaz z trhu tedy chybí
+a z `market_research` ho nedostaneme.
+
+### Co se s reálnými případy dělá dnes
+
+Velký 1+kk, který díky dispozici opravdu funguje jako silnější produkt
+(postel + rozkládací gauč, spí 4), se řeší **interně přes `ObservedConfig`**:
+underwriting předá `{ band: "2BR", evidence }` a model počítá na pásmu 2BR.
+Na 45 m² to dává +47 až +54 % proti veřejnému číslu, tedy víc než těch
++42 %. Veřejně se `ObservedConfig` ignoruje záměrně (`scope !== "internal"`),
+aby se přes něj nedalo do webu propašovat číslo bez prohlídky.
+
+**Veřejná logika kapacity ani přirážky uvnitř pásma ZÁMĚRNĚ neexistuje**
+a čeká na důkazy. Rozhodující proměnná je konfigurace a kapacita, ne m².
+Pravidlo typu „velký 1+kk = 6 hostů" je přesně to, co se sem psát nemá.
+
+### Známý důsledek, ne chyba
+
+U velkého 1+kk v Praze 4 a Praze 6 klesá násobek k ~1,05–1,07×. Jakmile
+`ratioRounded > 1` přestane platit, karta obě zlaté řádky (Kč/rok
+i násobek) schová a napíše, že dlouhodobý nájem vychází podobně nebo výš.
+Vizuálně je to zlom, obsahově je to pravda: na taková data model nemá čím
+tvrdit víc.
+
+### 4+kk má tutéž mezeru na druhém konci
+
+`4kk` sedí na `3BR`, nad kterým už žádné pásmo není. Velký 4+kk tedy nemá
+kam překlopit — a je to horší případ než 1+kk, protože chybí i teoretický
+cíl. Až se to bude řešit, řeší se **obě dispozice dohromady**, ne studia
+zvlášť.
+
+### Čím to bylo změřeno
+
+Vším tímhle je vinen až **opravený harness z `ede92be`**. Předchozí
+baseline měla překlep `presetM2` místo `representativeM2`, takže model
+dostával `m2 = undefined`, padal na `typicalArea` a **všechny čtyři kbelíky
+vracely totéž číslo** — 912 dvojic identických, 0 rozdílných. Tehdejší
+baseline tuhle otázku prostě neuměla položit. Kdo bude čísla ověřovat,
+ať cituje `ede92be` nebo novější, nikdy starší běh.
