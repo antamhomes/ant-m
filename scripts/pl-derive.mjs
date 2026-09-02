@@ -3,7 +3,10 @@
 // ze ktereho jsou konstanty v src/lib/yield.ts.
 export const MONTHS_EXPECTED = 12;
 export const RELIABLE_MIN_N = 50;   // HEURISTIC, viz docs/calculator-model.md
-export const BANDS = ["1BR", "2BR", "3BR", "all"];
+// 4BR je v seznamu, aby ho pull NEZAHODIL jako neznáme pásmo. Model ho zatím
+// nezná (`Band` je 1BR|2BR|3BR a `BAND_BLEND["4kk"]` končí na 3BR), takže
+// dokud se pásmo nezavede, projde 4BR pipeline a čeká v artefaktu.
+export const BANDS = ["1BR", "2BR", "3BR", "4BR", "all"];
 
 const num = (v) => (typeof v === "number" && Number.isFinite(v) ? v : null);
 const mean = (xs) => xs.reduce((a, c) => a + c, 0) / xs.length;

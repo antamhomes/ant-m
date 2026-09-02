@@ -3,12 +3,45 @@ import { readFileSync } from "node:fs";
 // @ts-expect-error - ciste JS odvozeni sdilene s scripts/pl-import.mjs
 import { deriveBands, RELIABLE_MIN_N } from "../../scripts/pl-derive.mjs";
 import { MARKET_STR, RELIABLE_MIN_N as MODEL_MIN_N, isReliableN } from "../lib/yield";
+// @ts-expect-error - ciste JS pravidlo okna sdilene s pull skripty
+import { pullWindow, WINDOW_MONTHS, CLOSE_LAG_DAYS } from "../../scripts/pl-window.mjs";
 
 const DISTRICTS = ["praha1","praha2","praha3","praha4","praha5","praha6","praha7","praha8","praha9"] as const;
 const load = (d: string) =>
   JSON.parse(readFileSync(`data/pricelabs-2026-08/${d}.json`, "utf8"));
 
 describe("importni cesta (Step 0)", () => {
+  it("okno pullu je deterministicke a sedi na artefakty, ktere uz v repu jsou", () => {
+    // Nejsilnejsi test, jaky na tohle jde: pravidlo musi TREFIT okno, na kterem
+    // je postaveno vsech devet okresnich artefaktu. Kdyby se rozeslo, indexy
+    // nove pullnutych ctvrti by nebyly porovnatelne s okresy.
+    const repo = JSON.parse(readFileSync("data/pricelabs-2026-08/praha3.json", "utf8"))
+      .meta.months.map((m: string) => m.replace("-", "_"));
+    expect(pullWindow(new Date("2026-09-01")).months).toEqual(repo);
+
+    // 10 ctvrti pullnutych 1. 9. 2026 jelo na 2025_09..2026_07 (11 mesicu),
+    // tedy na jinem okne nez repo. Tohle pravidlo takovy stav nevyrobi.
+    for (const d of ["2026-09-01", "2026-09-30", "2027-02-14", "2026-12-31"]) {
+      const w = pullWindow(new Date(d));
+      expect(w.months, `${d}: vzdy ${WINDOW_MONTHS} mesicu`).toHaveLength(WINDOW_MONTHS);
+      expect(new Set(w.months).size, `${d}: zadny mesic dvakrat`).toBe(WINDOW_MONTHS);
+      expect([...w.months].sort(), `${d}: chronologicky`).toEqual(w.months);
+      expect(w.from).toBe(w.months[0]);
+      expect(w.to).toBe(w.months[WINDOW_MONTHS - 1]);
+    }
+
+    // Mesic se pocita za uzavreny az CLOSE_LAG_DAYS po konci: den pred prahem
+    // jeste ne, den na prahu uz ano. Zadne koukani do dat, jen kalendar.
+    const before = pullWindow(new Date(`2026-09-${String(CLOSE_LAG_DAYS - 1).padStart(2, "0")}`));
+    const on = pullWindow(new Date(`2026-09-${String(CLOSE_LAG_DAYS).padStart(2, "0")}`));
+    expect(before.to).toBe("2026_07");
+    expect(on.to).toBe("2026_08");
+
+    // prelom roku
+    expect(pullWindow(new Date("2027-01-15")).months[0]).toBe("2026_01");
+    expect(pullWindow(new Date("2027-01-05")).to).toBe("2026_11");
+  });
+
   it("prah spolehlivosti je jedno cislo pro model i import", () => {
     expect(RELIABLE_MIN_N).toBe(MODEL_MIN_N);
   });
