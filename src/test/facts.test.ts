@@ -818,13 +818,16 @@ describe("model výnosu", () => {
     // PriceLabs. Starý model (obsazenost × 1,15, strop 85 %, na plné tržní ADR)
     // popisoval kombinaci, která u nás nenastává: obsazenost opravdu jede
     // 92–96 %, ale za 63–77 % tržního ADR. Čistý poměr tržby proti průměru
-    // trhu vyšel 0,99 v Praze 1, 1,21 v Praze 3 a 1,08 v Praze 5.
-    // Veřejně jde do centra 0,95, aby veřejné číslo bylo spíš pod skutečností.
+    // trhu vyšel 1,032 v Praze 1 (PŘEMĚŘENO 2. 9. 2026: staré 0,99 pocházelo
+    // z odvození, které nebylo uložené a nešlo zreprodukovat; nový audit
+    // shodných období, tržba PO SLEVÁCH, Booking v EUR přepočtený měsíčním
+    // kurzem ČNB), 1,21 v Praze 3 a 1,08 v Praze 5 (přeměřením potvrzeno).
+    // Praha 2 měla ruční 0,95 bez jakéhokoli měření; zrušeno, platí výchozí 1,10.
     // Veřejný faktor se od 31. 8. 2026 ODVOZUJE z měření, nezapisuje se ručně:
     // nepříznivé měření se bere celé, příznivé se krátí k výchozí 1,10 podle
     // váhy vzorku. Asymetrie je záměrná veřejná opatrnost, ne statistika.
-    expect(operatorFactor("praha1", "public"), "naměřeno 0,99 na 3 bytech, bere se celé").toBe(0.99);
-    expect(operatorFactor("praha2", "public"), "bez vlastního bytu: nedědí 0,99 z P1").toBe(0.95);
+    expect(operatorFactor("praha1", "public"), "naměřeno 1,032 na 3 bytech × 12 měsíců, bere se celé").toBe(1.032);
+    expect(operatorFactor("praha2", "public"), "bez vlastního bytu -> výchozí 1,10 jako každý neměřený okres").toBe(1.1);
     expect(operatorFactor("praha3", "public"), "1,21 na 2 bytech (54 dní) -> váha 0,5 -> 1,155").toBe(1.155);
     expect(operatorFactor("praha5", "public"), "1,08 je POD výchozí, bere se celé i když snižuje").toBe(1.08);
     for (const loc of ["praha4", "praha6", "praha7", "praha8", "praha9"] as const)
@@ -837,7 +840,7 @@ describe("model výnosu", () => {
     // Interní faktor je od 31. 8. 2026 TOTOŽNÝ s veřejným: rozdíl mezi režimy
     // je množství informací o konkrétním bytě, ne násobitel. Prohlídka odstraní
     // nejistotu o bytě, ale nezvětší vzorek, ze kterého je faktor okresu měřený.
-    expect(operatorFactor("praha1", "internal")).toBe(0.99);
+    expect(operatorFactor("praha1", "internal")).toBe(1.032);
     expect(operatorFactor("praha5", "internal")).toBe(1.08);
     expect(operatorFactor("praha3", "internal")).toBe(1.155);
 
@@ -952,9 +955,9 @@ describe("model výnosu", () => {
     const cases: { label: string; loc: LocationKey; size: SizeKey; m2: number; ctvrt?: string | null;
       base: string; next: string | null; w: number; usedCtvrt: string | null; factor: number; derived: boolean }[] = [
       { label: "P1 2+kk 52 m², Ostatní", loc: "praha1", size: "2kk", m2: 52, ctvrt: null,
-        base: "1BR", next: "2BR", w: 0.8, usedCtvrt: null, factor: 0.99, derived: false },
+        base: "1BR", next: "2BR", w: 0.8, usedCtvrt: null, factor: 1.032, derived: false },
       { label: "P1 2+kk 52 m², Staré Město", loc: "praha1", size: "2kk", m2: 52, ctvrt: "stare_mesto",
-        base: "1BR", next: "2BR", w: 0.8, usedCtvrt: "stare_mesto", factor: 0.99, derived: false },
+        base: "1BR", next: "2BR", w: 0.8, usedCtvrt: "stare_mesto", factor: 1.032, derived: false },
       { label: "P3 2+kk 55 m²", loc: "praha3", size: "2kk", m2: 55,
         base: "1BR", next: "2BR", w: 1, usedCtvrt: null, factor: 1.155, derived: false },
       { label: "P5 2+kk 40 m² (1BR produkt)", loc: "praha5", size: "2kk", m2: 40,

@@ -215,7 +215,11 @@ export const OPERATOR_FACTOR_DEFAULT = 1.1;
  * vlastním bytům přibývá historie.
  */
 export const OPERATOR_EVIDENCE: Partial<Record<LocationKey, { measured: number; weight: number; sample: string }>> = {
-  praha1: { measured: 0.99, weight: 1.00, sample: "3 byty (402 1,08 · 405 0,95 · 302 0,94), ~318 dní každý" },
+  // PŘEMĚŘENO 2. 9. 2026 (audit shodných období). Dřívějších 0,99 se nedalo
+  // reprodukovat — odvození nebylo nikde uložené. Nové měření: 12 uzavřených
+  // měsíců 2025_08..2026_07, tržba za ubytování PO SLEVÁCH proti avg_revenue
+  // okresu z data/pricelabs-2026-08/praha1.json.
+  praha1: { measured: 1.032, weight: 1.00, sample: "3 byty × 12 měsíců (402 1,126 · 405 1,028 · 302 0,942)" },
   praha3: { measured: 1.21, weight: 0.50, sample: "2 byty (Modern AC 1,31 / 139 dní · Garden APT 1,21 / 54 dní)" },
   praha5: { measured: 1.08, weight: 1.00, sample: "1 byt (Mozart, 113 dní)" },
 };
@@ -236,8 +240,19 @@ export const OPERATOR_EVIDENCE: Partial<Record<LocationKey, { measured: number; 
  * nahoru a číslo se posune samo.
  * Praha 5: naměřeno 1,08, tedy POD výchozí 1,10, a bere se celé, i když to
  * veřejné číslo snižuje.
- * Praha 2: žádný vlastní byt. Nedědí 0,99 z Prahy 1 — zůstává ZÁMĚRNÝ
- * konzervativní předpoklad 0,95, dokud pro ni nebude důkaz.
+ * Praha 2: žádný vlastní byt, tedy ŽÁDNÉ měření. Do 2. 9. 2026 tu stálo ruční
+ * 0,95, což nebyl konzervativní odhad, ale nepodložená srážka: každý okres,
+ * kde se opravdu měří, vyšel 1,03 nebo výš. Výjimka se ruší a Praha 2 spadne
+ * na výchozí 1,10 jako každý jiný neměřený okres. Není to tvrzení o výkonu,
+ * je to odstranění zvláštního případu.
+ *
+ * METODIKA MĚŘENÍ (audit 2. 9. 2026, ať se to příště nemusí hádat):
+ * základem je `guest.accommodation` z Hospitable, tedy částka PO SLEVÁCH
+ * a před provizí platformy — `host.accommodation` je ceníková cena před
+ * slevami a nadsazuje o 7 %. Rezervace z Booking.com jsou vedené v EUR
+ * (`financials.currency`), Airbnb v CZK; sečíst je bez přepočtu je chyba,
+ * která posune faktor řádově. Přepočítává se měsíčním průměrem ČNB podle
+ * měsíce, do kterého noc spadá.
  * Praha 4, 6, 7, 8, 9: bez měření, výchozí 1,10. Praha 8 se NESRÁŽÍ za to,
  * že jí vychází vysoký násobek — uvnitř okresu je Karlín a ten okresní
  * benchmark legitimně táhne nahoru.
@@ -248,8 +263,8 @@ export const publicFactorFrom = (measured: number, weight: number): number =>
     : Math.round((OPERATOR_FACTOR_DEFAULT_PUBLIC + weight * (measured - OPERATOR_FACTOR_DEFAULT_PUBLIC)) * 1000) / 1000;
 
 export const OPERATOR_FACTOR_PUBLIC: Partial<Record<LocationKey, number>> = {
-  // bez vlastního bytu: záměrný konzervativní předpoklad, ne měření
-  praha2: 0.95,
+  // Praha 2 tu měla ruční 0,95. Zrušeno 2. 9. 2026: bez měření platí výchozí
+  // 1,10 jako pro každý jiný neměřený okres (viz operatorFactor níž).
   ...Object.fromEntries(
     Object.entries(OPERATOR_EVIDENCE).map(([loc, e]) => [loc, publicFactorFrom(e.measured, e.weight)]),
   ),

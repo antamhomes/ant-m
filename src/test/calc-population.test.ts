@@ -41,8 +41,13 @@ export function population() {
           rows.push({
             id: `${st.loc}|${st.ctvrt === undefined ? "?" : st.ctvrt ?? "-"}|${size}|${b.id}|${season}`,
             supported: r.supported, band: r.band, guests: r.guests,
-            czk: (r as any).czk ?? null, gross: (r as any).gross ?? null,
-            occ: (r as any).occ ?? null, adr: (r as any).adr ?? null,
+            // POZOR: OwnerMonthly nemá pole czk/gross/occ. Do 2. 9. 2026 se tu
+            // zachytávaly jako null, takže baseline NEHLÍDALA částky pro majitele.
+            // Správná pole jsou low/mid/high a hrubé tržby v market/antam.
+            low: (r as any).low ?? null, mid: (r as any).mid ?? null, high: (r as any).high ?? null,
+            grossMarket: (r as any).market?.gross ?? null, grossAntam: (r as any).antam?.gross ?? null,
+            netMarket: (r as any).market?.net ?? null, netAntam: (r as any).antam?.net ?? null,
+            occ: (r as any).market?.occupancy ?? null, adr: (r as any).adr ?? null,
             trace: (r as any).trace ?? null,
             ltr, rentFactor: st.loc === "jinde" ? 1 : ctvrtRentFactor(st.loc, st.ctvrt),
           });
