@@ -71,14 +71,18 @@ var marketCell = (loc, band) => {
 var OPERATOR_FACTOR_DEFAULT_PUBLIC = 1.1;
 var OPERATOR_FACTOR_DEFAULT = 1.1;
 var OPERATOR_EVIDENCE = {
-  praha1: { measured: 0.99, weight: 1, sample: "3 byty (402 1,08 \xB7 405 0,95 \xB7 302 0,94), ~318 dn\xED ka\u017Ed\xFD" },
+  // PŘEMĚŘENO 2. 9. 2026 (audit shodných období). Dřívějších 0,99 se nedalo
+  // reprodukovat — odvození nebylo nikde uložené. Nové měření: 12 uzavřených
+  // měsíců 2025_08..2026_07, tržba za ubytování PO SLEVÁCH proti avg_revenue
+  // okresu z data/pricelabs-2026-08/praha1.json.
+  praha1: { measured: 1.032, weight: 1, sample: "3 byty \xD7 12 m\u011Bs\xEDc\u016F (402 1,126 \xB7 405 1,028 \xB7 302 0,942)" },
   praha3: { measured: 1.21, weight: 0.5, sample: "2 byty (Modern AC 1,31 / 139 dn\xED \xB7 Garden APT 1,21 / 54 dn\xED)" },
   praha5: { measured: 1.08, weight: 1, sample: "1 byt (Mozart, 113 dn\xED)" }
 };
 var publicFactorFrom = (measured, weight) => measured <= OPERATOR_FACTOR_DEFAULT_PUBLIC ? measured : Math.round((OPERATOR_FACTOR_DEFAULT_PUBLIC + weight * (measured - OPERATOR_FACTOR_DEFAULT_PUBLIC)) * 1e3) / 1e3;
 var OPERATOR_FACTOR_PUBLIC = {
-  // bez vlastního bytu: záměrný konzervativní předpoklad, ne měření
-  praha2: 0.95,
+  // Praha 2 tu měla ruční 0,95. Zrušeno 2. 9. 2026: bez měření platí výchozí
+  // 1,10 jako pro každý jiný neměřený okres (viz operatorFactor níž).
   ...Object.fromEntries(
     Object.entries(OPERATOR_EVIDENCE).map(([loc, e]) => [loc, publicFactorFrom(e.measured, e.weight)])
   )
