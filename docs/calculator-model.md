@@ -580,3 +580,55 @@ dostával `m2 = undefined`, padal na `typicalArea` a **všechny čtyři kbelíky
 vracely totéž číslo** — 912 dvojic identických, 0 rozdílných. Tehdejší
 baseline tuhle otázku prostě neuměla položit. Kdo bude čísla ověřovat,
 ať cituje `ede92be` nebo novější, nikdy starší běh.
+
+### PŘEDREGISTRACE: co by muselo vyjít, aby velký 1+kk dostal veřejnou přirážku
+
+Zapsáno **2. 9. 2026, PŘED tím, než takový byt vůbec máme.** Důvod je
+prostý: až jednou nějaký změříme, bude svůdné hranice posunout tak, aby
+výsledek vyšel příznivě. Proto tady stojí předem.
+
+#### Hledaný vzorek
+
+**Velký 1+kk / garsonka, která OPRAVDU spí 5–6**, a je provozovaná
+pořádně. Ne „prostě velký byt". Kapacita a dispozice jsou ta proměnná,
+o kterou jde; metry čtvereční ji nenesou.
+
+#### Mozart 414 je NEGATIVNÍ KONTROLA, ne protidůkaz
+
+| | |
+|---|---|
+| proti Praha 5 **1BR** | **1,080×** |
+| proti Praha 5 **2BR** | **0,732×** |
+
+Mozart je fyzicky 2+kk, listovaný jako 1BR, ale **spí jen 4**. Vydělává
+jako 1BR. Z toho plyne přesně jedna věc: **samotná plocha ekonomiku 2BR
+nedělá.** Kdyby se přirážka spustila podle m², Mozart by byl nadsazený
+zhruba o 37 %.
+
+**POZOR NA ZÁMĚNU.** Mozartových 0,732 proti 2BR **není důkaz, že
+kapacita výnos nezvedá.** Je to důkaz, že plocha bez kapacity ho nezvedá.
+To jsou dvě různá tvrzení a Mozart odpovídá jen na první. Kdo tímhle
+číslem argumentuje proti kapacitní přirážce, cituje ho špatně.
+
+#### Předregistrované pásmo výkladu
+
+| naměřeno u kvalifikovaného 5–6lůžkového bytu | výklad |
+|---|---|
+| ~1,2× proti 1BR | důkaz pro **mírnou** přirážku |
+| ~1,4× proti 1BR | důkaz pro **silnější částečný blend** |
+| ~1,0× proti 2BR | komerčně se chová **jako 2BR produkt** |
+
+**Tohle jsou výkladové prahy pro diagnostiku, NE automatické spouštěče
+veřejného pravidla.** Že číslo padne do pásma, neznamená, že se pravidlo
+nasadí.
+
+#### Kolik důkazů je potřeba
+
+**Jeden vyhovující byt nestačí — ať vyjde jakkoli.** Veřejnou váhu blendu
+smí nastavit až **víc změřených případů 5–6lůžkových bytů**, každý
+se shodným obdobím a proti správnému pásmu PriceLabs (tedy metodikou
+z auditu 2. 9. 2026: tržba po slevách, Booking přepočtený měsíčním kurzem
+ČNB, benchmark ze stejných měsíců).
+
+Do té doby platí to, co je popsané výš: veřejně beze změny, reálné
+případy přes interní `ObservedConfig` po prohlídce.
