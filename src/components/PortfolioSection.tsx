@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MapPin, Users, Ruler, Sparkles, ChevronDown } from "lucide-react";
+import { MapPin, Users, Ruler, Sparkles, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import Reveal, { stagger } from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MARKET_OCC, ratioFor } from "@/lib/yield";
@@ -69,6 +69,8 @@ const copy = {
     soonDesc: "Každý byt nejdřív posoudíme, a\u00a0když unese písemné minimum, vezmeme ho. Napište nám a\u00a0do 24 hodin víte, jak je na\u00a0tom ten váš.",
     soonDescShort: "Každý byt nejdřív posoudíme. Napište nám a\u00a0do 24 hodin víte, jak je na\u00a0tom ten váš.",
     showAll: "Další výsledky",
+    prevFlat: "Předchozí byt",
+    nextFlat: "Další byt",
     featOwner: "průměrně měsíčně majiteli",
     restLabel: (n: number) => `Dalších ${n} bytů ve\u00a0správě, měsíčně majiteli`,
     restNew: (n: number) => `a\u00a0${n} nové bez celé sezóny`,
@@ -93,6 +95,8 @@ const copy = {
     soonDesc: "Căn nào Antam cũng xem kỹ trước, gánh được mức cam kết thì mới nhận. Nhắn cho Antam, trong 24 giờ anh chị biết căn nhà mình thế nào.",
     soonDescShort: "Căn nào Antam cũng xem kỹ trước. Nhắn cho Antam, trong 24 giờ anh chị biết căn nhà mình thế nào.",
     showAll: "Kết quả các căn khác",
+    prevFlat: "Căn trước",
+    nextFlat: "Căn sau",
     featOwner: "trung bình mỗi tháng chủ nhà nhận",
     restLabel: (n: number) => `Còn ${n} căn nữa Antam lo, mỗi tháng chủ nhà nhận`,
     restNew: (n: number) => `và ${n} căn mới chưa đủ một mùa`,
@@ -116,8 +120,14 @@ const PortfolioSection = () => {
   /* AD 1. 9. 2026: jeden byt nese sekci jako důkaz, ne katalog tří karet.
      Zbytek portfolia je pod tím řádek čísel a teprve po rozkliknutí mřížka. */
   const [showAll, setShowAll] = useState(false);
-  const featured = items[0];
-  const rest = items.slice(1);
+  /* Listuje se po jednom bytě dokolečka (2. 9. 2026). Kompozice zůstává
+     „jeden byt = důkaz"; kdo chce, projde si ostatní, ale sekce se nestane
+     galerií, protože pořád vidí jen jeden byt naráz. */
+  const withStats = items.filter((i) => i.stats);
+  const [featIdx, setFeatIdx] = useState(0);
+  const featured = withStats[featIdx];
+  const step = (d: number) => setFeatIdx((i) => (i + d + withStats.length) % withStats.length);
+  const rest = items.filter((i) => i !== featured);
   const restStats = rest.filter((i) => i.stats);
   const visible = showAll ? rest : [];
 
@@ -144,6 +154,19 @@ const PortfolioSection = () => {
           />
         </figure>
         <div className="px-6 pt-7 lg:px-0 lg:py-0 lg:pl-14 lg:pr-[max(1.5rem,calc((100vw-75rem)/2+1.5rem))]">
+          <div className="flex items-center gap-2 mb-5">
+            <button type="button" onClick={() => step(-1)} aria-label={c.prevFlat}
+              className="p-1.5 rounded-sm border border-border text-muted-foreground hover:border-foreground/40 transition-colors">
+              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
+            </button>
+            <button type="button" onClick={() => step(1)} aria-label={c.nextFlat}
+              className="p-1.5 rounded-sm border border-border text-muted-foreground hover:border-foreground/40 transition-colors">
+              <ChevronRight className="w-4 h-4" aria-hidden="true" />
+            </button>
+            <span className="ml-1.5 font-body text-[11.5px] uppercase tracking-[0.12em] text-muted-foreground tnum">
+              {featIdx + 1} / {withStats.length}
+            </span>
+          </div>
           <p className="tnum font-display font-semibold text-foreground leading-[0.9] tracking-[-0.028em] text-[clamp(3.25rem,6.8vw,6.5rem)] whitespace-nowrap">
             {fmtCzk(featured.stats!.owner)}
             <span className="ml-[0.5em] text-[0.3em] font-normal tracking-normal text-muted-foreground">Kč</span>
@@ -164,7 +187,7 @@ const PortfolioSection = () => {
               · {c.barMarket(featured.loc)}&nbsp;{featured.stats!.market}
               {lang === "cs" ? "\u00a0%" : "%"}
             </li>
-            <li>{c.statPeriod12}</li>
+            <li>{featured.stats!.since ? c.statPeriodSince(featured.stats!.since) : c.statPeriod12}</li>
           </ul>
         </div>
       </Reveal>
