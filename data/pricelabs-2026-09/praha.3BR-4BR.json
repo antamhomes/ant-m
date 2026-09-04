@@ -1,0 +1,203 @@
+{
+ "meta": {
+  "pulled": "2026-09-04",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Prague official boundary (openstreetmap)",
+  "slug": "praha",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "3BR",
+   "4BR"
+  ],
+  "bands_basis": {
+   "3BR": {
+    "basis": "measured"
+   },
+   "4BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "3BR": {
+    "file": "data/pricelabs-raw/praha.3BR.raw.json",
+    "raw_sha256": "45ccec91e7644f112a14a7ac44385c531326bd68c4ec1ae0fbf5212efd5053e3",
+    "captured_at": "2026-09-04T11:41:09.670Z",
+    "question_sha256": "ecd5382e4c6b375ad2ded4f12a4ae0c2ebbd6e62ff9658426a7ddc1f6bba1a2b",
+    "geometry_label": "Prague official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_lLNCqrvg-Wwx5C2lEi96GyIYCOSQ9jKl",
+    "geometry_token": null
+   },
+   "4BR": {
+    "file": "data/pricelabs-raw/praha.4BR.raw.json",
+    "raw_sha256": "aabf426f5515cae840377f5341cd104392b3c074c8d058002addae6438f3f1cd",
+    "captured_at": "2026-09-04T12:04:49.555Z",
+    "question_sha256": "a03a5a60b4bb0ac7b4657d19473ae37b8ff60e4a6eef686f664618ab4a7d78b3",
+    "geometry_label": "Prague official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_lLNCqrvg-Wwx5C2lEi96GyIYCOSQ9jKl",
+    "geometry_token": null
+   }
+  }
+ },
+ "3BR": {
+  "occ": [
+   77.8,
+   72.8,
+   79.6,
+   66.3,
+   78.7,
+   54.3,
+   61.6,
+   64.3,
+   72.2,
+   72.2,
+   68.3,
+   78.1
+  ],
+  "adr": [
+   5850.96,
+   5547.72,
+   5707.86,
+   4884.56,
+   8342.62,
+   5191.55,
+   4382.56,
+   5303.81,
+   7211.78,
+   7623.4,
+   6408.16,
+   6527.28
+  ],
+  "revpar": [
+   4554.6,
+   4037.23,
+   4543.76,
+   3239.51,
+   6567.08,
+   2819.17,
+   2698.73,
+   3411.82,
+   5205.4,
+   5503.48,
+   4374.89,
+   5099.12
+  ],
+  "active_listings": [
+   676,
+   692,
+   681,
+   703,
+   716,
+   732,
+   707,
+   729,
+   723,
+   722,
+   742,
+   757
+  ],
+  "avg_revenue": [
+   128289.26,
+   110923.85,
+   128871.46,
+   89141.03,
+   183989.35,
+   82441.79,
+   75677.82,
+   97408.12,
+   141259.03,
+   152929.95,
+   122517.84,
+   148424.29
+  ]
+ },
+ "4BR": {
+  "occ": [
+   77.8,
+   73.4,
+   80.1,
+   66.1,
+   77.6,
+   56,
+   63.9,
+   66.5,
+   73.9,
+   73.6,
+   70.7,
+   80.4
+  ],
+  "adr": [
+   8903.77,
+   8254.43,
+   7970.6,
+   6988.49,
+   11215.76,
+   6802.2,
+   5635.35,
+   7499.73,
+   10022.92,
+   11135.87,
+   9585.77,
+   9568.8
+  ],
+  "revpar": [
+   6930.79,
+   6057.28,
+   6381.26,
+   4621.21,
+   8700.98,
+   3812.5,
+   3603.39,
+   4984.52,
+   7403.01,
+   8191.82,
+   6772.47,
+   7690.26
+  ],
+  "active_listings": [
+   185,
+   184,
+   184,
+   187,
+   189,
+   194,
+   187,
+   190,
+   185,
+   184,
+   187,
+   190
+  ],
+  "avg_revenue": [
+   195003.48,
+   169844.42,
+   183112.65,
+   129147.28,
+   242177.39,
+   112653.25,
+   96360.82,
+   139872.32,
+   200019.94,
+   225123.36,
+   186691.6,
+   221208.07
+  ]
+ }
+}

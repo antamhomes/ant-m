@@ -1,0 +1,16 @@
+{
+ "artifact": "data/pricelabs-2026-09/praha.3BR-4BR.json",
+ "sha256": "cbfc04c424ba095a01fa3221cfce765fad394566cc40122717d334e9b54fe0f5",
+ "bytes": 3230,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "praha",
+ "geometry": "Prague official boundary (openstreetmap)",
+ "bands": [
+  "3BR",
+  "4BR"
+ ],
+ "pulled": "2026-09-04"
+}

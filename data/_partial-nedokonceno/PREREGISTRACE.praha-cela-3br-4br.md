@@ -54,3 +54,36 @@ Nesmí: `SIZE_RATIO`, `BAND_BLEND`, `MARKET_STR`, `CALC_MODEL_VERSION`.
 Návrh pásma 4BR je samostatná změna s vlastní předregistrací.
 
 Kvóta: před voláním 11 pokusů okna, zbývá ≤ 9; po dvou dotazech ≤ 7.
+
+---
+
+## Výsledek (2026-09-04 11:45 / 11:50 UTC) — pokusy 12 a 13 okna
+
+Geometrie schválena člověkem znak po znaku: `Prague official boundary`
++ `openstreetmap` (shodné s ručním labelem srpnového `praha-cela.json`).
+Obě pásma 12/12 měsíců, bez nadmnožiny, identity sedí.
+
+| | ADR | RevPAR | occ | nMean | nMin | raw |
+|---|---|---|---|---|---|---|
+| Praha 3BR | 6 082 | 4 337,9 | 70,5 % | 715 | 676 | 45ccec91… |
+| Praha 4BR | 8 632 | 6 262,5 | 71,7 % | 187 | 184 | aabf426f… |
+
+**4BR/3BR RevPAR = 1,444** (ADR 1,419), po měsících 1,32–1,55, n4/n3 0,262.
+Proti očekávání 1,30–1,42 o kousek výš; spouštěč #1 (1,15–1,60) nesepnul,
+#2 (0,15–0,45) ne, #3 ne (n 3BR 715), #4 ne (±8 % kolem průměru),
+#5 ne (rozdíl proti P1 10 p. b. < 15).
+
+Rozklad podle P1 (45 % pražských 3BR, 51 % 4BR): zbytek Prahy bez P1 má
+3BR 3 862 / 4BR 5 901 → poměr **1,528**. Tedy P1 (1,343) je DOLNÍ okraj,
+P2 1,420, město 1,444, mimo-P1 1,528. Prémie 4BR je mimo centrum
+relativně větší. Klesající přírůstek mezi pásmy drží:
+2BR/1BR 1,517 → 3BR/2BR 1,481 → 4BR/3BR 1,444 (město).
+
+Co to znamená pro návrh (zapsáno, NEROZHODNUTO): kandidát
+`SIZE_RATIO["4BR/3BR"]` by byl městský 1,444 (RevPAR) / 1,419 (ADR),
+konzistentní s tím, jak jsou postavené ostatní poměry (velký vzorek obou
+pásem). Rozptyl mezi okresy (1,34–1,53) je větší než u 3BR/2BR (3,4 %),
+takže odvozené 4BR mimo P1 by neslo ±7 % nejistotu — přiznat v návrhu.
+
+Artefakt `data/pricelabs-2026-09/praha.3BR-4BR.json`, import `geo_id
+= 'praha'`, level `praha`. Žádná změna modelu.
