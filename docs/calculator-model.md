@@ -392,6 +392,37 @@ elasticita nájmu na plochu je 0,74, vnitropásmová musí být výrazně pod ob
 **Drobnosti:** `ratioFor` má natvrdo `"2kk"` · nevysvětlený rozdíl 5,5 až 6,8 %
 na kartách portfolia · odvozené `ltr_rent` pro Prahu 4, 6 a 8 v DB.
 
+**Z integrace Žižkova 4. 9. 2026 — dva otevřené body, ZÁMĚRNĚ nevyřešené
+v témž commitu, aby pipeline zůstala čistá:**
+
+1. **Kalibrace odvozeného okresního 3BR v Praze 3.** `MARKET_STR.praha3`
+   pásmo 3BR nemá (tenké měření n≈46 potlačené v srpnu) a `marketCell` ho
+   odvozuje z 2BR celopražským poměrem: RevPAR 2303,5 × 1,481 = **3411,5**.
+   Proti tomu stojí dvě nezávislá přímá měření téže geografie: potlačený
+   okresní vzorek **4210,7** (n≈46) a Žižkov **4333,9** (n 44; Žižkov je
+   ~95 % okresní nabídky 3BR). Odvozená buňka leží ~20 % pod oběma. Není
+   to důkaz proti poměru obecně (Nové Město i Vinohrady sedí na ±4 %), ale
+   v Praze 3 poměr 3BR/2BR zjevně neplatí: vlastní okresní `3BR/1BR` je
+   2,654 a Žižkov 2,805, kdežto celopražský 2,304. Prověřit jako otázku
+   kalibrace okresního pásma — např. jestli má okres s vlastním tenkým
+   měřením dostat donora jinak než čistě celopražským poměrem. **Nic
+   z toho se nemění bez samostatné analýzy a předregistrace.** Dnes
+   Žižkov 3BR ve veřejném výsledku = 50 % naměřeného + 50 % odvozeného
+   = 3872,7, s `derived` a rozšířeným rozpětím; přesně to shrinkage má
+   dělat.
+
+2. **`calc_derived_note` je pro částečně měřené čtvrťové blendy
+   sémanticky nepřesná.** Text říká „číslo je odvozené z menších bytů ve
+   čtvrti a celopražského poměru". U Žižkova 3BR je polovina čísla přímé
+   měření 3BR té čtvrti a druhá polovina okresní 2BR × poměr — „menší byty
+   ve čtvrti" tam nejsou vůbec. Příznak `derived` je správně (`district.derived
+   && w < 1`), špatná je jen kopie. Projít text zvlášť; není to změna modelu.
+
+**Evidence pro čtvrťový selektor v Praze 3 (rozhodnutí 4. 9. 2026).** Žižkov
+proti okresu: 1BR/2BR −1,0 až −1,5 %, ale 3+kk/l +5,4 / +14,9 % a 4+kk
++13,5 %. Selektor v Praze 3 tedy není kosmetická geografie — u větších
+dispozic hýbe číslem podstatně, i když u malých bytů skoro ne.
+
 ---
 
 ## 4b. DATOVÁ PIPELINE (úklid 31. 8. 2026)
