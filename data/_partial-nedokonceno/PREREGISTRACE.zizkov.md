@@ -87,3 +87,73 @@ nic nezachytilo a Žižkov zůstává nedotčený. Předregistrace platí dál.
 
 Zamítnutí přišlo 2026-09-02 17:35 UTC → **kvóta se obnoví
 2026-09-03 v 15:18 UTC**.
+
+## Pokus 2 (2026-09-04 10:38 UTC): 1BR ÚSPĚCH — čeká na schválení geometrie
+
+Dotaz doslova: `Žižkov, Prague, official OpenStreetMap boundary, 1-bedroom.
+For each month from August 2025 through July 2026 give: occupancy rate,
+ADR, RevPAR, number of active listings, and average revenue per active listing.`
+
+- `selected_geometry_label`: **`Žižkov official boundary`**
+- `selected_geometry_source`: **`openstreetmap`**
+- `market_label`: `Žižkov, Prague` · session `lg_sess_5ex-Oc5yZ4Jpczs3L7RoXWQmkAmTAI8v` · geometry_token: žádný
+- okno: 12/12 měsíců `2025_08..2026_07`, žádná nadmnožina, 0 vyřazených řádků
+- syrová obálka: `data/pricelabs-raw/zizkov.1BR.raw.json`, raw_sha256 `cfc82183…`
+- kvóta: 1. pokus tohoto okna (okno ukotveno 10:38 UTC); stav před ním neznámý
+  (autorun 3. 9. 15:20 UTC běžel bez připojené složky, nic nezapsal, počet
+  jeho volání nelze ověřit) → počítej konzervativně.
+
+### Spouštěče — #3 a #4 SEPNULY (diagnostika, ne zamítnutí)
+
+| | P3 okres | Žižkov | podíl |
+|---|---|---|---|
+| n (průměr) | 625,9 | 537,1 | **0,858** |
+| n (min) | 592 | 510 | |
+| RevPAR (průměr) | 1 568,9 | 1 545,0 | 0,985 |
+
+Podíl 86 % je mimo očekávaných 25–60 %. Ale: podíl je **0,85–0,86 v každém
+z 12 měsíců** (stabilní, jak se chová podmnožina, ne překryv), RevPAR
+Žižkova je pod okresem (0,95–1,01 podle měsíce), a dopočtený zbytek P3
+(n ≈ 89, RevPAR ≈ 1 714) sedí na vinohradskou úroveň (Vinohrady celé
+1 670). Stejné okno jako okres (`praha3.json`, pulled 2026-08-30, tytéž měsíce).
+
+Závěr diagnostiky: **polygon není moc široký; špatný byl předpoklad
+předregistrace**, že P3 je z 55–65 % Vinohrady. Na STR je Praha 3 ze
+~86 % Žižkov. Vinohradská část P3 je ~14 % nabídky.
+
+Důsledek pro váhy (přepočet z podílu 0,86): 2BR ≈ 154 (**w 1,0**, ne 0,75),
+3BR ≈ 40 (**w 0,5**, ne 0). Otevřená otázka k integraci: P3 3BR je v okresním
+souboru označen UNRELIABLE (n ≈ 46 < 50) — jak se chová blend, když čtvrť
+dostane w 0,5 a okres sám je pod prahem spolehlivosti. Řešit až při
+integraci, s čísly v ruce; nic nepředjímat.
+
+Schválení geometrie: **OTEVŘENÉ**, čeká na člověka.
+
+## Pokusy 3 a 4 (2026-09-04 10:45 / 10:46 UTC): 2BR a 3BR ÚSPĚCH
+
+Geometrie schválena člověkem znak po znaku (`Žižkov official boundary` +
+`openstreetmap`). 2BR i 3BR položeny v téže session s výslovným pojmenováním
+hranice; u obou vrácen **stejný** `selected_geometry_label` + `_source`,
+ověřeno zvlášť. 12/12 měsíců, 0 vyřazených řádků, žádná nadmnožina.
+
+| pásmo | ADR | RevPAR | occ | nMean | nMin | podíl na P3 | RevPAR/P3 | raw_sha256 |
+|---|---|---|---|---|---|---|---|---|
+| 1BR | 2 085 | 1 545,0 | 73,5 % | 537 | 510 | 0,858 | 0,985 | cfc82183… |
+| 2BR | 3 052 | 2 279,6 | 73,8 % | 152 | 135 | 0,850 | 0,990 | 2322d061… |
+| 3BR | 6 006 | 4 333,9 | 71,7 % | 44 | 38 | 0,948 | 1,029 | 1da04923… |
+
+Artefakt: `data/pricelabs-2026-09/zizkov.json`, sha256 `dcddc021…`, basis
+measured u všech tří pásem, `raw_provenance` u všech tří.
+
+Spouštěče: #1 `2BR/1BR = 1,476` v pásmu 1,30–1,70 (poměrový model 1,567 →
+odchylka −5,8 %; okres P3 sám 1,474). #2 `3BR/1BR = 2,805` v pásmu
+1,40–2,90, těsně pod horní mezí (poměrový model 2,427 → +15,6 %, zatím
+největší odchylka; n=44, takže je to hlučné měření, ne důkaz proti modelu).
+#3, #4 sepnuly u 1BR (viz Pokus 2) a diagnostika je uzavřela. #5: podíly
+0,86/0,85/0,95 stabilní → Žižkov je podmnožina P3, ne překryv.
+
+Kvóta: 3 pokusy tohoto okna (10:38–10:46 UTC), všechny úspěšné.
+
+Váhy z naměřeného: 1BR w 1,0 · 2BR w 1,0 (nMean 152) · 3BR **w 0,5**
+(nMean 44; `ctvrtWeight` váží nMean, ne nMin). Případ 3BR viz samostatná
+inspekce před integrací — STOP na pokyn člověka.

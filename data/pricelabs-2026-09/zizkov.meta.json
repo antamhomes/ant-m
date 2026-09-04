@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/zizkov.json",
+ "sha256": "dcddc0214c8cffe6025539b054ebeac001dbac1874cdd665874de2c73cc4d181",
+ "bytes": 4489,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "zizkov",
+ "geometry": "Žižkov official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-04"
+}

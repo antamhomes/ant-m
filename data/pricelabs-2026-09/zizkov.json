@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "pulled": "2026-09-04",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Žižkov official boundary (openstreetmap)",
+  "slug": "zizkov",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR",
+   "2BR",
+   "3BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   },
+   "2BR": {
+    "basis": "measured"
+   },
+   "3BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/zizkov.1BR.raw.json",
+    "raw_sha256": "cfc8218341447a01f8efb89c503b32409e2517833d4cd0bc69166df8432aa0e1",
+    "captured_at": "2026-09-04T10:41:00.806Z",
+    "question_sha256": "8ba839338f986ecf18a6626acc00a307e11eaa571ed742da491905288584f751",
+    "geometry_label": "Žižkov official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_5ex-Oc5yZ4Jpczs3L7RoXWQmkAmTAI8v",
+    "geometry_token": null
+   },
+   "2BR": {
+    "file": "data/pricelabs-raw/zizkov.2BR.raw.json",
+    "raw_sha256": "2322d061ca9959467d059d32431244ede3c743ed998eaec85594d1bc5063c227",
+    "captured_at": "2026-09-04T10:45:36.508Z",
+    "question_sha256": "cca908f076918338c1edf114785c6f952ba9dad7415017d98f9ba8d639b713ca",
+    "geometry_label": "Žižkov official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_5ex-Oc5yZ4Jpczs3L7RoXWQmkAmTAI8v",
+    "geometry_token": null
+   },
+   "3BR": {
+    "file": "data/pricelabs-raw/zizkov.3BR.raw.json",
+    "raw_sha256": "1da0492309a74073532f9d366d6ce4c4d0350c55ed8fe40906f33424a1a7e5f6",
+    "captured_at": "2026-09-04T10:46:49.126Z",
+    "question_sha256": "c5eec61b5074edbf8dd719acdc7519d313cc386c422dfb0bcd0ad72a728af77f",
+    "geometry_label": "Žižkov official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_5ex-Oc5yZ4Jpczs3L7RoXWQmkAmTAI8v",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   79.5,
+   82.7,
+   83.8,
+   71.4,
+   80.3,
+   55.6,
+   64,
+   66.1,
+   74.3,
+   76.6,
+   71.7,
+   75.8
+  ],
+  "adr": [
+   2004.36,
+   1885.08,
+   1916.19,
+   1789.23,
+   2982.31,
+   1916.49,
+   1396.52,
+   1872.88,
+   2434.1,
+   2528.93,
+   2127.08,
+   2162.56
+  ],
+  "revpar": [
+   1593.21,
+   1558.4,
+   1605.18,
+   1276.82,
+   2395.87,
+   1065.99,
+   893.82,
+   1238.19,
+   1809.39,
+   1938.25,
+   1524.97,
+   1639.45
+  ],
+  "active_listings": [
+   516,
+   522,
+   510,
+   525,
+   540,
+   559,
+   522,
+   535,
+   545,
+   543,
+   553,
+   575
+  ],
+  "avg_revenue": [
+   47338.94,
+   43985.27,
+   46042.45,
+   35817,
+   66706.97,
+   31151.08,
+   24075.64,
+   35206.47,
+   49283.4,
+   53365.61,
+   42784.76,
+   46619.62
+  ]
+ },
+ "2BR": {
+  "occ": [
+   81.5,
+   80,
+   83.2,
+   70.6,
+   81.3,
+   58.8,
+   63.6,
+   67.5,
+   74.9,
+   75.3,
+   69.1,
+   79.8
+  ],
+  "adr": [
+   3055.16,
+   2800.75,
+   2826.97,
+   2446.12,
+   4385.91,
+   2499.6,
+   1998.72,
+   2623.71,
+   3525.8,
+   3850.52,
+   3243.82,
+   3364.62
+  ],
+  "revpar": [
+   2490.32,
+   2241.34,
+   2352.99,
+   1726.43,
+   3566,
+   1469.05,
+   1270.99,
+   1771.42,
+   2641.65,
+   2899.06,
+   2240.79,
+   2685.73
+  ],
+  "active_listings": [
+   146,
+   141,
+   135,
+   143,
+   153,
+   159,
+   151,
+   153,
+   157,
+   159,
+   164,
+   168
+  ],
+  "avg_revenue": [
+   71998.94,
+   62079.03,
+   68495.63,
+   48714.71,
+   98035.85,
+   43670.71,
+   35005.55,
+   52311.68,
+   75588.23,
+   80648.74,
+   62424.4,
+   77520.81
+  ]
+ },
+ "3BR": {
+  "occ": [
+   75.6,
+   73.9,
+   84.6,
+   67.5,
+   75.4,
+   55.2,
+   68.9,
+   65,
+   72.1,
+   75.3,
+   66,
+   80.6
+  ],
+  "adr": [
+   5171.88,
+   4379.63,
+   4427.36,
+   3850.81,
+   7467.19,
+   3722.17,
+   5472.42,
+   5988.85,
+   8846.22,
+   8773.33,
+   7474.53,
+   6499.63
+  ],
+  "revpar": [
+   3911.59,
+   3235.12,
+   3746.64,
+   2600.61,
+   5629.37,
+   2056.41,
+   3771.8,
+   3892.75,
+   6379.48,
+   6606.75,
+   4936.01,
+   5240.67
+  ],
+  "active_listings": [
+   38,
+   42,
+   40,
+   42,
+   43,
+   43,
+   44,
+   44,
+   45,
+   46,
+   49,
+   52
+  ],
+  "avg_revenue": [
+   113781.34,
+   92848.06,
+   103157.52,
+   69956.36,
+   169256.31,
+   62938.47,
+   103975.99,
+   107623.17,
+   175623.39,
+   180584.47,
+   130804.24,
+   144991.8
+  ]
+ }
+}
