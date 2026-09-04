@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "pulled": "2026-09-04",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Praha 10 official boundary (openstreetmap)",
+  "slug": "praha10",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR",
+   "2BR",
+   "3BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   },
+   "2BR": {
+    "basis": "measured"
+   },
+   "3BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/praha10.1BR.raw.json",
+    "raw_sha256": "ae0d13301c4d00428b701a77de832d6db8fc9d68b655737482707abe151ee216",
+    "captured_at": "2026-09-04T12:07:15.885Z",
+    "question_sha256": "87327a1d9062b02fba3a5388a2a3a04815e9dbabf73328689cb177a742ad6c54",
+    "geometry_label": "Praha 10 official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_dqPuRtMygmBb8giqRggzpbFyBS2qxvEx",
+    "geometry_token": null
+   },
+   "2BR": {
+    "file": "data/pricelabs-raw/praha10.2BR.raw.json",
+    "raw_sha256": "ecd7b88483dbcf63dd92dfb7f709bccbe3644c82d724463276228a1e8d18ebdc",
+    "captured_at": "2026-09-04T12:10:43.268Z",
+    "question_sha256": "af4aae8fc998238ce7ae9110578e9d1fdfa5ca9d7b542df33aae701be2f7109c",
+    "geometry_label": "Praha 10 official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_dqPuRtMygmBb8giqRggzpbFyBS2qxvEx",
+    "geometry_token": null
+   },
+   "3BR": {
+    "file": "data/pricelabs-raw/praha10.3BR.raw.json",
+    "raw_sha256": "70c3a1b61e6579c19ece0dff2f18025e06d124e473fdda7e7946971241d27929",
+    "captured_at": "2026-09-04T12:12:07.151Z",
+    "question_sha256": "9035631240ef481e67b96c3d9561df8f09c5a01dd06d5894658a5d903fa0a397",
+    "geometry_label": "Praha 10 official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_dqPuRtMygmBb8giqRggzpbFyBS2qxvEx",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   79.3,
+   77.4,
+   78,
+   66.2,
+   79.2,
+   51,
+   57.5,
+   61.7,
+   75.8,
+   75.7,
+   68.6,
+   72.5
+  ],
+  "adr": [
+   1821.43,
+   1714.92,
+   1774.35,
+   1619.26,
+   2526.43,
+   1720.81,
+   1395.13,
+   1691.17,
+   2097.14,
+   2263.22,
+   1955.35,
+   1868.89
+  ],
+  "revpar": [
+   1444.12,
+   1328.18,
+   1383.68,
+   1071.49,
+   2001.51,
+   877.97,
+   801.8,
+   1043.55,
+   1590.18,
+   1712.89,
+   1342.28,
+   1355.87
+  ],
+  "active_listings": [
+   196,
+   197,
+   195,
+   195,
+   199,
+   204,
+   197,
+   193,
+   194,
+   203,
+   208,
+   205
+  ],
+  "avg_revenue": [
+   40387.2,
+   36619.9,
+   39575.18,
+   29181.11,
+   54954.18,
+   25571.54,
+   23609.89,
+   29975.79,
+   43345.53,
+   48491.23,
+   37004.9,
+   38508.33
+  ]
+ },
+ "2BR": {
+  "occ": [
+   76.4,
+   73.4,
+   74.8,
+   60.2,
+   74.9,
+   51.2,
+   59.5,
+   60.6,
+   71.1,
+   67.5,
+   65.1,
+   71.9
+  ],
+  "adr": [
+   2920.93,
+   2604.72,
+   2870.43,
+   2590.58,
+   4015.71,
+   2779.83,
+   2223,
+   2644.37,
+   3295.27,
+   3599.94,
+   3227.78,
+   3366.83
+  ],
+  "revpar": [
+   2231.49,
+   1912.66,
+   2146.12,
+   1559,
+   3006.22,
+   1423.05,
+   1322.68,
+   1601.55,
+   2342.57,
+   2428.78,
+   2101.66,
+   2421.21
+  ],
+  "active_listings": [
+   60,
+   58,
+   60,
+   62,
+   67,
+   69,
+   67,
+   67,
+   66,
+   67,
+   66,
+   69
+  ],
+  "avg_revenue": [
+   61451.86,
+   52406.91,
+   64896.67,
+   42506.59,
+   81905.25,
+   43176.08,
+   42897.89,
+   46111.25,
+   59896.31,
+   65434.24,
+   58038.02,
+   68813.23
+  ]
+ },
+ "3BR": {
+  "occ": [
+   29.1,
+   15.1,
+   28.1,
+   26.4,
+   40,
+   35.4,
+   31.7,
+   26.7,
+   30.2,
+   26.7,
+   25.4,
+   30
+  ],
+  "adr": [
+   4201.19,
+   7235.59,
+   5876.92,
+   7538.24,
+   6935.56,
+   3276.62,
+   2773.11,
+   6491.25,
+   6965.92,
+   6896.76,
+   6025.22,
+   5412.78
+  ],
+  "revpar": [
+   1220.86,
+   1089.7,
+   1653.98,
+   1992.25,
+   2774.22,
+   1161.33,
+   878.15,
+   1732.83,
+   2105.98,
+   1839.14,
+   1530.73,
+   1621.22
+  ],
+  "active_listings": [
+   13,
+   13,
+   13,
+   12,
+   13,
+   15,
+   15,
+   14,
+   14,
+   12,
+   11,
+   12
+  ],
+  "avg_revenue": [
+   40811.55,
+   60296.58,
+   55243.04,
+   69728.73,
+   85538.56,
+   45872.66,
+   52689.04,
+   51118.58,
+   60371.35,
+   55174.11,
+   47197.59,
+   67118.48
+  ]
+ }
+}

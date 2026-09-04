@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/praha10.json",
+ "sha256": "1af72d1f994a2d6a684a775e5a74149a0f855fa8aeacb17b9882136d21057fe2",
+ "bytes": 4473,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "praha10",
+ "geometry": "Praha 10 official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-04"
+}
