@@ -50,9 +50,40 @@ opravit každou 4+kk cestu, další čtvrť zpřesní jedno místo.
 pásma 4BR je samostatná změna s vlastní předregistrací a regresí, kde
 se smějí hýbat jen řádky `4kk`.
 
-Po sondě (další okno kvóty, priorita člověka): Praha 10 okres (1BR/2BR/3BR)
-→ Staré Město re-pull s měsíční řadou (odstraní jedinou RECONSTRUCTED
-buňku) → další 4BR / další čtvrti podle výsledku sondy.
+**Sonda proběhla 4. 9. 2026 11:30–11:33 UTC (pokusy 10–11), výsledek
+v `PREREGISTRACE.4br-sonda.md` a commitu `31f29cc`.** Závěr člověka:
+pásmo 4BR je životaschopné (Praha 1 nMin 94, poměr 1,343, po měsících
+1,24–1,44), ale odvozený poměr pro ostatní okresy zatím stojí na jednom
+spolehlivém zdroji a globálně se nenasazuje. Praha 2 (n ≈ 30) potvrzuje
+směr, ne kalibraci. Malé okresy (P3/P5/P8, čekáno n ≈ 10–20) se na 4BR
+NEPULLUJÍ — kalibraci nezlepší.
+
+**Konvence:** P1 4BR dostane VLASTNÍ artefakt
+(`data/pricelabs-2026-09/praha1.4BR.json`); `praha1.json` z 30. 8. se
+nepřepisuje (syrový artefakt je autorita, jeho sha256 zůstává). Před
+skládáním artefaktu a importem musí člověk schválit vrácené okresní
+geometrie znak po znaku (`Praha 1 official boundary` / `Praha 2 official
+boundary`, obě `openstreetmap`) — stejný kontrakt jako u čtvrtí.
+
+## Fronta pro další okno kvóty (od ~10:38 UTC 5. 9. 2026)
+
+1. **Praha 10 okres, 1BR / 2BR / 3BR** (3 dotazy) — jediný okres, který
+   dnes vrací „posoudíme individuálně". Nová geometrie → STOP po prvním
+   pásmu na schválení. Předregistrace před voláním.
+2. **Staré Město re-pull s měsíční řadou, 1BR / 2BR / 3BR** (3 dotazy) —
+   odstraní jedinou `RECONSTRUCTED` buňku v produkci; nMin poprvé známé.
+   Srovnání s rekonstruovanými hodnotami (3206 / 2467,4 / 533 …) je
+   diagnostika, ne kritérium. Předregistrace před voláním.
+3. **Praha-celá 3BR + 4BR** (2 dotazy) — druhý zdroj poměru 4BR/3BR
+   s velkým n; `praha-cela.json` je „all sizes", takže obě pásma se
+   musí změřit. Předregistrace před voláním.
+4. **STOP a rozhodnutí** o změně modelu 4+kk z důkazů: nový `Band`
+   „4BR", `BAND_BLEND["4kk"]` s `next: "4BR"` a blendem podle m²,
+   `SIZE_RATIO["4BR/3BR"]`, odvozené 4BR jen tam, kde přímá data chybí.
+   Vlastní předregistrace; v regresi se smějí hýbat jen řádky `4kk`.
+
+Rozpočet: 8 dotazů + rezerva ≥ 4. Další čtvrti (Holešovice, Nusle,
+Libeň, Vršovice) až po tomhle a jen se zbylým rozpočtem.
 
 Každá další čtvrť potřebuje **vlastní předregistraci PŘED prvním
 voláním** — modelem implikované poměry, okresní kontext, očekávaný
