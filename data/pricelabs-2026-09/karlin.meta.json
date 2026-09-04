@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/karlin.json",
+ "sha256": "d932605b90913a35fefe1d2caeeafca77d6b1799eda85bcf1e6a80a8fa239fd1",
+ "bytes": 4470,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "karlin",
+ "geometry": "Karlín official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-04"
+}

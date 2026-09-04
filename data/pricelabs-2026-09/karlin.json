@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "pulled": "2026-09-04",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Karlín official boundary (openstreetmap)",
+  "slug": "karlin",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR",
+   "2BR",
+   "3BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   },
+   "2BR": {
+    "basis": "measured"
+   },
+   "3BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/karlin.1BR.raw.json",
+    "raw_sha256": "3383aa4e17b61ce0b15c75c1affc6c4630025eb9c0821b2ffd0360f2e3c3647e",
+    "captured_at": "2026-09-04T11:13:18.987Z",
+    "question_sha256": "e265e0efd06ee82dd840004b8858d0f8894a5535a0619cc66688c1ab5b7fac76",
+    "geometry_label": "Karlín official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess__lzYtW2sBo3LrpssMosj87FmMkuOKFub",
+    "geometry_token": null
+   },
+   "2BR": {
+    "file": "data/pricelabs-raw/karlin.2BR.raw.json",
+    "raw_sha256": "5b2d8647a401e59488c11a51a57eb464f43f0d1ab47834959baf3e0ca2228aae",
+    "captured_at": "2026-09-04T11:17:16.537Z",
+    "question_sha256": "f796a772be6da7f19097a35205caf7c9b33cebe21b3961d60db7a993ccbe382d",
+    "geometry_label": "Karlín official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess__lzYtW2sBo3LrpssMosj87FmMkuOKFub",
+    "geometry_token": null
+   },
+   "3BR": {
+    "file": "data/pricelabs-raw/karlin.3BR.raw.json",
+    "raw_sha256": "86f82cb06b27296b2b3ff09f6057c4030065503b7f403b8f9ae3b2dd7a3c56ab",
+    "captured_at": "2026-09-04T11:18:32.471Z",
+    "question_sha256": "c1521c8568dc0518c6d40bcabd4b33f1502a4c218464c3c49a65337e9775233c",
+    "geometry_label": "Karlín official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess__lzYtW2sBo3LrpssMosj87FmMkuOKFub",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   83.8,
+   85.6,
+   86.2,
+   74.1,
+   84.6,
+   57.4,
+   67.2,
+   70.5,
+   77.9,
+   78.6,
+   72.3,
+   81
+  ],
+  "adr": [
+   2635.69,
+   2411.37,
+   2573.96,
+   2202.98,
+   3809,
+   2338.27,
+   1799.01,
+   2364.7,
+   3285.17,
+   3266.97,
+   2714.28,
+   2651.81
+  ],
+  "revpar": [
+   2209.6,
+   2064.28,
+   2217.78,
+   1632.25,
+   3221.37,
+   1341.76,
+   1209.02,
+   1666.61,
+   2559.33,
+   2567.37,
+   1963.11,
+   2148.97
+  ],
+  "active_listings": [
+   253,
+   269,
+   263,
+   264,
+   271,
+   276,
+   272,
+   280,
+   267,
+   264,
+   267,
+   282
+  ],
+  "avg_revenue": [
+   60008.08,
+   56106.67,
+   63222.12,
+   43420.61,
+   86099.61,
+   38286.7,
+   31206.49,
+   45963.77,
+   69869.61,
+   70909.95,
+   53488.55,
+   60362.31
+  ]
+ },
+ "2BR": {
+  "occ": [
+   82.8,
+   72.2,
+   83.6,
+   66.4,
+   75,
+   48.8,
+   59.5,
+   56.7,
+   67.6,
+   68.8,
+   61,
+   76.6
+  ],
+  "adr": [
+   3639.11,
+   3201.24,
+   3517.36,
+   2916.75,
+   6405.19,
+   3168.99,
+   2412.14,
+   3431.46,
+   5269.96,
+   5300.5,
+   3903.8,
+   3964.89
+  ],
+  "revpar": [
+   3012.08,
+   2310.83,
+   2940.52,
+   1937.39,
+   4806.07,
+   1546.66,
+   1434.59,
+   1946.06,
+   3562.73,
+   3644.09,
+   2380.43,
+   3035.83
+  ],
+  "active_listings": [
+   66,
+   66,
+   62,
+   64,
+   66,
+   70,
+   65,
+   65,
+   65,
+   63,
+   56,
+   60
+  ],
+  "avg_revenue": [
+   87406.05,
+   64090.2,
+   83537.36,
+   50701.81,
+   132937.82,
+   50105.86,
+   37411.78,
+   54639.4,
+   91443.5,
+   98911.12,
+   64637.91,
+   84711.34
+  ]
+ },
+ "3BR": {
+  "occ": [
+   81.1,
+   75.5,
+   83.4,
+   62.9,
+   80.3,
+   49.6,
+   65.3,
+   64.4,
+   71.8,
+   65.4,
+   59.8,
+   72
+  ],
+  "adr": [
+   5291.04,
+   4939.21,
+   5561.83,
+   4455.19,
+   7927.24,
+   5300.5,
+   3578.01,
+   4928.35,
+   6596.07,
+   7936.34,
+   6144.85,
+   5851.54
+  ],
+  "revpar": [
+   4290.39,
+   3727.02,
+   4637,
+   2803.27,
+   6363.26,
+   2630.59,
+   2334.74,
+   3171.49,
+   4733.29,
+   5194.27,
+   3671.92,
+   4215.75
+  ],
+  "active_listings": [
+   39,
+   43,
+   44,
+   46,
+   47,
+   47,
+   45,
+   46,
+   42,
+   36,
+   38,
+   37
+  ],
+  "avg_revenue": [
+   123961.59,
+   105256.16,
+   125488.69,
+   71283.04,
+   168707.84,
+   81818,
+   59266.53,
+   87825.77,
+   131921.47,
+   150336.97,
+   106269.77,
+   128185.29
+  ]
+ }
+}
