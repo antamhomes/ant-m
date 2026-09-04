@@ -19,9 +19,40 @@ selhání neznemožní bezpečně pokračovat. Cíl je rozšířit MĚŘENÉ pok
 
 ## Fronta
 
-1. **Žižkov** (praha3) — předregistrace `data/_partial-nedokonceno/PREREGISTRACE.zizkov.md` ZMRAZENÁ
-2. **Smíchov** (praha5)
-3. **Karlín** (praha8) — jen pokud zbývá rozpočet
+**Původní fronta vyčerpána 4. 9. 2026:** Žižkov (`71f63a7`), Smíchov
+(`a7a83bb`), Karlín (`0afa7a0`) — všechny tři čtvrti se třemi přímo
+měřenými pásmy, 0 změněných dřívějších kombinací, 9 pokusů celkem.
+
+**Dočasná fronta od 4. 9. 2026 (rozhodnutí člověka): sonda pásma 4BR,
+ne další geografie.** Důvod: 4+kk je dnes zastropené na 3BR přes celý
+rozsah 70–140 m² (docs/calculator-model.md §4); jedno pásmo navíc může
+opravit každou 4+kk cestu, další čtvrť zpřesní jedno místo.
+
+1. **Kontrola sémantiky poskytovatele, bez kvóty** (`get_knowledge`):
+   znamená „3-bedroom" přesně 3, nebo 3+? Když 3+, STOP a přemyslet —
+   samostatné pásmo 4BR by bylo rozdělení téže populace, ne přidání.
+   *Ověřeno 4. 9. 2026 11:25 UTC: knowledge bot říká „přesně 3", 4BR
+   nejsou v 3BR zahrnuté; nad 4 se seskupuje do „4+". Je to odpověď
+   znalostního bota, ne dokumentace — bere se jako předpoklad, který
+   strukturovaná odpověď musí potvrdit (n 4BR ≪ n 3BR, RevPAR nad 3BR).*
+2. **Praha 1, 4BR** — předregistrace `PREREGISTRACE.4br-sonda.md`
+   ZMRAZENÁ před voláním; jeden dotaz, výslovně pojmenovaná hranice,
+   syrový záchyt, kalendářní okno.
+3. **Praha 2, 4BR** — totéž.
+4. **STOP a hlášení** před jakoukoli změnou modelu nebo další 4BR
+   geografií: nMin/nMean, poměr 4BR/3BR RevPAR, jestli některé pásmo
+   projde stávající logikou spolehlivosti (okresní pásmo jde do
+   `MARKET_STR` jen s nMin ≥ 50), a jestli je poměr dost stabilní, aby
+   ospravedlnil architekturu pásma 4BR později.
+
+**Během sondy se NESAHÁ na `BAND_BLEND`, `SIZE_RATIO`,
+`CALC_MODEL_VERSION` ani produkční model.** Sonda je sběr dat; návrh
+pásma 4BR je samostatná změna s vlastní předregistrací a regresí, kde
+se smějí hýbat jen řádky `4kk`.
+
+Po sondě (další okno kvóty, priorita člověka): Praha 10 okres (1BR/2BR/3BR)
+→ Staré Město re-pull s měsíční řadou (odstraní jedinou RECONSTRUCTED
+buňku) → další 4BR / další čtvrti podle výsledku sondy.
 
 Každá další čtvrť potřebuje **vlastní předregistraci PŘED prvním
 voláním** — modelem implikované poměry, okresní kontext, očekávaný
