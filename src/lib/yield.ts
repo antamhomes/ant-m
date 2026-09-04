@@ -530,6 +530,37 @@ export const MARKET_CTVRT: Record<string, { label: string; parents: LocationKey[
       "3BR": { adr: 5437, revpar: 3946.1, nMean: 71, nMin: 63, basis: "measured" },
     },
   },
+  /**
+   * Žižkov leží celý v Praze 3 (jediný kontext praha3/zizkov, LTR −3,8 %,
+   * n=79). Pull 4. 9. 2026, geometrie „Žižkov official boundary
+   * (openstreetmap)" schválená člověkem znak po znaku, okno 2025_08..2026_07,
+   * surové odpovědi data/pricelabs-raw/zizkov.{1BR,2BR,3BR}.raw.json,
+   * artefakt data/pricelabs-2026-09/zizkov.json.
+   *
+   * Na STR je Praha 3 z ~86 % Žižkov (1BR 537 z 626, 2BR 152 z 179, 3BR
+   * 44 z 46 nabídek okresu), takže 1BR a 2BR sedí na okres na procento
+   * (RevPAR 0,985 / 0,990 okresu). Předregistrace čekala podíl 35–45 %;
+   * mýlil se předpoklad, ne polygon — podíl je 0,85–0,86 ve všech dvanácti
+   * měsících, tak se chová podmnožina.
+   *
+   * POZOR na 3BR: nMean 44 dává `ctvrtWeight` 0,5 a okresní buňka P3 3BR
+   * NENÍ měřená — MARKET_STR.praha3 pásmo 3BR nemá a `marketCell` ho odvozuje
+   * z 2BR poměrem (RevPAR 2303,5 × 1,481 = 3411,5). Veřejný výsledek je tedy
+   * 50 % naměřeného Žižkova (4333,9) + 50 % odvozeného okresu = 3872,7,
+   * s příznakem `derived` a rozšířeným rozpětím. Naměřených 4334 se
+   * nepublikuje přímo; přesně na to je shrinkage. Že odvozených 3411 leží
+   * hluboko pod naměřeným Žižkovem i pod potlačeným tenkým měřením okresu
+   * (4211, n≈46), je otázka kalibrace okresního pásma a řeší se ZVLÁŠŤ,
+   * ne v téhle integraci (docs/calculator-model.md, otevřené body).
+   */
+  zizkov: {
+    label: "Žižkov", parents: ["praha3"],
+    bands: {
+      "1BR": { adr: 2085, revpar: 1545.0, nMean: 537, nMin: 510, basis: "measured" },
+      "2BR": { adr: 3052, revpar: 2279.6, nMean: 152, nMin: 135, basis: "measured" },
+      "3BR": { adr: 6006, revpar: 4333.9, nMean: 44, nMin: 38, basis: "measured" },
+    },
+  },
 };
 export const ctvrtiOf = (loc: string) =>
   Object.entries(MARKET_CTVRT)
