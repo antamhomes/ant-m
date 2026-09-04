@@ -235,6 +235,39 @@ var MARKET_CTVRT = {
       "2BR": { adr: 3348, revpar: 2385.4, nMean: 145, nMin: 125, basis: "measured" },
       "3BR": { adr: 5524, revpar: 3562.1, nMean: 58, nMin: 50, basis: "measured" }
     }
+  },
+  /**
+   * Karlín leží celý v Praze 8 (jediný kontext praha8/karlin, LTR +11,4 %,
+   * n=36 — největší nájemní prémie v registru). Pull 4. 9. 2026, geometrie
+   * „Karlín official boundary (openstreetmap)" schválená člověkem znak po
+   * znaku, okno 2025_08..2026_07, surové odpovědi
+   * data/pricelabs-raw/karlin.{1BR,2BR,3BR}.raw.json, artefakt
+   * data/pricelabs-2026-09/karlin.json.
+   *
+   * Tohle je první čtvrť, kde se lokální efekt na STR opravdu ukázal:
+   * Karlín je nad Prahou 8 ve všech pásmech (RevPAR 1,086 / 1,082 / 1,069
+   * okresu), u 1BR v každém z 12 měsíců, při stabilním podílu 70–90 %
+   * okresní nabídky. Žižkov a Smíchov seděly na okres bez ohledu na nájemní
+   * rozestup; Karlín je místo, kde se nájem i STR rozcházejí stejným směrem.
+   * „Karlín effect" z docs/calculator-model.md je tím změřený, ne
+   * předpokládaný.
+   *
+   * VÁHY: 2BR nMean 64 → 0,75 (první čtvrťové 2BR pod plnou vahou).
+   * 3BR nMean 43 → 0,5 a okresní rodič P8 3BR NENÍ měřený (potlačené
+   * n≈47, `marketCell` odvozuje z 2BR: 2508,0 × 1,481 = 3714,3) — týž
+   * režim jako Žižkov: 50 % naměřených 3981,1 + 50 % odvozených 3714,3
+   * = 3847,7 s příznakem `derived`. Rozdíl proti Žižkovu: tady jsou
+   * naměřená čtvrť a odvozený okres blízko (+7 %), takže shrinkage skoro
+   * nic nemění.
+   */
+  karlin: {
+    label: "Karl\xEDn",
+    parents: ["praha8"],
+    bands: {
+      "1BR": { adr: 2671, revpar: 2066.8, nMean: 269, nMin: 253, basis: "measured" },
+      "2BR": { adr: 3928, revpar: 2713.1, nMean: 64, nMin: 56, basis: "measured" },
+      "3BR": { adr: 5709, revpar: 3981.1, nMean: 43, nMin: 36, basis: "measured" }
+    }
   }
 };
 var ctvrtWeight = (n) => n >= 100 ? 1 : n >= 50 ? 0.75 : n >= 25 ? 0.5 : 0;
