@@ -65,6 +65,15 @@ skládáním artefaktu a importem musí člověk schválit vrácené okresní
 geometrie znak po znaku (`Praha 1 official boundary` / `Praha 2 official
 boundary`, obě `openstreetmap`) — stejný kontrakt jako u čtvrtí.
 
+**Stav 4. 9. 2026 12:00 UTC — okno vyčerpáno na 16 pokusů, 4 v rezervě,
+žádné další volání dnes.** Hotovo nad rámec původní fronty (rozhodnutí
+člověka během dne): Praha-celá 3BR + 4BR (poměr 4BR/3BR 1,444, oba
+spolehlivé; `ea415e3`) a Praha 10 okres 1BR/2BR/3BR (`d6e90fb`, bez
+integrace — 3BR n ≈ 13 s obsazeností 29 %, spouštěč sepnul, viz
+předregistrace). Migrace `20260904120000_str_market_band_4br` aplikovaná.
+Z fronty níž zbývá pro další okno jen Staré Město re-pull (předregistrace
+zmrazená) a rozhodnutí o změně modelu 4+kk.
+
 ## Fronta pro další okno kvóty (od ~10:38 UTC 5. 9. 2026)
 
 1. **Praha 10 okres, 1BR / 2BR / 3BR** (3 dotazy) — jediný okres, který
