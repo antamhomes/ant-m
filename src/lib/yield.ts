@@ -561,6 +561,35 @@ export const MARKET_CTVRT: Record<string, { label: string; parents: LocationKey[
       "3BR": { adr: 6006, revpar: 4333.9, nMean: 44, nMin: 38, basis: "measured" },
     },
   },
+  /**
+   * Smíchov leží celý v Praze 5 (jediný kontext praha5/smichov, LTR +7,7 %,
+   * n=101 — nejlepší nájemní vzorek ze všech čtvrtí). Pull 4. 9. 2026,
+   * geometrie „Smíchov official boundary (openstreetmap)" schválená člověkem
+   * znak po znaku, okno 2025_08..2026_07, surové odpovědi
+   * data/pricelabs-raw/smichov.{1BR,2BR,3BR}.raw.json, artefakt
+   * data/pricelabs-2026-09/smichov.json. 1BR a 2BR přišly jako 13 měsíců
+   * (neuzavřený 2026_08 navíc); obálka ho drží, extrakce ho vyřadila
+   * kalendářním pravidlem.
+   *
+   * Na STR je Smíchov 72–79 % Prahy 5 a sedí na okres ve všech pásmech
+   * (RevPAR 0,99 / 1,01 / 0,96 okresu). Nájemní prémie +7,7 % se na STR
+   * NEPŘENÁŠÍ — stejný vzorec jako Žižkov (LTR −3,8 %, STR −1,5 %). Čtvrť
+   * tedy pro majitele v Praze 5 skoro nic nemění; je tu proto, že to teď
+   * je změřené, ne odhadnuté.
+   *
+   * 3BR: nMean 58 → `ctvrtWeight` 0,75, nMin 50 přesně na prahu
+   * spolehlivosti. Na rozdíl od Žižkova je okresní rodič P5 3BR MĚŘENÝ
+   * (nMin 65), takže blend je 75 % naměřené čtvrti + 25 % naměřeného
+   * okresu, bez příznaku derived.
+   */
+  smichov: {
+    label: "Smíchov", parents: ["praha5"],
+    bands: {
+      "1BR": { adr: 2263, revpar: 1566.6, nMean: 327, nMin: 293, basis: "measured" },
+      "2BR": { adr: 3348, revpar: 2385.4, nMean: 145, nMin: 125, basis: "measured" },
+      "3BR": { adr: 5524, revpar: 3562.1, nMean: 58, nMin: 50, basis: "measured" },
+    },
+  },
 };
 export const ctvrtiOf = (loc: string) =>
   Object.entries(MARKET_CTVRT)
