@@ -1,0 +1,15 @@
+{
+ "artifact": "data/pricelabs-2026-09/praha2.4BR.json",
+ "sha256": "88c306b1ec39f069348a8fc6014f9d69a423e7743ccda01c0f290bc4c7903de9",
+ "bytes": 1931,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "praha2",
+ "geometry": "Praha 2 official boundary (openstreetmap)",
+ "bands": [
+  "4BR"
+ ],
+ "pulled": "2026-09-04"
+}

@@ -125,3 +125,20 @@ Odpovědi na čtyři otázky sondy:
 Žádná změna modelu. Artefakt se neskládá, dokud člověk nerozhodne
 konvenci (rozšířit `praha1.json` = změnit jeho sha256, nebo samostatný
 `praha1.4BR` artefakt). Kvóta: 11 pokusů okna, zbývá ≤ 9.
+
+## Schválení geometrie a persistence (2026-09-04 11:35 UTC)
+
+Člověk schválil obě geometrie znak po znaku: `Praha 1 official boundary`
++ `openstreetmap`, `Praha 2 official boundary` + `openstreetmap`.
+**Zaznamenaná výhrada:** srpnové okresní artefakty 1BR–3BR (30. 8.)
+vznikly před vrstvou syrové provenience, takže shoda polygonu s nimi je
+doložená jen nepřímo — reprodukce P2 3BR z 2. 9. sedla 60/60 hodnot.
+Pro účel sondy to stačí; poměr 4BR/3BR tedy srovnává zachycenou
+geometrii s nezachycenou.
+
+Persistence (jen data, žádný model): samostatné artefakty
+`data/pricelabs-2026-09/praha1.4BR.json` (sha256 `88ab6cee…`) a
+`praha2.4BR.json` (`88c306b1…`), `praha1.json` / `praha2.json` z 30. 8.
+nedotčené. Import do DB jako okresní pásmo 4BR: P1 `reliable: true`
+(nMin 94), P2 `reliable: false` (nMin 27). `MARKET_STR`, `BAND_BLEND`,
+`SIZE_RATIO`, `CALC_MODEL_VERSION` beze změny.

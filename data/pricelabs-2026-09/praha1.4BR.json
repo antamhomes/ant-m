@@ -1,0 +1,117 @@
+{
+ "meta": {
+  "pulled": "2026-09-04",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Praha 1 official boundary (openstreetmap)",
+  "slug": "praha1",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "4BR"
+  ],
+  "bands_basis": {
+   "4BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "4BR": {
+    "file": "data/pricelabs-raw/praha1.4BR.raw.json",
+    "raw_sha256": "8f56830ca6e377ad797d83b0274c33e665f67dccb8a64a749fdc1b26f2e04098",
+    "captured_at": "2026-09-04T11:27:36.611Z",
+    "question_sha256": "e17c6c5845a1a8e9b52466f18816e431b5923b7f037e10d8b7921e8aa010e73e",
+    "geometry_label": "Praha 1 official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_RpZIiRimkFTTt0W_GBA7ehJXj3ojzWoq",
+    "geometry_token": null
+   }
+  }
+ },
+ "4BR": {
+  "occ": [
+   79,
+   74.4,
+   80.4,
+   67.9,
+   79.9,
+   60.6,
+   63,
+   66,
+   74.2,
+   73.9,
+   74.8,
+   83.2
+  ],
+  "adr": [
+   9546.25,
+   8782.87,
+   8474.24,
+   7334.49,
+   11794.5,
+   6923.52,
+   5782.31,
+   7760.62,
+   10364.69,
+   11998.95,
+   9240.92,
+   9161.08
+  ],
+  "revpar": [
+   7543.6,
+   6530.12,
+   6812.76,
+   4982.95,
+   9429.24,
+   4192.92,
+   3643.09,
+   5122.91,
+   7688.48,
+   8870.22,
+   6910.94,
+   7626.22
+  ],
+  "active_listings": [
+   96,
+   97,
+   94,
+   95,
+   96,
+   98,
+   96,
+   96,
+   94,
+   94,
+   94,
+   94
+  ],
+  "avg_revenue": [
+   214154.31,
+   184945.07,
+   199493.61,
+   141340.02,
+   272190.77,
+   120689.48,
+   95609.81,
+   146087.31,
+   213672.14,
+   249340.86,
+   195480.97,
+   223590.75
+  ]
+ }
+}

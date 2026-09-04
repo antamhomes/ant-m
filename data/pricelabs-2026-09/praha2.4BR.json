@@ -1,0 +1,117 @@
+{
+ "meta": {
+  "pulled": "2026-09-04",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Praha 2 official boundary (openstreetmap)",
+  "slug": "praha2",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "4BR"
+  ],
+  "bands_basis": {
+   "4BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "4BR": {
+    "file": "data/pricelabs-raw/praha2.4BR.raw.json",
+    "raw_sha256": "f0af839a57cb9b736c9bf02f58e407d3a296a49889e4befa71c2131db66893a4",
+    "captured_at": "2026-09-04T11:28:51.632Z",
+    "question_sha256": "d5db7fc51cb885e1fc15404ed1603eff21511b6ba7a4e4b631304ee30a292ada",
+    "geometry_label": "Praha 2 official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_MKfOSzRm63a6AHytdLMXHdxlvvedPFFT",
+    "geometry_token": null
+   }
+  }
+ },
+ "4BR": {
+  "occ": [
+   79.9,
+   79.6,
+   86.4,
+   71.2,
+   78.7,
+   54.1,
+   70.7,
+   70.8,
+   73.7,
+   77.2,
+   73.8,
+   79.5
+  ],
+  "adr": [
+   7480.44,
+   7030.44,
+   7023.65,
+   6000.5,
+   10777.56,
+   6099.42,
+   4726.35,
+   6767.72,
+   9205.35,
+   9399.5,
+   10808.08,
+   11375.12
+  ],
+  "revpar": [
+   5977.14,
+   5595.66,
+   6071.5,
+   4274.46,
+   8480.15,
+   3297.62,
+   3339.34,
+   4790.63,
+   6787.49,
+   7259.31,
+   7972.14,
+   9045.86
+  ],
+  "active_listings": [
+   28,
+   27,
+   29,
+   29,
+   31,
+   34,
+   33,
+   35,
+   32,
+   31,
+   31,
+   31
+  ],
+  "avg_revenue": [
+   154907.42,
+   150802.9,
+   164219.69,
+   114827.67,
+   225430.72,
+   94653.95,
+   88925.49,
+   131189.64,
+   178737.14,
+   188742,
+   210341.88,
+   257987.78
+  ]
+ }
+}
