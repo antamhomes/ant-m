@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/smichov.json",
+ "sha256": "134b42b64900096bd583f2045b0272a43ae68b4ac9c26e0f27e2f9ecccf3e591",
+ "bytes": 4492,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "smichov",
+ "geometry": "Smíchov official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-04"
+}

@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "pulled": "2026-09-04",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Smíchov official boundary (openstreetmap)",
+  "slug": "smichov",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR",
+   "2BR",
+   "3BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   },
+   "2BR": {
+    "basis": "measured"
+   },
+   "3BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/smichov.1BR.raw.json",
+    "raw_sha256": "7077fe7f5817765a9d564ca04c40cb751f1a92785ada10704e58a9d831d821c2",
+    "captured_at": "2026-09-04T11:03:44.077Z",
+    "question_sha256": "f70f236f6a4113c4b26c9b79d636d1fa9ac50e6c39e24dd886e1d23b4474957d",
+    "geometry_label": "Smíchov official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_WuOXReRVpEdMAw6uNtD9t1Q2iu2VhT8Q",
+    "geometry_token": null
+   },
+   "2BR": {
+    "file": "data/pricelabs-raw/smichov.2BR.raw.json",
+    "raw_sha256": "157d6c62dc20694ddfb6d0516ae5c4ebd5aabd1a6bdd41ef25c4095c4fb93e6f",
+    "captured_at": "2026-09-04T11:06:58.675Z",
+    "question_sha256": "03ecb0bd46eb01496bebecec5866ee4f5e6deb0f56367052c0f98c2125812b91",
+    "geometry_label": "Smíchov official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_WuOXReRVpEdMAw6uNtD9t1Q2iu2VhT8Q",
+    "geometry_token": null
+   },
+   "3BR": {
+    "file": "data/pricelabs-raw/smichov.3BR.raw.json",
+    "raw_sha256": "4724b96dbdc7266201e2d95efcc24b11d8c1fd91ee742f58a42bc810e3ab53e2",
+    "captured_at": "2026-09-04T11:08:19.149Z",
+    "question_sha256": "9658c408f8d04b86bf4b68357b5c913dd24dfd8f83fe688ab1c942a6a1ead7d4",
+    "geometry_label": "Smíchov official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_WuOXReRVpEdMAw6uNtD9t1Q2iu2VhT8Q",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   76.5,
+   76.2,
+   79.1,
+   66.7,
+   75.4,
+   46.3,
+   57,
+   62.5,
+   69.6,
+   73.5,
+   67.2,
+   71.1
+  ],
+  "adr": [
+   2145.23,
+   2021.76,
+   2111.49,
+   1889.91,
+   3233.46,
+   1991.83,
+   1597.17,
+   2056.2,
+   2605.2,
+   2819.89,
+   2382.39,
+   2305.89
+  ],
+  "revpar": [
+   1641.8,
+   1539.96,
+   1671.19,
+   1259.94,
+   2438.92,
+   921.85,
+   910.95,
+   1284.38,
+   1814.48,
+   2073.98,
+   1601.88,
+   1639.46
+  ],
+  "active_listings": [
+   298,
+   293,
+   293,
+   326,
+   333,
+   348,
+   334,
+   340,
+   337,
+   343,
+   340,
+   339
+  ],
+  "avg_revenue": [
+   48471.32,
+   44035.2,
+   48310.85,
+   34802,
+   66616.26,
+   27250.05,
+   27062.73,
+   37130.76,
+   50455.63,
+   57416.04,
+   45485.14,
+   49093.45
+  ]
+ },
+ "2BR": {
+  "occ": [
+   80.7,
+   75.1,
+   79.9,
+   62.8,
+   80.3,
+   53.1,
+   62.6,
+   61.9,
+   70.8,
+   73.7,
+   67.3,
+   76.4
+  ],
+  "adr": [
+   3290.32,
+   2969.28,
+   3145.5,
+   2792.56,
+   4559.27,
+   2817.03,
+   2375.43,
+   3001.22,
+   3846.08,
+   4052.07,
+   3620.73,
+   3705.03
+  ],
+  "revpar": [
+   2655.1,
+   2229.94,
+   2513.09,
+   1754.27,
+   3660.34,
+   1495.92,
+   1486.24,
+   1856.53,
+   2724.17,
+   2984.5,
+   2435.96,
+   2828.87
+  ],
+  "active_listings": [
+   125,
+   131,
+   131,
+   143,
+   146,
+   149,
+   144,
+   144,
+   146,
+   153,
+   161,
+   163
+  ],
+  "avg_revenue": [
+   77189.17,
+   61612.52,
+   71789.88,
+   47397.3,
+   96046.03,
+   43266.65,
+   44348.82,
+   52306.93,
+   72594.81,
+   78882.33,
+   67388.75,
+   80193.32
+  ]
+ },
+ "3BR": {
+  "occ": [
+   72.5,
+   65.5,
+   73.8,
+   63.9,
+   71.9,
+   45.3,
+   51.5,
+   53.1,
+   66.1,
+   65.5,
+   60.4,
+   70.3
+  ],
+  "adr": [
+   5814.73,
+   5261.09,
+   5344.9,
+   4656.45,
+   7813.92,
+   4740.02,
+   3522.91,
+   4533.11,
+   6352.74,
+   6523.64,
+   5488.24,
+   6234.92
+  ],
+  "revpar": [
+   4216.59,
+   3446.6,
+   3946.16,
+   2975.72,
+   5617.7,
+   2147.36,
+   1814.3,
+   2408.04,
+   4197.65,
+   4275.31,
+   3315.97,
+   4383.31
+  ],
+  "active_listings": [
+   52,
+   52,
+   50,
+   55,
+   55,
+   59,
+   62,
+   64,
+   62,
+   58,
+   61,
+   65
+  ],
+  "avg_revenue": [
+   117748.35,
+   92319.58,
+   115723.3,
+   83816.05,
+   158231.95,
+   67081.63,
+   56444.83,
+   68887.14,
+   116267.12,
+   123572.8,
+   94249.98,
+   133691.11
+  ]
+ }
+}
