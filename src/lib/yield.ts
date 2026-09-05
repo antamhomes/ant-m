@@ -636,6 +636,34 @@ export const MARKET_CTVRT: Record<string, { label: string; parents: LocationKey[
       "3BR": { adr: 5709, revpar: 3981.1, nMean: 43, nMin: 36, basis: "measured" },
     },
   },
+  /**
+   * Holešovice leží celé v Praze 7 (jediný kontext praha7/holesovice, LTR
+   * +0,1 %, n=62 — nájem na úrovni okresu). Pull 5. 9. 2026, geometrie
+   * „Holešovice official boundary (openstreetmap)" schválená člověkem znak
+   * po znaku, okno 2025_08..2026_07, surové odpovědi
+   * data/pricelabs-raw/holesovice.{1BR,2BR,3BR}.raw.json, artefakt
+   * data/pricelabs-2026-09/holesovice.json. Prvních čtvrť pro Prahu 7.
+   *
+   * Holešovice = 77–93 % nabídky P7 a sedí na okres na 2–3 % ve všech
+   * pásmech (RevPAR 0,970 / 0,978 / 1,027). Nájem na paritě → STR na
+   * paritě, jako Žižkov a Smíchov. Zbytek P7 (Bubeneč/Letná, n ≈ 42
+   * u 1BR) je o ~16 % nad Holešovicemi.
+   *
+   * VÁHY: 2BR nMean 76 → 0,75. 3BR nMean 24 → `ctvrtWeight` 0 → `localCell`
+   * vrací okres, tedy ODVOZENÝ P7 3BR (2087,1 × 1,481 = 3091,0, derived).
+   * Přímo naměřených 4188 (n 24, occ 55 %) je o 35 % výš než odvozený
+   * rodič — další datový bod k otevřenému bodu „odvozené 3BR pod tenkým
+   * přímým měřením" (docs/calculator-model.md §4), tady se nic nemění.
+   * Pásmo je uložené jako měřené, do veřejného výsledku nepromluví.
+   */
+  holesovice: {
+    label: "Holešovice", parents: ["praha7"],
+    bands: {
+      "1BR": { adr: 2123, revpar: 1461.4, nMean: 173, nMin: 161, basis: "measured" },
+      "2BR": { adr: 3489, revpar: 2041.3, nMean: 76, nMin: 72, basis: "measured" },
+      "3BR": { adr: 7413, revpar: 4188.4, nMean: 24, nMin: 19, basis: "measured" },
+    },
+  },
 };
 export const ctvrtiOf = (loc: string) =>
   Object.entries(MARKET_CTVRT)
