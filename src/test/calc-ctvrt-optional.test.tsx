@@ -41,8 +41,12 @@ describe("ctvrt je nepovinne zpresneni", () => {
 
   it("okres bez ctvrti zadny vyber nenabizi", async () => {
     setup();
-    pick("praha4");
-    expect(ctvrtiOf("praha4")).toHaveLength(0);
+    // Fixture je okres, ktery ctvrt NEMA. Do 5. 9. 2026 to byla praha4;
+    // od integrace Nusli ma praha4 ctvrt, takze fixture je praha6.
+    // Kdyz i praha6 nekdy ctvrt dostane, posunout fixture dal (praha9),
+    // ne rusit test — hlida, ze selektor nevznika tam, kde nema co nabidnout.
+    pick("praha6");
+    expect(ctvrtiOf("praha6")).toHaveLength(0);
     expect(document.querySelector("#kalkulacka-ctvrt")).toBeNull();
   });
 });

@@ -312,6 +312,37 @@ var MARKET_CTVRT = {
       "2BR": { adr: 3489, revpar: 2041.3, nMean: 76, nMin: 72, basis: "measured" },
       "3BR": { adr: 7413, revpar: 4188.4, nMean: 24, nMin: 19, basis: "measured" }
     }
+  },
+  /**
+   * Nusle: rodič JEN praha4 (k.ú. má dílek v Praze 2, ale GEO registr zná
+   * jen praha4/nusle — rozšíření by bylo samostatné rozhodnutí, ne důsledek
+   * katastrální hranice). LTR +4,1 %, n=48. Pull 5. 9. 2026, geometrie
+   * „Nusle official boundary (openstreetmap)" schválená člověkem znak po
+   * znaku, okno 2025_08..2026_07 (3BR přišel jako 13 měsíců, 2026_08
+   * vyřazen kalendářním pravidlem), surové odpovědi
+   * data/pricelabs-raw/nusle.{1BR,2BR,3BR}.raw.json, artefakt
+   * data/pricelabs-2026-09/nusle.json. První čtvrť pro Prahu 4.
+   *
+   * Nusle = 61 % nabídky P4 u 1BR a jsou nad okresem: 1BR +6 %, 2BR **+28 %**
+   * — první čtvrť, kde se lokální efekt takhle liší podle pásma. Okresní
+   * 2BR P4 (1697,0) táhne dolů zbytek okresu (Krč/Braník/Michle, dopočtem
+   * ≈ 1150); nuselské 2BR je centrální. Směr sedí s nájemní prémií.
+   *
+   * VÁHY: 2BR nMean 37 → 0,5, tedy veřejně 50 % z 2170,1 + 50 % z 1697,0
+   * = 1933,6 (okresní 2BR je měřené, bez příznaku derived). 3BR nMean 5
+   * → 0 → okres, tj. ODVOZENÝ P4 3BR (1697,0 × 1,481 = 2513,3); přímé
+   * měření 4324 při n ≈ 5 je o 72 % výš — čtvrtý okres s tímto vzorcem
+   * (P3, P8, P7, P4), zapsáno v docs/calculator-model.md §4, pravidlo se
+   * nemění. Pásmo uložené jako měřené, do výsledku nepromluví.
+   */
+  nusle: {
+    label: "Nusle",
+    parents: ["praha4"],
+    bands: {
+      "1BR": { adr: 1903, revpar: 1332.3, nMean: 112, nMin: 101, basis: "measured" },
+      "2BR": { adr: 3318, revpar: 2170.1, nMean: 37, nMin: 27, basis: "measured" },
+      "3BR": { adr: 6419, revpar: 4323.6, nMean: 5, nMin: 3, basis: "measured" }
+    }
   }
 };
 var ctvrtWeight = (n) => n >= 100 ? 1 : n >= 50 ? 0.75 : n >= 25 ? 0.5 : 0;
