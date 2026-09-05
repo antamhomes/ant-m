@@ -143,13 +143,12 @@ export const isReliableN = (nMin: number | null): boolean => nMin !== null && nM
 
 /**
  * Buňky bez surového artefaktu v repu. Nejsou zakázané, ale musí být PŘIZNANÉ:
- * test je z dat přepočítat nemůže. Staré Město přišlo přes market_research
- * a měsíční řada se neuložila, takže se nedá spočítat nMin ani ověřit adr.
- * Až se čtvrť pullne znovu i s řadou, řádek odsud zmizí.
+ * test je z dat přepočítat nemůže. Od 5. 9. 2026 PRÁZDNÉ: Staré Město,
+ * jediná taková buňka, bylo přetaženo s měsíční řadou (viz MARKET_CTVRT).
+ * Mechanismus zůstává — každá další rekonstrukce se sem musí zapsat a test
+ * ve facts.test.ts to vynucuje (nMin null bez záznamu tady = fail).
  */
-export const RECONSTRUCTED_CELLS: Record<string, string> = {
-  "stare_mesto": "pull 30. 8. 2026 přes market_research, měsíční řada neuložena; nMin neznámé",
-};
+export const RECONSTRUCTED_CELLS: Record<string, string> = {};
 /**
  * Buňka trhu pro čtvrť a pásmo. Když čtvrť pásmo nemá dost velké, odvodí se
  * JEDNÍM krokem z nejbližšího spolehlivého pásma téže čtvrti přímým poměrem.
@@ -480,12 +479,27 @@ export type CtvrtCell = {
   adr: number; revpar: number; nMean: number; nMin: number | null;
 } & CellBasis;
 export const MARKET_CTVRT: Record<string, { label: string; parents: LocationKey[]; bands: Partial<Record<Band, CtvrtCell>> }> = {
+  /**
+   * Staré Město: přetaženo 5. 9. 2026 S MĚSÍČNÍ ŘADOU, geometrie „Old Town
+   * official boundary (openstreetmap)" schválená člověkem (anglický label,
+   * jako „New Town" u Nového Města). Surové odpovědi
+   * data/pricelabs-raw/stare_mesto.{1BR,2BR,3BR}.raw.json, artefakt
+   * data/pricelabs-2026-09/stare_mesto.json. Tím zmizelo z RECONSTRUCTED_CELLS.
+   *
+   * Co re-pull ukázal proti rekonstrukci z 30. 8.: 1BR RevPAR +0,07 % a ADR
+   * +0,14 % (tentýž polygon), 2BR RevPAR +1,1 %, 3BR +3,7 % (u ADR i RevPAR
+   * stejně — jiná cenová úroveň rekonstrukce, ne jiný polygon). Původní
+   * „nMean" 533 / 297 / 110 byla ve skutečnosti MINIMA řady (dnešní nMin
+   * 533 / 296 / 111); skutečný nMean je 567 / 321 / 114. Ve sporu kód vs DB
+   * (2BR 3733,7 vs 3479; 3BR 4809,4 vs 4560) měl pravdu kód; DB řádky byly
+   * záměrně přepsané ventilem antam.allow_history_rewrite v téže transakci.
+   */
   stare_mesto: {
     label: "Staré Město", parents: ["praha1"],
     bands: {
-      "1BR": { adr: 3206, revpar: 2467.4, nMean: 533, nMin: null, basis: "measured" },
-      "2BR": { adr: 4886, revpar: 3733.7, nMean: 297, nMin: null, basis: "measured" },
-      "3BR": { adr: 6353, revpar: 4809.4, nMean: 110, nMin: null, basis: "measured" },
+      "1BR": { adr: 3211, revpar: 2469.2, nMean: 567, nMin: 533, basis: "measured" },
+      "2BR": { adr: 4867, revpar: 3774.2, nMean: 321, nMin: 296, basis: "measured" },
+      "3BR": { adr: 6588, revpar: 4987.8, nMean: 114, nMin: 111, basis: "measured" },
     },
   },
   /**
