@@ -343,6 +343,40 @@ var MARKET_CTVRT = {
       "2BR": { adr: 3318, revpar: 2170.1, nMean: 37, nMin: 27, basis: "measured" },
       "3BR": { adr: 6419, revpar: 4323.6, nMean: 5, nMin: 3, basis: "measured" }
     }
+  },
+  /**
+   * Libeň: sdílená geometrie, rodiče praha8 A praha9 (GEO registr zná oba
+   * kontexty, LTR −2,4 % n=29 / −0,6 % n=13). Jeden pull, dva kontexty
+   * (SOP §15 jako Vinohrady/Nové Město). Pull 5. 9. 2026, geometrie „Libeň
+   * official boundary (openstreetmap)" schválená člověkem znak po znaku,
+   * okno 2025_08..2026_07, všechna tři pásma 12/12, surové odpovědi
+   * data/pricelabs-raw/liben.{1BR,2BR,3BR}.raw.json, artefakt
+   * data/pricelabs-2026-09/liben.json. První čtvrť pro Prahu 9.
+   *
+   * Libeň potvrzuje karlínský rozklad P8: je 26 % POD okresem P8 (1BR
+   * 1400,4 vs 1902,3), protože okres táhne Karlín (n 269, RevPAR 2067);
+   * zbytek P8 bez Karlína má ≈ 1357 a Libeň sedí +3 % nad ním i +3 % nad
+   * celým P9 (1363,9). Podíl na P8 u 1BR 24 % (0,22–0,25 stabilně).
+   *
+   * VÁHY: 1BR nMean 83 → 0,75 v obou kontextech (P8: 0,75·1400,4 +
+   * 0,25·1902,3 = 1525,9; P9: 1391,3). 2BR nMean 28 → 0,5: v P8 do
+   * MĚŘENÉHO okresního 2BR (2508,0 → 2284,3, bez derived); v P9 do
+   * ODVOZENÉHO 2BR (1363,9 × 1,517 = 2069,0 → 2064,8, derived = true,
+   * protože okres je odvozený a w < 1). 3BR nMean 2 → 0 → okres, tj.
+   * odvozený P8 3BR (2508,0 × 1,481) i odvozený P9 3BR (1363,9 × 2,304);
+   * přímé měření 1752 při n = 2 a occ 47 % je pro jednou hluboko POD
+   * odvozeným (opačný směr než P3/P8/P7/P4, stejný jako P10) — při n = 2
+   * jen záznam do docs/calculator-model.md §4, pravidlo se nemění. Pásmo
+   * uložené jako měřené, do výsledku nepromluví.
+   */
+  liben: {
+    label: "Libe\u0148",
+    parents: ["praha8", "praha9"],
+    bands: {
+      "1BR": { adr: 2024, revpar: 1400.4, nMean: 83, nMin: 79, basis: "measured" },
+      "2BR": { adr: 3114, revpar: 2060.6, nMean: 28, nMin: 25, basis: "measured" },
+      "3BR": { adr: 4414, revpar: 1752.2, nMean: 2, nMin: 2, basis: "measured" }
+    }
   }
 };
 var ctvrtWeight = (n) => n >= 100 ? 1 : n >= 50 ? 0.75 : n >= 25 ? 0.5 : 0;
