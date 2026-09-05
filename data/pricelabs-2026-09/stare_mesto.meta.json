@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/stare_mesto.json",
+ "sha256": "2867127e189ccca0318ac6315ac98b35376bf461912bd714a5bb9ff67747eb23",
+ "bytes": 4533,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "stare_mesto",
+ "geometry": "Old Town official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-05"
+}

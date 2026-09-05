@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "pulled": "2026-09-05",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Old Town official boundary (openstreetmap)",
+  "slug": "stare_mesto",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR",
+   "2BR",
+   "3BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   },
+   "2BR": {
+    "basis": "measured"
+   },
+   "3BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/stare_mesto.1BR.raw.json",
+    "raw_sha256": "eea7bb1cd94c38d9a142a9bec17c7d49161c33554275174c2f9be254803765e6",
+    "captured_at": "2026-09-05T16:37:17.653Z",
+    "question_sha256": "d14206d9209472c335bf8bfc910e7f098078ca59d66f9ed66ad595052939bd5b",
+    "geometry_label": "Old Town official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_Z0dgM9e7nUTiuZewx0azpyqkRvgo96Ow",
+    "geometry_token": null
+   },
+   "2BR": {
+    "file": "data/pricelabs-raw/stare_mesto.2BR.raw.json",
+    "raw_sha256": "351bdae0c59173fae75ee08b2e8a2f471a81fba741c188d80153ac809aa98f61",
+    "captured_at": "2026-09-05T16:40:27.970Z",
+    "question_sha256": "80c187d3c361cc4bef159d84b76c5d09bce8023f1c271701d43ab1e4662214ac",
+    "geometry_label": "Old Town official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_Z0dgM9e7nUTiuZewx0azpyqkRvgo96Ow",
+    "geometry_token": null
+   },
+   "3BR": {
+    "file": "data/pricelabs-raw/stare_mesto.3BR.raw.json",
+    "raw_sha256": "e3b0eba67bbe1745b624774198fea1491557914dda94da55ea9f286858fe87df",
+    "captured_at": "2026-09-05T16:41:54.754Z",
+    "question_sha256": "3a73390ac13327f38dcb4df47bb1ff49b3553de47995ae57dd6e47c738d17ecb",
+    "geometry_label": "Old Town official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_Z0dgM9e7nUTiuZewx0azpyqkRvgo96Ow",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   81.6,
+   83.4,
+   85.8,
+   73.9,
+   87.3,
+   60.4,
+   64.7,
+   69.4,
+   75,
+   79.5,
+   72.6,
+   77
+  ],
+  "adr": [
+   3188.86,
+   3127.66,
+   3141.04,
+   2687.75,
+   4546.83,
+   2648.67,
+   2222.73,
+   2761.2,
+   3678.79,
+   3903.8,
+   3292.89,
+   3326.97
+  ],
+  "revpar": [
+   2603.05,
+   2607.9,
+   2694.41,
+   1987.08,
+   3967.3,
+   1600.69,
+   1438.22,
+   1917.45,
+   2758.28,
+   3104.71,
+   2390.25,
+   2560.94
+  ],
+  "active_listings": [
+   535,
+   533,
+   540,
+   562,
+   567,
+   589,
+   558,
+   572,
+   583,
+   584,
+   588,
+   590
+  ],
+  "avg_revenue": [
+   73705.58,
+   72755.52,
+   78205.3,
+   54725.83,
+   108759.86,
+   45434.86,
+   38467.21,
+   54108.92,
+   74704.14,
+   86674.47,
+   66371.67,
+   73265.08
+  ]
+ },
+ "2BR": {
+  "occ": [
+   82.5,
+   79.9,
+   85.8,
+   72.4,
+   85.3,
+   59.6,
+   66.3,
+   69.6,
+   77.6,
+   78.9,
+   76.3,
+   82.9
+  ],
+  "adr": [
+   4906.15,
+   4711.83,
+   4862.02,
+   4076.91,
+   7225.26,
+   3953.84,
+   3209.7,
+   4111.72,
+   5506.25,
+   5786.04,
+   4924.8,
+   5129.89
+  ],
+  "revpar": [
+   4046.65,
+   3763.83,
+   4170.15,
+   2951.85,
+   6159.64,
+   2356.31,
+   2128.74,
+   2863.65,
+   4270.89,
+   4564.27,
+   3758.81,
+   4255.1
+  ],
+  "active_listings": [
+   307,
+   304,
+   296,
+   311,
+   322,
+   330,
+   319,
+   322,
+   332,
+   340,
+   336,
+   334
+  ],
+  "avg_revenue": [
+   116632.56,
+   105818.29,
+   121550.41,
+   81208.52,
+   171697.12,
+   67129.34,
+   58414.02,
+   82043.48,
+   116288.19,
+   123526.17,
+   104504.51,
+   121072.1
+  ]
+ },
+ "3BR": {
+  "occ": [
+   79,
+   76.5,
+   81.3,
+   68.8,
+   83.2,
+   62.3,
+   66.8,
+   68.4,
+   74.5,
+   78,
+   75.1,
+   82.7
+  ],
+  "adr": [
+   6521.64,
+   6390.22,
+   6416.31,
+   5704.02,
+   9692.52,
+   5203.58,
+   4286.84,
+   5410.47,
+   7683.73,
+   8051.43,
+   6818.97,
+   6881.31
+  ],
+  "revpar": [
+   5150.76,
+   4885.68,
+   5213.54,
+   3923.24,
+   8059.67,
+   3239.7,
+   2863.54,
+   3699.27,
+   5726.51,
+   6276.76,
+   5120.87,
+   5694.14
+  ],
+  "active_listings": [
+   111,
+   111,
+   112,
+   111,
+   113,
+   119,
+   113,
+   115,
+   115,
+   117,
+   119,
+   117
+  ],
+  "avg_revenue": [
+   148463.18,
+   133751.63,
+   147960.22,
+   108430.79,
+   227014.04,
+   89530.68,
+   75979.2,
+   102799.02,
+   151547.9,
+   173939.84,
+   143384.3,
+   166540.45
+  ]
+ }
+}
