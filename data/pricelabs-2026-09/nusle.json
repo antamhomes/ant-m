@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "pulled": "2026-09-05",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Nusle official boundary (openstreetmap)",
+  "slug": "nusle",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR",
+   "2BR",
+   "3BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   },
+   "2BR": {
+    "basis": "measured"
+   },
+   "3BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/nusle.1BR.raw.json",
+    "raw_sha256": "91ceb0fd4b74d46e54587ab2ab0fd309f3385e4a0297c7755b53defb1ea1c6d7",
+    "captured_at": "2026-09-05T17:08:18.414Z",
+    "question_sha256": "aac123dd596c265d173a5abba2895e3290885828dd3af6d3072095a637d09af4",
+    "geometry_label": "Nusle official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_TNK2IcsjBJYW03kjE3FTJyR78IvCgvcu",
+    "geometry_token": null
+   },
+   "2BR": {
+    "file": "data/pricelabs-raw/nusle.2BR.raw.json",
+    "raw_sha256": "9d37b7a171fa03f10450f4061f605fe223c6d508748f5ed852d764a0eb511971",
+    "captured_at": "2026-09-05T17:15:16.923Z",
+    "question_sha256": "9b356d4227f493b28d69af5b492d4b9c7454f71fbed0c1206ad673cf7b6b3cb0",
+    "geometry_label": "Nusle official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_TNK2IcsjBJYW03kjE3FTJyR78IvCgvcu",
+    "geometry_token": null
+   },
+   "3BR": {
+    "file": "data/pricelabs-raw/nusle.3BR.raw.json",
+    "raw_sha256": "453c00ffdff30c09cd6254ba513705424c7128218765e28420f4e2b62ee865dd",
+    "captured_at": "2026-09-05T17:16:51.536Z",
+    "question_sha256": "01e194c27633cff2b366b66e89451442035e2e9d6aeb76d0bbdac19df70b4b59",
+    "geometry_label": "Nusle official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_TNK2IcsjBJYW03kjE3FTJyR78IvCgvcu",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   70,
+   77.6,
+   82,
+   63.2,
+   79.1,
+   43.7,
+   56.1,
+   61.6,
+   75.9,
+   78.1,
+   68.9,
+   72.6
+  ],
+  "adr": [
+   1779.44,
+   1702.65,
+   1865.89,
+   1687,
+   2508.05,
+   1792.37,
+   1340.6,
+   1728.54,
+   2117.7,
+   2253.85,
+   2135.15,
+   1929.43
+  ],
+  "revpar": [
+   1245.91,
+   1321.68,
+   1529.47,
+   1066.75,
+   1984.44,
+   783.74,
+   752.43,
+   1064.09,
+   1607.61,
+   1759.85,
+   1470.08,
+   1401.17
+  ],
+  "active_listings": [
+   101,
+   112,
+   109,
+   111,
+   117,
+   121,
+   113,
+   110,
+   110,
+   105,
+   112,
+   117
+  ],
+  "avg_revenue": [
+   36269.84,
+   36032.27,
+   41903.78,
+   27698.19,
+   52866.39,
+   22267.54,
+   22809.4,
+   28126.08,
+   41228.11,
+   47000.99,
+   38098.21,
+   41866.23
+  ]
+ },
+ "2BR": {
+  "occ": [
+   70.7,
+   67.3,
+   73.3,
+   65.1,
+   76.4,
+   40.5,
+   47.6,
+   51.9,
+   72.3,
+   64.7,
+   69.1,
+   72.1
+  ],
+  "adr": [
+   3939,
+   2489.12,
+   3555.33,
+   2770.89,
+   4327.95,
+   3126.98,
+   2829.11,
+   2624.78,
+   4359.18,
+   3082.3,
+   3335.13,
+   3381.48
+  ],
+  "revpar": [
+   2786.24,
+   1674.58,
+   2605.03,
+   1804.44,
+   3308.66,
+   1265.8,
+   1346.38,
+   1362.34,
+   3150.46,
+   1993.25,
+   2305,
+   2438.99
+  ],
+  "active_listings": [
+   35,
+   34,
+   35,
+   34,
+   36,
+   36,
+   27,
+   36,
+   39,
+   38,
+   47,
+   47
+  ],
+  "avg_revenue": [
+   77149.98,
+   48210.42,
+   77427.23,
+   48083.15,
+   84291.93,
+   37672.64,
+   44699.97,
+   37496.79,
+   88055.44,
+   55901.67,
+   67536.39,
+   69755.19
+  ]
+ },
+ "3BR": {
+  "occ": [
+   94.1,
+   66.7,
+   77.4,
+   64,
+   85.7,
+   26.9,
+   25,
+   72.5,
+   79.4,
+   74,
+   55.1,
+   87.9
+  ],
+  "adr": [
+   6111,
+   5890.23,
+   5622.02,
+   6527.24,
+   8421.7,
+   7542.16,
+   5668.39,
+   5896.34,
+   7157.72,
+   7174.52,
+   5894.07,
+   5119.59
+  ],
+  "revpar": [
+   5751.53,
+   3926.82,
+   4349.11,
+   4177.44,
+   7218.6,
+   2030.58,
+   1417.1,
+   4274.84,
+   5684.07,
+   5307.18,
+   3245.05,
+   4500.29
+  ],
+  "active_listings": [
+   3,
+   3,
+   4,
+   4,
+   4,
+   4,
+   5,
+   6,
+   6,
+   5,
+   6,
+   7
+  ],
+  "avg_revenue": [
+   146663.9,
+   100133.92,
+   115251.5,
+   104435.9,
+   176855.65,
+   52795.11,
+   31176.14,
+   113995.86,
+   128838.93,
+   129141.42,
+   72202.34,
+   111607.15
+  ]
+ }
+}

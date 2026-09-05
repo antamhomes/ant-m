@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/nusle.json",
+ "sha256": "5d0b161a2d69b78b7dc8b7033ea1a57fe7a44e65c7ed88795cfb44c0a6b5368f",
+ "bytes": 4437,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "nusle",
+ "geometry": "Nusle official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-05"
+}

@@ -70,3 +70,63 @@ praha4; kdyby n vyšlo výrazně nad P4 odhad, podezření na P2 přesah.
 
 SOP beze změny. Kvóta: před voláním 6 pokusů okna, zbývá 14; po Nuslích
 ≥ 11 → Libeň; každá čtvrť se zastaví pod 4 zbývajícími.
+
+---
+
+## Pokus 1 (2026-09-05 17:02 UTC): 1BR ÚSPĚCH — čeká na schválení geometrie
+
+Dotaz doslova: `Nusle, Prague, official OpenStreetMap boundary, 1-bedroom.
+For each month from August 2025 through July 2026 give: …`
+
+- `selected_geometry_label`: **`Nusle official boundary`**
+- `selected_geometry_source`: **`openstreetmap`**
+- `market_label`: `Nusle, Prague, Czech Republic` · session `lg_sess_TNK2IcsjBJYW03kjE3FTJyR78IvCgvcu`
+- 12/12 měsíců, bez nadmnožiny, identity sedí; raw `91ceb0fd…`
+- kvóta: 7. pokus okna
+
+| | P4 okres | Nusle | poměr |
+|---|---|---|---|
+| n (průměr) | 183,5 | 111,5 | **0,608** |
+| n (min) | 158 | 101 | |
+| RevPAR | 1 254,0 | 1 332,3 | **1,062** (0,98–1,14 po měsících) |
+| ADR | 1 810 | 1 903 | 1,052 |
+| occ | | 69,1 % | |
+
+Spouštěče: #3 ne (112 < 165) · #4 ne (61 % v pásmu 25–75) · #5 ne
+(0,57–0,64; rozptyl 7 p. b. je víc než u dřívějších čtvrtí, ale bez
+trendu — Nusle rostou v zimě, P4 v létě) · #6 ne — Nusle jsou **+6,2 %
+nad okresem** u 1BR, ve směru nájemní prémie (+4,1 %). Zbytek P4 (n ≈ 72)
+má RevPAR ≈ 1 133, 15 % pod Nuslemi. nMean 112 → váha **1,0** (odhad
+0,75 byl pesimistický; podíl 61 % je nad bodovým odhadem 45 %).
+
+Schválení geometrie: **OTEVŘENÉ**, čeká na člověka.
+
+## Pokusy 2 a 3 (2026-09-05 17:05 / 17:07 UTC): 2BR a 3BR ÚSPĚCH
+
+Geometrie schválena člověkem znak po znaku. 2BR i 3BR v téže session,
+u obou stejný label + zdroj, ověřeno zvlášť. 2BR 12/12; 3BR přišel jako
+13 měsíců (`2026_08` navíc, vyřazen kalendářním pravidlem, obálka drží 13).
+
+| pásmo | ADR | RevPAR | occ | nMean | nMin | podíl na P4 | rozsah | RevPAR/P4 | váha | raw |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1BR | 1 903 | 1 332,3 | 69,1 % | 112 | 101 | 0,608 | 0,57–0,64 | 1,062 | 1,0 | 91ceb0fd… |
+| 2BR | 3 318 | 2 170,1 | 64,3 % | 37 | 27 | 0,538 | 0,42–0,59 | **1,279** | **0,5** | 9d37b7a1… |
+| 3BR | 6 419 | 4 323,6 | 67,4 % | 5 | 3 | 0,864 | 0,75–1,00 | 1,226 | **0** | 453c00ff… |
+
+Spouštěče: #1 `2BR/1BR = 1,629` v pásmu (model 1,567 → +4,0 %; okres P4
+sám má 1,353 — anomálně nízké 2BR je vlastnost okresu, ne Nuslí).
+#2 `3BR/1BR = 3,245` MIMO 1,20–3,00, ale n ≈ 5 → podle předregistrace jen
+zaznamenat. #3–#6 ne.
+
+**Zjištění:** Nusle mají u 2BR **+28 % nad okresem** (u 1BR +6 %) — první
+čtvrť, kde se lokální efekt liší podle pásma tak výrazně. Pravděpodobný
+mechanismus: zbytek P4 2BR (n ≈ 32, Krč/Braník/Michle) táhne okresní 2BR
+dolů (dopočtený zbytek ≈ 1 150), zatímco nuselské 2BR jsou centrální. Při
+váze 0,5 jde do veřejného výsledku 50 % z 2170,1 + 50 % z 1697,0 =
+**1 933,6** (`derived: false`, okresní 2BR je měřené).
+
+3BR: nMean 5 → `ctvrtWeight` 0 → okres, tj. ODVOZENÝ P4 3BR (1697,0 ×
+1,481 = 2 513); přímo naměřených 4 324 při n ≈ 5 je o 72 % výš —
+čtvrtý okres s tímto vzorcem (P3, P8, P7, P4), zapsáno, pravidlo se nemění.
+
+Kvóta: pokusy 7–9 okna (9 celkem), zbývá 11.
