@@ -104,3 +104,47 @@ do okresu, který je o 26 % nad ní (váha 0,75 → výsledek P8|liben 1BR ≈
 úrovni. To je očekávané chování `localCell`, ne spouštěč.
 
 Schválení geometrie: **OTEVŘENÉ**, čeká na člověka.
+
+## Pokusy 2 a 3 (2026-09-05 17:31 / 17:36 UTC): 2BR a 3BR ÚSPĚCH
+
+Geometrie schválena člověkem znak po znaku (`Libeň official boundary` +
+`openstreetmap`). 2BR i 3BR v téže session, u obou stejný label + zdroj,
+ověřeno zvlášť. Oba 12/12, bez nadmnožiny; křížová kontrola tabulky
+v prozaické části odpovědi proti `data[]` bez rozdílu. 3BR přišel jako
+řádná řada (ne `data:null`) s n = 2–3; identity u srpna/ledna
+(occ 7,3 % / 6,5 %) mimo toleranci o 0,23 % / 0,75 % = zaokrouhlení
+occ při 2–3 obsazených nocích, ne přepis.
+
+| pásmo | ADR | RevPAR | occ | nMean | nMin | podíl na P8 | RevPAR/P8 | podíl na P9 (raw) | RevPAR/P9 (raw) | váha | raw |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1BR | 2 024 | 1 400,4 | 68,5 % | 83 | 79 | 0,236 | 0,736 | 1,08 | 1,027 | 0,75 | 1732025a… |
+| 2BR | 3 114 | 2 060,6 | 65,3 % | 28 | 25 | 0,301 (0,27–0,34) | 0,822 | 1,16 | 1,083 | **0,5** | 879b968f… |
+| 3BR | 4 414 | 1 752,2 | 46,7 % | 2 | 2 | 0,046 | 0,470 | 0,33 | 0,925 | **0** | a3cc6618… |
+
+(P9 2BR n ≈ 24 a P9 3BR n ≈ 7 nejsou v `MARKET_STR` — v modelu jsou
+odvozené; P8 3BR n ≈ 47 rovněž odvozené. Poměry k „raw" okresům jsou jen
+kontext, ne blendovací základ.)
+
+Spouštěče: #1 `2BR/1BR = 1,471` v pásmu 1,20–1,75 (model 1,567 → −6 %;
+P8 sám 1,318, P9 raw 1,396 — nízké 2BR/1BR je vlastnost severovýchodu, ne
+Libně). #2 `3BR/1BR = 1,251` těsně v pásmu 1,20–3,20, ale n = 2 → podle
+předregistrace jen zaznamenat; 3BR/2BR = 0,85 (3BR pod 2BR) je při n = 2
+a occ 47 % šum, ne trh. #3–#6 ne (viz Pokus 1).
+
+Dopad na integraci (pravidla beze změny, `parents: ["praha8","praha9"]`):
+- 1BR: w 0,75 v obou kontextech; P8|liben ≈ 0,75·1 400 + 0,25·1 902 =
+  1 526 (`derived: false`); P9|liben ≈ 0,75·1 400 + 0,25·1 364 = 1 391.
+- 2BR: w 0,5; P8|liben blenduje do MĚŘENÉHO P8 2BR (2 508) → ≈ 2 284;
+  P9|liben blenduje do ODVOZENÉHO P9 2BR (1 363,9·1,517 ≈ 2 069) → ≈ 2 065
+  s `derived: true` (okres odvozený a w < 1).
+- 3BR: w 0 → `localCell` vrací okres beze změny: P8 3BR odvozené
+  (2 508·1,481 ≈ 3 714), P9 3BR odvozené (1 363,9·2,304 ≈ 3 142). Libeň
+  3BR (1 752, n 2) zůstává měřená/uložená, inertní. Tady je pro jednou
+  měřené 3BR hluboko POD odvozeným — opačný směr než P3/P8/P7/P4, stejný
+  jako P10 (n ≈ 13); při n = 2 se z toho nic neplyne, jen záznam do
+  otevřené položky „kalibrace odvozeného 3BR".
+- Nové stavy regrese: `praha8|liben`, `praha9|liben`, `praha9|-`
+  (Ostatní; musí rovnat `praha9|?`). `praha8|-` existuje od Karlína a
+  nesmí se hnout.
+
+Kvóta: 12. pokus okna → zbývá **8** (rezerva). STOP po integraci.

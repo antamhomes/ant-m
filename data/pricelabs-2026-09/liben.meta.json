@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/liben.json",
+ "sha256": "e428f55f43db6e96128a632242d6f9d98b9377da5cc652f1c80b009dfa0d1944",
+ "bytes": 4420,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "liben",
+ "geometry": "Libeň official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-05"
+}

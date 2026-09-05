@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "pulled": "2026-09-05",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Libeň official boundary (openstreetmap)",
+  "slug": "liben",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR",
+   "2BR",
+   "3BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   },
+   "2BR": {
+    "basis": "measured"
+   },
+   "3BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/liben.1BR.raw.json",
+    "raw_sha256": "1732025abc80f71be62c95d3be6323899248e3066c0b8a37f259b88192cfb1b4",
+    "captured_at": "2026-09-05T17:22:41.892Z",
+    "question_sha256": "6dbf63bc85f398bb8f9dd10bb7a0b6a90eefcf812c837674e4e2c0ee33a8208a",
+    "geometry_label": "Libeň official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_ROZB4dPNLRQzu2b89Bx6fw7kIcIOyTOD",
+    "geometry_token": null
+   },
+   "2BR": {
+    "file": "data/pricelabs-raw/liben.2BR.raw.json",
+    "raw_sha256": "879b968f0725e55b2fae488110d2d608fc6311685c8b3214ed7749c711aa2350",
+    "captured_at": "2026-09-05T17:31:35.746Z",
+    "question_sha256": "c7eea6c26fcc29155661a4f86791f71de0207fb97c55ec00c33c54aee57b2e18",
+    "geometry_label": "Libeň official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_ROZB4dPNLRQzu2b89Bx6fw7kIcIOyTOD",
+    "geometry_token": null
+   },
+   "3BR": {
+    "file": "data/pricelabs-raw/liben.3BR.raw.json",
+    "raw_sha256": "a3cc6618eae2a4e49b6096f23cab36815839352d6e3c40238f8e5a43efdec7d1",
+    "captured_at": "2026-09-05T17:33:16.082Z",
+    "question_sha256": "01a4c04f7ac6d17a948788afa6fd31ff822480770ab41ba443abf56043d3dc75",
+    "geometry_label": "Libeň official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_ROZB4dPNLRQzu2b89Bx6fw7kIcIOyTOD",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   77.7,
+   80.2,
+   77,
+   69.7,
+   76.4,
+   49.7,
+   52.7,
+   57.4,
+   71.7,
+   74.7,
+   64.8,
+   70.6
+  ],
+  "adr": [
+   1955.43,
+   1853.24,
+   1948.21,
+   1848.93,
+   2812.72,
+   1926.66,
+   1601.6,
+   1863.16,
+   2127.87,
+   2275.85,
+   2010.87,
+   2064.55
+  ],
+  "revpar": [
+   1520.13,
+   1487.2,
+   1500.98,
+   1287.98,
+   2149.24,
+   958.15,
+   844.8,
+   1069.83,
+   1526.26,
+   1699.53,
+   1302.09,
+   1458.21
+  ],
+  "active_listings": [
+   80,
+   82,
+   80,
+   79,
+   85,
+   86,
+   84,
+   79,
+   79,
+   87,
+   86,
+   85
+  ],
+  "avg_revenue": [
+   44039.72,
+   39929,
+   42115.7,
+   35072.82,
+   60077.95,
+   26748.42,
+   22928.21,
+   27975.24,
+   40805.02,
+   47079.43,
+   34324.5,
+   42092.27
+  ]
+ },
+ "2BR": {
+  "occ": [
+   70.2,
+   73,
+   70.7,
+   58.6,
+   75.2,
+   52.4,
+   53.6,
+   59.2,
+   66.1,
+   70.6,
+   59,
+   75
+  ],
+  "adr": [
+   2897.47,
+   2716.62,
+   3086.82,
+   2712.43,
+   4775.72,
+   3203.79,
+   2080.89,
+   2748.63,
+   3444.86,
+   3700.17,
+   2897.86,
+   3102.64
+  ],
+  "revpar": [
+   2032.69,
+   1983.71,
+   2182.14,
+   1589.18,
+   3593.22,
+   1678.58,
+   1116.17,
+   1626.65,
+   2277.19,
+   2612.82,
+   1709.36,
+   2325.8
+  ],
+  "active_listings": [
+   25,
+   26,
+   26,
+   26,
+   28,
+   28,
+   29,
+   28,
+   27,
+   27,
+   29,
+   32
+  ],
+  "avg_revenue": [
+   62916.55,
+   61395.72,
+   61736.32,
+   43172.86,
+   101024.89,
+   52595.63,
+   35271.05,
+   44665.18,
+   62272.47,
+   73263.44,
+   47551.26,
+   69668.37
+  ]
+ },
+ "3BR": {
+  "occ": [
+   7.3,
+   30.2,
+   61,
+   43.1,
+   63.8,
+   6.5,
+   5.4,
+   61,
+   67.9,
+   64.4,
+   59.3,
+   90.3
+  ],
+  "adr": [
+   7203.82,
+   4408.62,
+   3782.77,
+   3248.1,
+   5024.27,
+   7432.87,
+   4861.02,
+   4215.23,
+   3396.85,
+   3261.96,
+   3257.17,
+   2879.41
+  ],
+  "revpar": [
+   527.11,
+   1330.9,
+   2308.13,
+   1400.04,
+   3205.14,
+   479.54,
+   262.76,
+   2572,
+   2307.29,
+   2100.92,
+   1932.22,
+   2600.76
+  ],
+  "active_listings": [
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   3,
+   3
+  ],
+  "avg_revenue": [
+   21611.46,
+   35268.94,
+   68089.85,
+   40601.21,
+   92948.92,
+   14865.75,
+   9722.03,
+   75874.09,
+   61143.29,
+   61977.18,
+   57000.4,
+   80623.55
+  ]
+ }
+}
