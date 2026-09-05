@@ -70,3 +70,37 @@ Label může být „Libeň official boundary" nebo anglická varianta.
 SOP §15 (sdílená geometrie, jeden pull, dva kontexty) beze změny. Kvóta:
 před voláním 9 pokusů okna, zbývá 11; po Libni ≥ 8 → STOP a hlášení,
 další čtvrť jen na pokyn.
+
+## Pokus 1 (2026-09-05 17:22 UTC): 1BR ÚSPĚCH — čeká na schválení geometrie
+
+Dotaz doslova: `Libeň, Prague, official OpenStreetMap boundary, 1-bedroom.
+For each month from August 2025 through July 2026 give: …`
+(`question_sha256 6dbf63bc…`)
+
+- `selected_geometry_label`: **`Libeň official boundary`**
+- `selected_geometry_source`: **`openstreetmap`**
+- `market_label`: `Libeň, Prague — 1BR` · session `lg_sess_ROZB4dPNLRQzu2b89Bx6fw7kIcIOyTOD`
+- 12/12 měsíců (`2025_08..2026_07`), bez nadmnožiny, identity sedí; raw `1732025a…`
+- kvóta: 10. pokus okna (zbývá 10)
+
+| | P8 okres | P9 okres | zbytek P8 bez Karlína | Libeň | Libeň/P8 | Libeň/P9 | Libeň/zbytek P8 |
+|---|---|---|---|---|---|---|---|
+| n (průměr) | 350,0 | 76,2 | 81,0 | 82,7 → 83 | **0,236** | 1,08 | 1,02 |
+| n (min) | 336 | 64 | | 79 | | | |
+| RevPAR | 1 902,3 | 1 363,9 | 1 357,1 | 1 400,4 | **0,736** (0,66–0,84 po měsících) | **1,027** (0,92–1,16) | **1,032** |
+| ADR | 2 532 | 2 065 | | 2 024 | 0,799 | 0,980 | |
+| occ | 74,4 % | 65,6 % | | 68,5 % | | | |
+
+Spouštěče: #3 ne (83 < 150) · #4 ne (23,6 % v pásmu 15–40 %) · #5 ne
+(0,22–0,25; rozptyl 2,6 p. b.) · #6 ne — Libeň je **26 % POD okresem P8**,
+přesně ve směru karlínského rozkladu: Karlín (n 269, RevPAR 2 067) táhne
+P8 nahoru, zbytek P8 bez Karlína má RevPAR ≈ 1 357 a Libeň sedí +3 % nad
+ním i +3 % nad celým P9. Bodový odhad n ~90 potvrzen (83); nMean 83 →
+váha **0,75**; nMin 79 ≥ 50 → `reliable`.
+
+Poznámka pro integraci (bez změny pravidel): v P8 se Libeň bude blendovat
+do okresu, který je o 26 % nad ní (váha 0,75 → výsledek P8|liben 1BR ≈
+0,75·1 400 + 0,25·1 902 ≈ 1 526); v P9 do okresu prakticky na stejné
+úrovni. To je očekávané chování `localCell`, ne spouštěč.
+
+Schválení geometrie: **OTEVŘENÉ**, čeká na člověka.
