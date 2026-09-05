@@ -94,6 +94,43 @@ zmrazená) a rozhodnutí o změně modelu 4+kk.
 Rozpočet: 8 dotazů + rezerva ≥ 4. Další čtvrti (Holešovice, Nusle,
 Libeň, Vršovice) až po tomhle a jen se zbylým rozpočtem.
 
+**Stav 5. 9. 2026 17:45 UTC — okno (ukotvené ~16:37 UTC) použito na 12
+pokusů, 8 v rezervě, člověk rozhodl kvótu DRŽET.** Odchylka od fronty
+výš byla rozhodnutím člověka ráno: Praha 10 i Praha-celá se stihly už
+4. 9., takže dnes šlo Staré Město re-pull (`0c6bb7c`/`20bb680`, jediná
+`RECONSTRUCTED` buňka nahrazena měřením, DB řádky přepsány s ventilem
+v jedné transakci), pak nová čtvrťová pokrytí: Holešovice (`e93daf8`),
+Nusle (`96c1ad1`), Libeň (`8a5ad00`/`178b40c`, sdílená geometrie P8+P9,
+jeden pull, dva kontexty). Všechny tři čtvrti se třemi přímo měřenými
+pásmy, 0 změněných dřívějších kombinací. Rozhodnutí o 4+kk se nekonalo
+(design, ne kvóta).
+
+## Fronta pro další okno kvóty (od ~16:37 UTC 6. 9. 2026) — VÝBĚROVĚ
+
+Rozhodnutí člověka 5. 9. večer: zbývající mezery jsou čím dál okrajovější
+(P6 bez čtvrti, druhé čtvrti P5/P10 = buňky s váhou ≤ 0,5), takže se
+**nepullují čtvrti jen proto, že kvóta existuje**. Pořadí:
+
+1. **Vršovice, 1BR / 2BR / 3BR** (3 dotazy) — jediná čtvrť, která
+   odemyká něco rozdělaného: Praha 10 je pullnutá, ale neintegrovaná
+   (`SEASONS_BY_LOC.praha10` chybí, 3BR n ≈ 13 s obsazeností 29 %).
+   Předregistrace před voláním, STOP po 1BR na schválení geometrie.
+2. **Rozhodnutí o integraci Prahy 10** z okresních dat + kontextu
+   Vršovic (bez kvóty): recept `SEASONS_BY_LOC.praha10` zdokumentovat,
+   `MARKET_STR.praha10` 1BR + 2BR, 3BR ven; v regresi se smějí hýbat jen
+   řádky `praha10|…`.
+3. **Změna modelu 4+kk** z už sebraných důkazů (Praha-celá 1,444, P1
+   1,343, P2 1,420; bez kvóty): nový `Band` „4BR", `BAND_BLEND["4kk"]`
+   s `next: "4BR"`, `SIZE_RATIO["4BR/3BR"]`, odvozené 4BR jen tam, kde
+   přímá data chybí, s ±7 % výhradou. Vlastní předregistrace; v regresi
+   jen řádky `4kk`.
+4. **Teprve potom** okrajové čtvrti P6/P5 (Dejvice/Bubeneč, Košíře), a
+   jen když je pro ně důvod jiný než „máme kvótu".
+
+Otevřená položka beze změny pravidla: tenké měřené 3BR vs. odvozené
+okresní 3BR — P3/P8/P7/P4 nad odvozeným, P10 (n ≈ 13) a Libeň (n = 2) pod
+ním. Kalibrace je samostatná analýza, ne vedlejší efekt pullu.
+
 Každá další čtvrť potřebuje **vlastní předregistraci PŘED prvním
 voláním** — modelem implikované poměry, okresní kontext, očekávaný
 vzorek a váha, spouštěče. Zapisuje se do
