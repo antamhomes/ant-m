@@ -47,15 +47,17 @@ function ssgPrerenderPlugin(): Plugin {
         for (const [file, route, lang] of targets) {
           const html = await fs.readFile(file, "utf8");
           const app: string = await mod.renderPage(route);
-          const ld =
-            `<script id="ld-faq" type="application/ld+json">${safe(mod.buildFaqJsonLd(lang))}</script>` +
-            `<script id="ld-business" type="application/ld+json">${safe(mod.buildBusinessJsonLd(lang))}</script>`;
+          // Zamčený web: žádný JSON-LD (obsahuje FAQ) a noindex, dokud se závora nevypne.
+          const head: string = mod.SITE_LOCK_ENABLED
+            ? `<meta name="robots" content="noindex, nofollow">`
+            : `<script id="ld-faq" type="application/ld+json">${safe(mod.buildFaqJsonLd(lang))}</script>` +
+              `<script id="ld-business" type="application/ld+json">${safe(mod.buildBusinessJsonLd(lang))}</script>`;
           const out = html
             .replace('<div id="root"></div>', `<div id="root">${app}</div>`)
-            .replace("</head>", `${ld}</head>`);
+            .replace("</head>", `${head}</head>`);
           if (out === html) throw new Error(`antam-ssg: injection anchors not found in ${file}`);
           await fs.writeFile(file, out);
-          console.log(`antam-ssg: prerendered ${file} (${Math.round(app.length / 1024)} kB of content)`);
+          console.log(`antam-ssg: prerendered ${file} (${Math.round(app.length / 1024)} kB of content${mod.SITE_LOCK_ENABLED ? ", LOCKED" : ""})`);
         }
       } finally {
         await server.close();

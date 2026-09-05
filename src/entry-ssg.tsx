@@ -34,3 +34,4 @@ export const renderPage = (path: "/" | "/vn"): Promise<string> =>
   });
 
 export { buildFaqJsonLd, buildBusinessJsonLd } from "./components/SEO";
+export { SITE_LOCK_ENABLED } from "./lib/siteLock";
