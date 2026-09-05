@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "pulled": "2026-09-05",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Holešovice official boundary (openstreetmap)",
+  "slug": "holesovice",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR",
+   "2BR",
+   "3BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   },
+   "2BR": {
+    "basis": "measured"
+   },
+   "3BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/holesovice.1BR.raw.json",
+    "raw_sha256": "faf0a0ba255921557b059fc00caa1373abc13c811b8f46a589f18a02b23ccd0a",
+    "captured_at": "2026-09-05T16:51:03.126Z",
+    "question_sha256": "09ca79b1ae9c8aee13d8b0f1fc37cc130250c043e13e1290f549bc8377fd85ad",
+    "geometry_label": "Holešovice official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_YmR7VejBfYjh_zAgu1Qq4RnDI8dQy7OF",
+    "geometry_token": null
+   },
+   "2BR": {
+    "file": "data/pricelabs-raw/holesovice.2BR.raw.json",
+    "raw_sha256": "2b3465e2bcff8e29fc2532f0aafb77e3817ec9303cf5a2f1a6c1bdb750d6edef",
+    "captured_at": "2026-09-05T17:01:28.793Z",
+    "question_sha256": "e6b80e8a2f321cc20648eb642a01d55332ee557832f7e0ca09a107907c2b85e4",
+    "geometry_label": "Holešovice official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_YmR7VejBfYjh_zAgu1Qq4RnDI8dQy7OF",
+    "geometry_token": null
+   },
+   "3BR": {
+    "file": "data/pricelabs-raw/holesovice.3BR.raw.json",
+    "raw_sha256": "c97d5db4956ab120b9d8057b17439b2a9aa8ca4c0c52753d6eea51b505bd4cbb",
+    "captured_at": "2026-09-05T17:03:03.714Z",
+    "question_sha256": "cdb077986001a9e42d0af43cffa1c8aa09ce352d7809ed7d23be9c1698b66f50",
+    "geometry_label": "Holešovice official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_YmR7VejBfYjh_zAgu1Qq4RnDI8dQy7OF",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   74.9,
+   77.3,
+   78.8,
+   64.1,
+   76.7,
+   48.6,
+   53.8,
+   59.6,
+   71.3,
+   73.4,
+   66.3,
+   70.9
+  ],
+  "adr": [
+   2047.96,
+   1957.22,
+   2113.61,
+   1890.5,
+   2968.59,
+   1889.92,
+   1611.59,
+   1888.78,
+   2348.08,
+   2403.15,
+   2193.54,
+   2158.31
+  ],
+  "revpar": [
+   1534.74,
+   1513.07,
+   1664.96,
+   1211.76,
+   2277.9,
+   918.89,
+   866.53,
+   1125.9,
+   1674.28,
+   1765,
+   1453.65,
+   1530.31
+  ],
+  "active_listings": [
+   161,
+   166,
+   167,
+   174,
+   180,
+   181,
+   177,
+   172,
+   172,
+   174,
+   176,
+   173
+  ],
+  "avg_revenue": [
+   45640.24,
+   41780.28,
+   46175.66,
+   32643.51,
+   62296.38,
+   25472.17,
+   23374.74,
+   31333.18,
+   44878.38,
+   48391.44,
+   39785.77,
+   43103.69
+  ]
+ },
+ "2BR": {
+  "occ": [
+   68.4,
+   63.4,
+   68.1,
+   52,
+   65.6,
+   39.2,
+   46.6,
+   52.2,
+   63.4,
+   61.8,
+   54.6,
+   60.2
+  ],
+  "adr": [
+   3273.9,
+   2885.41,
+   3249.32,
+   2769.3,
+   4941.22,
+   3404.94,
+   2678.26,
+   3563.53,
+   3943.65,
+   4177.25,
+   3407.68,
+   3571.46
+  ],
+  "revpar": [
+   2240.66,
+   1828.34,
+   2212.25,
+   1440.39,
+   3240.36,
+   1334.95,
+   1247.74,
+   1861.12,
+   2499.39,
+   2580.51,
+   1861.73,
+   2148.29
+  ],
+  "active_listings": [
+   74,
+   73,
+   72,
+   73,
+   75,
+   79,
+   76,
+   74,
+   73,
+   77,
+   81,
+   80
+  ],
+  "avg_revenue": [
+   70728.65,
+   54571.83,
+   63049.21,
+   38020.2,
+   85059.53,
+   39701.55,
+   39816.73,
+   52592.79,
+   65859.01,
+   71222.07,
+   53924.97,
+   67252.47
+  ]
+ },
+ "3BR": {
+  "occ": [
+   52.8,
+   49.2,
+   65.3,
+   48.1,
+   52.2,
+   40.7,
+   48.5,
+   52.2,
+   64.5,
+   63.9,
+   61.6,
+   64.6
+  ],
+  "adr": [
+   5901.54,
+   5781.45,
+   7814.79,
+   5885.12,
+   8628.7,
+   6065.09,
+   5987.79,
+   7110.01,
+   10098.2,
+   9830.39,
+   8125.29,
+   7725.03
+  ],
+  "revpar": [
+   3114.7,
+   2846.93,
+   5104.13,
+   2830.56,
+   4499.92,
+   2470.45,
+   2901.45,
+   3708,
+   6511.41,
+   6280.53,
+   5003.26,
+   4989.08
+  ],
+  "active_listings": [
+   21,
+   22,
+   23,
+   25,
+   25,
+   26,
+   19,
+   25,
+   23,
+   24,
+   24,
+   26
+  ],
+  "avg_revenue": [
+   93440.99,
+   83509.89,
+   138321.85,
+   68169.32,
+   104623.03,
+   67474.15,
+   76344.37,
+   97644.08,
+   170226.81,
+   161499.25,
+   135421.45,
+   131711.77
+  ]
+ }
+}

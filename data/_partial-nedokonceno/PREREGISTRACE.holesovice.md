@@ -78,3 +78,59 @@ SOP beze změny: výslovná hranice v každém dotazu, session jen pin, label
 `2025_08..2026_07`, nadmnožina jen kalendářním pravidlem, bez poměrového
 dopočtu. Kvóta: před voláním 3 pokusy okna (Staré Město), zbývá 17;
 po Holešovicích ≥ 14 → Nusle → Libeň, každá se zastaví pod 4 zbývajícími.
+
+---
+
+## Pokus 1 (2026-09-05 16:50 UTC): 1BR ÚSPĚCH — čeká na schválení geometrie
+
+Dotaz doslova: `Holešovice, Prague, official OpenStreetMap boundary,
+1-bedroom. For each month from August 2025 through July 2026 give: …`
+
+- `selected_geometry_label`: **`Holešovice official boundary`**
+- `selected_geometry_source`: **`openstreetmap`**
+- `market_label`: `Holešovice, Prague - 1BR` · session `lg_sess_YmR7VejBfYjh_zAgu1Qq4RnDI8dQy7OF`
+- 12/12 měsíců, bez nadmnožiny, identity sedí; raw `faf0a0ba…`
+- kvóta: 4. pokus okna (Staré Město 3 + tento)
+
+| | P7 okres | Holešovice | poměr |
+|---|---|---|---|
+| n (průměr) | 214,8 | 172,8 | **0,804** |
+| n (min) | 196 | 161 | |
+| RevPAR | 1 507,0 | 1 461,4 | **0,970** |
+| ADR | 2 105 | 2 123 | 1,009 |
+| occ | | 68,0 % | |
+
+Spouštěče: #3 ne (173 < 195) · #4 ne (80 % v pásmu 50–95, přesně bodový
+odhad) · #5 ne (0,78–0,82 ve všech 12 měsících) · #6 ne (0,970 uvnitř
+±5 %). Holešovice jsou o 3 % POD okresem při stejném ADR — tedy nižší
+obsazenost. Dopočtený zbytek P7 (n ≈ 42, Bubeneč/Letná) má RevPAR
+≈ 1 694, 16 % nad Holešovicemi. Vzorec „nájem na paritě → STR blízko
+parity" drží, s mírným záporným znaménkem.
+
+Schválení geometrie: **OTEVŘENÉ**, čeká na člověka.
+
+## Pokusy 2 a 3 (2026-09-05 16:53 / 16:55 UTC): 2BR a 3BR ÚSPĚCH
+
+Geometrie schválena člověkem znak po znaku. 2BR i 3BR v téže session,
+u obou stejný label + zdroj, ověřeno zvlášť. 12/12 měsíců, bez nadmnožiny.
+
+| pásmo | ADR | RevPAR | occ | nMean | nMin | podíl na P7 | rozsah | RevPAR/P7 | váha | raw |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1BR | 2 123 | 1 461,4 | 68,0 % | 173 | 161 | 0,804 | 0,78–0,82 | 0,970 | 1,0 | faf0a0ba… |
+| 2BR | 3 489 | 2 041,3 | 58,0 % | 76 | 72 | 0,773 | 0,76–0,79 | 0,978 | **0,75** | 2b3465e2… |
+| 3BR | 7 413 | 4 188,4 | 55,3 % | 24 | 19 | 0,934 | 0,90–0,96 | 1,027 | **0** | c97d5db4… |
+
+Spouštěče: #1 `2BR/1BR = 1,397` v pásmu (P7 1,385 — čtvrť kopíruje okres).
+#2 `3BR/1BR = 2,866` v pásmu, u horní meze (n ≈ 24, hlučné; ADR YoY −62 až
++60 %, jako u okresu). #3–#6 ne. **Holešovice = Praha 7 na 2–3 % ve všech
+pásmech**, přesně jak předregistrace čekala u nájmu na paritě.
+
+3BR podle předpokladu: nMean 24 → `ctvrtWeight` **0** → `localCell` vrací
+okres, tj. ODVOZENÝ P7 3BR (2087,1 × 1,481 = 3 091,0, `derived: true`).
+Přímo naměřených 4 188 je o 35 % nad odvozeným — stejný vzorec jako P3
+a P8 (odvozené 3BR pod tenkým přímým měřením; zapsáno v
+docs/calculator-model.md §4 jako otevřený bod, tady jen další datový bod).
+Pásmo se ukládá jako měřené (DB `reliable: false`, nMin 19), do veřejného
+výsledku nepromluví.
+
+Kvóta: pokusy 4–6 okna (6 celkem), zbývá 14.

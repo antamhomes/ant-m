@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/holesovice.json",
+ "sha256": "24d6823bfbe2ae2447e7534ad5fe99d5a2e815befb5a48e852dcb79049c07714",
+ "bytes": 4507,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "holesovice",
+ "geometry": "Holešovice official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-05"
+}
