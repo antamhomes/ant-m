@@ -114,7 +114,12 @@ Rozhodnutí člověka 5. 9. večer: zbývající mezery jsou čím dál okrajov�
 1. **Vršovice, 1BR / 2BR / 3BR** (3 dotazy) — jediná čtvrť, která
    odemyká něco rozdělaného: Praha 10 je pullnutá, ale neintegrovaná
    (`SEASONS_BY_LOC.praha10` chybí, 3BR n ≈ 13 s obsazeností 29 %).
-   Předregistrace před voláním, STOP po 1BR na schválení geometrie.
+   Předregistrace `PREREGISTRACE.vrsovice.md` ZMRAZENÁ 6. 9. 2026 před
+   voláním; STOP po 1BR na schválení geometrie. **Vazba:** do dokončení
+   integrace P10 jen sběr dat, `MARKET_CTVRT.vrsovice` se nepřidává
+   samostatně; body 1 a 2 končí JEDNOU modelovou/regresní dávkou (P10
+   okres + `SEASONS_BY_LOC.praha10` + Vršovice). Tenké P10 3BR = samostatné
+   výslovné rozhodnutí člověka, dávka ho nesmí vyřešit tiše.
 2. **Rozhodnutí o integraci Prahy 10** z okresních dat + kontextu
    Vršovic (bez kvóty): recept `SEASONS_BY_LOC.praha10` zdokumentovat,
    `MARKET_STR.praha10` 1BR + 2BR, 3BR ven; v regresi se smějí hýbat jen
