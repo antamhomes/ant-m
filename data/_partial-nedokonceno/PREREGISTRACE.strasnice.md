@@ -79,4 +79,48 @@ neutrácí**. Po Strašnicích dnes žádné další volání.
 
 ## Log pokusů
 
-(prázdné — před prvním voláním)
+### Pokus 1 (2026-09-07 18:24 UTC): 1BR ÚSPĚCH — čeká na rozhodnutí člověka
+
+Dotaz doslova: `Strašnice, Prague, official OpenStreetMap boundary,
+1-bedroom. For each month from August 2025 through July 2026 give: …`
+**14. pokus okna** (ukotveno ~17:10 UTC 7. 9.), zbývá 6.
+
+- `selected_geometry_label`: **`Strašnice official boundary`**
+- `selected_geometry_source`: **`openstreetmap`**
+- `market_label`: `Strašnice, Prague` · session `lg_sess_riniN_ZXXViDRyULZtABu9e--aRx6oSc`
+- přišlo **13 měsíců** (`2026_08` navíc) → vyřazen kalendářním pravidlem,
+  obálka drží 13, `excluded_rows` = 1; v okně 12/12, identity sedí, próza
+  proti `data[]` bez rozdílu; raw `18b0bb14…`
+
+| | P10 okres | Vršovice | zbytek P10 (dopočet) | Strašnice | poměr |
+|---|---|---|---|---|---|
+| n (průměr) | 198,8 | 140,2 | 58,7 | 20,0 → 20 (18–23) | podíl na P10 **0,101** (0,09–0,12) |
+| n (min) | 193 | 133 | | 18 | |
+| RevPAR | 1 329,5 | 1 361,7 | ≈ 1 252 | 1 093,4 | k P10 **0,822** (0,70–0,92); k Vršovicím 0,803; k zbytku 0,873 |
+| ADR | 1 871 | 1 888 | | 1 844 | 0,986 |
+| occ | 70,2 % | 71,3 % | | **59,0 %** | leden 33 %, únor 41 % |
+
+Spouštěče: #3 ne (20 ≪ 59) · #4 ne (10,1 % v pásmu 8–25 %) · #5 ne
+(rozptyl 3 p. b., bez trendu) · #6 ne — Strašnice jsou **18 % POD
+okresem a 20 % pod Vršovicemi**, přes ADR jen −1 %: rozdíl je celý
+v obsazenosti (59 % vs 70 %). Vršovická prémie je tedy reálná a zbytek
+P10 mimo Vršovice je ještě slabší, než dopočet ukazoval (Strašnice
+0,87× zbytku → ostatní části zbytku musí ležet výš, nebo jde
+o Malešice/vinohradský díl). Bodový odhad n ~30 byl optimistický (20).
+
+**nMean 20 < 25 → váha 0 ve všech pásmech → čtvrť by byla v modelu
+inertní** (scénář Vysočany). 2BR (odhad 8–12) a 3BR (1–3) na tom nic
+nezmění. Předregistrace to připouštěla: člověk může zvolit STOP jako
+u Vysočan (raw + DB `partial`, `MARKET_CTVRT` bez Strašnic), nebo dopullovat
+2BR/3BR (#15–16, po nich přesně 4 v rezervě) a integrovat měřenou,
+inertní čtvrť. Informační hodnota dalších dvou dotazů je archivní.
+
+Rozhodnutí člověka 7. 9. 2026: **(a) STOP, čtvrť zůstává `partial`** —
+„nMean 20 means weight 0, so spending two more calls on 2BR/3BR gives us
+no calculator improvement." Stejný postup jako Vysočany: 1BR raw v repu,
+artefakt jen s 1BR, DB řádek `praha10_strasnice` 1BR s `pull_state =
+partial`, `MARKET_CTVRT.strasnice` NEVZNIKÁ, model beze změny. Geometrie
+`Strašnice official boundary` + `openstreetmap` NEschválená (nebylo
+třeba, jen změřená). Žádná další volání PriceLabs po uzavření; 6 pokusů
+okna zůstává nevyužito. Sběr dat pro kalkulačku tímto končí — další
+pracovní proud je audit kalkulačky/webu jako konverzního trychtýře.

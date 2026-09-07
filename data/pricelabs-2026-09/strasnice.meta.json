@@ -1,0 +1,15 @@
+{
+ "artifact": "data/pricelabs-2026-09/strasnice.json",
+ "sha256": "4135effe4394d82c1233985468edd2f028fd88424a86db816e432ed91d69103e",
+ "bytes": 1928,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "strasnice",
+ "geometry": "Strašnice official boundary (openstreetmap)",
+ "bands": [
+  "1BR"
+ ],
+ "pulled": "2026-09-07"
+}

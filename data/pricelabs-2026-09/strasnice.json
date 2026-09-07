@@ -1,0 +1,117 @@
+{
+ "meta": {
+  "pulled": "2026-09-07",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Strašnice official boundary (openstreetmap)",
+  "slug": "strasnice",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/strasnice.1BR.raw.json",
+    "raw_sha256": "18b0bb142eea926cc015dd1f9eead62f3248ba59f8080d0186c3c99f382e322b",
+    "captured_at": "2026-09-07T18:23:15.721Z",
+    "question_sha256": "b3b6ae8ff57293df8b4abd36f37816142daad5ed26aabc00cd27a835d0260196",
+    "geometry_label": "Strašnice official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_riniN_ZXXViDRyULZtABu9e--aRx6oSc",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   73.9,
+   65.7,
+   68.1,
+   55.8,
+   68.8,
+   33.4,
+   40.9,
+   54.7,
+   65.9,
+   61.6,
+   56.5,
+   62.2
+  ],
+  "adr": [
+   1725.7,
+   1703.95,
+   1833.62,
+   1580.04,
+   2250.28,
+   2070.83,
+   1378.31,
+   1727.37,
+   1948.36,
+   2128.48,
+   1787.4,
+   1994.89
+  ],
+  "revpar": [
+   1275.2,
+   1120.15,
+   1248.26,
+   880.87,
+   1548.31,
+   691.92,
+   564.03,
+   944.18,
+   1284.79,
+   1311.34,
+   1010.27,
+   1241.6
+  ],
+  "active_listings": [
+   23,
+   21,
+   21,
+   19,
+   19,
+   20,
+   20,
+   18,
+   19,
+   19,
+   20,
+   21
+  ],
+  "avg_revenue": [
+   37857.51,
+   32694.51,
+   39361.79,
+   25167.7,
+   49988.26,
+   24159.65,
+   21746.66,
+   28833.84,
+   37992.95,
+   35652.06,
+   29045.19,
+   36351.25
+  ]
+ }
+}
