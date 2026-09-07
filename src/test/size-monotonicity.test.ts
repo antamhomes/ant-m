@@ -74,7 +74,7 @@ describe("monotonie podle velikosti: větší kbelík nikdy nevydělá míň", (
   });
 
   it("strukturální podmínka: nextCell.revpar >= baseCell.revpar v každém dosažitelném kontextu", () => {
-    const PAIRS: [Band, Band][] = [["1BR", "2BR"], ["2BR", "3BR"]];
+    const PAIRS: [Band, Band][] = [["1BR", "2BR"], ["2BR", "3BR"], ["3BR", "4BR"]];
     const problems: string[] = [];
     let checked = 0;
     for (const loc of Object.keys(MARKET_STR) as MeasuredLocation[]) {
@@ -94,7 +94,7 @@ describe("monotonie podle velikosti: větší kbelík nikdy nevydělá míň", (
 
   it("výjimky, pokud nějaké jsou, mají klíč i důkaz", () => {
     for (const e of MEASURED_EXCEPTIONS) {
-      expect(e.key, "výjimka bez klíče").toMatch(/^praha\d+\/[a-z_-]+ [123]BR->[123]BR$/);
+      expect(e.key, "výjimka bez klíče").toMatch(/^praha\d+\/[a-z_-]+ [1234]BR->[1234]BR$/);
       expect(e.evidence.length, `výjimka ${e.key} bez důkazu`).toBeGreaterThan(20);
     }
   });

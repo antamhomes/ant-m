@@ -22,7 +22,7 @@ import {
   operatorFactor, OPERATOR_EVIDENCE, publicFactorFrom, AVAILABILITY, BAND_BLEND, bandWeight, bandForSize, ctvrtiOf, MARKET_CTVRT,
   marketOccPct, ratioFor, SIZE_PRESET, SIZE_RATIO, isReliableN, RELIABLE_MIN_N, RECONSTRUCTED_CELLS, SPREAD, SIZE_BUCKETS_BY_VERSION, CALC_MODEL_VERSION, bucketsFor, bucketFor, marketCell, localCell, guestsFor, BASE_GUESTS,
   RENT_SLOPE, RENT_INTERCEPT, FURN_RENT, RENT_GROWTH, STR_GROWTH, GEO, geoContext, ctvrtRentFactor, TYPICAL_AREA, typicalArea, type LocationKey,
-  type MeasuredLocation, type SizeKey,
+  type MeasuredLocation, type SizeKey, type Band,
 } from "@/lib/yield";
 import { fiveYear } from "@/lib/horizon";
 import { parseShare } from "@/contexts/CalcContext";
@@ -34,8 +34,13 @@ const net = (r: ReturnType<typeof ownerMonthly>) => {
 };
 /** Dispozice, která spadne do daného pásma trhu. */
 const sizeOf = (band: string): SizeKey => band === "1BR" ? "1kk" : band === "2BR" ? "2kk" : "4kk";
-/** Okresní STR artefakt: P1–P9 z 30. 8. 2026, Praha 10 z 4. 9. 2026 (integrace 7. 9. 2026). */
-const strArtifact = (loc: string) => `data/pricelabs-${loc === "praha10" ? "2026-09" : "2026-08"}/${loc}.json`;
+/** Plocha, na které 4+kk sedí čistě na daném pásmu: 85 m² = w 0 (3BR), 142 m² = w 1 (4BR). */
+const m2Of = (band: string) => band === "1BR" ? 35 : band === "2BR" ? 60 : band === "3BR" ? 85 : 142;
+/** Okresní STR artefakt: P1–P9 z 30. 8. 2026, Praha 10 z 4. 9. 2026 (integrace 7. 9. 2026);
+ *  pásmo 4BR má vlastní artefakty ze sondy 4. 9. 2026 (praha1.4BR.json, praha2.4BR.json). */
+const strArtifact = (loc: string, band = "1BR") =>
+  band === "4BR" ? `data/pricelabs-2026-09/${loc}.4BR.json` : `data/pricelabs-${loc === "praha10" ? "2026-09" : "2026-08"}/${loc}.json`;
+const FOUR_BR_ARTIFACTS: Record<string, string> = { praha1: "data/pricelabs-2026-09/praha1.4BR.json", praha2: "data/pricelabs-2026-09/praha2.4BR.json" };
 /** Stejný tvar jako tovární funkce v yield.ts; drží snapshot verze čitelný. */
 const B = (id: string, minM2: number | null, maxM2: number | null, representativeM2: number | null) =>
   ({ id, labelKey: `calc_size_${id}`, minM2, maxM2, representativeM2, supported: representativeM2 !== null });
@@ -367,8 +372,8 @@ describe("model výnosu", () => {
     // hranice čtvrtí, 8/2025 až 7/2026). Konstanty v yield.ts jsou z nich
     // vygenerované; tenhle test hlídá, že se nerozejdou.
     for (const [loc, bands] of Object.entries(MARKET_STR)) {
-      const raw = JSON.parse(readFileSync(strArtifact(loc), "utf8"));
       for (const [band, cell] of Object.entries(bands)) {
+        const raw = JSON.parse(readFileSync(strArtifact(loc, band), "utf8"));
         const r = raw[band];
         // artefakty 2026-08 nesou annual.adr (= průměr měsíční řady na 2 des.),
         // artefakty z pl-artifact.mjs (2026-09) jen řadu — obojí je týž recept
@@ -397,10 +402,19 @@ describe("model výnosu", () => {
         const al = raw[band].active_listings as number[];
         expect(isReliableN(Math.min(...al)), `${loc} ${band} chybí, ale prošlo by bránou`).toBe(false);
       }
+      // 4BR: změřené jen v P1 a P2 (sonda 4. 9. 2026); P2 (nMin 27) bránou propadá
+      if (FOUR_BR_ARTIFACTS[loc] && !MARKET_STR[loc]["4BR"]) {
+        const al = JSON.parse(readFileSync(FOUR_BR_ARTIFACTS[loc], "utf8"))["4BR"].active_listings as number[];
+        expect(isReliableN(Math.min(...al)), `${loc} 4BR chybí, ale prošlo by bránou`).toBe(false);
+      }
     }
     expect(MARKET_STR.praha3["3BR"]).toBeUndefined();
     expect(MARKET_STR.praha9["2BR"]).toBeUndefined();
     expect(MARKET_STR.praha4["3BR"]).toBeUndefined();
+    // 4BR (7. 9. 2026): měřené jen v Praze 1; nikde jinde bez artefaktu nad prahem
+    expect(MARKET_STR.praha1["4BR"]).toBeDefined();
+    for (const loc of Object.keys(MARKET_STR) as MeasuredLocation[])
+      if (loc !== "praha1") expect(MARKET_STR[loc]["4BR"], `${loc} 4BR bez měření`).toBeUndefined();
     // Buňky bez surového artefaktu musí být PŘIZNANÉ, ne jen tiše bez nMin.
     for (const [id, c] of Object.entries(MARKET_CTVRT))
       for (const [band, cell] of Object.entries(c.bands))
@@ -502,8 +516,11 @@ describe("model výnosu", () => {
       expect(contactSrc, `lead musí nést ${f}`).toContain(f);
 
     // (5) Historická verze se NEPŘEPISUJE. Když někdo změní obsah 2026-08-31.1,
-    // spadne tohle a připomene, že má přidat NOVOU verzi.
-    expect(CALC_MODEL_VERSION).toBe("2026-08-31.1");
+    // spadne tohle a připomene, že má přidat NOVOU verzi. 2026-09-07.1 = pásmo 4BR
+    // (4+kk přestalo být ploché); kbelíky obou verzí jsou BYTE-SHODNÉ — verze
+    // nese ekonomiku a provenienci leadu, ne změnu UI.
+    expect(CALC_MODEL_VERSION).toBe("2026-09-07.1");
+    expect(SIZE_BUCKETS_BY_VERSION["2026-09-07.1"]).toEqual(SIZE_BUCKETS_BY_VERSION["2026-08-31.1"]);
     expect(SIZE_BUCKETS_BY_VERSION["2026-08-31.1"]).toEqual({
       "1kk": [B("s", null, 30, 28), B("m", 31, 40, 35), B("l", 41, 49, 45), B("xl", 50, null, null)],
       "2kk": [B("s", null, 40, 38), B("m", 41, 55, 50), B("l", 56, 80, 63), B("xl", 81, null, null)],
@@ -700,8 +717,8 @@ describe("model výnosu", () => {
       if (!r.supported) throw new Error("unsupported");
       return (r.antam.gross - r.market.gross) / ((r.antam.gross + r.market.gross) / 2);
     };
-    const solid = ownerMonthly("praha1", "4kk", { m2: 105 });   // P1 3BR je změřené
-    const derived = ownerMonthly("praha9", "4kk", { m2: 105 }); // P9 3BR se dopočítává
+    const solid = ownerMonthly("praha1", "1kk", { m2: 35 });    // P1 1BR je změřené, 1+kk bez překlopení
+    const derived = ownerMonthly("praha9", "4kk", { m2: 105 }); // P9 3BR se dopočítává a 4BR tam není → ploché
     expect(solid.supported && solid.derived).toBe(false);
     expect(derived.supported && derived.derived).toBe(true);
     expect(width(solid)).toBeCloseTo(SPREAD.high - SPREAD.low, 3);
@@ -796,6 +813,32 @@ describe("model výnosu", () => {
     expect(marketCell("praha10", "3BR")!.adr).toBe(Math.round(MARKET_STR.praha10["2BR"]!.adr * SIZE_RATIO["3BR/2BR"].adr));
     expect(SIZE_RATIO["3BR/1BR"].adr, "přímý poměr, ne součin sousedních")
       .not.toBeCloseTo(SIZE_RATIO["2BR/1BR"].adr * SIZE_RATIO["3BR/2BR"].adr, 3);
+    // 4BR/3BR (7. 9. 2026): z CELOPRAŽSKÉ řady, obě pásma měřená (nMin 676 / 184),
+    // ne z okresů (jen P1 by prošlo a je nejdražší s nejnižším poměrem)
+    const cela = JSON.parse(readFileSync("data/pricelabs-2026-09/praha.3BR-4BR.json", "utf8"));
+    const m = (xs: number[]) => xs.reduce((a, b) => a + b, 0) / xs.length;
+    expect(Math.min(...cela["3BR"].active_listings)).toBeGreaterThanOrEqual(RELIABLE_MIN_N);
+    expect(Math.min(...cela["4BR"].active_listings)).toBeGreaterThanOrEqual(RELIABLE_MIN_N);
+    expect(SIZE_RATIO["4BR/3BR"].revpar).toBeCloseTo(m(cela["4BR"].revpar) / m(cela["3BR"].revpar), 3);
+    expect(SIZE_RATIO["4BR/3BR"].adr).toBeCloseTo(m(cela["4BR"].adr) / m(cela["3BR"].adr), 3);
+    // 4BR jedním krokem z MĚŘENÉHO 3BR; bez měřeného 3BR žádná buňka (žádné řetězení)
+    expect(marketCell("praha1", "4BR")!.derived).toBe(false);
+    expect(marketCell("praha2", "4BR")!.derived).toBe(true);
+    expect(marketCell("praha2", "4BR")!.adr).toBe(Math.round(MARKET_STR.praha2["3BR"]!.adr * SIZE_RATIO["4BR/3BR"].adr));
+    expect(marketCell("praha5", "4BR")!.derived).toBe(true);
+    for (const loc of ["praha3", "praha4", "praha6", "praha7", "praha8", "praha9", "praha10"] as const)
+      expect(marketCell(loc, "4BR"), `${loc} 4BR by vyžadovalo řetězení`).toBeNull();
+    // Čtvrť bez pásma 4BR: v okrese s ODVOZENÝM 4BR se odvodí z LOKÁLNÍHO 3BR × poměr
+    // (varianta B, 7. 9. 2026), v okrese s MĚŘENÝM 4BR (P1) platí okresní buňka.
+    const smichov3 = localCell("praha5", "3BR", "smichov")!, smichov4 = localCell("praha5", "4BR", "smichov")!;
+    expect(smichov3.derived).toBe(false);
+    expect(smichov4.derived).toBe(true);
+    expect(smichov4.revpar).toBeCloseTo(smichov3.revpar * SIZE_RATIO["4BR/3BR"].revpar, 6);
+    expect(smichov4.revpar).not.toBeCloseTo(marketCell("praha5", "4BR")!.revpar, 0);
+    expect(localCell("praha1", "4BR", "stare_mesto")).toEqual(marketCell("praha1", "4BR"));
+    // řetězení ani lokálně: Žižkov 3BR je blend s odvozeným okresem → 4BR žádné
+    expect(localCell("praha3", "3BR", "zizkov")!.derived).toBe(true);
+    expect(localCell("praha3", "4BR", "zizkov")).toBeNull();
     const r = ownerMonthly("praha4", "4kk", { m2: 105 });
     expect(r.supported && r.derived).toBe(true);
     const r1 = ownerMonthly("praha1", "2kk");
@@ -864,7 +907,7 @@ describe("model výnosu", () => {
     for (const [loc, bands] of Object.entries(MARKET_STR))
       for (const [band, cell] of Object.entries(bands)) {
         const size = sizeOf(band);
-        const m2 = band === "1BR" ? 35 : band === "2BR" ? 60 : 105;
+        const m2 = m2Of(band);
         const r = ownerMonthly(loc, size, { m2 });
         if (!r.supported) throw new Error(`${loc} ${band} má data, ale model je nevrací`);
         expect(r.band).toBe(band);
@@ -872,12 +915,17 @@ describe("model výnosu", () => {
         // rozpětí je vždy kladné a vršek nad spodkem
         expect(r.high).toBeGreaterThan(r.low);
         expect(r.mid).toBeGreaterThan(0);
-        // horní hranice u pásma bez překlopení = tržní RevPAR × dny × dostupnost × faktor
-        if (size === "1kk" || size === "4kk") {
+        // horní hranice u dispozice bez překlopení (1+kk) = tržní RevPAR × dny × dostupnost × faktor
+        if (size === "1kk") {
           const k = operatorFactor(loc, "public");
           expect(r.antam.gross).toBe(Math.round(cell.revpar * 30.44 * 1.08 * AVAILABILITY * k));
         }
-        expect(Math.round(r.market.occupancy * 100)).toBe(marketOccPct(loc as MeasuredLocation, band as "1BR" | "2BR" | "3BR"));
+        // 4+kk plně překlopené do 4BR (w = 1): vršek = 4BR RevPAR × dny × dostupnost × faktor
+        if (band === "4BR") {
+          const k = operatorFactor(loc, "public");
+          expect(r.antam.gross).toBe(Math.round(cell.revpar * 30.44 * AVAILABILITY * k));
+        }
+        expect(Math.round(r.market.occupancy * 100)).toBe(marketOccPct(loc as MeasuredLocation, band as Band));
       }
   });
 

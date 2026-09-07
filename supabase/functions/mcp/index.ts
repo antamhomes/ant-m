@@ -20,7 +20,15 @@ var BASE_GUESTS = { "1kk": 4, "2kk": 6, "3kk": 8, "4kk": 10 };
 var guestsFor = (size) => BASE_GUESTS[size];
 var isMeasured = (loc) => loc in MARKET_STR;
 var MARKET_STR = {
-  praha1: { "1BR": { adr: 2917, revpar: 2207.5, nMean: 1675, nMin: 1606 }, "2BR": { adr: 4507, revpar: 3399.3, nMean: 904, nMin: 866 }, "3BR": { adr: 6576, revpar: 4924.8, nMean: 320, nMin: 308 } },
+  /**
+   * Praha 1 4BR: sonda 4. 9. 2026 (data/pricelabs-2026-09/praha1.4BR.json,
+   * geometrie „Praha 1 official boundary (openstreetmap)" schválená člověkem),
+   * do modelu 7. 9. 2026 s pásmem 4BR. Jediný okres, kde 4BR projde bránou
+   * nMin ≥ 50 (94). Praha 2 4BR (nMin 27) bránou neprojde a odvozuje se
+   * z 3BR × SIZE_RATIO["4BR/3BR"] — odvozené 6 178 proti přímo měřeným 6 074
+   * (+1,7 %), poměr tedy sedí i tam.
+   */
+  praha1: { "1BR": { adr: 2917, revpar: 2207.5, nMean: 1675, nMin: 1606 }, "2BR": { adr: 4507, revpar: 3399.3, nMean: 904, nMin: 866 }, "3BR": { adr: 6576, revpar: 4924.8, nMean: 320, nMin: 308 }, "4BR": { adr: 8930, revpar: 6612.8, nMean: 95, nMin: 94 } },
   praha2: { "1BR": { adr: 2419, revpar: 1739.9, nMean: 920, nMin: 869 }, "2BR": { adr: 3748, revpar: 2831.4, nMean: 361, nMin: 346 }, "3BR": { adr: 5874, revpar: 4278.2, nMean: 128, nMin: 120 } },
   praha3: { "1BR": { adr: 2130, revpar: 1568.9, nMean: 626, nMin: 592 }, "2BR": { adr: 3085, revpar: 2303.5, nMean: 179, nMin: 162 } },
   praha4: { "1BR": { adr: 1810, revpar: 1254, nMean: 184, nMin: 158 }, "2BR": { adr: 2539, revpar: 1697, nMean: 69, nMin: 60 } },
@@ -52,14 +60,25 @@ var SIZE_RATIO = {
    *  (čtvrti se solidním vzorkem obou pásem, váženo nabídkami), ne jejich
    *  součin: řetězit dva odvozené poměry zesiluje chybu. Rozhodnutí
    *  31. 8. 2026 po rekonciliaci jedenácti bytů. */
-  "3BR/1BR": { adr: 2.329, revpar: 2.304 }
+  "3BR/1BR": { adr: 2.329, revpar: 2.304 },
+  /** 4BR/3BR z CELOPRAŽSKÉ řady (data/pricelabs-2026-09/praha.3BR-4BR.json,
+   *  3BR nMin 676, 4BR nMin 184, obě měřená; po měsících 1,32–1,55).
+   *  Rozhodnutí člověka 7. 9. 2026: ne P1 (1,343 — jediný okres s oběma pásmy
+   *  ≥ 50, ale nejdražší a s nejnižším poměrem), ne Praha bez P1 (1,526 —
+   *  dopočet rozdílem, ne měření). Nejistota mezi zdroji ±7 %. Sestupný
+   *  přírůstek mezi pásmy drží: 1,517 → 1,481 → 1,444. Hlídá facts.test.ts. */
+  "4BR/3BR": { adr: 1.419, revpar: 1.444 }
 };
 var RATIO_OF = {
   "1BR>2BR": SIZE_RATIO["2BR/1BR"],
   "2BR>3BR": SIZE_RATIO["3BR/2BR"],
-  "1BR>3BR": SIZE_RATIO["3BR/1BR"]
+  "1BR>3BR": SIZE_RATIO["3BR/1BR"],
+  // 4BR jen JEDNÍM krokem z měřeného 3BR (P2, P5). Okresy bez měřeného 3BR
+  // 4BR buňku nedostanou (žádné řetězení 2BR → 3BR → 4BR); přímý poměr
+  // 4BR/2BR by dnes vyšel jen z P1 a nedoporučuje se (7. 9. 2026).
+  "3BR>4BR": SIZE_RATIO["4BR/3BR"]
 };
-var BAND_ORDER = ["1BR", "2BR", "3BR"];
+var BAND_ORDER = ["1BR", "2BR", "3BR", "4BR"];
 var marketCell = (loc, band) => {
   const own = MARKET_STR[loc][band];
   if (own) return { ...own, derived: false };
@@ -109,7 +128,12 @@ var BAND_BLEND = {
   "1kk": { base: "1BR" },
   "2kk": { base: "1BR", next: "2BR", lo: 40, hi: 55 },
   "3kk": { base: "2BR", next: "3BR", lo: 65, hi: 95 },
-  "4kk": { base: "3BR" }
+  /** 4+kk: překlopení 3BR → 4BR na 93 a 132 m² = dnešní hrany kbelíků s/m a
+   *  m/l (p25/p75 stocku), stejně jako 3+kk používá 65/95. Váhy s/m/l =
+   *  0 / 0,59 / 1,0. Schváleno člověkem 7. 9. 2026 (předregistrace
+   *  data/_partial-nedokonceno/PREREGISTRACE.4kk-blend.md); do té doby
+   *  bylo 4+kk ploché (jen 3BR). Hranice kbelíků se tím nemění. */
+  "4kk": { base: "3BR", next: "4BR", lo: 93, hi: 132 }
 };
 var bandWeight = (size, m2) => {
   const b = BAND_BLEND[size];
@@ -130,6 +154,21 @@ var SIZE_BUCKETS_BY_VERSION = {
     // překlopení 2BR→3BR na 65 a 95 · p95 120
     "3kk": [B("s", null, 65, 63), B("m", 66, 95, 78), B("l", 96, 120, 106), B("xl", 121, null, null)],
     // p25 93 · p50 115 · p75 132 · p95 151 — bez překlopení (chybí pásmo 4BR)
+    "4kk": [B("s", null, 93, 85), B("m", 94, 132, 116), B("l", 133, 151, 142), B("xl", 152, null, null)]
+  },
+  /**
+   * 2026-09-07.1: kbelíky BYTE-SHODNÉ s 2026-08-31.1. Nová verze je kvůli
+   * ekonomice, ne UI: 4+kk přestalo být ploché (BAND_BLEND 3BR → 4BR na
+   * 93/132, tj. na dosavadních hranách), takže tytéž veřejné vstupy dávají
+   * u 4+kk m/l jiné číslo. Lead s touhle verzí = počítáno s pásmem 4BR;
+   * lead s 2026-08-31.1 = plochý strop na 3BR. facts.test.ts hlídá shodu
+   * kbelíků obou verzí.
+   */
+  "2026-09-07.1": {
+    "1kk": [B("s", null, 30, 28), B("m", 31, 40, 35), B("l", 41, 49, 45), B("xl", 50, null, null)],
+    "2kk": [B("s", null, 40, 38), B("m", 41, 55, 50), B("l", 56, 80, 63), B("xl", 81, null, null)],
+    "3kk": [B("s", null, 65, 63), B("m", 66, 95, 78), B("l", 96, 120, 106), B("xl", 121, null, null)],
+    // překlopení 3BR→4BR na 93 a 132 = tytéž hrany jako p25/p75 · p95 151
     "4kk": [B("s", null, 93, 85), B("m", 94, 132, 116), B("l", 133, 151, 142), B("xl", 152, null, null)]
   }
 };
@@ -482,11 +521,27 @@ var MARKET_CTVRT = {
   }
 };
 var ctvrtWeight = (n) => n >= 100 ? 1 : n >= 50 ? 0.75 : n >= 25 ? 0.5 : 0;
+var localDerived = (loc, band, ctvrt) => {
+  const target = BAND_ORDER.indexOf(band);
+  for (let i = target - 1; i >= 0; i--) {
+    const from = BAND_ORDER[i];
+    const k = RATIO_OF[`${from}>${band}`];
+    if (!k) continue;
+    const src = localCell(loc, from, ctvrt);
+    if (!src || src.derived) return null;
+    return { adr: Math.round(src.adr * k.adr), revpar: src.revpar * k.revpar, nMean: src.nMean, nMin: src.nMin, derived: true };
+  }
+  return null;
+};
 var localCell = (loc, band, ctvrt) => {
   const district = marketCell(loc, band);
   const c = ctvrt ? MARKET_CTVRT[ctvrt] : void 0;
   if (!c || !c.parents.includes(loc)) return district;
   const own = c.bands[band];
+  if (!own && district?.derived) {
+    const local = localDerived(loc, band, ctvrt);
+    if (local) return local;
+  }
   if (!own || own.basis !== "measured" || !district) return district;
   const w = ctvrtWeight(own.nMean);
   if (w === 0) return district;
@@ -625,17 +680,17 @@ var split = (gross, occupancy) => {
 function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope = "public", config } = {}) {
   const guests = guestsFor(size);
   const area = m2 ?? typicalArea(location, size);
-  const band = bandForSize(size, area);
-  if (!isMeasured(location)) return { supported: false, band, guests };
+  if (!isMeasured(location)) return { supported: false, band: bandForSize(size, area), guests };
   const observed = scope === "internal" ? config ?? null : null;
   const cfg = observed ? { base: observed.band, next: void 0, lo: void 0, hi: void 0 } : BAND_BLEND[size];
   const usedCtvrt = ctvrt && MARKET_CTVRT[ctvrt]?.parents.includes(location) ? ctvrt : null;
   const baseCell = localCell(location, cfg.base, usedCtvrt);
-  if (!baseCell) return { supported: false, band, guests };
+  if (!baseCell) return { supported: false, band: cfg.base, guests };
   const nextCell = cfg.next ? localCell(location, cfg.next, usedCtvrt) : null;
   const w = nextCell && !observed ? bandWeight(size, area) : 0;
   const f = season === "year" ? { adr: 1, revpar: 1 } : SEASONS_BY_LOC[location][season];
   const shownCell = w >= 0.5 && nextCell ? nextCell : baseCell;
+  const band = w >= 0.5 && nextCell && cfg.next ? cfg.next : cfg.base;
   const adr = Math.round(shownCell.adr * f.adr);
   const marketRevpar = shownCell.revpar * f.revpar;
   const marketOcc = Math.round(marketRevpar / adr * 1e3) / 1e3;

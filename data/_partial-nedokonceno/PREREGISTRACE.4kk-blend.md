@@ -140,3 +140,37 @@ přesně ty v bodu 10 — všechny kódují dnešní plochou zónu.
 8, 9. Fáze 2 = implementace + testy z bodu 10 + regrese s očekáváním:
 mimo `4kk` 0 změn, `4kk` s: střed beze změny, m/l: jen P1/P2/P5 kontexty
 (a jejich čtvrti/Ostatní), P3–P10 beze změny včetně popisku.
+
+## Fáze 2 — SCHVÁLENO a PROVEDENO 7. 9. 2026
+
+Rozhodnutí člověka: bod 3 = 1,444 / 1,419 (celopražská řada); bod 5 =
+lo 93 / hi 132, kbelíky beze změny; bod 6 = **B s výjimkou P1** (měřené
+okresní 4BR má přednost; jinde `lokální 3BR × poměr`, jeden krok, donor
+nesmí být odvozený); bod 8 = přijmout standardní blendovanou sémantiku
+(s-kbelík: střed beze změny, rozpětí ±8 % → ±4 %), zapsat do regrese;
+bod 9 = `CALC_MODEL_VERSION` → `2026-09-07.1` s byte-shodnými kbelíky;
+popisek pásma z reálné cesty modelu.
+
+Regrese (`b62708f` baseline × implementace, 2 304 kombinací): 0 přidaných,
+0 odebraných, **152 změněných, všech 152 je `4kk`, 0 mimo 4+kk** (1+kk,
+2+kk, 3+kk byte-shodné). 144 číselných = P1/P2/P5 × 4 kontexty × s/m/l ×
+4 sezóny (s: střed ±1 Kč, jen rozpětí); 8 jen popisek `band` u
+NEPODPOROVANÉ lokality `jinde` (m/l 4+kk: popisek plochy, žádný výsledek
+— popisek podporovaných výsledků se drží reálné cesty, 0 řádků „4BR bez
+4BR buňky"). P3/P4/P6–P10 všechny kontexty beze změny včetně popisku.
+
+| kontext | m | l |
+|---|---|---|
+| P1 okres / Ostatní / Staré Město / Nové Město | +15,2 / +14,4 / +16,1 % | +25,7 / +24,4 / +27,2 % (měřené 4BR) |
+| P2 okres / Ostatní / Nové Město / Vinohrady | +19,6 % všude | +33,3 % všude (lokální 3BR × 1,444, derived) |
+| P5 okres / Ostatní / Košíře / Smíchov | +19,6 % všude | +33,3 % všude (derived) |
+
+Varianta B doložená: Smíchov 4BR = Smíchov 3BR (3 599,2, blend měřené ×
+měřené) × 1,444 = 5 197,2 ≠ okresní 5 357,8; Vinohrady v P2 4BR 5 817,9
+z lokálního 3BR 4 029; Staré Město 4BR = měřené okresní 6 612,8. Žádné
+řetězení: `localCell("praha3","4BR","zizkov") = null` (Žižkov 3BR je blend
+s odvozeným okresem), `marketCell(P3/P4/P6–P10,"4BR") = null`.
+Monotonie s ≤ m ≤ l: zelená; strukturální dvojice += 3BR → 4BR. Testy
+100/100, build OK. Lead nese `calc_model_version` (ContactSection /
+CalculatorSection / portalLead beze změny kódu, jen nová hodnota).
+

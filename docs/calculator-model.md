@@ -298,23 +298,28 @@ vždy p95 a `m2` v kbelíku je medián inzerátů, které do něj spadají.
 | 3+kk | do 65 (63) | 66–95 (78) | 96–120 (106) | nad 120, 5 % |
 | 4+kk | do 93 (85) | 94–132 (116) | 133–151 (142) | nad 151, 3 % |
 
-V závorce reprezentativní plocha. U 2+kk a 3+kk dávají tlačítka rozlišitelná
-čísla (test to hlídá); u 1+kk a 4+kk se mění jen nájem, protože pásmo se nemá
-kam překlopit, což je jedna z otevřených věcí v sekci 4.
+V závorce reprezentativní plocha. U 2+kk, 3+kk a od 7. 9. 2026 i 4+kk dávají
+tlačítka rozlišitelná čísla (test to hlídá); u 1+kk se mění jen nájem, protože
+pásmo se nemá kam překlopit, což je otevřená věc v sekci 4. 4+kk překlápí
+3BR → 4BR na 93 a 132 m², tj. přesně na dosavadních hranách kbelíků, takže
+tabulka výš platí beze změny (`CALC_MODEL_VERSION` 2026-09-07.1 má kbelíky
+byte-shodné s 2026-08-31.1; nová verze nese ekonomiku a provenienci leadu).
 
 **Konfigurace je VERZOVANÁ** (`CALC_MODEL_VERSION`, `SIZE_BUCKETS_BY_VERSION`).
 Historická verze se nepřepisuje: u každého leadu je uložené `calc_model_version`,
 `calc_inputs` (okres, čtvrť, dispozice, `size_bucket_id`, `representative_m2`,
 `bucket_label`, `oversized`) a `calc_result`, takže jde zpětně zrekonstruovat,
 co přesně majitel viděl. **Nová hranice = nová verze, ne editace staré.**
-`facts.test.ts` obsah verze `2026-08-31.1` zamyká snapshotem; kdo ho změní,
+`facts.test.ts` obsah verzí `2026-08-31.1` a `2026-09-07.1` zamyká snapshotem
+(a hlídá jejich shodu); kdo ho změní,
 shodí test a ten mu připomene, že má přidat verzi.
 
 Komponenta nesmí obsahovat žádnou hranici natvrdo, renderuje se z
 `bucketsFor(size)`. Hlídá to test, který skenuje kód komponenty (bez komentářů
 a Tailwind tříd) na všechna čísla použitá v konfiguraci.
 
-**Hranice se přepočítají**, až se dořeší ploché zóny a přibude pásmo 4BR.
+**Hranice se přepočítají**, až se dořeší plochá zóna 1+kk. Pásmo 4BR přibylo
+7. 9. 2026 bez posunu hranic (lo/hi 4+kk = dosavadní p25/p75).
 
 ---
 
@@ -371,13 +376,25 @@ zatímco nájemní medián sráží Libeň a Kobylisy. Praha 8 se za to NESRÁŽ
 Pull ukáže, jestli je to Karlín effect. Do doby, než bude čtvrťový nájem, se
 ale ten poměr nesmí číst jako sladěné lokální srovnání.
 
-**4BR a 5BR pásmo.** 4+kk je dnes zastropené na 3BR, takže celý rozsah 70 až
-140 m² vrací totéž. Bez 4BR dat se to poctivě spravit nedá.
+**4BR pásmo — VYŘEŠENO 7. 9. 2026** (předregistrace
+`data/_partial-nedokonceno/PREREGISTRACE.4kk-blend.md`, schválená člověkem
+bod po bodu). `Band` += 4BR, `MARKET_STR.praha1["4BR"]` měřené (nMin 94),
+`SIZE_RATIO["4BR/3BR"] = 1,444 / 1,419` z celopražské řady (3BR nMin 676,
+4BR nMin 184), `BAND_BLEND["4kk"]` 3BR → 4BR na 93/132 m². 4BR jedním
+krokem z měřeného 3BR (P2, P5); okresy bez měřeného 3BR zůstávají ploché
+(žádné řetězení). Čtvrť bez 4BR v okrese s odvozeným 4BR: `lokální 3BR ×
+1,444` (čtvrťový efekt přežije do vyššího pásma); v P1 platí měřené
+okresní 4BR. Popisek pásma jde z reálné cesty modelu. Dopad: 4+kk m/l
+v P1 +15,2 / +25,7 %, v P2/P5 kontextech +19,6 / +33,3 %; s beze změny
+(jen rozpětí ±8 % → ±4 % podle standardní blendované sémantiky, zapsáno
+v regresi). 5BR se neřeší. Otevřené zůstává: přímý poměr 4BR/2BR pro
+okresy bez měřeného 3BR (dnes jen P1 → nedoporučeno).
 
 **Ploché zóny m².** Jakmile dispozice dosáhne nejvyššího dostupného pásma, STR
 přestane na plochu reagovat, zatímco nájem roste dál. Týká se to zhruba 53 %
 realistického pražského stocku: 1+kk celý rozsah (STR +0 % proti nájmu +112 %),
-2+kk nad 55 m² (39 % z nich), 3+kk nad 95 m² (24 %), 4+kk celý rozsah.
+2+kk nad 55 m² (39 % z nich), 3+kk nad 95 m² (24 %), 4+kk nad 132 m²
+(do 7. 9. 2026 celý rozsah).
 Uvažovaný směr: jednostranná omezená prémie AŽ ZA vyčerpaným pásmem, s klesajícím
 přírůstkem, kolem β 0,25 a stropem +15 %. Nikde v datech, která držíme, se ale
 vnitropásmová elasticita změřit nedá (Airbnb nezveřejňuje plochu), takže by to
@@ -549,6 +566,11 @@ Tohle bylo vědomě zrušeno. Když to někde uvidíš, je to relikt, ne rozhodn
 ## Plochá zóna 1+kk a 4+kk: NENÍ to chyba, je to přiznaná mezera
 
 Zapsáno 2. 9. 2026. **Než to někdo „opraví", ať si přečte tohle.**
+
+*Doplněno 7. 9. 2026:* 4+kk ploché být PŘESTALO — pásmo 4BR je změřené
+(Praha celá, P1, P2) a `BAND_BLEND["4kk"]` překlápí 3BR → 4BR (viz §4).
+Řešení šlo přes změřené vyšší pásmo, ne přes prémii za m² — přesně tak,
+jak tahle sekce požaduje. Pro 1+kk platí všechno níž beze změny.
 
 ### Co se děje
 
