@@ -81,4 +81,72 @@ zbývá 17; Dejvice = pokusy 4–6, začíná se jen s ≥ 5, končí s rezervou
 
 ## Log pokusů
 
-(prázdné — před prvním voláním)
+### Pokus 1 (2026-09-07 17:29 UTC): 1BR ÚSPĚCH — čeká na schválení geometrie
+
+Dotaz doslova: `Dejvice, Prague, official OpenStreetMap boundary,
+1-bedroom. For each month from August 2025 through July 2026 give: …`
+**4. pokus okna** (ukotveno ~17:10 UTC 7. 9.), zbývá 16.
+
+- `selected_geometry_label`: **`Dejvice official boundary`**
+- `selected_geometry_source`: **`openstreetmap`**
+- `market_label`: `Dejvice, Prague` · session `lg_sess_amstkVnxh3ldMM7wodwhIfb1Fy8AW6Nx`
+- přišlo **13 měsíců** (`2026_08` navíc) → vyřazen kalendářním pravidlem,
+  obálka drží všech 13, `excluded_rows` = 1; v okně 12/12, identity sedí;
+  raw `99af425e…`
+
+| | P6 okres | zbytek P6 bez Dejvic | Dejvice | poměr k P6 |
+|---|---|---|---|---|
+| n (průměr) | 154,5 | 120,9 | 33,6 → 34 | **0,218** (0,20–0,23) |
+| n (min) | 144 | | 32 | |
+| RevPAR | 1 286,6 | 1 236,5 | 1 468,5 | **1,141** (1,06–1,42); k zbytku 1,188 |
+| ADR | 1 873 | | 2 029 | 1,083 |
+| occ | 68,2 % | | 71,8 % | |
+
+Spouštěče: #3 ne (34 ≪ 155) · #4 ne, ale **těsně** (21,8 % při dolní mezi
+20 %) · #5 ne (rozptyl 3 p. b.) · #6 ne — Dejvice **+14 % nad okresem**,
+ve směru nájemní prémie. Bodový odhad n ~65 byl dvojnásobně optimistický:
+Dejvice mají jen 34 nabídek 1BR → váha **0,5** (nMin 32 < 50 →
+`reliable: false`). P6 STR je rozptýlenější, než předregistrace čekala
+— zbytek okresu (n ≈ 121) sedí na 1 237.
+
+Poznámka bez akce: k.ú. Dejvice je velké a 34 nabídek 1BR je málo na
+„nejcentrálnější čtvrť P6"; buď je P6 opravdu STR periferie, nebo část
+dejvické nabídky sedí v Bubenči (P6/P7, sdílená geometrie). Nic
+z toho není spouštěč pro geometrii (label sedí, podíl stabilní).
+
+Schválení geometrie: **SCHVÁLENO člověkem 7. 9. 2026** znak po znaku
+(`Dejvice official boundary` + `openstreetmap`); pokyn: „let the frozen
+weighting handle the thin samples".
+
+### Pokusy 2 a 3 (2026-09-07 17:37 / 17:40 UTC): 2BR a 3BR ÚSPĚCH
+
+Táž session, hranice pojmenovaná v každém dotazu, label + zdroj ověřeny
+u obou pásem zvlášť. 2BR 12/12; 3BR přišel jako 13 měsíců (`2026_08`
+navíc, vyřazen kalendářním pravidlem — próza odpovědi průměruje 13
+měsíců, `data[]` v okně 12; próza není autorita). Identity sedí, tabulky
+v próze proti `data[]` bez rozdílu. Pokusy okna: 6, zbývá 14.
+
+| pásmo | ADR | RevPAR | occ | nMean | nMin | podíl na P6 | RevPAR/P6 | váha | raw |
+|---|---|---|---|---|---|---|---|---|---|
+| 1BR | 2 029 | 1 468,5 | 71,8 % | 34 | 32 | 0,218 (0,20–0,23) | **1,141** | **0,5** | 99af425e… |
+| 2BR | 2 955 | 2 246,6 | 75,1 % | 19 | 18 | 0,232 (0,21–0,25) | **1,196** (1,12–1,36) | **0** | 38be2c38… |
+| 3BR | 4 033 | 3 232,4 | 80,0 % | 2 | 1 | — | 1,162 k odvozenému 2 782,7 | **0** | a7f4b862… |
+
+Spouštěče: #1 `2BR/1BR = 1,530` v pásmu (model 1,567; okres P6 1,460).
+#2 `3BR/1BR = 2,201` v pásmu, n = 2 → jen záznam. #3–#6 ne.
+
+Dopad na integraci (pravidla beze změny, `parents: ["praha6"]`):
+- 1BR w 0,5 → `praha6|dejvice` 1BR = 0,5·1 468,5 + 0,5·1 286,6 =
+  **1 377,6** (+7 % nad okresem ve výsledku), `derived: false`.
+- 2BR nMean 19 < 25 → w 0 → okres beze změny (1 878,9), přestože přímé
+  měření je +20 % nad ním. Přesně to má pravidlo dělat: 19 nabídek.
+- 3BR w 0 → odvozený P6 3BR (2 782,7); přímé měření 3 232 při n = 2 je
+  o 16 % výš — pátý okres se vzorcem „tenké 3BR nad odvozeným" (P3, P8,
+  P7, P4, P6), záznam do otevřené položky, pravidlo beze změny.
+- Nové stavy regrese: `praha6|dejvice`, `praha6|-` (Ostatní = okres).
+  Fixture „okres bez čtvrti" → praha10.
+
+Poznámka bez akce: Dejvice jsou první čtvrť, kde je lokální efekt
+(+14 % / +20 %) větší než to, co váha pustí do výsledku (+7 % / 0 %).
+Je to důsledek pravidla o vzorku, ne chyba dat; kdyby se někdy měnilo,
+je tohle referenční případ.

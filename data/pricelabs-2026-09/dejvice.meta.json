@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/dejvice.json",
+ "sha256": "7419a70fcd1b25173df45e4b33d26c87bdc7b3dd3b7d7e3d440f4c528b43b397",
+ "bytes": 4441,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "dejvice",
+ "geometry": "Dejvice official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-07"
+}

@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "pulled": "2026-09-07",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Dejvice official boundary (openstreetmap)",
+  "slug": "dejvice",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR",
+   "2BR",
+   "3BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   },
+   "2BR": {
+    "basis": "measured"
+   },
+   "3BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/dejvice.1BR.raw.json",
+    "raw_sha256": "99af425e1903b41da901f1e4c903291284fe2f203f225e9cacc3f1322ab2913a",
+    "captured_at": "2026-09-07T17:23:18.391Z",
+    "question_sha256": "ac1a6f3e17fbf15f831c9da0cd38e565ca2456768bd352fa30a9bd7361f0b5be",
+    "geometry_label": "Dejvice official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_amstkVnxh3ldMM7wodwhIfb1Fy8AW6Nx",
+    "geometry_token": null
+   },
+   "2BR": {
+    "file": "data/pricelabs-raw/dejvice.2BR.raw.json",
+    "raw_sha256": "38be2c38022edcb8aefa1a75c9304a191ed5fe2442ae78e62ada72c0b09729e0",
+    "captured_at": "2026-09-07T17:26:39.918Z",
+    "question_sha256": "4be64de4c0e0d53bb6d149a2eea27e7ef3ae29b594e4a5aa402f67c5e66c4597",
+    "geometry_label": "Dejvice official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_amstkVnxh3ldMM7wodwhIfb1Fy8AW6Nx",
+    "geometry_token": null
+   },
+   "3BR": {
+    "file": "data/pricelabs-raw/dejvice.3BR.raw.json",
+    "raw_sha256": "a7f4b86290dae230a98fa0c2717a462285452b5966b653e40c7bacee975b0299",
+    "captured_at": "2026-09-07T17:27:54.978Z",
+    "question_sha256": "f8afead7a116f0e87e1cbc96353fe15233e5239f7f31262f6014e206a59b6dc7",
+    "geometry_label": "Dejvice official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_amstkVnxh3ldMM7wodwhIfb1Fy8AW6Nx",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   76.7,
+   77.8,
+   74.6,
+   67,
+   72.8,
+   62.1,
+   61.5,
+   66.5,
+   79.6,
+   73.9,
+   75.5,
+   74.2
+  ],
+  "adr": [
+   1996.48,
+   1943.79,
+   1941.03,
+   1651.32,
+   2542.25,
+   1763.44,
+   1602.88,
+   1917.78,
+   2344.24,
+   2386.5,
+   2226.37,
+   2028.12
+  ],
+  "revpar": [
+   1531.28,
+   1512.18,
+   1448.16,
+   1106.99,
+   1850.73,
+   1095.58,
+   985.08,
+   1275.4,
+   1865.42,
+   1764.69,
+   1680.6,
+   1505.41
+  ],
+  "active_listings": [
+   32,
+   33,
+   34,
+   34,
+   35,
+   35,
+   33,
+   33,
+   34,
+   34,
+   33,
+   33
+  ],
+  "avg_revenue": [
+   47316.59,
+   47331.37,
+   41996.77,
+   31750.36,
+   52163.17,
+   32182.76,
+   32458.39,
+   40273.36,
+   54796.59,
+   50514.24,
+   56215.9,
+   48674.97
+  ]
+ },
+ "2BR": {
+  "occ": [
+   80.4,
+   82.8,
+   84.4,
+   69.3,
+   81.8,
+   52.6,
+   62.5,
+   65.9,
+   85.9,
+   78.5,
+   72.2,
+   84.5
+  ],
+  "adr": [
+   3036.32,
+   2820.74,
+   2771.82,
+   2556.02,
+   3677.9,
+   2507.7,
+   2296.76,
+   2666.23,
+   3539.62,
+   3258.62,
+   3190.65,
+   3140.13
+  ],
+  "revpar": [
+   2441.79,
+   2335.15,
+   2339.76,
+   1771,
+   3006.99,
+   1318.48,
+   1434.65,
+   1756.16,
+   3039.79,
+   2558.3,
+   2303.98,
+   2653.24
+  ],
+  "active_listings": [
+   20,
+   21,
+   20,
+   20,
+   20,
+   19,
+   18,
+   18,
+   19,
+   18,
+   18,
+   19
+  ],
+  "avg_revenue": [
+   65470.61,
+   61492.15,
+   65045.3,
+   48053.12,
+   80481.19,
+   36540.77,
+   38514.84,
+   47039.92,
+   81139.04,
+   72911.59,
+   68399.5,
+   78712.69
+  ]
+ },
+ "3BR": {
+  "occ": [
+   90.2,
+   94.2,
+   98,
+   71.4,
+   87.1,
+   80.6,
+   64,
+   69,
+   60.7,
+   69,
+   86.7,
+   89.7
+  ],
+  "adr": [
+   3826.41,
+   3453.5,
+   3255.09,
+   3352.3,
+   5963.52,
+   3297.26,
+   2811.24,
+   3240.26,
+   5184.96,
+   4719.99,
+   4200.93,
+   5094.17
+  ],
+  "revpar": [
+   3453.1,
+   3254.26,
+   3188.66,
+   2394.5,
+   5194.03,
+   2659.08,
+   1799.19,
+   2234.66,
+   3148.01,
+   3255.16,
+   3640.8,
+   4567.19
+  ],
+  "active_listings": [
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   2,
+   1,
+   1,
+   1,
+   2
+  ],
+  "avg_revenue": [
+   70788.56,
+   84610.73,
+   78122.1,
+   67046.05,
+   161015.05,
+   82431.49,
+   44979.79,
+   64805.12,
+   88144.31,
+   94399.77,
+   109224.06,
+   132448.37
+  ]
+ }
+}
