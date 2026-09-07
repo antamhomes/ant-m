@@ -227,8 +227,8 @@ html {
   .lead-on-dark { color: hsl(var(--primary-foreground) / 0.72); }
 
   /* KARTA VÝSLEDKU KALKULAČKY — pořadí na mobilu.
-     Dokud číslo není, patří karta ZA vstupy; jakmile je, jde PŘED ně jako
-     vrchol sekce. Řídí se custom property, ne přepínáním třídy: <Reveal>
+     Od patche 3 (7. 9. 2026) stojí karta na telefonu VŽDY za vstupy (order 2);
+     do té doby šla s číslem PŘED ně. Řídí se custom property, ne přepínáním třídy: <Reveal>
      dostává třídu .is-in imperativně z IntersectionObserveru, takže kdyby se
      měnila className, React by ji při překreslení přepsal a kartu by schoval
      přesně ve chvíli, kdy se číslo objeví. Atribut style React aktualizuje

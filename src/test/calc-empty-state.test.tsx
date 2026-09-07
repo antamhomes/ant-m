@@ -49,7 +49,7 @@ describe("prazdny start kalkulacky", () => {
       expect(b.getAttribute("aria-pressed")).toBe("false");
     // krok „Upřesněte lokalitu“ se bez okresu nenabízí
     expect(document.querySelector("#kalkulacka-ctvrt")).toBeNull();
-    // na mobilu karta ZA vstupy (--calc-order 2), dokud číslo není
+    // na mobilu karta ZA vstupy (--calc-order 2); od patche 3 vždy, i s číslem
     expect(card().style.getPropertyValue("--calc-order")).toBe("2");
   });
 
@@ -68,7 +68,7 @@ describe("prazdny start kalkulacky", () => {
     setup();
     pick("praha1");
     expect(hasNumber()).toBe(true);
-    expect(card().style.getPropertyValue("--calc-order")).toBe("1");
+    expect(card().style.getPropertyValue("--calc-order")).toBe("2");
     // výchozí dispozice 2kk, kbelík z typické plochy Prahy 1 (setLocation ho přenastaví)
     const m2 = bucketFor("2kk", typicalArea("praha1", "2kk")).representativeM2!;
     const r = ownerMonthly("praha1", "2kk", { season: "year", m2, ctvrt: undefined });
@@ -97,7 +97,7 @@ describe("prazdny start kalkulacky", () => {
     expect(hasNumber()).toBe(false);
     expect(card().textContent).toMatch(/Pro tuhle lokalitu nemáme vlastní/);
     expect(card().querySelector("a[href='#kontakt']")).toBeTruthy();
-    expect(card().style.getPropertyValue("--calc-order")).toBe("1");
+    expect(card().style.getPropertyValue("--calc-order")).toBe("2");
   });
 
   it("CTA posila poptavce snapshot s citelnymi popisky, pasmem a oknem dat", () => {

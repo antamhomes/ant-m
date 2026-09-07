@@ -186,6 +186,28 @@ const CalculatorSection = () => {
   useEffect(() => {
     if (calcPayload) window.dispatchEvent(new CustomEvent("antam:calc-state", { detail: calcPayload }));
   });
+  // Lišta na mobilu (patch 3) se montuje lazy a mohla by první stav minout
+  // (sdílený odkaz přijde s číslem hned). Na požádání se stav pošle znovu.
+  useEffect(() => {
+    const onRequest = () => {
+      if (calcPayload) window.dispatchEvent(new CustomEvent("antam:calc-state", { detail: calcPayload }));
+    };
+    window.addEventListener("antam:calc-state-request", onRequest);
+    return () => window.removeEventListener("antam:calc-state-request", onRequest);
+  });
+
+  // MOBIL (patch 3, spec §2): karta stojí VŽDY za vstupy (viz --calc-order níž),
+  // takže první číslo vznikne ~1 000 px pod selectem, kterým ho návštěvník
+  // vyvolal. Při PRVNÍM výsledku se proto stránka posune na kartu; další změny
+  // ukazuje lišta dole a „Upravit" vede zpět na vstupy. Sdílený odkaz začíná
+  // s lokalitou, tam se nic neposouvá (o scroll na sekci se stará fromShare).
+  const hadLocation = useRef(location !== null);
+  useEffect(() => {
+    if (location === null || hadLocation.current) return;
+    hadLocation.current = true;
+    if (!window.matchMedia("(max-width: 767px)").matches) return;
+    document.querySelector(".calc-result")?.scrollIntoView({ block: "start" });
+  }, [location]);
 
   // ANALYTIKA (spec §8). calc_start jednou na první změnu vstupu; calc_location
   // při volbě okresu/čtvrti; calc_result při každé změně výsledku, s odstupem
@@ -404,22 +426,22 @@ const CalculatorSection = () => {
 
           </Reveal>
 
-          {/* POŘADÍ NA MOBILU (2A): karta výsledku šla na telefonu PŘED vstupy
-              (order-1), takže sekce začínala tmavým panelem „Vyberte prosím
-              lokalitu“ a teprve pod ním byly ovladače, kterými se ta lokalita
-              vybírá. Dokud číslo není, patří karta ZA vstupy; jakmile je
-              (nebo jde o poctivé zavření pro nepodporovanou lokalitu či
-              nadměrný byt), zůstává nahoře jako vrchol sekce. Na desktopu se
-              nemění nic: vstupy vlevo, karta vpravo.
+          {/* POŘADÍ NA MOBILU. 2A dávala kartu s číslem PŘED vstupy; od patche 3
+              (7. 9. 2026, spec §2) stojí karta na telefonu VŽDY za vstupy: kdyby
+              se po první volbě přesunula nahoru, ujel by návštěvníkovi select,
+              který právě použil. Číslo při dalších změnách drží lišta dole,
+              první výsledek stránku na kartu posune (effect výš). Na desktopu se
+              nemění nic: vstupy vlevo, karta vpravo (order 2 v media query).
               className MUSÍ zůstat konstantní: .is-in přidává na tenhle prvek
               IntersectionObserver z Reveal.tsx přímo do classListu, takže
               kdyby React při změně stavu přepsal class atribut, karta by se
               schovala (opacity 0) přesně ve chvíli, kdy se objeví číslo.
-              Pořadí proto jde přes --calc-order a .calc-result v index.css. */}
+              Pořadí proto jde přes --calc-order a .calc-result v index.css;
+              hodnota je teď konstantní, property zůstává kvůli tomu mechanismu. */}
           <Reveal
             delay={0.1}
-            style={{ "--calc-order": location === null ? 2 : 1 } as CSSProperties}
-            className="calc-result flex items-start md:sticky md:top-24"
+            style={{ "--calc-order": 2 } as CSSProperties}
+            className="calc-result flex items-start md:sticky md:top-24 scroll-mt-24"
           >
             <div className="w-full bg-gradient-dark rounded-md p-5 sm:p-7 md:p-9 space-y-4 sm:space-y-5">
               {location === null ? (
