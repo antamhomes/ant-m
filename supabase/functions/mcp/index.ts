@@ -518,6 +518,38 @@ var MARKET_CTVRT = {
       "2BR": { adr: 3148, revpar: 1735.4, nMean: 9, nMin: 6, basis: "measured" },
       "3BR": { adr: 5739, revpar: 4246.5, nMean: 3, nMin: 2, basis: "measured" }
     }
+  },
+  /**
+   * Bubeneč: rodič jen praha6 (GEO registr praha6/bubenec, LTR +1,4 %, n=16).
+   * Druhá čtvrť Prahy 6. Pull 7. 9. 2026 (pokusy 11–13 okna), geometrie
+   * „Bubeneč official boundary (openstreetmap)" schválená člověkem znak po
+   * znaku, okno 2025_08..2026_07, všechna pásma 12/12, surové odpovědi
+   * data/pricelabs-raw/bubenec.{1BR,2BR,3BR}.raw.json, artefakt
+   * data/pricelabs-2026-09/bubenec.json.
+   *
+   * VÝHRADA GEOMETRIE (zapsaná, neopravená): k.ú. Bubeneč zasahuje i do
+   * Prahy 7 (díl u Stromovky / Výstaviště). GEO má jen kontext praha6,
+   * polygon PriceLabs díl P7 zahrnuje → podíl na P6 (39 %) i zdvih jsou
+   * o letenský díl nadsazené (≤ 42 nabídek u 1BR). Rozhodnutí člověka
+   * 7. 9. 2026: mapování rodiče se neotvírá, zůstává výhrada.
+   *
+   * Bubeneč je +18 % nad okresem u 1BR i 2BR (Dejvice +14 %): P6 je
+   * dvojí trh — Dejvice/Bubeneč nad 1 450, zbytek (Břevnov, Ruzyně…)
+   * hluboko pod okresním průměrem. VÁHY: 1BR nMean 60 → 0,75 → 0,75·1517,6
+   * + 0,25·1286,6 = 1459,9 (+13 %). 2BR nMean 34 → 0,5 → 0,5·2216,5 +
+   * 0,5·1878,9 = 2047,7 (+9 %), okresní 2BR měřené, bez derived. 3BR nMean
+   * 6 → 0 → odvozený P6 3BR (2782,7); přímé 2857 při n 6 sedí na
+   * odvozeném (+2,7 %) — první čtvrť, kde tenké 3BR odvozené nepřestřeluje.
+   * 4BR pro P6 dál žádné (okresní 3BR odvozené → žádné řetězení).
+   */
+  bubenec: {
+    label: "Bubene\u010D",
+    parents: ["praha6"],
+    bands: {
+      "1BR": { adr: 1979, revpar: 1517.6, nMean: 60, nMin: 53, basis: "measured" },
+      "2BR": { adr: 3029, revpar: 2216.5, nMean: 34, nMin: 31, basis: "measured" },
+      "3BR": { adr: 4596, revpar: 2857.1, nMean: 6, nMin: 5, basis: "measured" }
+    }
   }
 };
 var ctvrtWeight = (n) => n >= 100 ? 1 : n >= 50 ? 0.75 : n >= 25 ? 0.5 : 0;
