@@ -41,12 +41,13 @@ describe("ctvrt je nepovinne zpresneni", () => {
 
   it("okres bez ctvrti zadny vyber nenabizi", async () => {
     setup();
-    // Fixture je okres, ktery ctvrt NEMA. Do 5. 9. 2026 to byla praha4;
-    // od integrace Nusli ma praha4 ctvrt, takze fixture je praha6.
-    // Kdyz i praha6 nekdy ctvrt dostane, posunout fixture dal (praha9),
-    // ne rusit test — hlida, ze selektor nevznika tam, kde nema co nabidnout.
-    pick("praha6");
-    expect(ctvrtiOf("praha6")).toHaveLength(0);
+    // Fixture je okres, ktery ctvrt NEMA. Do 5. 9. 2026 to byla praha4
+    // (Nusle), do 7. 9. 2026 praha6 (Dejvice); ted praha10, dokud neni
+    // integrovana Praha 10 s Vrsovicemi — pak "jinde", ktere ctvrt nikdy
+    // mit nebude. Test se nerusi — hlida, ze selektor nevznika tam, kde
+    // nema co nabidnout.
+    pick("praha10");
+    expect(ctvrtiOf("praha10")).toHaveLength(0);
     expect(document.querySelector("#kalkulacka-ctvrt")).toBeNull();
   });
 });

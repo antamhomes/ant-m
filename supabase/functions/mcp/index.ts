@@ -377,6 +377,36 @@ var MARKET_CTVRT = {
       "2BR": { adr: 3114, revpar: 2060.6, nMean: 28, nMin: 25, basis: "measured" },
       "3BR": { adr: 4414, revpar: 1752.2, nMean: 2, nMin: 2, basis: "measured" }
     }
+  },
+  /**
+   * Dejvice: rodič jen praha6 (GEO registr praha6/dejvice, LTR +2,3 %,
+   * n=15). První čtvrť Prahy 6. Pull 7. 9. 2026, geometrie „Dejvice
+   * official boundary (openstreetmap)" schválená člověkem znak po znaku,
+   * okno 2025_08..2026_07 (1BR a 3BR přišly jako 13 měsíců, 2026_08
+   * vyřazen kalendářním pravidlem), surové odpovědi
+   * data/pricelabs-raw/dejvice.{1BR,2BR,3BR}.raw.json, artefakt
+   * data/pricelabs-2026-09/dejvice.json.
+   *
+   * Dejvice jsou jen 22 % nabídky P6 (P6 STR je rozptýlené: Bubeneč,
+   * Střešovice, Břevnov, letištní Ruzyně), ale jsou +14 % (1BR) a +20 %
+   * (2BR) nad okresem — ve směru nájemní prémie. Zbytek P6 sedí na ≈ 1 237.
+   *
+   * VÁHY: 1BR nMean 34 → 0,5 → veřejně 0,5·1468,4 + 0,5·1286,6 = 1377,5
+   * (+7 %). 2BR nMean 19 < 25 → 0 → okres (1878,9) přesto, že přímé
+   * měření je +20 % — pravidlo o vzorku, ne chyba dat; první čtvrť, kde
+   * lokální efekt výrazně převyšuje to, co váha pustí ven. 3BR nMean 2 →
+   * 0 → odvozený P6 3BR (1878,9 × 1,481 = 2782,7); přímé 3232 při n = 2
+   * o 16 % výš — pátý okres se vzorcem „tenké 3BR nad odvozeným", záznam
+   * v docs/calculator-model.md §4, pravidlo se nemění.
+   */
+  dejvice: {
+    label: "Dejvice",
+    parents: ["praha6"],
+    bands: {
+      "1BR": { adr: 2029, revpar: 1468.5, nMean: 34, nMin: 32, basis: "measured" },
+      "2BR": { adr: 2955, revpar: 2246.6, nMean: 19, nMin: 18, basis: "measured" },
+      "3BR": { adr: 4033, revpar: 3232.4, nMean: 2, nMin: 1, basis: "measured" }
+    }
   }
 };
 var ctvrtWeight = (n) => n >= 100 ? 1 : n >= 50 ? 0.75 : n >= 25 ? 0.5 : 0;
