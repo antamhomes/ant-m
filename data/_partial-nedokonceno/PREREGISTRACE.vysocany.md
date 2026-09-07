@@ -119,4 +119,12 @@ produkční. Pokud by člověk chtěl 2 dotazy ušetřit, je to legitimní
 rozhodnutí — SOP „2/3 = incomplete" by pak čtvrť nechal mimo
 `MARKET_CTVRT`, jen v raw + DB jako `partial`.
 
-Schválení geometrie: **OTEVŘENÉ**, čeká na člověka.
+Schválení geometrie: člověk 7. 9. 2026 zvolil **(b) — STOP, čtvrť
+zůstává `partial`**: „nMean 21 < 25 means it's inert under the current
+model. Spending two more calls only to archive 2BR/3BR that won't affect
+public output is low-value." Žádná další volání na Vysočany. 1BR raw
+zůstává v repu, DB dostane řádek `praha9_vysocany` 1BR s `pull_state =
+partial`, `MARKET_CTVRT.vysocany` NEVZNIKÁ (pravidlo 2/3 = incomplete).
+Kdyby se někdy dokončovaly, začíná se schválením geometrie
+`Vysočany official boundary` + `openstreetmap` (zatím NEschválené, jen
+změřené) a pokusy 2–3 v nové session s výslovně pojmenovanou hranicí.

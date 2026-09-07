@@ -1,0 +1,117 @@
+{
+ "meta": {
+  "pulled": "2026-09-07",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Vysočany official boundary (openstreetmap)",
+  "slug": "vysocany",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/vysocany.1BR.raw.json",
+    "raw_sha256": "97dfe5de752d93bb6d9bb1df0ca89f401246f61fb55d18fde8df761f406fefb4",
+    "captured_at": "2026-09-07T17:47:01.669Z",
+    "question_sha256": "e756c6b93fec6c384c9f3d00f9c802481445879958f21914b331c3eabe1b2535",
+    "geometry_label": "Vysočany official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_AMIy4uAWNMtyzWjAd4_07QN_8DpJl-y7",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   79.3,
+   86.3,
+   82.2,
+   74.2,
+   81.2,
+   47,
+   45.5,
+   54.8,
+   73.2,
+   78.8,
+   65.4,
+   74.6
+  ],
+  "adr": [
+   1780.04,
+   1621.76,
+   1631.19,
+   1583.87,
+   2046.92,
+   1567.38,
+   1360.9,
+   1577.01,
+   1891.31,
+   2035.15,
+   1861.96,
+   1896.74
+  ],
+  "revpar": [
+   1411.75,
+   1399.39,
+   1340.3,
+   1174.55,
+   1662.03,
+   737.41,
+   618.89,
+   863.52,
+   1384.28,
+   1604.56,
+   1218.52,
+   1414.27
+  ],
+  "active_listings": [
+   17,
+   18,
+   19,
+   20,
+   20,
+   23,
+   21,
+   20,
+   22,
+   23,
+   23,
+   25
+  ],
+  "avg_revenue": [
+   37791.59,
+   39462.72,
+   37109.5,
+   32667.26,
+   43212.83,
+   20811.26,
+   18566.59,
+   21497.14,
+   36145.08,
+   42309.72,
+   33186.75,
+   40463.81
+  ]
+ }
+}
