@@ -82,4 +82,41 @@ zbývá 11; Vysočany = pokusy 10–12, začíná se s ≥ 5, končí s rezervou
 
 ## Log pokusů
 
-(prázdné — před prvním voláním)
+### Pokus 1 (2026-09-07 17:48 UTC): 1BR ÚSPĚCH — čeká na schválení geometrie
+
+Dotaz doslova: `Vysočany, Prague, official OpenStreetMap boundary,
+1-bedroom. For each month from August 2025 through July 2026 give: …`
+**10. pokus okna** (ukotveno ~17:10 UTC 7. 9.), zbývá 10.
+
+- `selected_geometry_label`: **`Vysočany official boundary`**
+- `selected_geometry_source`: **`openstreetmap`**
+- `market_label`: `Vysočany, Prague` · session `lg_sess_AMIy4uAWNMtyzWjAd4_07QN_8DpJl-y7`
+- 12/12 měsíců, bez nadmnožiny, identity sedí; próza proti `data[]` bez
+  rozdílu; raw `97dfe5de…`
+
+| | P9 okres | Libeň | Vysočany | poměr k P9 |
+|---|---|---|---|---|
+| n (průměr) | 76,2 | 82,7 | 20,9 → 21 (17 → 25, roste) | podíl **0,274** (0,25–0,29) |
+| n (min) | 64 | 79 | 17 | |
+| RevPAR | 1 363,9 | 1 400,4 | 1 235,8 | **0,906** (0,69–1,09); k Libni 0,882 |
+| ADR | 2 065 | | 1 738 | 0,842 |
+| occ | 65,6 % | | 70,2 % | leden/únor 47 % / 46 % |
+
+Spouštěče: #3 ne (21 ≪ 76) · #4 ne (27,4 % v pásmu 15–65 %) · #5 ne
+(rozptyl 4 p. b., ale s trendem: nabídka roste 17 → 25 přes rok — nová
+výstavba u Harfy/Kolbenky, ne překryv) · #6 ne — Vysočany jsou **12 % POD
+Libní a 9 % pod P9**, ADR o 16 % níž. Nájemní efekt +0,8 % ≈ nula, STR
+zřetelně slabší. Bodový odhad n ~30 byl optimistický (21) → **nMean 21 <
+25 → váha 0 ve všech pásmech**. Přesně scénář „čtvrť v modelu inertní"
+z předregistrace: existuje v selektoru, veřejný výsledek = okres P9.
+
+Co to znamená: 2BR a 3BR se změří a uloží (pravidlo 2/3, měřené,
+inertní), model se nezmění nikde kromě přidání stavu `praha9|vysocany`,
+který je byte-shodný s `praha9|?` u všech STR čísel (liší se jen LTR
+efekt +0,8 %). Hodnota dnešních zbývajících dvou dotazů je tedy
+archivní/diagnostická (P9 mimo Libeň je opravdu tenké a levnější), ne
+produkční. Pokud by člověk chtěl 2 dotazy ušetřit, je to legitimní
+rozhodnutí — SOP „2/3 = incomplete" by pak čtvrť nechal mimo
+`MARKET_CTVRT`, jen v raw + DB jako `partial`.
+
+Schválení geometrie: **OTEVŘENÉ**, čeká na člověka.
