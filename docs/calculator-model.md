@@ -98,7 +98,7 @@ pokrytí, jiný zdroj a jinou spolehlivost.
 
 | vrstva | zdroj | pokrytí dnes |
 |---|---|---|
-| **Okresní STR** | PriceLabs, `data/pricelabs-2026-08/praha1..9.json` | 9 okresů, 20 buněk pásem z 27 možných. Praha 10 nemá NIC. |
+| **Okresní STR** | PriceLabs, `data/pricelabs-2026-08/praha1..9.json` + `data/pricelabs-2026-09/praha10.json` | 10 okresů, 22 buněk pásem z 30 možných. Praha 10 od 7. 9. 2026 (1BR + 2BR; 3BR odvozené, NEOVĚŘENÉ). |
 | **Čtvrťové STR** | PriceLabs | **prakticky chybí.** Staré Město = rekonstruované, Nové Město = `partial`. Žádný jiný čtvrťový artefakt v repu není. |
 | **Okresní LTR** | Sreality 8/2026, 1 354 vyčištěných inzerátů | všech 10 okresů, `RENT_INTERCEPT`. |
 | **Čtvrťové LTR** | týž scrape, reziduum proti okresní křivce | 34 kontextů nad 31 geometriemi, 33 s vlastním efektem, 1 deklarovaný fallback. |
@@ -387,7 +387,16 @@ elasticita nájmu na plochu je 0,74, vnitropásmová musí být výrazně pod ob
 **1+kk potřebuje vlastní pravidlo.** Nemá kam blendovat. Otestovat nejdřív
 1BR→2BR u velkých 1+kk, teprve pak prémii.
 
-**Praha 10** nemá STR data, vrací „posoudíme individuálně".
+**Praha 10** je od 7. 9. 2026 měřená (1BR nMin 193, 2BR nMin 58,
+`SEASONS_BY_LOC.praha10` ze `scripts/pl-seasons.mjs`, operátorský faktor
+výchozí 1,10; čtvrť Vršovice v téže dávce). **P10 3BR je odvozené z 2BR
+a NEOVĚŘENÉ:** přímé okresní měření (n ≈ 13, obsazenost 28,7 %, RevPAR
+1 633) i vršovické (n 8, occ 38 %, 2 387) leží hluboko POD odvozenými
+3 023 a žádné z nich poměr 1,481 nepodporuje; obě jsou ale příliš tenká
+a kontaminovaná střednědobými pobyty. Rozhodnutí člověka 7. 9. 2026:
+výchozí pravidlo provizorně, `derived: true` + rozšířené rozpětí, vede se
+jako otevřená položka (bod 1 níže) — jediný okres, kde odvozené 3BR sedí
+NAD tenkým měřením místo pod ním.
 
 **Drobnosti:** `ratioFor` má natvrdo `"2kk"` · nevysvětlený rozdíl 5,5 až 6,8 %
 na kartách portfolia · odvozené `ltr_rent` pro Prahu 4, 6 a 8 v DB.
@@ -410,6 +419,13 @@ v témž commitu, aby pipeline zůstala čistá:**
    Žižkov 3BR ve veřejném výsledku = 50 % naměřeného + 50 % odvozeného
    = 3872,7, s `derived` a rozšířeným rozpětím; přesně to shrinkage má
    dělat.
+
+   *Doplněno 7. 9. 2026:* týž vzorec „tenké přímé 3BR nad odvozeným" mají
+   P8 (Karlín 3 981 vs 3 714), P7 (Holešovice 4 188 vs 3 091), P4 (Nusle
+   4 324 vs 2 513) a P6 (Dejvice 3 232 při n 2 vs 2 783); opačný směr P10
+   (okres 1 633 při n 13, Vršovice 2 387 při n 8, odvozené 3 023) a Libeň
+   (1 752 při n 2). Pravidlo se nemění bez samostatné analýzy; P10 je
+   v modelu s výslovným označením „neověřené".
 
 2. **`calc_derived_note` je pro částečně měřené čtvrťové blendy
    sémanticky nepřesná.** Text říká „číslo je odvozené z menších bytů ve

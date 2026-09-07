@@ -28,7 +28,22 @@ var MARKET_STR = {
   praha6: { "1BR": { adr: 1873, revpar: 1286.6, nMean: 155, nMin: 144 }, "2BR": { adr: 2913, revpar: 1878.9, nMean: 83, nMin: 79 } },
   praha7: { "1BR": { adr: 2105, revpar: 1507, nMean: 215, nMin: 196 }, "2BR": { adr: 3336, revpar: 2087.1, nMean: 98, nMin: 91 } },
   praha8: { "1BR": { adr: 2532, revpar: 1902.3, nMean: 350, nMin: 336 }, "2BR": { adr: 3654, revpar: 2508, nMean: 92, nMin: 86 } },
-  praha9: { "1BR": { adr: 2065, revpar: 1363.9, nMean: 76, nMin: 64 } }
+  praha9: { "1BR": { adr: 2065, revpar: 1363.9, nMean: 76, nMin: 64 } },
+  /**
+   * Praha 10: pull 4. 9. 2026 (data/pricelabs-2026-09/praha10.json, geometrie
+   * „Praha 10 official boundary (openstreetmap)" schválená člověkem), do
+   * modelu 7. 9. 2026 v jedné dávce s Vršovicemi. 3BR změřené (n ≈ 13, nMin
+   * 11, obsazenost 28,7 %, RevPAR 1 633) je pod prahem a NENÍ tady;
+   * marketCell ho odvodí z 2BR × 1,481 = 3 023. ROZHODNUTÍ ČLOVĚKA 7. 9.
+   * 2026: odvozené pravidlo přijato PROVIZORNĚ, vedeno jako NEOVĚŘENÉ —
+   * žádné přímé měření v P10 poměr 1,481 nepodporuje (okres 0,800 při
+   * n 13, Vršovice 1,129 při n 8 a occ 38 %), ale obě přímá měření jsou
+   * příliš tenká a kontaminovaná střednědobými pobyty na to, aby nahradila
+   * zavedený fallback. Otevřená položka kalibrace odvozeného 3BR
+   * (docs/calculator-model.md §4) tím dostává P10 jako jediný okres,
+   * kde odvozené sedí NAD tenkým měřením místo pod ním.
+   */
+  praha10: { "1BR": { adr: 1871, revpar: 1329.5, nMean: 199, nMin: 193 }, "2BR": { adr: 3012, revpar: 2041.4, nMean: 65, nMin: 58 } }
 };
 var SIZE_RATIO = {
   "2BR/1BR": { adr: 1.525, revpar: 1.517 },
@@ -407,6 +422,34 @@ var MARKET_CTVRT = {
       "2BR": { adr: 2955, revpar: 2246.6, nMean: 19, nMin: 18, basis: "measured" },
       "3BR": { adr: 4033, revpar: 3232.4, nMean: 2, nMin: 1, basis: "measured" }
     }
+  },
+  /**
+   * Vršovice: rodič jen praha10 (GEO registr praha10/vrsovice, LTR +2,8 %,
+   * n=40). Pull 7. 9. 2026 (pokusy 1–3 okna), geometrie „Vršovice official
+   * boundary (openstreetmap)" schválená člověkem znak po znaku, okno
+   * 2025_08..2026_07, všechna pásma 12/12, surové odpovědi
+   * data/pricelabs-raw/vrsovice.{1BR,2BR,3BR}.raw.json, artefakt
+   * data/pricelabs-2026-09/vrsovice.json. Podle předregistrace byly
+   * Vršovice do integrace Prahy 10 jen sběr dat a do modelu vstupují
+   * v JEDNÉ dávce s MARKET_STR.praha10 a SEASONS_BY_LOC.praha10.
+   *
+   * Vršovice = 70 % nabídky P10 u 1BR (0,68–0,72 stabilně), +2,4 % nad
+   * okresem (zbytek P10 je 8 % pod nimi). VÁHY: 1BR nMean 140 → 1,0 →
+   * čistě vršovická buňka 1361,7 (bez blendu). 2BR nMean 36 → 0,5 →
+   * 0,5·2114,5 + 0,5·2041,4 = 2078,0 (okresní 2BR měřené, bez derived).
+   * 3BR nMean 8 → 0 → okres, tj. odvozený P10 3BR (3 023, neověřený —
+   * viz MARKET_STR.praha10). Přímé vršovické 3BR 2 387 (n 8, occ 38 %,
+   * median_bw 67–95 dní) se výslovně NEPOUŽÍVÁ jako hodnota P10 3BR
+   * (rozhodnutí člověka 7. 9. 2026); je uložené jako měřené, inertní.
+   */
+  vrsovice: {
+    label: "Vr\u0161ovice",
+    parents: ["praha10"],
+    bands: {
+      "1BR": { adr: 1888, revpar: 1361.7, nMean: 140, nMin: 133, basis: "measured" },
+      "2BR": { adr: 3233, revpar: 2114.5, nMean: 36, nMin: 31, basis: "measured" },
+      "3BR": { adr: 6603, revpar: 2387.4, nMean: 8, nMin: 6, basis: "measured" }
+    }
   }
 };
 var ctvrtWeight = (n) => n >= 100 ? 1 : n >= 50 ? 0.75 : n >= 25 ? 0.5 : 0;
@@ -446,7 +489,10 @@ var SEASONS_BY_LOC = {
   praha6: { summer: { adr: 1.031, revpar: 1.11 }, winter: { adr: 0.892, revpar: 0.727 }, xmas: { adr: 1.215, revpar: 1.322 } },
   praha7: { summer: { adr: 1.021, revpar: 1.089 }, winter: { adr: 0.861, revpar: 0.707 }, xmas: { adr: 1.408, revpar: 1.548 } },
   praha8: { summer: { adr: 1.036, revpar: 1.084 }, winter: { adr: 0.815, revpar: 0.697 }, xmas: { adr: 1.49, revpar: 1.624 } },
-  praha9: { summer: { adr: 1.013, revpar: 1.067 }, winter: { adr: 0.922, revpar: 0.784 }, xmas: { adr: 1.219, revpar: 1.393 } }
+  praha9: { summer: { adr: 1.013, revpar: 1.067 }, winter: { adr: 0.922, revpar: 0.784 }, xmas: { adr: 1.219, revpar: 1.393 } },
+  /** Spočítáno scripts/pl-seasons.mjs z praha10.json (1BR + 2BR); recept
+   *  reprodukuje všech 54 konstant P1–P9 přesně (--check). */
+  praha10: { summer: { adr: 1.031, revpar: 1.089 }, winter: { adr: 0.858, revpar: 0.719 }, xmas: { adr: 1.349, revpar: 1.499 } }
 };
 var RENT_SLOPE = -0.2565;
 var RENT_INTERCEPT = {

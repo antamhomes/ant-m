@@ -34,6 +34,8 @@ const net = (r: ReturnType<typeof ownerMonthly>) => {
 };
 /** Dispozice, která spadne do daného pásma trhu. */
 const sizeOf = (band: string): SizeKey => band === "1BR" ? "1kk" : band === "2BR" ? "2kk" : "4kk";
+/** Okresní STR artefakt: P1–P9 z 30. 8. 2026, Praha 10 z 4. 9. 2026 (integrace 7. 9. 2026). */
+const strArtifact = (loc: string) => `data/pricelabs-${loc === "praha10" ? "2026-09" : "2026-08"}/${loc}.json`;
 /** Stejný tvar jako tovární funkce v yield.ts; drží snapshot verze čitelný. */
 const B = (id: string, minM2: number | null, maxM2: number | null, representativeM2: number | null) =>
   ({ id, labelKey: `calc_size_${id}`, minM2, maxM2, representativeM2, supported: representativeM2 !== null });
@@ -365,10 +367,13 @@ describe("model výnosu", () => {
     // hranice čtvrtí, 8/2025 až 7/2026). Konstanty v yield.ts jsou z nich
     // vygenerované; tenhle test hlídá, že se nerozejdou.
     for (const [loc, bands] of Object.entries(MARKET_STR)) {
-      const raw = JSON.parse(readFileSync(`data/pricelabs-2026-08/${loc}.json`, "utf8"));
+      const raw = JSON.parse(readFileSync(strArtifact(loc), "utf8"));
       for (const [band, cell] of Object.entries(bands)) {
         const r = raw[band];
-        expect(cell.adr, `${loc} ${band} adr`).toBe(Math.round(r.annual.adr));
+        // artefakty 2026-08 nesou annual.adr (= průměr měsíční řady na 2 des.),
+        // artefakty z pl-artifact.mjs (2026-09) jen řadu — obojí je týž recept
+        const annualAdr = r.annual?.adr ?? r.adr.reduce((a: number, b: number) => a + b, 0) / 12;
+        expect(cell.adr, `${loc} ${band} adr`).toBe(Math.round(annualAdr));
         const revparMean = r.revpar.reduce((a: number, b: number) => a + b, 0) / 12;
         expect(Math.abs(cell.revpar - revparMean), `${loc} ${band} revpar`).toBeLessThan(0.06);
         // obsazenost implikovaná modelem = tržní průměr čtvrti (RevPAR/ADR)
@@ -386,7 +391,7 @@ describe("model výnosu", () => {
     // A OPAČNĚ: každá buňka, která v MARKET_STR chybí, musí bránou opravdu
     // propadnout. Bez toho by šlo cell tiše vynechat a nikdo by si nevšiml.
     for (const loc of Object.keys(MARKET_STR) as MeasuredLocation[]) {
-      const raw = JSON.parse(readFileSync(`data/pricelabs-2026-08/${loc}.json`, "utf8"));
+      const raw = JSON.parse(readFileSync(strArtifact(loc), "utf8"));
       for (const band of ["1BR", "2BR", "3BR"] as const) {
         if (MARKET_STR[loc][band]) continue;
         const al = raw[band].active_listings as number[];
@@ -762,7 +767,10 @@ describe("model výnosu", () => {
     // poměr = vážený průměr přes čtvrti, kde mají obě pásma ≥ 50 nabídek (tytéž řady)
     const w = (pairs: [number, number, number][]) => pairs.reduce((a, p) => a + p[0] * p[2], 0) / pairs.reduce((a, p) => a + p[2], 0);
     const r21: [number, number, number][] = [], r32: [number, number, number][] = [];
-    for (const loc of Object.keys(MARKET_STR) as MeasuredLocation[]) {
+    // SIZE_RATIO je zmrazený od 31. 8. 2026 a odvozený z P1–P9 (artefakty
+    // 2026-08). Praha 10 (integrace 7. 9. 2026) do jeho odvození NEVSTUPUJE —
+    // poměr se s novým okresem nepřepočítává, to by byla změna modelu.
+    for (const loc of (Object.keys(MARKET_STR) as MeasuredLocation[]).filter((l) => l !== "praha10")) {
       const raw = JSON.parse(readFileSync(`data/pricelabs-2026-08/${loc}.json`, "utf8"));
       const c = (b: string) => ({ adr: raw[b].annual.adr as number, rp: raw[b].revpar.reduce((a: number, x: number) => a + x, 0) / 12, n: raw[b].active_listings.reduce((a: number, x: number) => a + x, 0) / 12 });
       const b1 = c("1BR"), b2 = c("2BR"), b3 = c("3BR");
@@ -781,6 +789,11 @@ describe("model výnosu", () => {
     expect(marketCell("praha3", "3BR")!.adr).toBe(Math.round(MARKET_STR.praha3["2BR"]!.adr * SIZE_RATIO["3BR/2BR"].adr));
     expect(marketCell("praha9", "2BR")!.derived).toBe(true);
     expect(marketCell("praha9", "3BR")!.adr).toBe(Math.round(MARKET_STR.praha9["1BR"]!.adr * SIZE_RATIO["3BR/1BR"].adr));
+    // P10 3BR: měřené n ≈ 13 pod prahem → odvozené z 2BR; rozhodnutí člověka
+    // 7. 9. 2026 = výchozí pravidlo, PROVIZORNĚ, vedeno jako neověřené
+    expect(MARKET_STR.praha10["3BR"]).toBeUndefined();
+    expect(marketCell("praha10", "3BR")!.derived).toBe(true);
+    expect(marketCell("praha10", "3BR")!.adr).toBe(Math.round(MARKET_STR.praha10["2BR"]!.adr * SIZE_RATIO["3BR/2BR"].adr));
     expect(SIZE_RATIO["3BR/1BR"].adr, "přímý poměr, ne součin sousedních")
       .not.toBeCloseTo(SIZE_RATIO["2BR/1BR"].adr * SIZE_RATIO["3BR/2BR"].adr, 3);
     const r = ownerMonthly("praha4", "4kk", { m2: 105 });
@@ -792,11 +805,11 @@ describe("model výnosu", () => {
   });
 
   it("čtvrti a pásma bez dostatečného vzorku žádné číslo nevracejí", () => {
-    // Praha 10 čeká na doplnění dat (rate limit 30. 8.), "jinde" nikdy.
-    for (const loc of ["praha10", "jinde"])
+    // "jinde" nikdy (Praha 10 je měřená od 7. 9. 2026, do té doby čekala na data).
+    for (const loc of ["jinde"])
       expect(ownerMonthly(loc, "3kk").supported, loc).toBe(false);
     // každá změřená čtvrť má číslo pro všechny dispozice (tenká pásma odvozená)
-    for (const loc of ["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9"])
+    for (const loc of ["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9", "praha10"])
       for (const size of ["1kk", "2kk", "3kk", "4kk"] as const)
         expect(ownerMonthly(loc, size).supported, `${loc} ${size}`).toBe(true);
   });
@@ -830,7 +843,7 @@ describe("model výnosu", () => {
     expect(operatorFactor("praha2", "public"), "bez vlastního bytu -> výchozí 1,10 jako každý neměřený okres").toBe(1.1);
     expect(operatorFactor("praha3", "public"), "1,21 na 2 bytech (54 dní) -> váha 0,5 -> 1,155").toBe(1.155);
     expect(operatorFactor("praha5", "public"), "1,08 je POD výchozí, bere se celé i když snižuje").toBe(1.08);
-    for (const loc of ["praha4", "praha6", "praha7", "praha8", "praha9"] as const)
+    for (const loc of ["praha4", "praha6", "praha7", "praha8", "praha9", "praha10"] as const)
       expect(operatorFactor(loc, "public"), `${loc} bez měření zůstává na výchozí`).toBe(1.1);
     // Praha 8 se NESRÁŽÍ za vysoký násobek: uvnitř okresu je Karlín.
     expect(OPERATOR_EVIDENCE.praha8, "Praha 8 nemá vlastní měření a nesmí ho dostat od oka").toBeUndefined();
