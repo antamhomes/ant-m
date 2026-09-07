@@ -143,6 +143,16 @@ pražský okres má aspoň jednu čtvrť. Další čtvrti jen s důvodem, ne
 „protože je kvóta" (kandidáti: Bubeneč P6/P7 sdílená, Střešovice, Břevnov,
 Podolí/Braník P4, Strašnice P10 — všechny čekaně tenké).
 
+**Stav 7. 9. 2026 ~18:30 UTC — SBĚR DAT PRO KALKULAČKU UKONČEN rozhodnutím
+člověka.** Po zero-quota pořadí (`RANKING-ctvrti-2026-09-07.md`) ještě
+Bubeneč (`8497dbf`/`e0622e9`, 1BR 0,75 + 2BR 0,5, +18 % nad P6, výhrada
+geometrie P7) a Strašnice jen 1BR → `partial` (nMean 20, inertní;
+`1d94026`). Okno použito na 14 pokusů, 6 nevyužito. 14 čtvrtí
+v `MARKET_CTVRT`, každý okres ≥ 1; Vysočany a Strašnice `partial`. Další
+pracovní proud: audit kalkulačky/webu jako konverzního trychtýře — NE
+další data. Zbývající kandidáti GEO (17) jsou podle pořadí inertní nebo
+hraniční; pullovat jen s konkrétním důvodem.
+
 Otevřená položka beze změny pravidla: tenké měřené 3BR vs. odvozené
 okresní 3BR — P3/P8/P7/P4 nad odvozeným, P10 (n ≈ 13) a Libeň (n = 2) pod
 ním. Kalibrace je samostatná analýza, ne vedlejší efekt pullu.
