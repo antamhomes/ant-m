@@ -205,3 +205,25 @@ occ 3BR 37,7 % < 55 % → anomálie P10 3BR NENÍ jen mimovršovická. #3–#6 n
   a rozšířeným rozpětím; `praha10|vrsovice` 3BR w 0 → totéž. Jestli je to
   přijatelné, nebo P10 3+kk/4+kk chce vlastní zacházení, je rozhodnutí
   člověka PŘED dávkou.
+
+### Práce bez kvóty (2026-09-07 17:25 UTC): recept sezón reprodukován, P10 spočítáno, MODEL BEZE ZMĚNY
+
+`scripts/pl-seasons.mjs --check` reprodukuje **všech 54 konstant
+`SEASONS_BY_LOC` P1–P9 přesně** z artefaktů `data/pricelabs-2026-08/`.
+Recept: spolehlivá pásma = ta v `MARKET_STR`; měsíční ADR/RevPAR vážené
+počtem aktivních nabídek přes pásma; léto duben–říjen, zima listopad–
+březen bez prosince, Vánoce prosinec; faktor = průměr sezóny / průměr
+12 měsíců; 3 desetinná místa. Dvě alternativy (průměr pásmových faktorů
+vážený nMean; nevážený měsíční průměr) NESEDÍ — vyloučeno.
+
+`SEASONS_BY_LOC.praha10` z `praha10.json`, pásma 1BR + 2BR (3BR nMin 11
+ven, stejně jako u P3/P4/P6/P7/P8/P9):
+
+`{ summer: { adr: 1.031, revpar: 1.089 }, winter: { adr: 0.858, revpar: 0.719 }, xmas: { adr: 1.349, revpar: 1.499 } }`
+
+(součet 7/4/1 = 0,9998; zima RevPAR < ADR; Vánoce > léto — invarianty
+`facts.test.ts` sedí. Prakticky totožné s P4: 1,034/1,093 · 0,856/0,714 ·
+1,338/1,491.) Zapsáno jen sem; do `yield.ts` až v integrační dávce.
+
+Rozhodnutí 4 VAZBY (P10 3BR): **OTEVŘENÉ, čeká na člověka.** Podklady
+v Pokusech 2 a 3 výše.
