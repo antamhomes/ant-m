@@ -7,7 +7,7 @@ import { trackEvent } from "@/lib/analytics";
 import { BAND_LABEL, ownerMonthly, rentFor, ctvrtiOf, ctvrtRentFactor, bucketsFor, CALC_MODEL_VERSION, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
 import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/CalcContext";
 import { classifyBand, type LeadCalcPayload } from "@/lib/leadBand";
-import { CALC_DATA_WINDOW } from "@/lib/dataWindow";
+import { CALC_DATA_WINDOW, dataWindowLabel } from "@/lib/dataWindow";
 
 /** Lokalita v kalkulačce: pražské čtvrti + „jinde". U čtvrtí bez vlastních dat
  *  (P2, P6 až P10) a u „jinde" se panel výsledku přepne na posouzení
@@ -145,6 +145,11 @@ const CalculatorSection = () => {
     ltrMonth: result.ltr || null,
     size, bucket,
   });
+
+  // KARTA PODLE PÁSMA (patch 2, spec §3): slabý byt dostane stejné číslo, ale
+  // neutrální barvu řádku 2, vedlejší tlačítko „k posouzení“, bez slibu 24 h
+  // a bez sdílení. Písmeno pásma návštěvník nikde nevidí.
+  const weak = band.band === "weak";
 
   // Co se ukládá k leadu. JEDNA definice pro obě CTA (dřív byl tentýž objekt
   // opsaný dvakrát a mohl se rozejít). low/high se sem posílají DÁL, i když se
@@ -466,7 +471,7 @@ const CalculatorSection = () => {
                     }}
                     className="btn btn-primary-inverse w-full"
                   >
-                    {t(lang, "calc_cta")}
+                    {t(lang, "calc_cta_unsupported")}
                   </a>
                 </div>
               ) : (
@@ -496,43 +501,33 @@ const CalculatorSection = () => {
                           {t(lang, "calc_month_suffix")}
                         </span>
                       </p>
-                      {/* Benefit v Kč za rok hned pod headline: pro majitele je
-                          „+192 000 Kč ročně“ hmatatelnější než násobek, a je to
-                          druhý nejsilnější prvek karty. Stejná podmínka jako
-                          u násobku níž, aby si ty dvě věty neodporovaly. */}
-                      {betterThanLtr && (
-                        <p className="mt-2 font-body text-[15px] sm:text-base font-semibold text-gold tnum">
-                          +{(Math.round(((result.r.high - result.ltr) * 12) / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
-                          <span className="font-normal text-[13px] text-primary-foreground/70">
-                            {t(lang, "calc_vs_ltr_year")}
-                          </span>
-                        </p>
+                      {/* ŘÁDEK 2 (patch 2): benefit v Kč za rok A násobek v jedné větě,
+                          „+X Kč ročně · přibližně Y× dlouhodobý nájem (Z Kč)“.
+                          Samostatný blok „Dlouhodobý pronájem“ i šipka „→ přibližně 2× více“
+                          odešly; nájem zůstává v závorce, protože dělá násobek přezkoumatelný.
+                          Zlatě u silného a nadějného bytu, neutrálně u slabého. Kde nájem vyjde
+                          stejně nebo výš, zůstává poctivá věta (calc_ltr_higher). Stejná
+                          podmínka pro obě věty, aby si neodporovaly. */}
+                      {result.ratio > 0 && (
+                        betterThanLtr ? (
+                          <p className={`mt-2 font-body text-[15px] sm:text-base font-semibold tnum text-pretty ${weak ? "text-primary-foreground/80" : "text-gold"}`}>
+                            {t(lang, "calc_vs_ltr_year")
+                              .replace("{delta}", `${(Math.round(((result.r.high - result.ltr) * 12) / 1000) * 1000).toLocaleString("cs-CZ")}\u00a0Kč`)
+                              .replace("{ratio}", ratioRounded.toLocaleString("cs-CZ"))
+                              .replace("{ltr}", `${(Math.round(result.ltr / 1000) * 1000).toLocaleString("cs-CZ")}\u00a0Kč`)}
+                          </p>
+                        ) : (
+                          <p className="mt-2 font-body text-[13px] text-primary-foreground/85">
+                            {t(lang, "calc_ltr_higher")}
+                          </p>
+                        )
                       )}
-                      {/* Kapacita se majiteli ZÁMĚRNĚ neukazuje (rozhodnutí 31. 8. 2026).
-                          Pásmo trhu se bere z dispozice a plochy, ale kolik lůžek se do bytu
-                          opravdu vejde, závisí na proporcích pokojů, ne na celkových m².
-                          Tvrdit konkrétní počet z jednoho čísla byla falešná přesnost;
-                          určuje se při prohlídce a patří do interního podkladu, ne na web.
-                          Hlídá to facts.test.ts, tady i v grafu a v poptávce. */}
-                      {result.r.derived && (
-                        <p className="mt-1.5 font-body text-[12px] text-primary-foreground/60 leading-relaxed">
-                          {t(lang, "calc_derived_note")}
-                        </p>
-                      )}
-                      {/* Reálná cena za noc: jeden tichý řádek. Značka poskytovatele dat
-                          jde z veřejného výsledku pryč (31. 8. 2026): zdroj patří do
-                          metodiky pod výsledkem, ne do headline. */}
-                      <p className="mt-3 font-body text-[13px] text-primary-foreground/70 tnum">
-                        {t(lang, "calc_market_line")} ({BAND_LABEL[result.r.band][lang]}): {result.r.adr.toLocaleString("cs-CZ")}&nbsp;Kč
-                      </p>
-                      {/* Shrnutí vstupů na VŠECH šířkách (1. 9. 2026). Do té doby bylo
-                          md:hidden, takže na desktopu nebylo vidět, se kterou čtvrtí
-                          a sezónou se počítalo — obojí přitom mění výsledné číslo. */}
-                      <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70">
+                      {/* ŘÁDEK 3: vybraný byt. Čtvrť z trace, ne ze stavu (čtvrť patřící pod
+                          jiný okres se ignoruje). Plocha je reprezentativní hodnota kbelíku,
+                          se kterou model i nájem OPRAVDU počítaly („kolem X m²“). Sezóna
+                          jen když není celý rok. Kapacita se neukazuje (31. 8. 2026). */}
+                      <p className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 font-body text-[13px] text-primary-foreground/70 tnum">
                         <span>{locLabel(location)}</span>
-                        {/* Čtvrť mění číslo, takže musí být ve shrnutí vidět. Bereme ji
-                            z trace, ne ze stavu: je to ta, se kterou model opravdu počítal
-                            (čtvrť patřící pod jiný okres se ignoruje). */}
                         {result.ctvrtLabel && (
                           <>
                             <span aria-hidden="true">·</span>
@@ -540,55 +535,48 @@ const CalculatorSection = () => {
                           </>
                         )}
                         <span aria-hidden="true">·</span>
-                        <span>{t(lang, `calc_season_${season}` as const)}</span>
+                        <span>{sizeLabel}</span>
+                        <span aria-hidden="true">·</span>
+                        <span>{t(lang, "calc_rent_typical")} {m2}&nbsp;m²</span>
+                        {season !== "year" && (
+                          <>
+                            <span aria-hidden="true">·</span>
+                            <span>{t(lang, `calc_season_${season}` as const)}</span>
+                          </>
+                        )}
                         <a href="#kalkulacka-zadani" className="ml-1 inline-flex items-center gap-1 underline underline-offset-4 decoration-primary-foreground/30 hover:text-primary-foreground">
                           <Pencil className="w-3 h-3" aria-hidden="true" />
                           {t(lang, "calc_edit")}
                         </a>
                       </p>
-                    </div>
-
-
-                    <div className="border-t border-primary-foreground/10 pt-4">
-                      <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
-                        {t(lang, "calc_ltr")}
+                      {/* ŘÁDEK 4: trh. Realizovaná cena za noc pro pásmo + okno dat z JEDINÉ
+                          konstanty (lib/dataWindow), nikdy z překladů. Poskytovatel dat patří
+                          do metodiky pod sekcí, ne na kartu. */}
+                      <p className="mt-2 font-body text-[13px] text-primary-foreground/70 tnum text-pretty">
+                        {t(lang, "calc_market_line")} ({BAND_LABEL[result.r.band][lang]}): {result.r.adr.toLocaleString("cs-CZ")}&nbsp;{t(lang, "calc_per_night")} ·{" "}
+                        <span className="whitespace-nowrap">{dataWindowLabel(lang)}</span>
                       </p>
-                      <p className="font-display text-xl font-semibold text-primary-foreground/60 tnum">
-                        ~{(Math.round(result.ltr / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč{" "}
-                        <span className="font-body text-[12px] font-normal text-primary-foreground/50">{t(lang, "calc_ltr_for")} {sizes.find((x) => x.value === size)?.label} {t(lang, "calc_rent_typical")} {m2}&nbsp;m² ({t(lang, "calc_rent_src")})</span>
+                      {/* VĚTA PÁSMA (spec §3a): jediné místo, kde karta mluví o síle bytu,
+                          a mluví bez písmen. Slabý byt dostane poctivou větu s pozvánkou
+                          „pokud má byt něco navíc“, ne zlaté +Kč. */}
+                      <p className="mt-3 font-body text-[13px] text-primary-foreground/85 leading-relaxed text-pretty">
+                        {t(lang, weak ? "calc_band_weak" : band.band === "strong" ? "calc_band_strong" : "calc_band_viable")}
                       </p>
-                      {/* Násobek se ukazuje jen tam, kde po zaokrouhlení opravdu VÍC než 1×.
-                          Jinak by web psal „přibližně 0,8× více" (nesmysl a navíc tvrzení,
-                          že krátkodobě vyděláte míň, hned vedle slibu garance) nebo
-                          „1,0× více". Tam, kde nájem vyjde stejně nebo výš, to řekneme
-                          rovnou: je to pravda a zároveň to poptávku rovnou zatřídí.
-                          TÁŽ podmínka řídí i řádek Kč/rok nahoře pod headline. */}
-                      {result.ratio > 0 && (
-                        betterThanLtr ? (
-                          <p className="font-body text-[13px] text-primary-foreground/85 mt-2">
-                            → {t(lang, "calc_approx_prefix")}{" "}
-                            <strong className="text-gold">
-                              {ratioRounded.toLocaleString("cs-CZ")}×{" "}
-                            </strong>
-                            {t(lang, "calc_vs_ltr")}
-                          </p>
-                        ) : (
-                          <p className="font-body text-[13px] text-primary-foreground/85 mt-2">
-                            {t(lang, "calc_ltr_higher")}
-                          </p>
-                        )
+                      {/* Odvozené číslo: jedna věta, neutrálně, bez „čtvrť“ (do 7. 9. 2026
+                          text vinil čtvrť i u okresního výsledku). */}
+                      {result.r.derived && (
+                        <p className="mt-1.5 font-body text-[12px] text-primary-foreground/60 leading-relaxed text-pretty">
+                          {t(lang, "calc_derived_note")}
+                        </p>
                       )}
                     </div>
-
-                    {/* Odměna, úklid a energie se z karty vypustily (2B):
-                        vlastní je Ceník, který stojí hned za Srovnáním. Karta
-                        drží jen to, co je o BYTĚ návštěvníka: číslo, roční
-                        rozdíl proti nájmu, násobek a shrnutí vstupů. */}
                   </div>
                   )}
 
-
                   <div className="space-y-3">
+                    {/* CTA PODLE PÁSMA (spec §3c): silný a nadějný byt hlavní tlačítko
+                        + slib 24 h + testovací věta o minimu ve smlouvě; slabý byt vedlejší
+                        tlačítko „k posouzení“ bez slibu. Sdílení jen tam, kde má co sdílet. */}
                     <a
                       href="#kontakt"
                       onClick={() => {
@@ -600,18 +588,32 @@ const CalculatorSection = () => {
                           })
                         );
                       }}
-                      className="btn btn-primary-inverse w-full"
+                      className={weak ? "btn btn-secondary-inverse w-full" : "btn btn-primary-inverse w-full"}
                     >
-                      {t(lang, "calc_cta")}
+                      {t(lang, weak ? "calc_cta_weak" : "calc_cta")}
                     </a>
-                    <button
-                      type="button"
-                      onClick={shareResult}
-                      className="flex items-center gap-1.5 font-body text-xs text-primary-foreground/60 hover:text-primary-foreground transition-colors underline underline-offset-4 decoration-primary-foreground/25"
-                    >
-                      <Share2 className="w-3.5 h-3.5" aria-hidden="true" />
-                      {shared ? t(lang, "calc_share_done") : t(lang, "calc_share")}
-                    </button>
+                    {!weak && (
+                      <p className="font-body text-[12.5px] text-primary-foreground/70 leading-relaxed text-pretty">
+                        {t(lang, "calc_promise")}
+                      </p>
+                    )}
+                    {/* TEST (rozhodnutí 7. 9. 2026): jedna tichá věta o minimu ve smlouvě,
+                        mechanika garance zůstává v Ceníku. Měří se cta_click podle pásma. */}
+                    {!weak && (
+                      <p className="font-body text-[12px] text-primary-foreground/55 leading-relaxed text-pretty">
+                        {t(lang, "calc_guarantee_line")}
+                      </p>
+                    )}
+                    {!weak && (
+                      <button
+                        type="button"
+                        onClick={shareResult}
+                        className="flex items-center gap-1.5 font-body text-xs text-primary-foreground/60 hover:text-primary-foreground transition-colors underline underline-offset-4 decoration-primary-foreground/25"
+                      >
+                        <Share2 className="w-3.5 h-3.5" aria-hidden="true" />
+                        {shared ? t(lang, "calc_share_done") : t(lang, "calc_share")}
+                      </button>
+                    )}
                   </div>
                 </>
               )}
@@ -630,7 +632,8 @@ const CalculatorSection = () => {
               {t(lang, "calc_disclaimer_toggle")}
             </summary>
             <p className="mt-3 font-body text-xs text-foreground/75 text-left leading-relaxed">
-              {t(lang, "calc_disclaimer")}
+              {/* Okno dat z konstanty (lib/dataWindow), ne z překladu; hlídá data-window.test. */}
+              {t(lang, "calc_method_window").replace("{window}", dataWindowLabel(lang))} {t(lang, "calc_disclaimer")}
             </p>
           </details>
         </div>

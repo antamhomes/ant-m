@@ -23,7 +23,9 @@ const BODY_KEYS: Record<"cs" | "vi", readonly TranslationKey[]> = {
   // QA-13: about_scale ("jednotlivé byty i více jednotek") říká totéž co
   // "Máte bytů víc? Každý má vlastní vyúčtování." ve Vyúčtování, které je
   // konkrétnější. V CZ se proto nerenderuje; VI zůstává beze změny.
-  cs: ["about_p4", "about_p5"],
+  // Patch 2 (7. 9. 2026): about_p5 („hlídáme, co byt brzdí“) říkalo totéž
+  // co Služby; v CZ zůstává citát, about_p1 a about_p4.
+  cs: ["about_p4"],
   vi: ["about_p4", "about_scale"],
 };
 /** Stats with an empty value are skipped: the CZ page dropped the managed-flat

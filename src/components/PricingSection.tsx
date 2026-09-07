@@ -1,6 +1,8 @@
-import Reveal from "@/components/Reveal";
+import { ChevronRight } from "lucide-react";
+import Reveal, { stagger } from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
+import { trackEvent } from "@/lib/analytics";
 
 /**
  * Ceník: všechno, co může majitel zaplatit, na jednom místě a s cenou.
@@ -11,11 +13,26 @@ import { t } from "@/i18n/translations";
  * neschováváme, tak ji ani vizuálně nebalíme. Rámečky, vyplněné pozadí
  * a pruh 70/30 šly pryč: ten pruh nic neměřil, jen dekoroval poměr, který
  * je o dva řádky níž vypsaný v korunách.
+ *
+ * PATCH 2 (7. 9. 2026, spec §1/§6): sem se sloučila samostatná sekce Garance.
+ * Cena a garance odpovídají na jednu otázku („co si berete a co když to
+ * nevyjde“); dvě sekce ji říkaly dvakrát a mezi číslem a formulářem stálo
+ * o 887 px víc. Řádek „Garance výnosu · v odměně“ nese pravidlo (g_desc)
+ * a tři kroky (g_step1..3); ilustrační dvojice 28 000 / 31 500 odešla,
+ * protože majitel svůj nájem už viděl na kartě. Kotva #garance zůstává,
+ * vede na ten řádek. Sekce končí jedním CTA na formulář.
  */
 type Row = { k: "pr6" | "pr7" };
 
 /** Co je v odměně navíc: garance a krytí škod stojí hned pod sazbou. */
 const CORE_ROWS: Row[] = [{ k: "pr6" }, { k: "pr7" }];
+
+/** Tři kroky garance, dřív v GaranceSection. Mechanika dál žije ve smlouvě. */
+const G_STEPS = [
+  { title: "g_step1_title", desc: "g_step1" },
+  { title: "g_step2_title", desc: "g_step2" },
+  { title: "g_step3_title", desc: "g_step3" },
+] as const;
 
 /** Jednorázové a doplňkové položky za rozbalovákem. */
 const MORE_ROWS = ["pr2", "pr3", "pr4", "pr5", "pr8"] as const;
@@ -100,9 +117,7 @@ const PricingSection = () => {
               </div>
             )}
 
-            <p className="mt-5 font-body text-[14.5px] text-muted-foreground leading-relaxed max-w-[62ch]">
-              {t(lang, "pr1_note")}
-            </p>
+            {/* pr1_note odešla (patch 2): opakovala pricing_desc. Klíč zůstává. */}
 
             {/* Garance a krytí škod: jediné místo, kde je vidět, co je v těch 30 % navíc.
                 AD 2. 9. 2026: o stupeň víc váhy. Jsou to dvě podstatné podmínky
@@ -111,7 +126,7 @@ const PricingSection = () => {
                 jako u řádků toku peněz výš: stejná gramatika, žádná nová karta. */}
             <dl className="mt-12 md:mt-14 border-t border-foreground/25">
               {CORE_ROWS.map(({ k }) => (
-                <div key={k} className="border-b border-border py-6 md:py-7">
+                <div key={k} id={k === "pr6" ? "garance" : undefined} className="border-b border-border py-6 md:py-7 scroll-mt-24">
                   <dt className="flex items-baseline justify-between gap-6">
                     <span className="font-display text-[20px] md:text-[22px] font-semibold text-foreground leading-snug">
                       {t(lang, `${k}_name` as const)}
@@ -121,8 +136,28 @@ const PricingSection = () => {
                     </span>
                   </dt>
                   <dd className="m-0 mt-2 font-body text-[14.5px] text-muted-foreground leading-relaxed max-w-[62ch]">
-                    {t(lang, `${k}_note` as const)}
+                    {/* Garance: věta z bývalého nadpisu sekce + pravidlo (nejméně nájem plus
+                        energie, rozdíl z naší odměny), které pr6_note nese už od 2. 9. 2026. */}
+                    {k === "pr6"
+                      ? <><span className="text-foreground">{t(lang, "g_title1")}{t(lang, "g_title2")}</span> {t(lang, "pr6_note")}</>
+                      : t(lang, `${k}_note` as const)}
                   </dd>
+                  {k === "pr6" && (
+                    /* Tři kroky garance: posouzení, minimum ve smlouvě, výsledek pod minimem. */
+                    <dd className="m-0 mt-5 grid sm:grid-cols-3 gap-y-4 sm:gap-x-8">
+                      {G_STEPS.map(({ title, desc }, i) => (
+                        <Reveal key={title} delay={stagger(i, 0.06)}>
+                          <p className="font-display text-[15px] font-semibold text-foreground mb-1 leading-snug">
+                            <span className="text-gold-deep tnum mr-2">{i + 1}.</span>
+                            {t(lang, title)}
+                          </p>
+                          <p className="font-body text-[13.5px] text-muted-foreground leading-relaxed text-pretty">
+                            {t(lang, desc)}
+                          </p>
+                        </Reveal>
+                      ))}
+                    </dd>
+                  )}
                 </div>
               ))}
             </dl>
@@ -149,6 +184,17 @@ const PricingSection = () => {
             <p className="mt-10 pt-7 border-t border-border font-body text-[13px] text-muted-foreground leading-relaxed text-pretty max-w-[68ch]">
               {t(lang, "pricing_foot")}
             </p>
+
+            {/* Jedno CTA za cenou a garancí (spec §1): stejná slovní zásoba jako
+                odeslání formuláře a závěr stránky. */}
+            <a
+              href="#kontakt"
+              onClick={() => trackEvent("cta_click", { location: "pricing", target: "contact" })}
+              className="btn btn-primary mt-8"
+            >
+              {t(lang, "g_cta")}
+              <ChevronRight className="w-4 h-4" />
+            </a>
           </Reveal>
         </div>
       </div>

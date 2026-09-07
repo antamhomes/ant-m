@@ -254,29 +254,26 @@ describe("garance výnosu", () => {
     expect(mcp).toEqual(cards);
   });
 
-  it("ilustrační dvojice v garanci sedí s modelem nájmu a třetí slot je prázdný", () => {
-    // Minimum = nájem + energie pro Prahu 1 2+kk; očekávaný výnos = co dá kalkulačka.
-    // Čísla se neuvádějí natvrdo: odvozují se z modelu, aby copy nemohla odejít
-    // od tabulky nájmů, když se přepočítá zdroj (28. 8. 2026 Deloitte + MF).
-    // Nájem z rentFor (jediná funkce na nájem), zaokrouhlený na tisíce pro copy.
-    const rent = Math.round(rentFor("praha1", "2kk") / 1000) * 1000;
-    const minimum = rent + ENERGY["2kk"];
-    expect(strip(cs.g_num1_value)).toMatch(new RegExp(rent.toLocaleString("cs-CZ").replace(/\s/g, " ")));
-    expect(strip(cs.g_num2_value)).toMatch(new RegExp(minimum.toLocaleString("cs-CZ").replace(/\s/g, " ")));
-    expect(strip(vi.g_num1_value)).toMatch(new RegExp(rent.toLocaleString("cs-CZ").replace(/\s/g, " ")));
-    expect(strip(vi.g_num2_value)).toMatch(new RegExp(minimum.toLocaleString("cs-CZ").replace(/\s/g, " ")));
-    // Garance je risk reversal, ne další odhad: třetí slot „očekávaný výnos"
-    // zůstává prázdný (upside prodává portfolio a kalkulačka).
-    expect(strip(cs.g_num3_value), "g_num3_value musí zůstat prázdné").toBe("");
-    expect(strip(vi.g_num3_value), "vi g_num3_value musí zůstat prázdné").toBe("");
-    // Popisek pod dvojicí rozepisuje nájem + energie; musí sedět na model,
-    // jinak se vrátí drift „26 000 + ? = 29 500" z auditu 29. 8. 2026.
-    const rentRe = new RegExp(rent.toLocaleString("cs-CZ").replace(/\s/g, " "));
-    const energyRe = new RegExp(ENERGY["2kk"].toLocaleString("cs-CZ").replace(/\s/g, " "));
-    expect(strip(cs.g_num_note)).toMatch(rentRe);
-    expect(strip(cs.g_num_note)).toMatch(energyRe);
-    expect(strip(vi.g_num_note)).toMatch(rentRe);
-    expect(strip(vi.g_num_note)).toMatch(energyRe);
+  it("garance je sloučená do Ceníku: pravidlo a tři kroky, žádná ilustrační dvojice", () => {
+    // Patch 2 (7. 9. 2026, spec §1/§6): samostatná sekce Garance odešla, řádek
+    // „Garance výnosu · v odměně“ v Ceníku nese pravidlo (g_desc) a tři kroky.
+    // Ilustrační 28 000 / 31 500 se už nekreslí: majitel svůj nájem viděl na
+    // kartě a dvojice s cizím bytem mu neříkala nic. Test dřív odvozoval čísla
+    // z rentFor a hlídal jejich shodu; teď hlídá, že se nevrátí.
+    for (const d of [cs, vi]) {
+      for (const k of ["g_num1_value", "g_num2_value", "g_num3_value", "g_num_note"] as const)
+        expect(strip(d[k]), `${k} zůstává prázdné`).toBe("");
+      // pravidlo minima = nájem + energie zůstává řečené v Ceníku a ve FAQ
+      for (const k of ["pr6_note", "faq18_a"] as const) expect(strip(d[k]).length).toBeGreaterThan(20);
+      for (const k of ["g_step1", "g_step2", "g_step3"] as const) expect(strip(d[k]).length).toBeGreaterThan(10);
+    }
+    expect(strip(cs.pr6_note)).toMatch(/nájem plus energie/);
+    expect(strip(cs.faq18_a)).toMatch(/plus energie/);
+    const index = readFileSync("src/pages/Index.tsx", "utf8");
+    expect(index, "Garance už není samostatná sekce").not.toMatch(/import\("@\/components\/GaranceSection"\)|<GaranceSection/);
+    const pricing = readFileSync("src/components/PricingSection.tsx", "utf8");
+    for (const k of ["g_title1", "pr6_note", "g_step1", "g_step2", "g_step3", "g_cta"]) expect(pricing).toContain(k);
+    expect(pricing, "kotva #garance vede na řádek v Ceníku").toContain('"garance"');
   });
 
   // PŘEPSÁNO 2C (1. 9. 2026). Do té doby test vyžadoval JEDEN identický popisek
@@ -323,7 +320,9 @@ describe("garance výnosu", () => {
     // operátorským faktorem) a staré mapování „pásmo = počet ložnic dispozice"
     // (pásmo se bere z dispozice A plochy). Ani jedno se nesmí vrátit, ani do
     // nápovědy u posuvníku. Zároveň se ven nepouštějí interní kalibrační detaily
-    // (počet kalibračních bytů, okno dat, naše obsazenost, naše ADR proti trhu).
+    // (počet kalibračních bytů, naše obsazenost, naše ADR proti trhu). Okno dat
+    // („12 měsíců do 7/2026“) je od patche 2 (7. 9. 2026) naopak VEŘEJNÉ: karta
+    // i metodika ho čtou z lib/dataWindow, nikdy z překladů (data-window.test).
     // Sweep přes VŠECHNY texty obou jazyků, ne jen přes disclaimer: zrušená
     // formulace se naposledy schovala v klíči calc_basis, který nic
     // nerenderovalo, ale pořád se dostával do bundlu.
@@ -550,8 +549,10 @@ describe("model výnosu", () => {
     // „nájem vychází podobně nebo výše" a zároveň „+9 000 Kč ročně navíc".
     expect(calc, "Kč/rok pod touž podmínkou jako násobek")
       .not.toContain("result.r.high > result.ltr &&");
-    expect((calc.match(/betterThanLtr/g) ?? []).length, "jedna podmínka, dvě použití")
-      .toBeGreaterThanOrEqual(3);
+    // Od patche 2 (7. 9. 2026) jsou násobek i Kč/rok JEDNA věta (řádek 2 karty),
+    // takže podmínka má definici a jedno použití; dřív dvě.
+    expect((calc.match(/betterThanLtr/g) ?? []).length, "jedna podmínka, jedno použití")
+      .toBeGreaterThanOrEqual(2);
     // Headline = dosažitelný vršek už spočítaného rozpětí, ne jeho střed. Rozpětí
     // musí zůstat vidět hned pod ním: featuruje se jiný bod, nejistota se neschovává.
     expect(calc, "headline je vršek rozpětí").toContain("result.r.high / 1000");

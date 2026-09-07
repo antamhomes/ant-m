@@ -16,6 +16,7 @@ const groups: Group[] = [
   {
     title: "faq_group_money",
     items: [
+      { q: "faq9_q", a: "faq9_a" },   // číslo v kalkulačce je PO odměně (patch 2: napsaná, do 7. 9. 2026 nerenderovaná)
       { q: "faq18_q", a: "faq18_a" }, // garance výnosu
       { q: "faq4_q", a: "faq4_a" },   // přehled + vyúčtování (kdy chodí peníze)
       { q: "faq6_q", a: "faq6_a" },   // úklid a energie

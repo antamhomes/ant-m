@@ -15,11 +15,13 @@ import { t } from "@/i18n/translations";
  * odmítnutím (faq13): pro koho krátkodobý pronájem nedává smysl. Ta věta se
  * do 2B nikde nezobrazovala.
  */
+// Patch 2 (7. 9. 2026): tři řádky místo čtyř. „Přehled plateb“ (comp4) byl
+// nejslabší argument a sekce stojí nově ZA formulářem jako ujištění, ne jako
+// krok před ním. Klíče comp4_* v překladech zůstávají.
 const rows = [
-  { title: "comp1_title", long: "comp1_long", short: "comp1_short" },
   { title: "comp2_title", long: "comp2_long", short: "comp2_short" },
   { title: "comp3_title", long: "comp3_long", short: "comp3_short" },
-  { title: "comp4_title", long: "comp4_long", short: "comp4_short" },
+  { title: "comp1_title", long: "comp1_long", short: "comp1_short" },
 ] as const;
 
 const ComparisonSection = () => {

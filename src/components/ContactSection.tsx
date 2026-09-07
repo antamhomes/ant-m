@@ -70,9 +70,9 @@ const ContactSection = () => {
     formStarted.current = true;
     trackEvent("form_start", { from_calc: !!calcSnapshot, band: calcSnapshot?.result_band ?? "none" });
   };
-  // Poslední věta, kterou do zprávy vepsala kalkulačka. Bez toho by se po
-  // změně kalkulačky nedala odlišit od textu, který napsal majitel sám.
-  const lastCalcLine = useRef("");
+  // Stav bytu je od patche 2 viditelný a povinný (čtyři přepínače místo
+  // selectu v rozbalováku). Tlačítka nemají `required`, hlídá to submit.
+  const [statusMissing, setStatusMissing] = useState(false);
   const [formData, setFormData] = useState(emptyForm);
   const set = (k: keyof typeof emptyForm, v: string | boolean) => setFormData((f) => ({ ...f, [k]: v }));
 
@@ -83,30 +83,18 @@ const ContactSection = () => {
   const calcSummary = calcSnapshot ? calcEchoLabel(calcSnapshot, lang) : "";
 
   // The calculator CTA pre-fills district + layout so the owner doesn't type them
-  // twice; the floor area lands visibly (and editably) in the message field.
+  // twice. Patch 2 (7. 9. 2026): kalkulačka už do zprávy NEPÍŠE „Z kalkulačky:
+  // 2+kk 63 m².“; totéž a víc říká čitelný řádek nad formulářem (calcEchoLabel)
+  // a úplný snapshot jde do e-mailu i portálu. Pole zprávy patří jen majiteli.
   useEffect(() => {
     const onPrefill = (e: Event) => {
       const d = (e as CustomEvent<{ location?: string; size?: string; m2?: number; calc?: LeadCalcPayload | null }>).detail || {};
       if (d.calc) setCalcSnapshot(d.calc);
-      const calcLine =
-        d.m2
-          ? lang === "cs"
-            ? `Z kalkulačky: ${d.size ?? ""} ${d.m2} m².`.replace(":  ", ": ")
-            : `Theo phần tính thử: ${d.size ?? ""} ${d.m2} m².`.replace(":  ", ": ")
-          : "";
-      setFormData((f) => {
-        // Text majitele se NIKDY nepřepisuje. Přepíše se jen věta, kterou tam
-        // vepsala kalkulačka minule: po změně okresu nebo velikosti by jinak
-        // ve zprávě zůstal starý byt.
-        const mine = f.message && f.message !== lastCalcLine.current;
-        return {
-          ...f,
-          location: d.location && LOCATIONS.includes(d.location) ? d.location : f.location,
-          size: d.size && SIZES.includes(d.size) ? d.size : f.size,
-          message: mine ? f.message : calcLine,
-        };
-      });
-      lastCalcLine.current = calcLine;
+      setFormData((f) => ({
+        ...f,
+        location: d.location && LOCATIONS.includes(d.location) ? d.location : f.location,
+        size: d.size && SIZES.includes(d.size) ? d.size : f.size,
+      }));
     };
     // Kalkulačka hlásí každou změnu stavu. Snapshot se aktualizuje POUZE tehdy,
     // když už nějaký je: jinak by se ke každému leadu nalepil výchozí stav
@@ -158,6 +146,11 @@ const ContactSection = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting || !formData.consent) return;
+    if (!formData.status) {
+      setStatusMissing(true);
+      document.getElementById("c-status-label")?.scrollIntoView({ block: "center" });
+      return;
+    }
     setSubmitting(true);
     setSendError(false);
     try {
@@ -282,11 +275,43 @@ const ContactSection = () => {
           className="bg-card border border-border rounded-sm p-5 sm:p-6 md:p-8 space-y-4 sm:space-y-5"
         >
           {success ? (
-            <p className="font-body text-foreground text-center py-6 leading-relaxed">
-              {t(lang, "contact_success")}
-            </p>
+            /* STAV PO ODESLÁNÍ (spec §5): co přijde, kdy, a telefon pro ty,
+               kdo chtějí termín hned. Jen sliby, které už stránka dává jinde
+               (24 h, propočet z realizovaných cen, minimum před podpisem).
+               Řádek z kalkulačky zůstává vidět, ať majitel ví, co odešel. */
+            <div className="py-4 sm:py-6 space-y-4">
+              <p className="font-display text-2xl sm:text-[1.75rem] font-semibold text-foreground leading-snug">
+                {t(lang, "contact_success_title")}
+              </p>
+              <p className="font-body text-[15px] text-foreground leading-relaxed text-pretty max-w-[60ch]">
+                {t(lang, "contact_success")}
+              </p>
+              {calcSummary && (
+                <p className="font-body text-[13.5px] text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span className="text-gold-deep">{t(lang, "contact_from_calc")}</span>
+                  <span className="text-foreground">{calcSummary}</span>
+                </p>
+              )}
+              <p className="font-body text-[14px] text-muted-foreground">
+                {t(lang, "contact_success_call")}{" "}
+                <a href="tel:+420727952459" className="text-gold-deep font-medium whitespace-nowrap hover:text-primary transition-colors">
+                  +420&nbsp;727&nbsp;952&nbsp;459
+                </a>
+              </p>
+            </div>
           ) : (
             <>
+              {/* Co už kalkulačka ví, stojí NAD poli, čitelně a s číslem, které majitel
+                  viděl (spec §4). Neptáme se podruhé; kdo chce jiný byt, jde zpět. */}
+              {calcSnapshot && (
+                <p className="font-body text-[13.5px] text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1 pb-1">
+                  <span className="text-gold-deep">{t(lang, "contact_from_calc")}</span>
+                  <span className="text-foreground">{calcSummary}</span>
+                  <a href="#kalkulacka" className="underline underline-offset-4 decoration-gold/40 text-gold-deep hover:text-primary transition-colors">
+                    {t(lang, "contact_edit_calc")}
+                  </a>
+                </p>
+              )}
               {/* Who */}
               {/* Phones stack the four contact fields: a 167 px cell cut the phone placeholder
                   and let the two labels sit on different lines. Two columns from sm, like the rest. */}
@@ -309,7 +334,10 @@ const ContactSection = () => {
                     id="c-phone" type="tel" required autoComplete="tel" inputMode="tel" value={formData.phone}
                     onChange={(e) => set("phone", e.target.value)} className={inputCls}
                     placeholder={t(lang, "contact_phone_placeholder") as string}
+                    aria-describedby="c-phone-help"
                   />
+                  {/* Proč telefon: do 7. 9. 2026 bylo pole povinné bez důvodu. */}
+                  <p id="c-phone-help" className="mt-1.5 font-body text-[12.5px] text-muted-foreground">{t(lang, "contact_phone_help")}</p>
                 </div>
                 <div className="sm:col-span-2">
                   <label htmlFor="c-email" className={labelCls}>
@@ -338,7 +366,35 @@ const ContactSection = () => {
                   id="c-street" type="text" autoComplete="street-address" value={formData.street}
                   onChange={(e) => set("street", e.target.value)} className={inputCls}
                   placeholder={t(lang, "contact_street_placeholder") as string}
+                  aria-describedby="c-street-help"
                 />
+                <p id="c-street-help" className="mt-1.5 font-body text-[12.5px] text-muted-foreground">{t(lang, "contact_street_help")}</p>
+              </div>
+
+              {/* STAV BYTU: jediný kvalifikační údaj, který kalkulačka nezná, proto
+                  viditelně a povinně (spec §4). Čtyři přepínače, jeden dotyk. */}
+              <div>
+                <p id="c-status-label" className={labelCls}>
+                  {t(lang, "contact_status")} <span className="text-gold-deep">*</span>
+                </p>
+                <div role="group" aria-labelledby="c-status-label" className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {statusOptions.map((o) => (
+                    <button key={o.value} type="button"
+                      onClick={() => { set("status", o.value); setStatusMissing(false); }}
+                      aria-pressed={formData.status === o.value}
+                      className={`px-3 py-2.5 rounded-sm text-left text-sm font-body font-medium transition-all border ${
+                        formData.status === o.value
+                          ? "bg-primary text-primary-foreground border-primary"
+                          : "bg-background border-border text-foreground hover:border-gold/50"
+                      }`}
+                    >
+                      {o.label}
+                    </button>
+                  ))}
+                </div>
+                {statusMissing && (
+                  <p role="alert" className="mt-1.5 font-body text-[12.5px] text-destructive">{t(lang, "contact_status_required")}</p>
+                )}
               </div>
               {/* 2C: kvalifikační pole (lokalita, dispozice, stav, počet bytů,
                   kontaktní preference) šla za rozbalovák. První pohled na
@@ -347,13 +403,6 @@ const ContactSection = () => {
                   Co už víme z kalkulačky, ukážeme místo dalšího ptaní. */}
 
               {/* Volitelné detaily za rozbalovákem: kratší formulář, stejná data. */}
-              {calcSnapshot && (
-                <p className="font-body text-[13.5px] text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
-                  <span className="text-gold-deep">{t(lang, "contact_from_calc")}</span>
-                  <span className="text-foreground">{calcSummary}</span>
-                </p>
-              )}
-
               <details className="group">
                 <summary className="list-none cursor-pointer font-body text-sm text-gold-deep underline underline-offset-4 decoration-gold/40 [&::-webkit-details-marker]:hidden">
                   {t(lang, "contact_more")}
@@ -382,13 +431,6 @@ const ContactSection = () => {
                   />
                 </div>
                 <div>
-                  <label htmlFor="c-status" className={labelCls}>{t(lang, "contact_status")}</label>
-                  <SelectField
-                    id="c-status" value={formData.status} onChange={(v) => set("status", v)}
-                    placeholder={t(lang, "contact_status_placeholder") as string} options={statusOptions}
-                  />
-                </div>
-                <div>
                   <label htmlFor="c-units" className={labelCls}>{t(lang, "contact_units")}</label>
                   <SelectField
                     id="c-units" value={formData.units} onChange={(v) => set("units", v)}
@@ -396,18 +438,8 @@ const ContactSection = () => {
                   />
                 </div>
               </div>
-
-                <div>
-                  <label htmlFor="c-energy" className={labelCls}>
-                    {t(lang, "contact_energy")}{" "}
-                    <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
-                  </label>
-                  <input
-                    id="c-energy" type="text" inputMode="numeric" value={formData.energy}
-                    onChange={(e) => set("energy", e.target.value)} className={inputCls}
-                    placeholder={t(lang, "contact_energy_placeholder") as string}
-                  />
-                </div>
+                {/* Energie z formuláře odešly (spec §4): ptáme se až při underwritingu.
+                    Pole ve stavu a v payloadu zůstává prázdné, ať se nic nerozejde. */}
               </div>
               </details>
 

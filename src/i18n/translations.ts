@@ -10,7 +10,9 @@ const translations = {
     nav_contact: "Kontakt",
     nav_menu_open: "Otevřít menu",
     nav_menu_close: "Zavřít menu",
-    nav_freeConsultation: "Napsat nám",
+    // Patch 2 (spec §6): jedna slovní zásoba pro jednu akci. Chrome (navbar + lišta)
+    // říká krátce „Poslat byt“, karta i formulář mluví o výpočtu.
+    nav_freeConsultation: "Poslat byt",
     // Hero
     hero_subtitle: "Antam Homes · péče o byt a krátkodobý pronájem",
     hero_title1: "Nemovitost vám má přidávat příjem.",
@@ -75,7 +77,7 @@ const translations = {
     step3_desc: "Byt připravený k\u00a0provozu spouštíme rovnou. Pokud je potřeba něco doladit, domluvíme úpravy, vybavení a\u00a0prezentaci.",
     step4_title: "Spustíme pronájem",
     step4_desc: "Převezmeme rezervace, hosty, ceny i provoz. První hosté chodí do 14 dnů od přípravy bytu.",
-    process_cta: "Poslat nám byt",
+    process_cta: "Poslat byt k výpočtu",
     process_season: "Byt spuštěný na podzim stihne prosinec, kdy jsou ceny v našich lokalitách až 1,5× nad ročním průměrem.",
 
     // About — Kdo za tím stojí (REVIEW: nahradit vlastními slovy + fotkou)
@@ -99,13 +101,15 @@ const translations = {
     g_title1: "Spodní hranice výnosu je ",
     g_title2: "daná dopředu.",
     g_desc: "Než byt převezmeme, písemně si stanovíme minimální roční výsledek pro majitele.",
-    g_num1_label: "Dlouhodobý nájem",
-    g_num1_value: "28 000 Kč",
-    g_num2_label: "Písemné minimum s Antam Homes",
-    g_num2_value: "31 500 Kč",
+    // Patch 2: ilustrační dvojice 28 000 / 31 500 odešla (garance je sloučená do
+    // Ceníku, majitel svůj nájem už viděl na kartě). Klíče zůstávají prázdné.
+    g_num1_label: "",
+    g_num1_value: "",
+    g_num2_label: "",
+    g_num2_value: "",
     g_num3_label: "",
     g_num3_value: "",
-    g_num_note: "Ilustrační příklad: 2+kk v centru, částky za měsíc (nájem 28\u00a0000 Kč + energie 3\u00a0500 Kč). Minimum sjednáváme jako roční částku pro konkrétní byt.",
+    g_num_note: "",
     g_step1_title: "Posouzení bytu",
     g_step1: "Prověříme lokalitu, stav a očekávaný výnos. Byt, za jehož číslo se neumíme postavit, do správy nebereme.",
     g_step2_title: "Minimum ve smlouvě",
@@ -119,7 +123,7 @@ const translations = {
     g_pair2_label: "",
     g_pair2_text: "",
     g_small: "",
-    g_cta: "Poslat nám byt",
+    g_cta: "Poslat byt k výpočtu",
     // Assurance (contact)
     assure1: "Nezávazná poptávka",
     assure2: "Garance výnosu",
@@ -155,7 +159,8 @@ const translations = {
     calc_rent_typical: "kolem",
     calc_rent_src: "medián\u00a0nabídek\u00a0Sreality",
     calc_terms_note: "Naše odměna 30\u00a0% z\u00a0čistého výnosu, konečná, 70\u00a0% jde vám. Úklid hradí hosté, energie majitel.",
-    calc_derived_note: "Pro tuhle velikost má čtvrť málo nabídek. Číslo je odvozené z\u00a0menších bytů ve\u00a0čtvrti a\u00a0celopražského poměru mezi velikostmi.",
+    // Patch 2 (7. 9. 2026): neutrálně a bez „čtvrť“, věta se ukazuje i u okresního výsledku.
+    calc_derived_note: "Pro tuhle velikost je v okolí málo nabídek, číslo vychází z menších bytů a pražského poměru mezi velikostmi.",
     calc_season: "Sezóna",
     calc_season_toggle: "Zobrazit sezónní odhad",
     calc_season_year: "Celý rok",
@@ -178,17 +183,31 @@ const translations = {
     calc_5y_renew: "Obnova vybavení",
     calc_5y_rent: "Dlouhodobý nájem pro srovnání",
     calc_net_sub: "měsíčně · po provizi platformy a odměně Antam 30 %",
-    calc_market_line: "Reálná cena za noc v okolí",
+    calc_market_line: "Realizované ceny v okolí",
+    calc_per_night: "Kč/noc",
     calc_5y_market: "Rozpětí měsíčně",
     calc_ltr: "Dlouhodobý pronájem",
     calc_vs_ltr: "více",
     // Benefit v korunách vedle důkazu v násobku: „+192 000 Kč ročně" je pro
     // majitele hmatatelnější než „1,6×". Násobek zůstává drobně vedle.
-    calc_vs_ltr_year: "ročně navíc oproti dlouhodobému pronájmu",
+    // Patch 2: benefit a násobek v jedné větě, {delta} {ratio} {ltr} doplní komponenta.
+    calc_vs_ltr_year: "+{delta} ročně · přibližně {ratio}× dlouhodobý nájem ({ltr})",
     // Když nájem vyjde stejně nebo výš, NEPÍŠE se "0,8× více". Řekne se to rovnou:
     // je to poctivé a zároveň to rovnou třídí poptávky (takový byt na garanci nemusí dosáhnout).
     calc_ltr_higher: "U\u00a0tohoto bytu vychází dlouhodobý nájem podobně nebo výše.",
-    calc_cta: "Chci přesnější propočet",
+    // Patch 2 (spec §3c): CTA pojmenovává další krok (přesný výpočet pro TENTO byt),
+    // nezpochybňuje číslo. Slabý byt má vedlejší tlačítko bez slibu.
+    calc_cta: "Chci výpočet pro svůj byt",
+    calc_cta_weak: "Poslat byt k posouzení",
+    calc_cta_unsupported: "Poslat byt k výpočtu",
+    calc_promise: "Do 24 hodin vám připravíme propočet podle adresy, stavu a půdorysu.",
+    calc_guarantee_line: "U vhodných bytů umíme výsledek podložit minimem ve smlouvě.",
+    // Věta pásma (spec §3a). Pásmo samo (strong/viable/weak) návštěvník nevidí.
+    calc_band_strong: "Silný potenciál pro krátkodobý pronájem.",
+    calc_band_viable: "Výsledek vypadá zajímavě. U tohoto bytu bude rozhodovat konkrétní stav, kapacita a patro.",
+    calc_band_weak: "Rozdíl proti dlouhodobému nájmu je u tohoto typu bytu menší. Pokud má byt něco navíc: výhled, terasu, výjimečný stav nebo vyšší kapacitu, pošlete nám ho k posouzení.",
+    // Metodika: okno dat doplní komponenta z lib/dataWindow ({window}), nikdy natvrdo.
+    calc_method_window: "Tržní data: realizované ceny a obsazenost krátkodobých pronájmů za {window}, podle okresu, čtvrti a počtu ložnic.",
     calc_month_suffix: "/ měsíc",
     calc_edit: "Upravit",
     calc_split_aria: "70 % majitel, 30 % Antam Homes",
@@ -400,6 +419,11 @@ const translations = {
     contact_email: "E-mail",
     contact_email_placeholder: "jan@email.cz",
     contact_phone: "Telefon",
+    // Patch 2 (spec §4): proč telefon, proč adresa, povinný stav bytu, návrat do kalkulačky.
+    contact_phone_help: "Na tohle číslo se ozveme s propočtem.",
+    contact_street_help: "Adresa zpřesní propočet.",
+    contact_status_required: "Vyberte prosím, v jakém stavu byt teď je.",
+    contact_edit_calc: "Upravit v kalkulačce",
     contact_phone_placeholder: "+420 123 456 789",
     contact_optional: "(nepovinné)",
     contact_pref: "Jak vás máme kontaktovat?",
@@ -431,10 +455,14 @@ const translations = {
     contact_units_few: "2 až 4 byty",
     contact_units_mid: "5 až 9 bytů",
     contact_units_many: "10 a více bytů",
-    contact_submit: "Chci propočet pro svůj byt",
+    // Patch 2: jedna slovní zásoba s kartou a závěrem stránky (spec §6).
+    contact_submit: "Poslat byt k výpočtu",
     contact_small: "Zdarma a nezávazně.",
     contact_phone_line: "Raději po telefonu?",
-    contact_success: "Děkujeme. Do 24 hodin se ozveme s propočtem pro váš byt.",
+    // Stav po odeslání (spec §5): jen sliby, které stránka dává jinde.
+    contact_success_title: "Díky, byt máme.",
+    contact_success: "Do 24 hodin se ozveme s propočtem pro váš byt: realizované ceny ve vaší čtvrti, odhad pro vaši dispozici a stav, a co by u vašeho bytu rozhodovalo. Pokud byt do správy vezmeme, dostanete i písemné roční minimum, ještě před podpisem.",
+    contact_success_call: "Chcete termín hned? Zavolejte",
     contact_error: "Něco se nepovedlo. Zkuste to prosím znovu, nebo napište na antamhomes@gmail.com.",
 
     // Contact (fallback)
@@ -460,7 +488,7 @@ const translations = {
     footer_updated: "",
 
     // Sticky mobile
-    mobile_cta: "Napsat nám",
+    mobile_cta: "Poslat byt",
     // Final CTA (slogan bookend after FAQ)
     final_desc: "Do 24 hodin víte, jak je na tom ten váš. Zdarma a nezávazně.",
     final_title: "Pošlete nám byt.",
@@ -493,7 +521,9 @@ const translations = {
     nav_contact: "Liên hệ",
     nav_menu_open: "Mở menu",
     nav_menu_close: "Đóng menu",
-    nav_freeConsultation: "Liên hệ",
+    // Patch 2 (7. 9. 2026): jedna VI slovní zásoba pro jednu akci, stejná hierarchie
+    // jako CZ (Gửi căn nhà… / Nhờ Antam tính…). Věty jsou návrh (Claude).
+    nav_freeConsultation: "Gửi căn nhà",
 
     // Hero
     hero_subtitle: "ANTAM HOMES · QUẢN LÝ CĂN HỘ CHO THUÊ NGẮN HẠN",
@@ -557,7 +587,7 @@ const translations = {
     step3_desc: "Nhà sẵn sàng thì Antam cho chạy luôn. Nếu cần chỉnh nội thất, ảnh hay tin đăng, hai bên thống nhất trước rồi mới làm.",
     step4_title: "Bắt đầu đón khách",
     step4_desc: "Nhà sẵn sàng để chụp ảnh thì trong 14 ngày tin đăng đã chạy. Khách, dọn dẹp, giá: Antam lo\u00a0hết.",
-    process_cta: "Gửi thông tin nhà",
+    process_cta: "Gửi căn nhà để Antam tính",
     process_season: "Nhà mở bán từ tháng 10 thì kịp tháng 12. Lúc đó giá ở các khu của Antam cao đến 1,5 lần trung bình năm.",
 
     // About — Ai đứng sau (REVIEW: thay bằng lời của Vương + ảnh)
@@ -581,13 +611,13 @@ const translations = {
     g_title1: "Mức sàn thu nhập ",
     g_title2: "được ấn định trước.",
     g_desc: "Trước khi nhận nhà, Antam ghi vào hợp đồng mức thu tối thiểu mỗi năm cho chủ nhà: ít nhất bằng tiền thuê dài hạn cộng tiền điện nước.",
-    g_num1_label: "Thuê dài hạn",
-    g_num1_value: "28 000 Kč",
-    g_num2_label: "Mức tối thiểu Antam ký trong hợp đồng",
-    g_num2_value: "31 500 Kč",
+    g_num1_label: "",
+    g_num1_value: "",
+    g_num2_label: "",
+    g_num2_value: "",
     g_num3_label: "",
     g_num3_value: "",
-    g_num_note: "Ví dụ minh họa: căn 2+kk ở trung tâm, số tiền mỗi tháng (tiền thuê 28\u00a0000 Kč + điện nước 3\u00a0500 Kč). Mức tối thiểu được tính theo năm, riêng cho từng căn.",
+    g_num_note: "",
     g_step1_title: "Xem trước miễn phí",
     g_step1: "Antam xem căn nhà có gánh được mức cam kết không. Không được thì Antam nói thẳng, không nhận.",
     g_step2_title: "Ghi rõ trong hợp đồng",
@@ -601,7 +631,7 @@ const translations = {
     g_pair2_label: "Căn nhà",
     g_pair2_text: "Khách làm hỏng lặt vặt thì Antam lo, không đẩy sang chủ nhà. Phần không đòi được bên khách hay bên nền tảng thì Antam chịu, tối đa 25\u00a0000 Kč mỗi năm, tùy nhà to nhỏ. Mức của căn nhà mình, anh chị biết trước khi ký.",
     g_small: "Mức cam kết tính cho 12 tháng kể từ khách đầu tiên. 14\u00a0đêm đầu trong năm anh chị về ở chỉ trả tiền dọn dẹp, không trả phí Antam; nhưng mức cam kết giảm theo tỷ lệ cho mọi đêm anh chị giữ nhà, kể cả 14\u00a0đêm đó. Phần lo hỏng hóc là hỏng do khách, không phải đồ cũ hỏng hay sửa chữa thông thường. Chi tiết theo hợp đồng quản lý.",
-    g_cta: "Nhờ Antam tính miễn phí",
+    g_cta: "Gửi căn nhà để Antam tính",
 
     // Assurance (contact)
     assure1: "Hỏi không ràng buộc",
@@ -638,7 +668,8 @@ const translations = {
     calc_rent_typical: "khoảng",
     calc_rent_src: "mức\u00a0giữa tin\u00a0đăng\u00a0Sreality",
     calc_terms_note: "Phí Antam 30% trên doanh thu ròng, là con số cuối cùng, 70% về chủ nhà. Phí dọn dẹp khách trả, điện nước chủ nhà lo.",
-    calc_derived_note: "Cỡ căn này trong quận còn ít tin đăng. Con số suy ra từ căn nhỏ hơn trong quận và tỷ lệ chung của cả Praha giữa các cỡ căn.",
+    // Patch 2, VI věta je návrh (Claude).
+    calc_derived_note: "Cỡ căn này quanh đó còn ít tin đăng, con số suy ra từ căn nhỏ hơn và tỷ lệ chung của cả Praha giữa các cỡ căn.",
     calc_season: "Mùa",
     calc_season_toggle: "Xem ước tính theo mùa",
     calc_season_year: "Cả năm",
@@ -659,13 +690,23 @@ const translations = {
     calc_5y_renew: "Thay mới đồ đạc",
     calc_5y_rent: "Thuê dài hạn để so sánh",
     calc_net_sub: "mỗi tháng · đã trừ phí nền tảng và phí Antam 30%",
-    calc_market_line: "Giá thật mỗi đêm quanh đó",
+    calc_market_line: "Giá thật quanh đó",
+    calc_per_night: "Kč/đêm",
     calc_5y_market: "Khoảng mỗi tháng",
     calc_ltr: "Cho thuê dài hạn",
     calc_vs_ltr: "so với cho thuê dài hạn",
-    calc_vs_ltr_year: "mỗi năm nhiều hơn so với cho thuê dài hạn",
+    calc_vs_ltr_year: "+{delta} mỗi năm · gấp {ratio} lần cho thuê dài hạn ({ltr})",
     calc_ltr_higher: "Với căn này, cho thuê dài hạn ra tương đương hoặc cao hơn.",
-    calc_cta: "Nhờ Antam tính miễn phí",
+    // Patch 2, VI věty jsou návrh (Claude), ne Vuongova slova.
+    calc_cta: "Nhờ Antam tính cho căn nhà của tôi",
+    calc_cta_weak: "Gửi căn nhà để Antam xem",
+    calc_cta_unsupported: "Gửi căn nhà để Antam tính",
+    calc_promise: "Trong 24 giờ Antam sẽ tính theo địa chỉ, tình trạng và mặt bằng căn nhà.",
+    calc_guarantee_line: "Căn hợp thì Antam ghi hẳn mức tối thiểu vào hợp đồng.",
+    calc_band_strong: "Căn này rất hợp cho thuê ngắn hạn.",
+    calc_band_viable: "Con số nhìn ổn. Với căn này, tình trạng nhà, sức chứa và tầng sẽ quyết định.",
+    calc_band_weak: "Với dạng căn này, chênh lệch so với cho thuê dài hạn không nhiều. Nếu nhà có gì đặc biệt: view đẹp, sân thượng, tình trạng tốt hay ở được nhiều người hơn, anh chị cứ gửi cho Antam xem.",
+    calc_method_window: "Số liệu thị trường: giá thực tế và tỷ lệ lấp đầy của các căn cho thuê ngắn hạn trong {window}, theo quận, khu vực và số phòng ngủ.",
     calc_month_suffix: "/ tháng",
     calc_edit: "Chỉnh lại",
     calc_split_aria: "70% chủ nhà, 30% Antam Homes",
@@ -877,6 +918,11 @@ const translations = {
     contact_email: "E-mail",
     contact_email_placeholder: "email@gmail.com",
     contact_phone: "Số điện thoại",
+    // Patch 2, VI věty jsou návrh (Claude).
+    contact_phone_help: "Antam sẽ gọi số này để báo con số.",
+    contact_street_help: "Có địa chỉ, con số sẽ đúng hơn.",
+    contact_status_required: "Anh chị chọn giúp căn nhà đang thế nào.",
+    contact_edit_calc: "Chỉnh lại trong phần tính thử",
     contact_phone_placeholder: "+420 123 456 789",
     contact_optional: "(không bắt buộc)",
     contact_pref: "Liên hệ qua",
@@ -908,10 +954,13 @@ const translations = {
     contact_units_few: "2 đến 4 căn",
     contact_units_mid: "5 đến 9 căn",
     contact_units_many: "10 căn trở lên",
-    contact_submit: "Gửi thông tin nhà",
+    contact_submit: "Gửi căn nhà để Antam tính",
     contact_small: "Antam sẽ gọi lại cho anh chị trong 24 giờ, tiếng Việt hay tiếng Séc đều được. Không\u00a0ràng\u00a0buộc\u00a0gì.",
     contact_phone_line: "Gọi hay nhắn Zalo đều được:",
-    contact_success: "Cảm ơn anh chị. Trong 24 giờ Antam sẽ gửi con số cho căn nhà mình.",
+    // Patch 2, VI věty jsou návrh (Claude).
+    contact_success_title: "Cảm ơn anh chị, Antam đã nhận được.",
+    contact_success: "Trong 24 giờ Antam sẽ gửi con số cho căn nhà mình: giá thật quanh khu, ước tính theo loại nhà và tình trạng, và điều gì sẽ quyết định với căn này. Nếu Antam nhận quản lý, anh chị sẽ có cả mức tối thiểu hằng năm ghi trong hợp đồng, trước khi ký.",
+    contact_success_call: "Muốn hẹn ngay? Gọi cho Antam",
     contact_error: "Gửi chưa được. Anh chị thử lại giúp, hoặc viết thẳng cho antamhomes@gmail.com.",
 
     // Contact (fallback)
@@ -937,7 +986,7 @@ const translations = {
     footer_updated: "Cập nhật lần cuối: 08/2026",
 
     // Sticky mobile
-    mobile_cta: "Liên hệ",
+    mobile_cta: "Gửi căn nhà",
 
     // Final CTA (slogan bookend after FAQ)
     final_desc: "Gửi địa chỉ và loại nhà, Antam sẽ gọi lại trong 24 giờ.",

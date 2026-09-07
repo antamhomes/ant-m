@@ -8,7 +8,9 @@ import { useLanguage } from "@/contexts/LanguageContext";
 // Below-the-fold sections are code-split so the first paint ships less JS.
 const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
 const CalculatorSection = lazy(() => import("@/components/CalculatorSection"));
-const GaranceSection = lazy(() => import("@/components/GaranceSection"));
+// GaranceSection je od patche 2 (7. 9. 2026) sloučená do Ceníku: cena
+// a garance odpovídají na jednu otázku majitele („co si berete a co když to
+// nevyjde“), dvě sekce ji říkaly dvakrát. Soubor odešel do _to_delete.
 const PricingSection = lazy(() => import("@/components/PricingSection"));
 // HorizonSection zůstává v repu (čte ho facts.test.ts), ale od 2B se
 // nemountuje: generický pětiletý model a rozpětí patří do personalizovaného
@@ -60,21 +62,23 @@ const Index = () => {
       <main id="obsah">
         <CalcProvider>
         <HeroSection />
-        {/* Prodejní řetěz (2B): slib → důkaz → moje číslo → „nájem je ale
-            jednodušší" → co si berete → co když to nevyjde → co za to reálně
-            děláte → vidím ten výsledek → kdo jste → jak se začne → poptávka.
-            Každá sekce odpovídá na otázku, kterou vyvolala ta předchozí.
+        {/* TRYCHTÝŘ VEDENÝ KALKULAČKOU (patch 2, docs/funnel-spec-2026-09-07.md §1).
+            Primární cesta: slib → důkaz → moje číslo → co si berete a co když
+            to nevyjde (Ceník + garance v jedné sekci) → jak se začne → poptávka.
+            Všechno za formulářem je ujištění pro čtenáře, kterého číslo
+            nepřesvědčilo: nájem vs. krátkodobě, co děláme každý den, vyúčtování
+            a portál, kdo jsme, otázky. Do 7. 9. 2026 stálo mezi číslem a
+            formulářem sedm sekcí a ≈8 000 px (audit B4).
             Vlastní Suspense hranice: pomalý chunk nikdy nedrží ostatní. */}
         <Suspense fallback={null}><PortfolioSection /></Suspense>
         <Suspense fallback={null}><CalculatorSection /></Suspense>
-        <Suspense fallback={null}><ComparisonSection /></Suspense>
         <Suspense fallback={null}><PricingSection /></Suspense>
-        <Suspense fallback={null}><GaranceSection /></Suspense>
+        <Suspense fallback={null}><ProcessSection /></Suspense>
+        <Suspense fallback={null}><ContactSection /></Suspense>
+        <Suspense fallback={null}><ComparisonSection /></Suspense>
         <Suspense fallback={null}><ServicesSection /></Suspense>
         <Suspense fallback={null}><OwnerReportSection /></Suspense>
         <Suspense fallback={null}><AboutSection /></Suspense>
-        <Suspense fallback={null}><ProcessSection /></Suspense>
-        <Suspense fallback={null}><ContactSection /></Suspense>
         <Suspense fallback={null}><FAQSection /></Suspense>
         <Suspense fallback={null}><FinalCtaSection /></Suspense>
         <ScrollToHash />

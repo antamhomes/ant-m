@@ -1,5 +1,8 @@
 import Reveal from "@/components/Reveal";
-import PortalDemo from "@/components/PortalDemo";
+// PortalDemo z veřejné stránky odešlo (patch 2, 7. 9. 2026): vedle skutečného
+// vyúčtování ukazovalo vymyšlené byty s reálnými částkami („Ukázka s vymyšlenými
+// byty a hosty“) a dělalo ze sekce nejdelší blok stránky (1 844 px). Portál
+// tu zůstává jako titulek, věta a odkaz; komponenta žije dál pro /portal.
 import { ChevronRight, Wallet, Receipt, BedDouble, FileBarChart } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
@@ -44,15 +47,7 @@ const OwnerReportSection = () => {
           </p>
         </Reveal>
 
-        <Reveal className="mt-7"><PortalDemo /></Reveal>
-
-        <Reveal className="mt-4 mb-9">
-          <p className="font-body text-[12.5px] text-muted-foreground leading-relaxed max-w-[78ch]">
-            {t(lang, "portal_note")}
-          </p>
-        </Reveal>
-
-        <Reveal className="mb-12 sm:mb-16 flex flex-wrap items-baseline gap-x-6 gap-y-2">
+        <Reveal className="mt-6 mb-12 sm:mb-16 flex flex-wrap items-baseline gap-x-6 gap-y-2">
           <a href="/portal" className="font-body text-[15px] font-medium text-gold-deep no-underline border-b border-gold/40 pb-0.5">
             {t(lang, "portal_open")}
           </a>
