@@ -142,4 +142,66 @@ praha6.
 
 ## Log pokusů
 
-(prázdné — před prvním voláním)
+### Pokus 1 (2026-09-07 17:10 UTC): 1BR ÚSPĚCH — čeká na schválení geometrie
+
+Dotaz doslova: `Vršovice, Prague, official OpenStreetMap boundary,
+1-bedroom. For each month from August 2025 through July 2026 give: …`
+Čerstvé okno (poslední volání 5. 9. 17:36 UTC), **1. pokus okna**
+(ukotveno ~17:10 UTC 7. 9.), zbývá 19.
+
+- `selected_geometry_label`: **`Vršovice official boundary`**
+- `selected_geometry_source`: **`openstreetmap`**
+- `market_label`: `Vršovice, Prague` · session `lg_sess_AMkfGOv9oOfenpGWqwbzy4pFST1Ph_vy`
+- 12/12 měsíců, bez nadmnožiny, identity sedí; raw `e95655d1…`
+
+| | P10 okres | zbytek P10 bez Vršovic | Vršovice | poměr k P10 |
+|---|---|---|---|---|
+| n (průměr) | 198,8 | 58,7 | 140,2 → 140 | **0,705** (0,68–0,72) |
+| n (min) | 193 | | 133 | |
+| RevPAR | 1 329,5 | 1 252,4 | 1 361,7 | **1,024** (1,01–1,07); k zbytku 1,087 |
+| ADR | 1 871 | | 1 888 | 1,009 |
+| occ | 70,2 % | | 71,3 % | |
+
+Spouštěče: #3 ne (140 < 199) · #4 ne (70,5 % v pásmu 30–75 %, u horního
+okraje — Vršovice JSOU STR Praha 10) · #5 ne (rozptyl 4 p. b., bez
+trendu) · #6 ne (+2,4 % nad okresem, ve směru nájemní prémie +2,8 %;
+zbytek P10 je 8 % pod Vršovicemi). Bodový odhad n ~100 byl pesimistický
+(140); nMean 140 → váha **1,0**, nMin 133 ≥ 50 → `reliable`.
+
+Důsledek pro integrační dávku (pravidla beze změny): u 1BR w 1,0 →
+`praha10|vrsovice` 1BR = čistě vršovická buňka (1 361,7), žádný blend.
+
+Schválení geometrie: **SCHVÁLENO člověkem 7. 9. 2026** znak po znaku
+(`Vršovice official boundary` + `openstreetmap`).
+
+### Pokusy 2 a 3 (2026-09-07 17:14 / 17:17 UTC): 2BR a 3BR ÚSPĚCH
+
+Táž session, hranice pojmenovaná v každém dotazu, label + zdroj ověřeny
+u obou pásem zvlášť. Oba 12/12, bez nadmnožiny, identity sedí; tabulka
+v próze proti `data[]` bez rozdílu. Pokusy okna: 3, zbývá 17.
+
+| pásmo | ADR | RevPAR | occ | nMean | nMin | podíl na P10 | RevPAR/P10 | váha (až v dávce) | raw |
+|---|---|---|---|---|---|---|---|---|---|
+| 1BR | 1 888 | 1 361,7 | 71,3 % | 140 | 133 | 0,705 (0,68–0,72) | 1,024 | 1,0 | e95655d1… |
+| 2BR | 3 233 | 2 114,5 | 64,7 % | 36 | 31 | 0,557 (0,53–0,58) | 1,036 (0,90–1,13) | **0,5** | 84ad602d… |
+| 3BR | 6 603 | 2 387,4 | **37,7 %** | 8 | 6 | 0,608 (0,54–0,67) | 1,462 | **0** | 46706242… |
+
+Spouštěče: #1 `2BR/1BR = 1,553` v pásmu (model 1,567, okres 1,536).
+#2 `3BR/1BR = 1,753` v pásmu 1,20–3,20, n = 8 → jen záznam. #7 **ne**:
+occ 3BR 37,7 % < 55 % → anomálie P10 3BR NENÍ jen mimovršovická. #3–#6 ne.
+
+**Vstup pro rozhodnutí 4 VAZBY (P10 3BR), nerozhoduje se tady:**
+- Vršovice = 61 % nabídky P10 3BR. Dopočtený zbytek P10 3BR (n ≈ 5):
+  RevPAR ≈ 445, occ ≈ 14 % — to není STR populace vůbec.
+- Ani Vršovice samy nejsou u 3BR „normální": occ 37,7 % proti 65–71 %
+  u 1BR/2BR, `median_bw` 67–95 dní v 8 z 12 měsíců, únor `median_los`
+  38 nocí → pár velkých bytů zčásti mimo krátkodobý trh.
+- Odvozený P10 3BR (2 041,4 × 1,481 = **3 023**) je o 27 % nad
+  nejlepším přímým měřením (Vršovice 2 387, n 8) a o 85 % nad okresním
+  měřením (1 633, n 13). Odvozené z vršovického 2BR (2 114,5 × 1,481 =
+  3 132) ho přestřeluje o 31 %. Žádné přímé měření v P10 poměr 3BR/2BR
+  1,481 nepodporuje (Vršovice 1,129, okres 0,800).
+- Výchozí pravidlo by v dávce dalo: P10 3BR odvozené 3 023 s `derived`
+  a rozšířeným rozpětím; `praha10|vrsovice` 3BR w 0 → totéž. Jestli je to
+  přijatelné, nebo P10 3+kk/4+kk chce vlastní zacházení, je rozhodnutí
+  člověka PŘED dávkou.

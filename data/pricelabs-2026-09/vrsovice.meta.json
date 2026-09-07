@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/vrsovice.json",
+ "sha256": "4402cec0916e7863a7e4968a59727d140cd28ffaf4f2817d2d566a2d6ae40616",
+ "bytes": 4468,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "vrsovice",
+ "geometry": "Vršovice official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-07"
+}
