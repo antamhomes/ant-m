@@ -225,5 +225,15 @@ ven, stejně jako u P3/P4/P6/P7/P8/P9):
 `facts.test.ts` sedí. Prakticky totožné s P4: 1,034/1,093 · 0,856/0,714 ·
 1,338/1,491.) Zapsáno jen sem; do `yield.ts` až v integrační dávce.
 
-Rozhodnutí 4 VAZBY (P10 3BR): **OTEVŘENÉ, čeká na člověka.** Podklady
-v Pokusech 2 a 3 výše.
+Rozhodnutí 4 VAZBY (P10 3BR): **ROZHODNUTO člověkem 7. 9. 2026 — varianta
+(a), výchozí odvozené pravidlo, přijato PROVIZORNĚ pro integraci.**
+Doslova: „keep the existing derived rule. Not because 3,023 looks
+proven — it clearly isn't — but because option (b) would mean inventing
+a P10-specific calibration from even worse data. The direct 3BR samples
+are tiny and appear contaminated by medium/long-stay behavior. Keep
+`derived: true` + widened range and explicitly preserve the warning/open
+calibration item." Výslovně NE: použít vršovických 2 387 jako P10 3BR
+(n = 8, occ 38 %, dlouhá okna a pobyty). V modelu se P10 3BR vede jako
+**neověřené (odvozené), ne měřené**; otevřená položka kalibrace
+odvozeného 3BR (docs/calculator-model.md §4) se rozšiřuje o P10 s touto
+poznámkou. Dávka tím je mechanická.
