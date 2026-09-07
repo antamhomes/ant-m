@@ -799,6 +799,34 @@ export const MARKET_CTVRT: Record<string, { label: string; parents: LocationKey[
       "3BR": { adr: 6603, revpar: 2387.4, nMean: 8, nMin: 6, basis: "measured" },
     },
   },
+  /**
+   * Košíře: rodič jen praha5 (GEO registr praha5/kosire, LTR +3,4 %, n=30).
+   * Druhý měřený kontext Prahy 5 vedle Smíchova. Pull 7. 9. 2026 (pokusy
+   * 7–9 okna), geometrie „Košíře official boundary (openstreetmap)"
+   * schválená člověkem znak po znaku, okno 2025_08..2026_07, všechna
+   * pásma 12/12, surové odpovědi data/pricelabs-raw/kosire.{1BR,2BR,3BR}
+   * .raw.json, artefakt data/pricelabs-2026-09/kosire.json.
+   *
+   * Košíře jsou 15 % nabídky P5 (0,14–0,17 stabilně) a 10 % POD okresem
+   * i Smíchovem (1BR 1427,5 vs 1579,7 / 1566,6), ADR o 15 % níž: levnější
+   * STR trh za Smíchovem. Nájemní prémie +3,4 % se u STR nepotvrzuje —
+   * přesně případ, kdy by okresní číslo bez čtvrti krátkodobý výnos
+   * nadhodnotilo.
+   *
+   * VÁHY: 1BR nMean 69 → 0,75 → 0,75·1427,5 + 0,25·1579,7 = 1465,6 (−7 %).
+   * 2BR nMean 9 → 0 → okres (2363,4); přímé měření 1735 při n 6–11 a
+   * obsazenosti 51 % (únor 15 %) není trh, ale šest bytů. 3BR nMean 3 →
+   * 0 → okres 3710,4 — P5 je jediný okres s MĚŘENÝM 3BR, takže blend
+   * nikdy nenese derived; přímé 4247 při n 3 je záznam, ne signál.
+   */
+  kosire: {
+    label: "Košíře", parents: ["praha5"],
+    bands: {
+      "1BR": { adr: 1924, revpar: 1427.5, nMean: 69, nMin: 63, basis: "measured" },
+      "2BR": { adr: 3148, revpar: 1735.4, nMean: 9, nMin: 6, basis: "measured" },
+      "3BR": { adr: 5739, revpar: 4246.5, nMean: 3, nMin: 2, basis: "measured" },
+    },
+  },
 };
 export const ctvrtiOf = (loc: string) =>
   Object.entries(MARKET_CTVRT)
