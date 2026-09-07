@@ -77,4 +77,63 @@ zbývá 14; Košíře = pokusy 7–9, začíná se jen s ≥ 5, končí s rezerv
 
 ## Log pokusů
 
-(prázdné — před prvním voláním)
+### Pokus 1 (2026-09-07 17:39 UTC): 1BR ÚSPĚCH — čeká na schválení geometrie
+
+Dotaz doslova: `Košíře, Prague, official OpenStreetMap boundary,
+1-bedroom. For each month from August 2025 through July 2026 give: …`
+**7. pokus okna** (ukotveno ~17:10 UTC 7. 9.), zbývá 13.
+
+- `selected_geometry_label`: **`Košíře official boundary`**
+- `selected_geometry_source`: **`openstreetmap`**
+- `market_label`: `Košíře, Prague, Czech Republic` · session `lg_sess_SuELlnKZSwP_JIb-7HsnsBWvMqnf5yxp`
+- 12/12 měsíců, bez nadmnožiny, identity sedí; tabulka v próze proti
+  `data[]` bez rozdílu; raw `37889846…`
+
+| | P5 okres | Smíchov | zbytek P5 bez Smíchova | Košíře | poměr |
+|---|---|---|---|---|---|
+| n (průměr) | 451,6 | 327 | 124,6 | 68,7 → 69 | podíl na P5 **0,152** (0,14–0,17); na zbytku 0,55 |
+| n (min) | 408 | | | 63 | |
+| RevPAR | 1 579,7 | 1 566,6 | ≈ 1 617 | 1 427,5 | k P5 **0,904** (0,68–0,98); ke Smíchovu 0,911 |
+| ADR | 2 259 | | | 1 924 | 0,852 |
+| occ | | | | 73,3 % | leden 33 % (P5 45 %) |
+
+Spouštěče: #3 ne (69 < 125) · #4 ne (15,2 % v pásmu 5–20 %) · #5 ne
+(rozptyl 3 p. b.; červenec 84 nabídek je skok, podíl přesto v pásmu) ·
+#6 ne — Košíře jsou **10 % POD okresem i Smíchovem**, ADR o 15 % níž.
+Nájemní prémie +3,4 % se u STR nepotvrzuje; Košíře jsou levnější STR
+trh za Smíchovem. Bodový odhad n ~40 byl pesimistický (69) → váha
+**0,75**, nMin 63 ≥ 50 → `reliable`.
+
+Dopad na integraci (pravidla beze změny): P5|kosire 1BR ≈ 0,75·1 427,5 +
+0,25·1 579,7 = 1 465,6 (−7 % pod okresem), `derived: false`.
+
+Schválení geometrie: **SCHVÁLENO člověkem 7. 9. 2026** znak po znaku
+(`Košíře official boundary` + `openstreetmap`).
+
+### Pokusy 2 a 3 (2026-09-07 17:44 / 17:47 UTC): 2BR a 3BR ÚSPĚCH
+
+Táž session, hranice pojmenovaná v každém dotazu, label + zdroj ověřeny
+u obou pásem zvlášť. Oba 12/12, bez nadmnožiny, identity sedí, tabulky
+v próze proti `data[]` bez rozdílu. Pokusy okna: 9, zbývá 11.
+
+| pásmo | ADR | RevPAR | occ | nMean | nMin | podíl na P5 | RevPAR/P5 | váha | raw |
+|---|---|---|---|---|---|---|---|---|---|
+| 1BR | 1 924 | 1 427,5 | 73,3 % | 69 | 63 | 0,152 (0,14–0,17) | **0,904** | **0,75** | 37889846… |
+| 2BR | 3 148 | 1 735,4 | **51,0 %** | 9 | 6 | 0,048 | 0,734 | **0** | 48de07ef… |
+| 3BR | 5 739 | 4 246,5 | 73,0 % | 3 | 2 | 0,04 | 1,144 | **0** | 7825d4a5… |
+
+Spouštěče: #1 `2BR/1BR = 1,216` **těsně v pásmu** 1,20–1,75 (model 1,567,
+P5 1,496) — nízko, ale n 6–11 a occ 51 % (únor 15 %, leden 22 %): 2BR
+Košíře je 6 bytů se zimním výpadkem, ne trh; #2 `3BR/1BR = 2,975`
+v pásmu, n = 3 → jen záznam. #3–#6 ne.
+
+Dopad na integraci (pravidla beze změny, `parents: ["praha5"]`, všechna
+okresní pásma měřená → žádný `derived` z blendu):
+- 1BR w 0,75 → P5|kosire 1BR = 0,75·1 427,5 + 0,25·1 579,7 = **1 465,6**
+  (−7 % pod okresem).
+- 2BR nMean 9 → w 0 → okres (2 363,4). 3BR nMean 3 → w 0 → okres
+  (3 710,4, měřené; přímé 4 247 při n 3 o 14 % výš — záznam, P5 je
+  jediný okres, kde je i okresní 3BR měřené, takže srovnání je
+  měřené-vs-měřené, ne vs odvozené).
+- Nový stav regrese: jen `praha5|kosire`. `praha5|smichov` a `praha5|-`
+  (Ostatní) už existují a nesmí se hnout.

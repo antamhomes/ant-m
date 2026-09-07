@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "pulled": "2026-09-07",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Košíře official boundary (openstreetmap)",
+  "slug": "kosire",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR",
+   "2BR",
+   "3BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   },
+   "2BR": {
+    "basis": "measured"
+   },
+   "3BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/kosire.1BR.raw.json",
+    "raw_sha256": "37889846e6de2c5172fcaa314fff4c20a9e26e27966fc6cfc17717c3a51f4866",
+    "captured_at": "2026-09-07T17:37:16.268Z",
+    "question_sha256": "d612c0d2410702f1f1b8a5662add9e6399f92a7e20f639b199e26a2730ef720b",
+    "geometry_label": "Košíře official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_SuELlnKZSwP_JIb-7HsnsBWvMqnf5yxp",
+    "geometry_token": null
+   },
+   "2BR": {
+    "file": "data/pricelabs-raw/kosire.2BR.raw.json",
+    "raw_sha256": "48de07efa4b8cc20636bc138171cded31a4e7f2102f80c9a07aec5fecdc8e8f2",
+    "captured_at": "2026-09-07T17:41:19.942Z",
+    "question_sha256": "b584bdb9a9765f98f5d060ba99680b1695d662438df2fafb77865e499bf44633",
+    "geometry_label": "Košíře official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_SuELlnKZSwP_JIb-7HsnsBWvMqnf5yxp",
+    "geometry_token": null
+   },
+   "3BR": {
+    "file": "data/pricelabs-raw/kosire.3BR.raw.json",
+    "raw_sha256": "7825d4a5b183f9a02407bb596ee5477c5603567988c16bb0365d8a642ad34ebb",
+    "captured_at": "2026-09-07T17:42:40.037Z",
+    "question_sha256": "06eadf320f4b976be8ead83dd484c11319d5ac446095cd38d7854c137dc1673b",
+    "geometry_label": "Košíře official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_SuELlnKZSwP_JIb-7HsnsBWvMqnf5yxp",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   77.1,
+   84.9,
+   83.3,
+   70.2,
+   79,
+   33.2,
+   61.9,
+   65.9,
+   81.5,
+   81.9,
+   80.2,
+   81
+  ],
+  "adr": [
+   1853.75,
+   1688.04,
+   1850.74,
+   1665.88,
+   3029.3,
+   1859.78,
+   1287.6,
+   1673.29,
+   2138.22,
+   2372.07,
+   1773.16,
+   1900.63
+  ],
+  "revpar": [
+   1428.72,
+   1433.71,
+   1541.29,
+   1168.75,
+   2393.71,
+   618.06,
+   797.45,
+   1102.9,
+   1741.68,
+   1942.34,
+   1421.56,
+   1539.65
+  ],
+  "active_listings": [
+   63,
+   67,
+   64,
+   67,
+   70,
+   67,
+   69,
+   69,
+   68,
+   67,
+   69,
+   84
+  ],
+  "avg_revenue": [
+   40948.03,
+   41004.02,
+   45734.7,
+   33474.84,
+   69673.98,
+   17977.9,
+   22461.38,
+   31929.75,
+   48680.09,
+   56547.02,
+   40239.25,
+   45852.74
+  ]
+ },
+ "2BR": {
+  "occ": [
+   48.8,
+   47.9,
+   46.4,
+   35.1,
+   35.1,
+   22.4,
+   14.8,
+   67.3,
+   81.9,
+   85.2,
+   64.6,
+   62.5
+  ],
+  "adr": [
+   2560.38,
+   2531.15,
+   2283.7,
+   2009.3,
+   3507.62,
+   2688.3,
+   2377.95,
+   5533.61,
+   3886.19,
+   4135.39,
+   2774.22,
+   3493.34
+  ],
+  "revpar": [
+   1248.96,
+   1213.15,
+   1059.31,
+   705.02,
+   1231.15,
+   602.98,
+   352.29,
+   3725.6,
+   3183.22,
+   3525.25,
+   1793.53,
+   2184.69
+  ],
+  "active_listings": [
+   6,
+   7,
+   7,
+   6,
+   6,
+   7,
+   11,
+   11,
+   11,
+   11,
+   11,
+   11
+  ],
+  "avg_revenue": [
+   51207.51,
+   51255.76,
+   43961.17,
+   40185.99,
+   37180.73,
+   21506.4,
+   12682.4,
+   112885.64,
+   84789.5,
+   97745.48,
+   56316.71,
+   88206.94
+  ]
+ },
+ "3BR": {
+  "occ": [
+   96.4,
+   74.6,
+   76.3,
+   64.8,
+   73.3,
+   59.2,
+   69.7,
+   75.4,
+   63.2,
+   78.4,
+   66.7,
+   78.4
+  ],
+  "adr": [
+   6646.04,
+   5559.05,
+   7510.73,
+   4659.5,
+   7468.33,
+   4352.7,
+   3839.5,
+   3922.08,
+   6839.85,
+   6810.93,
+   4478.59,
+   6782.09
+  ],
+  "revpar": [
+   6408.68,
+   4149.72,
+   5731.87,
+   3018.83,
+   5476.78,
+   2574.84,
+   2676.01,
+   2955.77,
+   4325.2,
+   5338.3,
+   2985.72,
+   5315.69
+  ],
+  "active_listings": [
+   2,
+   3,
+   3,
+   3,
+   3,
+   3,
+   3,
+   3,
+   3,
+   3,
+   3,
+   3
+  ],
+  "avg_revenue": [
+   179443.18,
+   98209.93,
+   145207.43,
+   107168.47,
+   205379.09,
+   91406.76,
+   88308.47,
+   101974.01,
+   147056.67,
+   131678.04,
+   65685.93,
+   131120.36
+  ]
+ }
+}

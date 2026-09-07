@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/kosire.json",
+ "sha256": "997f47dd15c4e7e655c7ef41ca62dacd277ddcf6d6eeac2a2252b8080cd80ffd",
+ "bytes": 4448,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "kosire",
+ "geometry": "Košíře official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-07"
+}
