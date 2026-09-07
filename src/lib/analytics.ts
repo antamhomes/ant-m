@@ -3,10 +3,26 @@
  *
  * - Nothing is loaded and no cookie is set until the visitor accepts in the
  *   cookie banner (see components/CookieConsent.tsx).
- * - Set GA_MEASUREMENT_ID to your "G-XXXXXXXXXX" ID from GA4 → Admin → Data
- *   streams. While it is empty, analytics (and the banner) are disabled.
+ * - Set the "G-XXXXXXXXXX" ID from GA4 → Admin → Data streams either here or
+ *   as VITE_GA_MEASUREMENT_ID in the build environment (Lovable env). While
+ *   it is empty, analytics (and the banner) are disabled and every
+ *   trackEvent call is a no-op: the funnel events below exist in the code
+ *   but nothing is measured until the ID is set.
+ *
+ * Funnel events (docs/funnel-spec-2026-09-07.md §8), all fired from the
+ * components, names kept in one place so GA4 reports and the code agree:
+ *   calc_start     first change of any calculator input
+ *   calc_location  district / čtvrť chosen            {district, ctvrt}
+ *   calc_result    result changed (debounced 500 ms)  {district, ctvrt, size, bucket, season, band, derived, ratio_rounded, model_version}
+ *   cta_click      existing, now with {band}
+ *   form_start     first focus inside the contact form {from_calc, band}
+ *   lead_submit    successful send                     {form, status, band, ratio_rounded, district, ctvrt, size, units, from_calc}
+ *   lead_error     send failed                         {band}
+ *   calc_share     existing, now with {band}
+ * `band` is the internal qualification (lib/leadBand.ts), never shown to the visitor.
  */
-export const GA_MEASUREMENT_ID = "";
+export const GA_MEASUREMENT_ID: string =
+  (import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined)?.trim() || "";
 
 const CONSENT_KEY = "antam-cookie-consent"; // "granted" | "denied"
 

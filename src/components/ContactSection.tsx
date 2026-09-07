@@ -6,6 +6,7 @@ import { t } from "@/i18n/translations";
 import { sendInquiry } from "@/lib/inquiry";
 import { mirrorInquiryToPortal } from "@/lib/portalLead";
 import { trackEvent } from "@/lib/analytics";
+import { calcEchoLabel, leadSummaryLine, type LeadCalcPayload } from "@/lib/leadBand";
 
 const LOCATIONS = [
   "Praha 1", "Praha 2", "Praha 3", "Praha 4", "Praha 5",
@@ -60,7 +61,15 @@ const ContactSection = () => {
   const [sendError, setSendError] = useState(false);
   // Co kalkulačka ukázala, uložené k leadu. Bez toho se po posunu hranic
   // kbelíků nedá zpětně zjistit, jaké číslo majitel v tu chvíli viděl.
-  const [calcSnapshot, setCalcSnapshot] = useState<Record<string, unknown> | null>(null);
+  // Od 7. 9. 2026 nese i čitelné popisky, pásmo, násobek a okno dat (lib/leadBand).
+  const [calcSnapshot, setCalcSnapshot] = useState<Partial<LeadCalcPayload> | null>(null);
+  // form_start jednou za život formuláře: první fokus do libovolného pole.
+  const formStarted = useRef(false);
+  const onFormFocus = () => {
+    if (formStarted.current) return;
+    formStarted.current = true;
+    trackEvent("form_start", { from_calc: !!calcSnapshot, band: calcSnapshot?.result_band ?? "none" });
+  };
   // Poslední věta, kterou do zprávy vepsala kalkulačka. Bez toho by se po
   // změně kalkulačky nedala odlišit od textu, který napsal majitel sám.
   const lastCalcLine = useRef("");
@@ -69,17 +78,15 @@ const ContactSection = () => {
 
   // Co už kalkulačka ví, se návštěvníkovi ukáže, místo aby se na to ptal
   // formulář podruhé. Pole zůstávají za rozbalovákem, předvyplněná.
-  const calcSummary = calcSnapshot
-    ? [calcSnapshot.district, calcSnapshot.ctvrt, calcSnapshot.bucket_label]
-        .filter((x): x is string => typeof x === "string" && x.length > 0)
-        .join(" \u00b7 ")
-    : "";
+  // Čitelně (Praha 1 · Staré Město · 2+kk · kolem 63 m² · ~63 000 Kč / měsíc);
+  // do 7. 9. 2026 tu stálo „praha1 · stare_mesto“, surová id z payloadu.
+  const calcSummary = calcSnapshot ? calcEchoLabel(calcSnapshot, lang) : "";
 
   // The calculator CTA pre-fills district + layout so the owner doesn't type them
   // twice; the floor area lands visibly (and editably) in the message field.
   useEffect(() => {
     const onPrefill = (e: Event) => {
-      const d = (e as CustomEvent<{ location?: string; size?: string; m2?: number; calc?: Record<string, unknown> }>).detail || {};
+      const d = (e as CustomEvent<{ location?: string; size?: string; m2?: number; calc?: LeadCalcPayload | null }>).detail || {};
       if (d.calc) setCalcSnapshot(d.calc);
       const calcLine =
         d.m2
@@ -106,7 +113,7 @@ const ContactSection = () => {
     // kalkulačky i od člověka, který ji nikdy nerozklikl. Bez tohohle nesl lead
     // číslo z okamžiku kliknutí na CTA, i když majitel potom kalkulačku přenastavil.
     const onCalcState = (e: Event) => {
-      const d = (e as CustomEvent<Record<string, unknown>>).detail;
+      const d = (e as CustomEvent<LeadCalcPayload>).detail;
       if (d) setCalcSnapshot((prev) => (prev ? d : prev));
     };
     window.addEventListener("antam:prefill-contact", onPrefill);
@@ -168,9 +175,12 @@ const ContactSection = () => {
           status: labelOf(statusOptions, formData.status),
           contactPref: labelOf(prefOptions, formData.contactPref),
           language: lang === "cs" ? "čeština" : "Tiếng Việt",
-          // The e-mail template has fixed fields, so the energy and unit-count
-          // answers ride inside the message body instead of template keys.
+          // The e-mail template has fixed fields, so the calculator result, the
+          // energy and unit-count answers ride inside the message body instead of
+          // template keys. The calculator line goes FIRST: the inbox has to see
+          // the band and the number before the owner's free text.
           message: [
+            calcSnapshot ? leadSummaryLine(calcSnapshot) : "",
             formData.message,
             formData.units ? `Počet bytů: ${labelOf(unitsOptions, formData.units)}` : "",
             formData.energy ? `Energie: ${formData.energy}` : "",
@@ -197,28 +207,53 @@ const ContactSection = () => {
         ...(calcSnapshot
           ? {
               calc_model_version: calcSnapshot.model_version as string,
+              // Celý snapshot: vstupy s čitelnými popisky a výsledek s pásmem,
+              // násobkem, ročním rozdílem, příznakem derived a oknem dat. Stejná
+              // data, ze kterých se zpětně generuje interní podklad (spec §9).
               calc_inputs: {
                 district: calcSnapshot.district,
+                district_label: calcSnapshot.district_label,
                 ctvrt: calcSnapshot.ctvrt,
+                ctvrt_label: calcSnapshot.ctvrt_label,
                 dispozice: calcSnapshot.dispozice,
+                size_label: calcSnapshot.size_label,
                 size_bucket_id: calcSnapshot.size_bucket_id,
                 representative_m2: calcSnapshot.representative_m2,
                 bucket_label: calcSnapshot.bucket_label,
                 oversized: calcSnapshot.oversized,
+                season: calcSnapshot.season,
               },
               calc_result: {
                 owner_low: calcSnapshot.owner_low,
                 owner_high: calcSnapshot.owner_high,
                 ltr_month: calcSnapshot.ltr_month,
+                ltr_ctvrt_factor: calcSnapshot.ltr_ctvrt_factor,
+                ratio: calcSnapshot.ratio,
+                annual_delta: calcSnapshot.annual_delta,
+                result_band: calcSnapshot.result_band,
+                derived: calcSnapshot.derived,
+                data_window: calcSnapshot.data_window,
+                summary: leadSummaryLine(calcSnapshot),
               },
             }
           : {}),
       });
-      trackEvent("lead_submit", { form: "contact", status: formData.status || "n/a" });
+      trackEvent("lead_submit", {
+        form: "contact",
+        status: formData.status || "n/a",
+        units: formData.units || "n/a",
+        from_calc: !!calcSnapshot,
+        band: calcSnapshot?.result_band ?? "none",
+        ratio_rounded: typeof calcSnapshot?.ratio === "number" ? Math.round(calcSnapshot.ratio * 10) / 10 : -1,
+        district: calcSnapshot?.district ?? formData.location ?? "",
+        ctvrt: calcSnapshot?.ctvrt ?? "?",
+        size: calcSnapshot?.dispozice ?? formData.size ?? "",
+      });
       setSuccess(true);
       setFormData(emptyForm);
     } catch (err) {
       console.error("Failed to send inquiry", err);
+      trackEvent("lead_error", { band: calcSnapshot?.result_band ?? "none" });
       setSendError(true);
     } finally {
       setSubmitting(false);
@@ -243,6 +278,7 @@ const ContactSection = () => {
 
         <Reveal as="form" delay={0.1}
           onSubmit={handleSubmit}
+          onFocusCapture={onFormFocus}
           className="bg-card border border-border rounded-sm p-5 sm:p-6 md:p-8 space-y-4 sm:space-y-5"
         >
           {success ? (

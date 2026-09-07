@@ -44,8 +44,9 @@ const FiveYearChart = () => {
   const { w: W, h: H } = box;
   const narrow = W < 480;
   const PAD = { t: 16, r: narrow ? 56 : 92, b: 30, l: narrow ? 50 : 64 };
-  const d = useMemo(() => fiveYear(location, size, m2, ctvrt), [location, size, m2, ctvrt]);
-  if (!d) return null;
+  // Bez vybrané lokality (prázdný start kalkulačky, 7. 9. 2026) graf nemá co kreslit.
+  const d = useMemo(() => (location === null ? null : fiveYear(location, size, m2, ctvrt)), [location, size, m2, ctvrt]);
+  if (!d || location === null) return null;
 
   const czk = (n: number) => `${Math.round(n).toLocaleString("cs-CZ").replace(/ /g, "\u00a0")}\u00a0Kč`;
   // "mil." / "tis." are Czech; the Vietnamese page counts in "triệu" (million) and "nghìn".

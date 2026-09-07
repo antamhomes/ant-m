@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, type CSSProperties } from "react";
+import { useState, useMemo, useEffect, useRef, type CSSProperties } from "react";
 import Reveal from "@/components/Reveal";
 import { Calculator, MapPin, Home, Share2, Pencil, Ruler } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -6,13 +6,18 @@ import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
 import { BAND_LABEL, ownerMonthly, rentFor, ctvrtiOf, ctvrtRentFactor, bucketsFor, CALC_MODEL_VERSION, type LocationKey, type SizeKey, type SeasonKey } from "@/lib/yield";
 import { CALC_LOCATIONS as LOCATIONS, useCalc, type CalcLoc } from "@/contexts/CalcContext";
+import { classifyBand, type LeadCalcPayload } from "@/lib/leadBand";
+import { CALC_DATA_WINDOW } from "@/lib/dataWindow";
 
 /** Lokalita v kalkulačce: pražské čtvrti + „jinde". U čtvrtí bez vlastních dat
  *  (P2, P6 až P10) a u „jinde" se panel výsledku přepne na posouzení
  *  do 24 hodin; ŽÁDNÉ číslo se neukazuje a nic se neopisuje z jiné čtvrti. */
 
 // Veřejné vstupy: lokalita → čtvrť (jen kde jsou data) → dispozice → velikost
-// → volitelně sezóna. Samé klikání, nic se nepíše. Kapacita se neptá ani
+// → volitelně sezóna. Samé klikání, nic se nepíše. PRÁZDNÝ START (7. 9. 2026):
+// dokud návštěvník nevybere lokalitu, karta nic nepočítá a neukazuje; do té
+// doby byla výchozí Praha 1 a každý viděl nejdřív její ~57 000 Kč (audit
+// trychtýře, nález B3). Sdílený odkaz lokalitu nese, takže přijde s číslem. Kapacita se neptá ani
 // nezobrazuje. Model počítá rozpětí, ale VEŘEJNĚ se ukazuje JEDNO číslo:
 // vršek rozpětí označený jako potenciál (1. 9. 2026). low/high žijí dál
 // v ownerMonthly, ve stopě, v leadu, v grafu i v MCP — jen se nerenderují.
@@ -49,8 +54,9 @@ const CalculatorSection = () => {
     // posílala typická plocha, takže se sdílený „posoudíme individuálně" otevřel
     // příjemci jako normální kbelík S ČÍSLEM. Oversized musí zůstat oversized.
     const shareM2 = oversized ? (bucketsFor(size).find((b) => b.id === bucket)?.minM2 ?? m2) : m2;
+    if (location === null) return;
     const url = `${window.location.origin}${window.location.pathname}?byt=${location}-${ctvrt ?? "-"}-${size}-${shareM2}m-${season}#kalkulacka`;
-    trackEvent("calc_share", { district: location, ctvrt: ctvrt ?? "-", size, m2: shareM2, season });
+    trackEvent("calc_share", { district: location ?? "", ctvrt: ctvrt ?? "-", size, m2: shareM2, season, band: band.band });
     try {
       if (navigator.share) { await navigator.share({ title: "Antam Homes", url }); return; }
     } catch { /* user cancelled — fall through to copy */ }
@@ -69,6 +75,9 @@ const CalculatorSection = () => {
   // naměřeným operátorským faktorem. Minus provize platformy, dělení 70/30.
   // Nájem řídí PLOCHA (rentFor).
   const result = useMemo(() => {
+    // Bez lokality se NIC nepočítá: žádné výchozí okresní číslo, které by
+    // návštěvníka ukotvilo dřív, než řekne, kde byt je.
+    if (location === null) return { r: null, ltr: 0, ratio: 0, ctvrtLabel: null, rentCtvrtFactor: 1 };
     const r = ownerMonthly(location, size, { season, m2, ctvrt });
     // Nájem bere TÉŽ čtvrť jako STR strana. Bez toho by se lokální čitatel
     // dělil okresním jmenovatelem a násobek by se u silných čtvrtí nafoukl.
@@ -125,22 +134,42 @@ const CalculatorSection = () => {
   })();
   // Byt nad p95 stocku se NEEXTRAPOLUJE: místo pochybného čísla jde na
   // individuální posouzení, stejně jako čtvrť nebo pásmo bez dat.
-  const supported = result.r.supported && !oversized;
+  const supported = !!result.r?.supported && !oversized;
+  const sizeLabel = sizes.find((s) => s.value === size)?.label ?? "";
+
+  // Pásmo poptávky (lib/leadBand): prezentace a interní skórování nad čísly,
+  // která karta stejně ukazuje. Číslo na kartě nemění a návštěvník ho nevidí.
+  const band = classifyBand({
+    supported: !!result.r?.supported, oversized,
+    ownerHigh: result.r?.supported ? result.r.high : null,
+    ltrMonth: result.ltr || null,
+    size, bucket,
+  });
 
   // Co se ukládá k leadu. JEDNA definice pro obě CTA (dřív byl tentýž objekt
   // opsaný dvakrát a mohl se rozejít). low/high se sem posílají DÁL, i když se
   // veřejně nerenderují: bez nich se zpětně nedá underwritovat, co majitel viděl.
-  const calcPayload = {
+  // Čitelné popisky (district_label, ctvrt_label, size_label) jdou vedle id,
+  // aby formulář ani e-mail nepsaly „praha1 · stare_mesto“.
+  const calcPayload: LeadCalcPayload | null = location === null ? null : {
     model_version: CALC_MODEL_VERSION,
-    district: location, ctvrt: ctvrt ?? null, dispozice: size,
+    data_window: { from: CALC_DATA_WINDOW.from, to: CALC_DATA_WINDOW.to, months: CALC_DATA_WINDOW.months },
+    district: location, district_label: locLabel(location),
+    ctvrt: ctvrt ?? null, ctvrt_label: result.ctvrtLabel,
+    dispozice: size, size_label: sizeLabel,
     size_bucket_id: bucket,
     representative_m2: oversized ? null : m2,
     bucket_label: bucketLabel,
     oversized,
-    owner_low: result.r.supported ? result.r.low : null,
-    owner_high: result.r.supported ? result.r.high : null,
+    season,
+    owner_low: result.r?.supported ? result.r.low : null,
+    owner_high: result.r?.supported ? result.r.high : null,
     ltr_month: result.ltr || null,
     ltr_ctvrt_factor: result.rentCtvrtFactor,
+    derived: !!result.r?.supported && result.r.derived,
+    result_band: band.band,
+    ratio: band.ratio,
+    annual_delta: band.annualDelta,
   };
 
   // Poptávka si snapshot bere při kliknutí na CTA. Když majitel potom ještě
@@ -148,9 +177,48 @@ const CalculatorSection = () => {
   // ČÍSLO, které už na stránce není. Tenhle event drží snapshot v poptávce
   // synchronně se stavem kalkulačky — ale jen tam, kde už nějaký je, aby se
   // k leadu nelepil výchozí stav někomu, kdo kalkulačku vůbec nepoužil.
+  // Bez lokality není co hlásit.
   useEffect(() => {
-    window.dispatchEvent(new CustomEvent("antam:calc-state", { detail: calcPayload }));
+    if (calcPayload) window.dispatchEvent(new CustomEvent("antam:calc-state", { detail: calcPayload }));
   });
+
+  // ANALYTIKA (spec §8). calc_start jednou na první změnu vstupu; calc_location
+  // při volbě okresu/čtvrti; calc_result při každé změně výsledku, s odstupem
+  // 500 ms, aby rychlé překlikávání neposílalo pět eventů za sekundu. Bez GA ID
+  // je trackEvent no-op, kód je tu, aby měření začalo hned po nastavení ID.
+  const started = useRef(false);
+  const markStart = () => {
+    if (started.current) return;
+    started.current = true;
+    trackEvent("calc_start");
+  };
+  const onLocation = (v: CalcLoc) => {
+    markStart();
+    setLocation(v);
+    trackEvent("calc_location", { district: v, ctvrt: "?" });
+  };
+  const onCtvrt = (v: string | null) => {
+    markStart();
+    setCtvrt(v);
+    trackEvent("calc_location", { district: location ?? "", ctvrt: v ?? "-" });
+  };
+  const onSize = (v: SizeKey) => { markStart(); pickSize(v); };
+  const onBucket = (id: string) => { markStart(); pickBucket(id); };
+  const onSeason = (v: SeasonKey) => { markStart(); setSeason(v); };
+  const resultKey = location === null ? "" : `${location}|${ctvrt ?? "?"}|${size}|${bucket}|${season}|${band.band}`;
+  useEffect(() => {
+    if (!resultKey) return;
+    const id = window.setTimeout(() => {
+      trackEvent("calc_result", {
+        district: location ?? "", ctvrt: ctvrt ?? "?", size, bucket, season,
+        band: band.band, derived: !!result.r?.supported && result.r.derived,
+        ratio_rounded: band.ratio === null ? -1 : Math.round(band.ratio * 10) / 10,
+        model_version: CALC_MODEL_VERSION,
+      });
+    }, 500);
+    return () => window.clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resultKey]);
 
   return (
     <section id="kalkulacka" className="section bg-secondary scroll-mt-20">
@@ -174,10 +242,12 @@ const CalculatorSection = () => {
               {/* Mobile: native select (úspora místa) */}
               <select
                 id="calc-location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value as CalcLoc)}
+                value={location ?? ""}
+                onChange={(e) => { if (e.target.value) onLocation(e.target.value as CalcLoc); }}
                 className="sm:hidden w-full min-w-0 max-w-full px-4 py-3 bg-card border border-border rounded-sm font-body text-sm font-medium text-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/30 transition-colors"
               >
+                {/* Prázdná volba jen dokud lokalita není: po výběru zmizí, zpět na „nic“ se nejde. */}
+                {location === null && <option value="">{t(lang, "calc_location_pick")}</option>}
                 {LOCATIONS.map((l) => (
                   <option key={l} value={l}>{locLabel(l)}</option>
                 ))}
@@ -185,7 +255,7 @@ const CalculatorSection = () => {
               {/* Desktop: tlačítka */}
               <div role="group" aria-labelledby="calc-location-label" className="hidden sm:grid sm:grid-cols-3 gap-2">
                 {LOCATIONS.map((l) => (
-                  <button key={l} type="button" onClick={() => setLocation(l)}
+                  <button key={l} type="button" onClick={() => onLocation(l)}
                     aria-pressed={location === l}
                     className={`px-3 py-2.5 rounded-sm text-sm font-body font-medium transition-all border ${
                       location === l
@@ -203,7 +273,7 @@ const CalculatorSection = () => {
                 zpřesnění — bez volby platí okresní odhad. Nabídka se řídí
                 `ctvrtiOf(location)`, takže další čtvrti (Žižkov, Smíchov,
                 Karlín…) se objeví samy, aniž by komukoli přibyl krok. */}
-            {needsCtvrt && (
+            {needsCtvrt && location !== null && (
               <div id="kalkulacka-ctvrt" className="scroll-mt-24">
                 <p id="calc-area-label" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
                   <MapPin className="w-4 h-4 text-gold" />
@@ -211,7 +281,7 @@ const CalculatorSection = () => {
                 </p>
                 <div role="group" aria-labelledby="calc-area-label" className="flex flex-wrap gap-2">
                   {ctvrtiOf(location).map((c) => (
-                    <button key={c.id} type="button" onClick={() => setCtvrt(c.id)}
+                    <button key={c.id} type="button" onClick={() => onCtvrt(c.id)}
                       aria-pressed={ctvrt === c.id}
                       className={`px-3 py-2.5 rounded-sm text-sm font-body font-medium transition-all border ${
                         ctvrt === c.id
@@ -222,7 +292,7 @@ const CalculatorSection = () => {
                       {c.label}
                     </button>
                   ))}
-                  <button type="button" onClick={() => setCtvrt(null)}
+                  <button type="button" onClick={() => onCtvrt(null)}
                     aria-pressed={ctvrt === null}
                     className={`px-3 py-2.5 rounded-sm text-sm font-body font-medium transition-all border ${
                       ctvrt === null
@@ -245,7 +315,7 @@ const CalculatorSection = () => {
               </p>
               <div role="group" aria-labelledby="calc-disposition-label" className="grid grid-cols-4 gap-2">
                 {sizes.map((s) => (
-                  <button key={s.value} type="button" onClick={() => pickSize(s.value)}
+                  <button key={s.value} type="button" onClick={() => onSize(s.value)}
                     aria-pressed={size === s.value}
                     className={`px-2 sm:px-3 py-3 min-w-0 rounded-sm text-sm font-body font-semibold transition-all border ${
                       size === s.value
@@ -280,7 +350,7 @@ const CalculatorSection = () => {
                       ? t(lang, "calc_size_upto").replace("{n}", String(b.maxM2))
                       : `${b.minM2}\u2013${b.maxM2} m²`;
                   return (
-                    <button key={b.id} type="button" onClick={() => pickBucket(b.id)}
+                    <button key={b.id} type="button" onClick={() => onBucket(b.id)}
                       aria-pressed={bucket === b.id}
                       className={`flex flex-col items-start px-3 py-2.5 min-w-0 rounded-sm font-body transition-all border ${
                         bucket === b.id
@@ -308,7 +378,7 @@ const CalculatorSection = () => {
               </summary>
               <div className="mt-3 grid grid-cols-2 gap-2">
                 {SEASON_KEYS.map((key) => (
-                  <button key={key} type="button" onClick={() => setSeason(key)}
+                  <button key={key} type="button" onClick={() => onSeason(key)}
                     aria-pressed={season === key}
                     className={`flex flex-col px-3 py-3 rounded-sm font-body transition-all border text-left leading-tight ${
                       season === key
@@ -343,11 +413,25 @@ const CalculatorSection = () => {
               Pořadí proto jde přes --calc-order a .calc-result v index.css. */}
           <Reveal
             delay={0.1}
-            style={{ "--calc-order": 1 } as CSSProperties}
+            style={{ "--calc-order": location === null ? 2 : 1 } as CSSProperties}
             className="calc-result flex items-start md:sticky md:top-24"
           >
             <div className="w-full bg-gradient-dark rounded-md p-5 sm:p-7 md:p-9 space-y-4 sm:space-y-5">
-              {!supported ? (
+              {location === null ? (
+                /* PRÁZDNÝ START: bez lokality žádné číslo. Tichá výzva místo
+                   výchozí Prahy 1; na mobilu stojí ZA vstupy (--calc-order 2). */
+                <div className="space-y-4">
+                  <p className="font-display text-2xl sm:text-[1.75rem] font-semibold text-primary-foreground leading-snug text-balance">
+                    {t(lang, "calc_empty_title")}
+                  </p>
+                  <p className="font-body text-[14.5px] text-primary-foreground/80 leading-relaxed">
+                    {t(lang, "calc_empty_text")}
+                  </p>
+                  <a href="#kontakt" className="inline-flex items-center gap-1 font-body text-[13px] text-primary-foreground/70 underline underline-offset-4 decoration-primary-foreground/30 hover:text-primary-foreground">
+                    {t(lang, "calc_empty_link")}
+                  </a>
+                </div>
+              ) : !supported ? (
                 /* Lokalita bez vlastních tržních dat: žádné číslo, poctivé
                    zavření s cestou k propočtu do 24 hodin. */
                 <div className="space-y-4">
@@ -374,9 +458,9 @@ const CalculatorSection = () => {
                   <a
                     href="#kontakt"
                     onClick={() => {
-                      trackEvent("cta_click", { location: "calculator_unsupported", target: "contact", district: location, size });
+                      trackEvent("cta_click", { location: "calculator_unsupported", target: "contact", district: location, size, band: band.band });
                       window.dispatchEvent(new CustomEvent("antam:prefill-contact", {
-                        detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2,
+                        detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizeLabel, m2,
                           calc: calcPayload },
                       }));
                     }}
@@ -387,7 +471,7 @@ const CalculatorSection = () => {
                 </div>
               ) : (
                 <>
-                  {result.r.supported && (
+                  {result.r?.supported && (
                   <div className="space-y-4 sm:space-y-5">
                     <div>
                       <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
@@ -508,10 +592,10 @@ const CalculatorSection = () => {
                     <a
                       href="#kontakt"
                       onClick={() => {
-                        trackEvent("cta_click", { location: "calculator", target: "contact", district: location, size });
+                        trackEvent("cta_click", { location: "calculator", target: "contact", district: location, size, band: band.band });
                         window.dispatchEvent(
                           new CustomEvent("antam:prefill-contact", {
-                            detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizes.find((s) => s.value === size)?.label ?? "", m2,
+                            detail: { location: locLabel(location), ctvrt: ctvrt ?? null, size: sizeLabel, m2,
                           calc: calcPayload },
                           })
                         );

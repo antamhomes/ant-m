@@ -574,8 +574,8 @@ describe("model výnosu", () => {
       }
     }
     // low/high MUSÍ přežít pod povrchem: v modelu, ve stopě, v leadu, v grafu i v MCP.
-    expect(calc, "low jde do leadu").toContain("owner_low: result.r.supported ? result.r.low");
-    expect(calc, "high jde do leadu").toContain("owner_high: result.r.supported ? result.r.high");
+    expect(calc, "low jde do leadu").toContain("owner_low: result.r?.supported ? result.r.low");
+    expect(calc, "high jde do leadu").toContain("owner_high: result.r?.supported ? result.r.high");
     expect(readFileSync("src/lib/horizon.ts", "utf8"), "graf dál čte oba konce")
       .toContain("const netMarket = year.low;");
     expect(readFileSync("src/lib/mcp/tools/estimate-yield.ts", "utf8"), "MCP dál vrací oba konce")
@@ -748,7 +748,7 @@ describe("model výnosu", () => {
     expect(typicalArea("praha1", "2kk")).toBe(65);
     expect(typicalArea("jinde", "2kk")).toBe(MEDIAN_AREA["2kk"]);
     // typicalArea zůstává jako VÝCHOZÍ hodnota posuvníku a záloha, ne jako vstup výpočtu
-    expect(readFileSync("src/contexts/CalcContext.tsx", "utf8")).toContain("typicalArea(loc0, size0)");
+    expect(readFileSync("src/contexts/CalcContext.tsx", "utf8")).toContain('typicalArea(loc0 ?? "", size0)');
     expect(readFileSync("src/lib/horizon.ts", "utf8")).toContain("m2Input ?? typicalArea(location, size)");
   });
 

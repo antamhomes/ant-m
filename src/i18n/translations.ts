@@ -134,6 +134,11 @@ const translations = {
     calc_desc: "Lokalita a\u00a0dispozice. Výsledek z\u00a0realizovaných cen celé čtvrti, ne\u00a0z\u00a0ceníků.",
     calc_location: "Lokalita",
     calc_loc_other: "Jinde / mimo Prahu",
+    // Prázdný start (7. 9. 2026): bez lokality karta nic nepočítá.
+    calc_location_pick: "Vyberte lokalitu",
+    calc_empty_title: "Začněte lokalitou.",
+    calc_empty_text: "Číslo se objeví po první volbě, dispozice a velikost ho zpřesní.",
+    calc_empty_link: "Raději rovnou poslat byt",
     calc_size: "Dispozice",
     calc_area: "Upřesněte lokalitu",
     calc_area_other: "Ostatní {district}",
@@ -612,6 +617,11 @@ const translations = {
     calc_desc: "Quận và loại nhà. Con số tính từ giá thật cả quận, không phải giá niêm yết.",
     calc_location: "Quận",
     calc_loc_other: "Nơi khác / ngoài Praha",
+    // Prázdný start (7. 9. 2026). VI věty jsou návrh (Claude), ne Vuongova slova.
+    calc_location_pick: "Chọn quận",
+    calc_empty_title: "Chọn quận trước là được.",
+    calc_empty_text: "Chọn xong là thấy con số. Loại nhà và diện tích sẽ làm con số đúng hơn.",
+    calc_empty_link: "Hoặc gửi thẳng căn nhà cho Antam",
     calc_size: "Loại nhà",
     calc_area: "Khu vực cụ thể",
     calc_area_other: "Khu khác thuộc {district}",

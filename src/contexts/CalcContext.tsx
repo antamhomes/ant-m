@@ -24,7 +24,11 @@ const SIZES: SizeKey[] = ["1kk", "2kk", "3kk", "4kk"];
 const SEASONS: SeasonKey[] = ["year", "summer", "winter", "xmas"];
 
 type CalcState = {
-  location: CalcLoc; setLocation: (v: CalcLoc) => void;
+  /** null = návštěvník ještě nevybral lokalitu; ŽÁDNÝ výsledek se nepočítá ani nekreslí
+   *  (do 7. 9. 2026 byla výchozí Praha 1 a každý viděl nejdřív její číslo, viz
+   *  docs/audit-funnel-2026-09-07.md B3). Sdílený odkaz lokalitu nese, takže
+   *  přijde rovnou s číslem. */
+  location: CalcLoc | null; setLocation: (v: CalcLoc) => void;
   /** undefined = krok „Upřesněte lokalitu“ nezodpovězen, null = Ostatní Praha X */
   ctvrt: string | null | undefined; setCtvrt: (v: string | null | undefined) => void;
   /** true, když okres má vlastní čtvrti, a krok se tedy nesmí přeskočit */
@@ -92,22 +96,25 @@ const readShare = () =>
 export const CalcProvider = ({ children }: { children: ReactNode }) => {
   const initial = useMemo(readShare, []);
   const size0 = initial?.size ?? "2kk";
-  const loc0 = initial?.location ?? "praha1";
-  const [location, setLocationRaw] = useState<CalcLoc>(loc0);
+  // Bez sdíleného odkazu NENÍ vybraná lokalita. Výchozí kbelík velikosti se
+  // proto bere z celopražské typické plochy (typicalArea bez okresu vrací
+  // MEDIAN_AREA), ne z Prahy 1; okres si ho při výběru stejně přenastaví.
+  const loc0: CalcLoc | null = initial?.location ?? null;
+  const [location, setLocationRaw] = useState<CalcLoc | null>(loc0);
   // POZOR: ne `initial?.ctvrt ?? undefined` — `??` srovná null na undefined,
   // a tím zmizí rozdíl mezi „Ostatní Praha X“ a „nezodpovězeno“.
   const [ctvrt, setCtvrt] = useState<string | null | undefined>(initial ? initial.ctvrt : undefined);
   const [size, setSize] = useState<SizeKey>(size0);
-  const [bucket, setBucket] = useState<string>(bucketFor(size0, initial?.m2 ?? typicalArea(loc0, size0)).id);
+  const [bucket, setBucket] = useState<string>(bucketFor(size0, initial?.m2 ?? typicalArea(loc0 ?? "", size0)).id);
   const [season, setSeason] = useState<SeasonKey>(initial?.season ?? "year");
 
   // m² už není vstup: plyne z vybraného kbelíku. Sdílené odkazy se ale pořád
   // nesou v m², takže se při načtení namapují na kbelík, který je obsahuje.
   const picked = bucketById(size, bucket);
   const oversized = picked.representativeM2 === null;
-  const m2 = picked.representativeM2 ?? typicalArea(location, size);
+  const m2 = picked.representativeM2 ?? typicalArea(location ?? "", size);
 
-  const needsCtvrt = ctvrtiOf(location).length > 0;
+  const needsCtvrt = location !== null && ctvrtiOf(location).length > 0;
   /** Změna okresu vrací krok 2 na „nezodpovězeno“ a plochu na typickou pro nový okres. */
   const setLocation = (v: CalcLoc) => {
     setLocationRaw(v);
@@ -115,7 +122,7 @@ export const CalcProvider = ({ children }: { children: ReactNode }) => {
     setBucket(bucketFor(size, typicalArea(v, size)).id);
   };
   /** Změna dispozice vybere kbelík, do kterého padne typická plocha té dispozice. */
-  const pickSize = (v: SizeKey) => { setSize(v); setBucket(bucketFor(v, typicalArea(location, v)).id); };
+  const pickSize = (v: SizeKey) => { setSize(v); setBucket(bucketFor(v, typicalArea(location ?? "", v)).id); };
 
   const value = useMemo<CalcState>(() => ({
     location, setLocation, ctvrt, setCtvrt, needsCtvrt,
