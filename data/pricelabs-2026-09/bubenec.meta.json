@@ -1,0 +1,17 @@
+{
+ "artifact": "data/pricelabs-2026-09/bubenec.json",
+ "sha256": "8296028c9193d29d12cbbdc979e97a541e39c523b9457a38f91745f1cbd99a60",
+ "bytes": 4449,
+ "window": {
+  "from": "2025_08",
+  "to": "2026_07"
+ },
+ "slug": "bubenec",
+ "geometry": "Bubeneč official boundary (openstreetmap)",
+ "bands": [
+  "1BR",
+  "2BR",
+  "3BR"
+ ],
+ "pulled": "2026-09-07"
+}

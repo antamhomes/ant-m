@@ -1,0 +1,289 @@
+{
+ "meta": {
+  "pulled": "2026-09-07",
+  "source": "PriceLabs MCP market_research",
+  "geometry": "Bubeneč official boundary (openstreetmap)",
+  "slug": "bubenec",
+  "currency": "CZK (converted from USD, month-aligned rates)",
+  "months": [
+   "2025_08",
+   "2025_09",
+   "2025_10",
+   "2025_11",
+   "2025_12",
+   "2026_01",
+   "2026_02",
+   "2026_03",
+   "2026_04",
+   "2026_05",
+   "2026_06",
+   "2026_07"
+  ],
+  "window_rule": "poslednich 12 uzavrenych mesicu (pl-window.mjs)",
+  "bands": [
+   "1BR",
+   "2BR",
+   "3BR"
+  ],
+  "bands_basis": {
+   "1BR": {
+    "basis": "measured"
+   },
+   "2BR": {
+    "basis": "measured"
+   },
+   "3BR": {
+    "basis": "measured"
+   }
+  },
+  "fields_note": "occ %, adr a revpar Kc/noc, avg_revenue Kc na aktivni listing a kalendarni mesic",
+  "raw_provenance": {
+   "1BR": {
+    "file": "data/pricelabs-raw/bubenec.1BR.raw.json",
+    "raw_sha256": "fc9a1aa2f36e37e496f460dfe30a74a1dbc2474ecc73c98207aba7964e0ac9d8",
+    "captured_at": "2026-09-07T18:14:41.306Z",
+    "question_sha256": "2d3cdb15faf4c51fae4eda2ee97f011ba47b0ab991248f7bd5af35fa0a8e5f04",
+    "geometry_label": "Bubeneč official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_1K2jfO77rAbCp952HeUoOdWB9iWG798C",
+    "geometry_token": null
+   },
+   "2BR": {
+    "file": "data/pricelabs-raw/bubenec.2BR.raw.json",
+    "raw_sha256": "6aaf0e0e0fa25e6984f029562c1a57d3c61d906bfb586083322c9e90ea325f48",
+    "captured_at": "2026-09-07T18:17:39.011Z",
+    "question_sha256": "375033ab19d4e71eebeabd0b0f2531edf8e18f0eb816f050b9e770b133c3ff79",
+    "geometry_label": "Bubeneč official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_1K2jfO77rAbCp952HeUoOdWB9iWG798C",
+    "geometry_token": null
+   },
+   "3BR": {
+    "file": "data/pricelabs-raw/bubenec.3BR.raw.json",
+    "raw_sha256": "b1d18a6bd17452efeab546e2896ace3e464b0576757a2a5d260caaf2aefb6f39",
+    "captured_at": "2026-09-07T18:19:01.149Z",
+    "question_sha256": "236a88dcd41788afb8ef5fb1435738461dba7fe3e3f2628beb73c203a97f5ea8",
+    "geometry_label": "Bubeneč official boundary",
+    "geometry_source": "openstreetmap",
+    "session_id": "lg_sess_1K2jfO77rAbCp952HeUoOdWB9iWG798C",
+    "geometry_token": null
+   }
+  }
+ },
+ "1BR": {
+  "occ": [
+   81.2,
+   90.6,
+   85.1,
+   71.6,
+   83.2,
+   50.3,
+   62.1,
+   72.8,
+   84.4,
+   82.5,
+   76,
+   72.3
+  ],
+  "adr": [
+   1799.94,
+   1763.11,
+   1952.48,
+   1772.65,
+   2791.11,
+   1811.58,
+   1544.82,
+   1776.97,
+   2086.74,
+   2304.11,
+   2064.6,
+   2078.31
+  ],
+  "revpar": [
+   1460.74,
+   1597.82,
+   1662.07,
+   1269.8,
+   2322.58,
+   911,
+   959.62,
+   1293.29,
+   1760.9,
+   1900.59,
+   1569.88,
+   1502.31
+  ],
+  "active_listings": [
+   53,
+   57,
+   62,
+   61,
+   60,
+   62,
+   59,
+   59,
+   60,
+   61,
+   61,
+   67
+  ],
+  "avg_revenue": [
+   43370.03,
+   45320.05,
+   45395.28,
+   34284.62,
+   63163.95,
+   27717.22,
+   26725.31,
+   37663.17,
+   50479.19,
+   52938.26,
+   45369.63,
+   43112.81
+  ]
+ },
+ "2BR": {
+  "occ": [
+   86.1,
+   82.1,
+   82,
+   73,
+   72.7,
+   43.8,
+   54.2,
+   69.8,
+   78.7,
+   75.9,
+   71.1,
+   76.7
+  ],
+  "adr": [
+   3026.29,
+   2993.4,
+   3155.65,
+   2690.15,
+   4239.42,
+   2398.98,
+   2321.16,
+   2637.63,
+   3459.96,
+   3524.03,
+   3001.26,
+   2895.86
+  ],
+  "revpar": [
+   2604.46,
+   2457.33,
+   2586.85,
+   1965.07,
+   3080.11,
+   1050.42,
+   1258.81,
+   1842.26,
+   2723.8,
+   2675.74,
+   2133.56,
+   2220.16
+  ],
+  "active_listings": [
+   32,
+   32,
+   31,
+   34,
+   37,
+   35,
+   33,
+   32,
+   33,
+   35,
+   36,
+   35
+  ],
+  "avg_revenue": [
+   72738.99,
+   69624.29,
+   72253.42,
+   53899.16,
+   88375.53,
+   27957.34,
+   36505.54,
+   51056.98,
+   73153.36,
+   72060.34,
+   54990.86,
+   64308.12
+  ]
+ },
+ "3BR": {
+  "occ": [
+   87.8,
+   68.9,
+   91.9,
+   19.5,
+   80,
+   23.5,
+   52.6,
+   75,
+   63.3,
+   63,
+   67.7,
+   80.1
+  ],
+  "adr": [
+   4531.88,
+   4152.84,
+   3740.72,
+   6103.66,
+   4873.25,
+   5322.24,
+   3739.49,
+   4023.97,
+   5690.77,
+   4364.79,
+   4491.98,
+   4113.75
+  ],
+  "revpar": [
+   3980.17,
+   2859.33,
+   3436.24,
+   1189.02,
+   3898.6,
+   1252.29,
+   1966.12,
+   3017.98,
+   3600.28,
+   2748.2,
+   3040.72,
+   3296.45
+  ],
+  "active_listings": [
+   5,
+   5,
+   5,
+   5,
+   6,
+   6,
+   5,
+   6,
+   6,
+   6,
+   6,
+   6
+  ],
+  "avg_revenue": [
+   114429.96,
+   58139.78,
+   98505.68,
+   30518.28,
+   103962.66,
+   31933.44,
+   63571.29,
+   92551.26,
+   88206.89,
+   74201.37,
+   79058.78,
+   82960.58
+  ]
+ }
+}

@@ -82,4 +82,78 @@ zůstanou ≥ 4 (14–16 → 4). Rezerva 4 se neutrácí.
 
 ## Log pokusů
 
-(prázdné — před prvním voláním)
+### Pokus 1 (2026-09-07 18:15 UTC): 1BR ÚSPĚCH — čeká na schválení geometrie
+
+Dotaz doslova: `Bubeneč, Prague, official OpenStreetMap boundary,
+1-bedroom. For each month from August 2025 through July 2026 give: …`
+**11. pokus okna** (ukotveno ~17:10 UTC 7. 9.), zbývá 9.
+
+- `selected_geometry_label`: **`Bubeneč official boundary`**
+- `selected_geometry_source`: **`openstreetmap`**
+- `market_label`: `Bubeneč, Prague` · session `lg_sess_1K2jfO77rAbCp952HeUoOdWB9iWG798C`
+- 12/12 měsíců, bez nadmnožiny, identity sedí, tabulka v próze proti
+  `data[]` bez rozdílu; raw `fc9a1aa2…`
+
+| | P6 okres | Dejvice | Bubeneč | poměr |
+|---|---|---|---|---|
+| n (průměr) | 154,5 | 33,6 | 60,2 → 60 (53 → 67) | podíl na P6 **0,390** (0,37–0,43); Bubeneč + Dejvice = 61 % P6 |
+| n (min) | 144 | 32 | 53 | |
+| RevPAR | 1 286,6 | 1 468,5 | 1 517,6 | k P6 **1,180** (1,09–1,38); k Dejvicím 1,033 |
+| ADR | 1 873 | 2 029 | 1 979 | 1,056 k P6 |
+| occ | 68,2 % | 71,8 % | **76,0 %** | |
+
+Spouštěče: #3 ne (60 ≪ 160) · #4 ne (39 % v pásmu 20–50 %) · #5 hraničně
+ne (0,37–0,43 = ±3 p. b.; nabídka roste 53 → 67 přes rok, okres stojí —
+růst nabídky, ne překryv) · #6 ne (+3,3 % nad Dejvicemi < 10 %) · #7
+záznam: Dejvice + Bubeneč = 61 % P6, zbytek (≈ 61 nabídek) by dopočtem
+seděl na RevPAR ≈ 958 — podezřele nízko; část bubenečské nabídky leží
+v dílu P7 (zbytek P7 bez Holešovic = 42 nabídek na 1 694), takže podíl
+i zdvih jsou nadsazené o letenský díl, přesně jak předregistrace čekala.
+Rozdělit to nejde (jeden polygon), zapisuje se, neopravuje.
+
+Bodový odhad n ~50 sedí (60) → nMean 60 → váha **0,75**, nMin 53 ≥ 50 →
+`reliable`. Bubeneč je **+18 % nad okresem P6** (Dejvice +14 %): P6 je
+dvojí trh — centrální Dejvice/Bubeneč nad 1 450 a zbytek (Břevnov,
+Ruzyně, Veleslavín…) hluboko pod okresním průměrem.
+
+Dopad na integraci (pravidla beze změny): P6|bubenec 1BR = 0,75·1 517,6
++ 0,25·1 286,6 = **1 459,9** (+13 % nad okresem), `derived: false`.
+
+Schválení geometrie: **SCHVÁLENO člověkem 7. 9. 2026** znak po znaku
+(`Bubeneč official boundary` + `openstreetmap`); pokyn: překryv s P7
+zůstává zdokumentovanou výhradou geometrie, mapování rodiče se během
+běhu neotvírá.
+
+### Pokusy 2 a 3 (2026-09-07 18:19 / 18:22 UTC): 2BR a 3BR ÚSPĚCH
+
+Táž session, hranice pojmenovaná v každém dotazu, label + zdroj ověřeny
+u obou pásem zvlášť (`market_label` u 2BR je próza „Bubenec, Prague 2BR
+Monthly Overview" — není autorita, label/zdroj sedí). Oba 12/12, bez
+nadmnožiny, identity sedí, tabulky v próze proti `data[]` bez rozdílu.
+Pokusy okna: 13, zbývá 7.
+
+| pásmo | ADR | RevPAR | occ | nMean | nMin | podíl na P6 | RevPAR/P6 | vs Dejvice | váha | raw |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 1BR | 1 979 | 1 517,6 | 76,0 % | 60 | 53 | 0,390 (0,37–0,43) | **1,180** | 1,033 | **0,75** | fc9a1aa2… |
+| 2BR | 3 029 | 2 216,5 | 72,2 % | 34 | 31 | 0,409 (0,38–0,44) | **1,180** (0,95–1,32) | 0,987 | **0,5** | 6aaf0e0e… |
+| 3BR | 4 596 | 2 857,1 | 64,4 % | 6 | 5 | — | 1,027 k odvozenému 2 782,7 | — | **0** | b1d18a6b… |
+
+Spouštěče: #1 `2BR/1BR = 1,461` v pásmu (model 1,567; P6 sám 1,460 —
+Bubeneč kopíruje okresní poměr přesně). #2 `3BR/1BR = 1,883` v pásmu,
+n = 6 → jen záznam; pozoruhodné: první čtvrť, kde tenké přímé 3BR sedí
+na odvozeném okresním 3BR (+2,7 %) místo desítek procent nad ním —
+záznam k otevřené položce §4, nic se nemění. #3–#7 viz Pokus 1.
+
+Dopad na integraci (pravidla beze změny, `parents: ["praha6"]`):
+- 1BR w 0,75 → P6|bubenec 1BR = 0,75·1 517,6 + 0,25·1 286,6 = **1 459,9**
+  (+13 %), `derived: false`.
+- 2BR w 0,5 → 0,5·2 216,5 + 0,5·1 878,9 = **2 047,7** (+9 %), `derived:
+  false` (okresní 2BR měřené). První čtvrť P6 s váhou i u 2BR.
+- 3BR w 0 → odvozený P6 3BR (2 782,7, derived); 4BR pro P6 dál žádné
+  (okresní 3BR odvozené → žádné řetězení) → 4+kk v Bubenči ploché jako
+  v celém P6. Nový stav regrese: jen `praha6|bubenec`; `praha6|dejvice`
+  a `praha6|-` musí zůstat byte-shodné.
+
+Výhrada geometrie (bez akce): polygon k.ú. Bubeneč zahrnuje díl v P7;
+kontext je jen praha6 (GEO). Podíl na P6 i zdvih jsou tím nadsazené
+o letenský díl (≤ 42 nabídek u 1BR). Neopravuje se, nerozšiřuje se.
