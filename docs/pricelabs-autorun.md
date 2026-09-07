@@ -132,6 +132,17 @@ Rozhodnutí člověka 5. 9. večer: zbývající mezery jsou čím dál okrajov�
 4. **Teprve potom** okrajové čtvrti P6/P5 (Dejvice/Bubeneč, Košíře), a
    jen když je pro ně důvod jiný než „máme kvótu".
 
+**Stav 7. 9. 2026 ~18:30 UTC — okno (ukotvené ~17:10 UTC) použito na 10
+pokusů, 10 v rezervě, další volání dnes žádné.** Hotovo: Vršovice
+(`f965dde`) + integrace Prahy 10 v jedné dávce (`9a2a608`, P10 3BR
+odvozené a NEOVĚŘENÉ rozhodnutím člověka), Dejvice (`222c4a5`), Košíře
+(`2737af5`), Vysočany jen 1BR → `partial` rozhodnutím člověka (nMean 21,
+inertní; `b62708f`), 4+kk blend 3BR → 4BR z už sebraných dat (`161220a`,
+CALC_MODEL_VERSION 2026-09-07.1). Fronta výš je tím vyčerpaná; každý
+pražský okres má aspoň jednu čtvrť. Další čtvrti jen s důvodem, ne
+„protože je kvóta" (kandidáti: Bubeneč P6/P7 sdílená, Střešovice, Břevnov,
+Podolí/Braník P4, Strašnice P10 — všechny čekaně tenké).
+
 Otevřená položka beze změny pravidla: tenké měřené 3BR vs. odvozené
 okresní 3BR — P3/P8/P7/P4 nad odvozeným, P10 (n ≈ 13) a Libeň (n = 2) pod
 ním. Kalibrace je samostatná analýza, ne vedlejší efekt pullu.
