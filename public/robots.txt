@@ -13,5 +13,6 @@ Allow: /
 User-agent: *
 Allow: /
 Disallow: /portal
+Disallow: /ukazka-portalu
 
 Sitemap: https://www.antamhomes.com/sitemap.xml

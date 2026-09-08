@@ -8,10 +8,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
 
-/* Ukázka portálu je samostatný web (vlastní Netlify site), ne stránka tohoto
-   webu: běží na vymyšlených bytech a nesmí se plést se skutečným portálem.
-   Změna adresy = tenhle jeden řádek. Skutečný portál zůstává na /portal. */
-const PORTAL_DEMO_URL = "https://demo.antamhomes.com/";
+/* Ukázka portálu: statická stránka v public/ukazka-portalu/, jede s webem,
+   takže nepotřebuje vlastní hosting ani DNS. Běží na vymyšlených bytech,
+   proto je v robots.txt zakázaná. Skutečný portál zůstává na /portal.
+   Až bude demo.antamhomes.com, změní se jen tenhle řádek. */
+const PORTAL_DEMO_URL = "/ukazka-portalu/";
 
 const OwnerReportSection = () => {
   const { lang } = useLanguage();
