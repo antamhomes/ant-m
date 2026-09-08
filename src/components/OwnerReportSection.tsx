@@ -8,6 +8,11 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
 
+/* Ukázka portálu je samostatný web (vlastní Netlify site), ne stránka tohoto
+   webu: běží na vymyšlených bytech a nesmí se plést se skutečným portálem.
+   Změna adresy = tenhle jeden řádek. Skutečný portál zůstává na /portal. */
+const PORTAL_DEMO_URL = "https://demo.antamhomes.com/";
+
 const OwnerReportSection = () => {
   const { lang } = useLanguage();
 
@@ -47,11 +52,19 @@ const OwnerReportSection = () => {
           </p>
         </Reveal>
 
-        <Reveal className="mt-6 mb-12 sm:mb-16 flex flex-wrap items-baseline gap-x-6 gap-y-2">
-          <a href="/portal" className="font-body text-[15px] font-medium text-gold-deep no-underline border-b border-gold/40 pb-0.5">
-            {t(lang, "portal_open")}
-          </a>
-          <span className="font-body text-[13px] text-muted-foreground">{t(lang, "portal_open_note")}</span>
+        <Reveal className="mt-6 mb-12 sm:mb-16">
+          <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+            <a href={PORTAL_DEMO_URL} target="_blank" rel="noopener noreferrer"
+              className="font-body text-[15px] font-medium text-gold-deep no-underline border-b border-gold/40 pb-0.5">
+              {t(lang, "portal_open")}
+            </a>
+            <a href="/portal" className="font-body text-[13.5px] text-muted-foreground no-underline border-b border-border pb-0.5">
+              {t(lang, "portal_login")}
+            </a>
+          </div>
+          <p className="mt-3 font-body text-[13px] text-muted-foreground text-pretty max-w-[56ch]">
+            {t(lang, "portal_open_note")}
+          </p>
         </Reveal>
 
         <div className={hasSide ? "grid md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-8 md:gap-16 items-start" : "max-w-xl space-y-5"}>

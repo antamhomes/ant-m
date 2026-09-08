@@ -38,11 +38,14 @@ const HeroSection = () => {
   const proof = t(lang, "hero_extra");
   const primaryHref = secondCta ? "#kontakt" : "#kalkulacka";
   const ref = useRef<HTMLElement>(null);
-  const mediaRef = useRef<HTMLDivElement>(null);
+  const mediaRef = useRef<HTMLImageElement>(null);
   const ready = useSplashDone();
 
-  // Very subtle parallax on the photo column: it moves at ~18 % of scroll speed
-  // while the hero is on screen. One passive scroll listener + rAF, no library.
+  // Very subtle parallax on the photo: posouvá se sám snímek uvnitř pevného
+  // rámu, ne rám. Rám drží fotku i závoj ve stejné geometrii; kdyby se hýbal
+  // rám, vyjede zpod závoje pruh nezastřené fotky (na mobilu přesně přes
+  // nadpis). Snímek je o 12 % vyšší než rám, jede se nahoru max. o 10 % jeho
+  // výšky, takže se hrana nikdy neodkryje. Jeden pasivní listener + rAF.
   useEffect(() => {
     const section = ref.current;
     const media = mediaRef.current;
@@ -53,7 +56,7 @@ const HeroSection = () => {
       raf = 0;
       const h = section.offsetHeight || 1;
       const p = Math.min(1, Math.max(0, window.scrollY / h));
-      media.style.transform = `translate3d(0, ${(p * 12).toFixed(2)}%, 0)`;
+      media.style.transform = `translate3d(0, -${(p * 10).toFixed(2)}%, 0)`;
     };
     const onScroll = () => {
       if (!raf) raf = window.requestAnimationFrame(update);
@@ -154,10 +157,7 @@ const HeroSection = () => {
         {/* Fotka bez závoje. Měkký přechod jen na levé hraně, ať se švem
             neřeže tmavá plocha od obrázku. */}
         <div className="order-1 lg:order-2 max-lg:absolute max-lg:inset-0 max-lg:bg-[hsl(var(--charcoal))] lg:relative overflow-hidden lg:h-auto">
-          <div
-            ref={mediaRef}
-            className="absolute inset-x-0 top-0 h-[52vh] min-h-[300px] max-h-[560px] lg:inset-0 lg:h-auto lg:max-h-none overflow-hidden will-change-transform"
-          >
+          <div className="absolute inset-x-0 top-0 h-[52vh] min-h-[300px] max-h-[560px] lg:inset-0 lg:h-auto lg:max-h-none overflow-hidden">
             <div className="absolute inset-0 hero-zoom">
               <img
                 src="/hero/bedroom-1280.webp"
@@ -168,7 +168,8 @@ const HeroSection = () => {
                 fetchPriority="high"
                 decoding="async"
                 onLoad={() => window.dispatchEvent(new Event("antam:hero-ready"))}
-                className="w-full h-[112%] object-cover max-lg:object-[50%_42%]"
+                ref={mediaRef}
+                className="w-full h-[112%] object-cover max-lg:object-[50%_42%] will-change-transform"
                 width={1920}
                 height={1530}
               />

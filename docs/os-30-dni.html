@@ -1,0 +1,762 @@
+<title>Antam Akviziční OS</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --ground:#F6F8F5; --surface:#FFFFFF; --surface2:#EDF1EB;
+  --ink:#141813; --ink2:#3D453B; --muted:#6A7366; --line:#DCE2D7; --line2:#C6CFC0;
+  --green:#1E4636; --green-soft:#E4EFE7; --gold:#9C7526; --gold-soft:#F6EED9;
+  --ok:#3F6B41; --warn:#A15A28; --crit:#96352E;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --disp:"Archivo","IBM Plex Sans",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0F1310; --surface:#161B16; --surface2:#1D231D;
+  --ink:#E7ECE4; --ink2:#BFC7BB; --muted:#8B948889; --muted:#8E9789; --line:#262D25; --line2:#374035;
+  --green:#7FC9A6; --green-soft:#17251D; --gold:#D9AC53; --gold-soft:#251E0E;
+  --ok:#79B47A; --warn:#D08A4E; --crit:#D3675D;
+}}
+:root[data-theme="dark"]{
+  --ground:#0F1310; --surface:#161B16; --surface2:#1D231D;
+  --ink:#E7ECE4; --ink2:#BFC7BB; --muted:#8E9789; --line:#262D25; --line2:#374035;
+  --green:#7FC9A6; --green-soft:#17251D; --gold:#D9AC53; --gold-soft:#251E0E;
+  --ok:#79B47A; --warn:#D08A4E; --crit:#D3675D;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.62;-webkit-text-size-adjust:100%}
+.wrap{max-width:1180px;margin:0 auto;padding:0 18px 96px}
+h1,h2,h3,h4{font-family:var(--disp);text-wrap:balance;margin:0}
+a{color:var(--green)}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* masthead */
+.mast{border-bottom:1px solid var(--line);background:var(--surface)}
+.mast-in{max-width:1180px;margin:0 auto;padding:20px 18px 18px;display:flex;flex-wrap:wrap;gap:14px;align-items:baseline;justify-content:space-between}
+.brand{font-family:var(--disp);font-weight:700;font-size:20px;letter-spacing:-.01em}
+.brand span{color:var(--gold)}
+.mast-meta{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.04em}
+
+/* daily view */
+.daily{background:var(--green);color:#fff;border-radius:3px;margin:18px 0 26px;overflow:hidden}
+:root[data-theme="dark"] .daily,html:not([data-theme]) .daily{}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .daily{background:#15271F;color:var(--ink);border:1px solid var(--line2)}}
+:root[data-theme="dark"] .daily{background:#15271F;color:var(--ink);border:1px solid var(--line2)}
+.daily-h{padding:12px 18px;border-bottom:1px solid rgba(255,255,255,.16);display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .daily-h{border-bottom-color:var(--line2)}}
+:root[data-theme="dark"] .daily-h{border-bottom-color:var(--line2)}
+.daily-h b{font-family:var(--disp);font-size:13px;letter-spacing:.1em;text-transform:uppercase;font-weight:600}
+.daily-h em{font-style:normal;font-family:var(--mono);font-size:11px;opacity:.72}
+.daily-rows{display:grid;grid-template-columns:repeat(5,1fr)}
+.drow{padding:14px 18px;border-right:1px solid rgba(255,255,255,.14)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .drow{border-right-color:var(--line2)}}
+:root[data-theme="dark"] .drow{border-right-color:var(--line2)}
+.drow:last-child{border-right:0}
+.drow k{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;opacity:.72;margin-bottom:6px}
+.drow v{display:block;font-family:var(--disp);font-size:26px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+.drow small{display:block;font-size:11.5px;opacity:.75;margin-top:3px;line-height:1.35}
+@media (max-width:820px){.daily-rows{grid-template-columns:repeat(2,1fr)}.drow{border-bottom:1px solid rgba(255,255,255,.14)}.drow:nth-child(5){grid-column:1/-1}}
+
+/* layout */
+.cols{display:grid;grid-template-columns:212px 1fr;gap:44px;align-items:start}
+@media (max-width:940px){.cols{grid-template-columns:1fr;gap:0}}
+nav.side{position:sticky;top:16px;font-size:13.5px}
+@media (max-width:940px){nav.side{position:static;margin-bottom:26px;border-bottom:1px solid var(--line);padding-bottom:14px}}
+nav.side h5{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:18px 0 6px;font-weight:500}
+nav.side h5:first-child{margin-top:0}
+nav.side a{display:block;padding:3px 0;color:var(--ink2);text-decoration:none;border-left:2px solid transparent;padding-left:10px;margin-left:-12px}
+nav.side a:hover{color:var(--green);border-left-color:var(--gold)}
+
+section{padding-top:30px;margin-bottom:16px;scroll-margin-top:16px}
+section>h2{font-size:23px;font-weight:700;letter-spacing:-.015em;line-height:1.2;display:flex;gap:10px;align-items:baseline}
+section>h2 .n{font-family:var(--mono);font-size:12px;color:var(--gold);font-weight:500;flex:none;padding-top:3px}
+.lede{color:var(--ink2);margin:8px 0 18px;max-width:66ch}
+h3{font-size:15.5px;font-weight:600;margin:26px 0 8px;letter-spacing:-.005em}
+h4{font-size:13px;font-weight:600;margin:18px 0 6px;font-family:var(--sans)}
+p{margin:0 0 12px;max-width:70ch}
+ul,ol{margin:0 0 12px;padding-left:20px;max-width:70ch}
+li{margin-bottom:5px}
+hr{border:0;border-top:1px solid var(--line);margin:34px 0}
+
+/* pills */
+.p{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;padding:2px 6px;border-radius:2px;white-space:nowrap;vertical-align:2px;font-weight:500}
+.p-dec{background:var(--green-soft);color:var(--green);border:1px solid var(--green)}
+.p-src{background:transparent;color:var(--muted);border:1px solid var(--line2)}
+.p-inf{background:var(--gold-soft);color:var(--gold);border:1px solid var(--gold)}
+.p-test{background:transparent;color:var(--warn);border:1px solid var(--warn)}
+.p-open{background:transparent;color:var(--crit);border:1px solid var(--crit)}
+
+/* tables */
+.tw{overflow-x:auto;margin:0 0 16px;border:1px solid var(--line);border-radius:3px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--surface2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+tbody tr.tot td{font-weight:600;background:var(--surface2)}
+
+/* script blocks */
+.sc{border:1px solid var(--line2);border-radius:3px;background:var(--surface);margin:0 0 14px;overflow:hidden}
+.sc-h{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;background:var(--surface2);border-bottom:1px solid var(--line)}
+.sc-h b{font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink2);font-weight:500}
+.sc-b{padding:13px 15px;font-size:14px;line-height:1.7;white-space:pre-wrap}
+.sc-b .stage{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin:12px 0 3px}
+.sc-b .stage:first-child{margin-top:0}
+.sc-b .br{color:var(--muted)}
+button.cp{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;background:transparent;color:var(--muted);border:1px solid var(--line2);border-radius:2px;padding:3px 8px;cursor:pointer}
+button.cp:hover{color:var(--green);border-color:var(--green)}
+button.cp:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* objections */
+.obj{border-top:1px solid var(--line);padding:14px 0}
+.obj:last-of-type{border-bottom:1px solid var(--line)}
+.obj q{display:block;font-family:var(--disp);font-size:16px;font-weight:600;quotes:none;margin-bottom:7px}
+.obj q:before{content:"„"}.obj q:after{content:"“"}
+.obj .ans{border-left:2px solid var(--gold);padding-left:13px;font-size:14px;line-height:1.68;white-space:pre-wrap}
+.obj .why{font-size:12.5px;color:var(--muted);margin-top:7px}
+
+/* callout */
+.note{border-left:2px solid var(--green);background:var(--surface);padding:12px 15px;margin:0 0 16px;font-size:13.5px}
+.note.warn{border-left-color:var(--crit)}
+.note b{font-family:var(--disp)}
+
+/* checklist */
+.ck{list-style:none;padding:0;margin:0 0 14px;max-width:none}
+.ck li{display:flex;gap:11px;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);margin:0}
+.ck li:last-child{border-bottom:0}
+.ck input{margin:4px 0 0;width:15px;height:15px;flex:none;accent-color:var(--green)}
+.ck .t{flex:1;min-width:0}
+.ck .clock{font-family:var(--mono);font-size:11px;color:var(--gold);display:block;margin-bottom:1px}
+.ck .sub{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+.ck input:checked + .t{opacity:.45;text-decoration:line-through;text-decoration-thickness:1px}
+
+/* cadence grid */
+.week{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:3px;overflow:hidden;margin-bottom:16px}
+@media (max-width:760px){.week{grid-template-columns:1fr}}
+.day{background:var(--surface);padding:12px}
+.day b{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px}
+.blk{font-size:12.5px;padding:6px 8px;border-radius:2px;margin-bottom:5px;line-height:1.4}
+.blk.prosp{background:var(--green-soft);border-left:2px solid var(--green)}
+.blk.other{background:var(--surface2);border-left:2px solid var(--line2)}
+.blk em{font-style:normal;font-family:var(--mono);font-size:10.5px;color:var(--muted);display:block}
+
+/* dashboard */
+.dash{border:1px solid var(--line2);border-radius:3px;background:var(--surface);overflow:hidden}
+.dash-h{padding:14px 18px;background:var(--surface2);border-bottom:1px solid var(--line2);display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:baseline}
+.dash-h b{font-family:var(--disp);font-size:15px}
+.dash-h em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.dash-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+@media (max-width:760px){.dash-grid{grid-template-columns:repeat(2,1fr)}}
+.dcell{background:var(--surface);padding:13px 15px}
+.dcell k{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:5px}
+.dcell v{display:block;font-family:var(--disp);font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.15}
+.dcell small{font-size:11.5px;color:var(--muted)}
+.foot{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.chain{font-family:var(--mono);font-size:11.5px;color:var(--muted);letter-spacing:.02em}
+.chain b{color:var(--gold);font-weight:500}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="mast">
+  <div class="mast-in">
+    <div class="brand">ANTAM <span>Akviziční OS</span></div>
+    <div class="mast-meta">30 DNÍ &middot; V1 &middot; 8. 9. AŽ 7. 10. 2026 &middot; VSTUP: STRATEGY-2026-09-07 V2</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<div class="daily">
+  <div class="daily-h"><b>Denní pohled</b><em>Přečti za 60 sekund. Když jsou první dvě políčka v pořádku, den je v pořádku.</em></div>
+  <div class="daily-rows">
+    <div class="drow"><k>1. Nezodpovězené leady</k><v>0</v><small>Musí být nula, než uděláš cokoliv jiného.</small></div>
+    <div class="drow"><k>2. Hovory dnes</k><v>0<span style="opacity:.5">/20</span></v><small>Před polednem. Neodkládá se.</small></div>
+    <div class="drow"><k>3. Follow-upy dnes</k><v>&mdash;</v><small>Z CRM, sloupec Datum další akce.</small></div>
+    <div class="drow"><k>4. Jeden obchodní úkol</k><v>&mdash;</v><small>Posouzení nebo deck. Jeden, až po hovorech.</small></div>
+    <div class="drow"><k>5. Konverzace tento týden</k><v>0<span style="opacity:.5">/8</span></v><small>Jediné číslo, které tento měsíc rozhoduje.</small></div>
+  </div>
+</div>
+
+<div class="cols">
+<nav class="side">
+  <h5>Denní provoz</h5>
+  <a href="#zitra">Zítra ráno</a>
+  <a href="#denni">Denní workflow</a>
+  <a href="#kadence">Týdenní kadence</a>
+  <h5>Cíle a měření</h5>
+  <a href="#cil">Cíl a scoreboard</a>
+  <a href="#plan">Plán týdnů 1 až 4</a>
+  <a href="#dashboard">Founder dashboard</a>
+  <h5>Akvizice</h5>
+  <a href="#kanaly">SOP tří kanálů</a>
+  <a href="#kvalifikace">Kvalifikace</a>
+  <a href="#skripty">Skripty</a>
+  <a href="#namitky">Námitky</a>
+  <a href="#crm">CRM</a>
+  <h5>Obchod</h5>
+  <a href="#underwriting">Underwriting a deck</a>
+  <a href="#nabidka">Prezentace nabídky</a>
+  <a href="#pripadovka">Případovka</a>
+  <a href="#makleri">Program pro makléře</a>
+  <h5>Riziko a učení</h5>
+  <a href="#faktor">Operator factor</a>
+  <a href="#registr">Registr garancí</a>
+  <a href="#experimenty">Experimenty</a>
+</nav>
+
+<main>
+
+<section id="zitra">
+<h2><span class="n">16</span> Zítra ráno, první tři hodiny</h2>
+<p class="lede">Doslova. Bez rozmýšlení pořadí. První akce dne je vytočené číslo, ne analýza, protože diagnóza strategie zní, že se volání vyhýbáš stavěním.</p>
+<ul class="ck" data-ck="zitra">
+  <li><input type="checkbox" id="z1"><label class="t" for="z1"><span class="clock">08:00 &ndash; 08:20 &middot; 20 min</span><b>Postav seznam 15 bytů.</b> Sreality, dlouhodobý pronájem, Praha, 1kk až 3kk, řazeno od nejstaršího inzerátu. Vezmi prvních 15 se silné nebo životaschopné čtvrti a telefonem v inzerátu. Do tabulky: adresa, čtvrť, dispozice, m², nájem, datum vložení, telefon, odkaz.<span class="sub">Nehledej dokonalý filtr. Hledej 15 telefonních čísel.</span></label></li>
+  <li><input type="checkbox" id="z2"><label class="t" for="z2"><span class="clock">08:20 &ndash; 09:00 &middot; 40 min</span><b>Vytoč všech 15.</b> Skript A1. Cílem není ano. Cílem je 15 vytočených čísel a poznámka u každého.<span class="sub">Když někdo zvedne a mluví, dokonči hovor. Zbytek dotoč zítra.</span></label></li>
+  <li><input type="checkbox" id="z3"><label class="t" for="z3"><span class="clock">09:00 &ndash; 09:15 &middot; 15 min</span><b>Zapiš, co se stalo.</b> Kolik zvedlo, kolik mluvilo, první věta, kterou ti řekli, a první námitka. Tohle je surovina experimentu E1.</label></li>
+  <li><input type="checkbox" id="z4"><label class="t" for="z4"><span class="clock">09:15 &ndash; 09:45 &middot; 30 min</span><b>Založ CRM.</b> Jeden list podle specifikace v sekci 7. Nic víc. Žádný nástroj, žádná automatizace.</label></li>
+  <li><input type="checkbox" id="z5"><label class="t" for="z5"><span class="clock">09:45 &ndash; 10:30 &middot; 45 min</span><b>Změř operator factor.</b> Read-only, portfolio proti PriceLabs benchmarku, 12 měsíců do 7/2026. Postup v sekci 12.<span class="sub">Do doby, než je hotový, nesmí padnout žádná podlaha v žádné nabídce.</span></label></li>
+  <li><input type="checkbox" id="z6"><label class="t" for="z6"><span class="clock">10:30 &ndash; 11:00 &middot; 30 min</span><b>Jednotková ekonomika.</b> Poslední tři měsíce výkazů: odměna na byt, přímé náklady na byt, hodiny na byt, marže na 25 000 Kč launch fee. Sekce 12, druhá tabulka.</label></li>
+  <li><input type="checkbox" id="z7"><label class="t" for="z7"><span class="clock">11:00 &ndash; 11:10 &middot; 10 min</span><b>Web živě.</b> <code>SITE_LOCK_ENABLED = false</code>, doplnit <code>VITE_GA_MEASUREMENT_ID</code>, commit, push, Publish v Lovable. Zkontroluj, že se v GA objeví realtime návštěva.<span class="sub">Jediný zásah do repa, který tenhle měsíc děláš.</span></label></li>
+</ul>
+<div class="note"><b>Pravidlo prvního dne.</b> Když ti dojde čas, obětuj body 4 až 7, nikdy body 1 až 3. Analýzu dohoníš večer. Hovor, který jsi nevytočil, se nevrací.</div>
+</section>
+
+<hr>
+
+<section id="denni">
+<h2><span class="n">3</span> Denní workflow</h2>
+<p class="lede">Pět kroků, vždy v tomhle pořadí. Pořadí je celý mechanismus. Underwriting se nikdy nedělá před blokem volání, protože underwriting je příjemný a volání ne.</p>
+<div class="tw"><table>
+<thead><tr><th>#</th><th>Krok</th><th>Čas</th><th>Pravidlo</th></tr></thead>
+<tbody>
+<tr><td class="num">1</td><td><b>Denní pohled</b>, nahoře na téhle stránce</td><td class="num">60 s</td><td>Když je políčko 1 nenulové, jdeš rovnou na krok 2.</td></tr>
+<tr><td class="num">2</td><td><b>Odpověz na nové leady</b></td><td class="num">do 10 min</td><td>Cíl je odpověď tentýž den, obvykle do hodiny. Nikdy neslibuj rychleji, než dokážeš držet. <span class="p p-src">SOURCE</span> T-Sales 00:03, nižší a dodržený slib váží víc.</td></tr>
+<tr><td class="num">3</td><td><b>Blok volání</b>, 20 čísel</td><td class="num">45 až 60 min</td><td>Telefon v ruce, tabulka otevřená, žádná jiná záložka. Blok se nezkracuje, když je hodně práce. Zkracuje se všechno ostatní.</td></tr>
+<tr><td class="num">4</td><td><b>Zápis</b> do CRM</td><td class="num">10 min</td><td>Hned po bloku, ne večer. Stav, další akce, datum další akce, námitka.</td></tr>
+<tr><td class="num">5</td><td><b>Follow-upy</b> splatné dnes</td><td class="num">15 min</td><td>Filtr v CRM na dnešní datum. Prázdný filtr znamená hotovo.</td></tr>
+<tr><td class="num">6</td><td><b>Jeden obchodní úkol</b>: posouzení nebo deck</td><td class="num">45 min</td><td>Jeden denně, ne dva. Když jich čeká víc, jde to do sobotní dávky, nikdy ne na úkor kroku 3.</td></tr>
+</tbody></table></div>
+<div class="note"><b>Ochrana volání, jak roste objem.</b> <span class="p p-inf">INFERENCE</span> Underwriting je jediná položka, která roste s úspěchem. Když v týdnu přeleze tři hodiny, spustil se první automatizační trigger v celé firmě, dávno před VA na třiceti bytech. Řešením je šablona posouzení, ne víc hodin a ne méně volání.</div>
+</section>
+
+<hr>
+
+<section id="kadence">
+<h2><span class="n">2</span> Týdenní kadence, 9,5 hodiny</h2>
+<p class="lede"><span class="p p-dec">DECIDED</span> 8 až 10 hodin týdně na akvizici. Takhle se to vejde. Zelené bloky jsou nedotknutelné.</p>
+<div class="week">
+  <div class="day"><b>Pondělí</b>
+    <div class="blk prosp">Blok volání, 20 čísel<em>60 min</em></div>
+    <div class="blk other">Pondělní review, dashboard<em>15 min</em></div>
+    <div class="blk other">Zápis a follow-upy<em>20 min</em></div>
+  </div>
+  <div class="day"><b>Úterý</b>
+    <div class="blk prosp">Blok volání, 20 čísel<em>60 min</em></div>
+    <div class="blk other">Posouzení nebo deck<em>45 min</em></div>
+  </div>
+  <div class="day"><b>Středa</b>
+    <div class="blk prosp">Blok volání, 20 čísel<em>60 min</em></div>
+    <div class="blk other">Makléři, 10 kontaktů<em>45 min</em></div>
+  </div>
+  <div class="day"><b>Čtvrtek</b>
+    <div class="blk prosp">Blok volání, 20 čísel<em>60 min</em></div>
+    <div class="blk other">Vietnamská síť, 10 kontaktů<em>30 min</em></div>
+    <div class="blk other">Posouzení nebo deck<em>45 min</em></div>
+  </div>
+  <div class="day"><b>Pátek</b>
+    <div class="blk prosp">Blok volání, 20 čísel<em>60 min</em></div>
+    <div class="blk other">Obnova seznamu na příští týden<em>60 min</em></div>
+  </div>
+</div>
+<div class="tw"><table>
+<thead><tr><th>Činnost</th><th class="num">h / týden</th><th>Poznámka</th></tr></thead>
+<tbody>
+<tr><td>100 kontaktů (dovolané po 7 min, nedovolané po 1 min)</td><td class="num">4,0</td><td>Jádro. Nikdy se nekrátí.</td></tr>
+<tr><td>Stavba a obnova seznamu</td><td class="num">1,0</td><td>Pátek, na příští týden dopředu.</td></tr>
+<tr><td>Follow-upy</td><td class="num">1,0</td><td>Rozprostřeno, 15 min denně.</td></tr>
+<tr><td>Makléři a vietnamská síť</td><td class="num">1,5</td><td>Středa a čtvrtek.</td></tr>
+<tr><td>Underwriting, prohlídky, decky</td><td class="num">2,0</td><td>Jediná položka, která roste. Sleduj ji.</td></tr>
+<tr class="tot"><td>Celkem</td><td class="num">9,5</td><td>Na horní hranici rozhodnutých 8 až 10, bez rezervy.</td></tr>
+</tbody></table></div>
+<p><b>Když ráno nejsou tvoje.</b> Posuň blok, ale nech ho jako první pracovní věc dne a nech ho pětkrát týdně. <span class="p p-src">SOURCE</span> Leads, Advertising in Real Life: mechanismem je návyk, ne úmysl. T-Content ~09:00: rozdíl mezi prací, když je nálada, a prací jako hodinky je zhruba padesátinásobek, ne dvojnásobek.</p>
+</section>
+
+<hr>
+
+<section id="cil">
+<h2><span class="n">1</span> Cíl a scoreboard</h2>
+<p class="lede">Třicetidenní cíl není obrat. Je jím důkaz a šest čísel, která dneska neexistují.</p>
+<div class="note"><b>Cíl do 7. 10. 2026:</b> 400 vytočených čísel, 25 a víc rozhovorů s majitelem, 8 a víc získaných adres, 4 posouzení, 3 decky, <b>1 až 2 podepsané byty</b>, a změřený operator factor, jednotková ekonomika, míra propadu na branách, rozdíl veřejné a interní kalkulace, četnost námitek a aktivace makléřů.</div>
+<div class="tw"><table>
+<thead><tr><th>Metrika</th><th>Typ</th><th class="num">Týden</th><th class="num">30 dní</th><th>Kde vzniká</th></tr></thead>
+<tbody>
+<tr><td>Vytočená čísla</td><td>vedoucí</td><td class="num">100</td><td class="num">400</td><td>Blok volání</td></tr>
+<tr><td><b>Rozhovory s majitelem</b></td><td>vedoucí</td><td class="num">6 až 8</td><td class="num">25+</td><td>CRM, stav 3</td></tr>
+<tr><td>Získané adresy</td><td>vedoucí</td><td class="num">2</td><td class="num">8+</td><td>CRM, pole Adresa</td></tr>
+<tr><td>Kontakty na makléře</td><td>vedoucí</td><td class="num">10</td><td class="num">40</td><td>Středa</td></tr>
+<tr><td>Kontakty ve vietnamské síti</td><td>vedoucí</td><td class="num">10</td><td class="num">40</td><td>Čtvrtek</td></tr>
+<tr><td>Kvalifikované byty (pásmo A nebo B)</td><td>průběžný</td><td class="num">1</td><td class="num">4+</td><td>Kvalifikace</td></tr>
+<tr><td>Prohlídky</td><td>průběžný</td><td class="num">1</td><td class="num">4+</td><td>Underwriting</td></tr>
+<tr><td>Odevzdané decky</td><td>průběžný</td><td class="num">&mdash;</td><td class="num">3+</td><td>Obchod</td></tr>
+<tr><td><b>Podepsané byty</b></td><td>zpožděný</td><td class="num">&mdash;</td><td class="num">1 až 2</td><td>Smlouva</td></tr>
+<tr><td>Odmítnuté byty s písemným verdiktem</td><td>zpožděný</td><td class="num">&mdash;</td><td class="num">všechny D</td><td>Odmítnutí je produkt</td></tr>
+</tbody></table></div>
+<p><span class="p p-open">OPEN</span> CAC a doba do uzavření se tenhle měsíc <b>měří, netrefuje</b>. Nastavit na ně cíl před prvním podpisem znamená vymyslet si je.</p>
+</section>
+
+<hr>
+
+<section id="kanaly">
+<h2><span class="n">4</span> SOP tří schválených kanálů</h2>
+<p class="lede">Tři kanály. Všechno ostatní je odložené: placená reklama, SEO, obsah jako kanál, developeři, účetní, direct mail, akce. <span class="p p-dec">DECIDED</span> Facebook nese jmenný seznam ve vietnamské síti, ale sám o sobě zatím není primární kanál.</p>
+
+<h3>Kanál 1 &middot; Stojící inzeráty dlouhodobého pronájmu, telefonem</h3>
+<div class="tw"><table>
+<thead><tr><th>Krok</th><th>Co konkrétně</th></tr></thead>
+<tbody>
+<tr><td><b>Zdroj</b></td><td>Sreality a Bezrealitky. Ručně, každý pátek nová dávka.</td></tr>
+<tr><td><b>Filtr</b></td><td>Praha, dlouhodobý pronájem, 1kk až 3kk, inzerát starší 30 dní, čtvrť v silném nebo životaschopném pásmu podle modelu, telefon v inzerátu. Inzeráty od majitele mají přednost před realitkou; inzeráty realitek jdou do kanálu 3, ne sem.</td></tr>
+<tr><td><b>Zapiš</b></td><td>Adresa, čtvrť, dispozice, m², požadovaný nájem, datum vložení, telefon, odkaz, majitel nebo realitka.</td></tr>
+<tr><td><b>Objem</b></td><td>150 jmen v prvním týdnu, pak 100 nových týdně.</td></tr>
+<tr><td><b>Nabídka na hovoru</b></td><td>Ne správa. Bezplatné posouzení, co ten byt dělá krátkodobě proti nájmu, který teď nevydělává, do 24 hodin.</td></tr>
+<tr><td><b>Cíl hovoru</b></td><td>Adresa. Nic jiného. Adresa je kvalifikační událost.</td></tr>
+<tr><td><b>Follow-up</b></td><td>Tři dotyky ve třech dnech, pak stop a zpátky do seznamu po 90 dnech.</td></tr>
+<tr><td><b>Stop nebo pokračuj</b></td><td>Po 300 vytočeních: pokračuj při 30+ rozhovorech a 8+ adresách. Když je rozhovorů dost a adres málo, je problém v uzavření hovoru, ne v kanálu. Kanál se ruší jen když je rozhovorů pod 10 %.</td></tr>
+</tbody></table></div>
+
+<h3>Kanál 2 &middot; Vietnamská síť majitelů a investorů</h3>
+<div class="tw"><table>
+<thead><tr><th>Krok</th><th>Co konkrétně</th></tr></thead>
+<tbody>
+<tr><td><b>Zdroj</b></td><td>Nejdřív jmenný seznam: rodina, známí, obchodní kontakty, lidé z FB skupin, které osobně znáš. Napsat jména na papír, ne "postnout do skupiny".</td></tr>
+<tr><td><b>Objem</b></td><td>10 osobních kontaktů týdně plus jeden příspěvek do skupiny týdně.</td></tr>
+<tr><td><b>Nabídka</b></td><td>Stejné posouzení, vietnamsky, s důrazem na jistotu a na to, že papírování řeší Antam.</td></tr>
+<tr><td><b>Otevření</b></td><td>ACA: uznání, kompliment, otázka. Ptáš se nejdřív, koho zná, ne na jeho vlastní byt. <span class="p p-src">SOURCE</span> Leads, Warm Outreach.</td></tr>
+<tr><td><b>Stop nebo pokračuj</b></td><td>Neruší se. Má pevný týdenní rozpočet času.</td></tr>
+<tr><td><b>Co se učíš</b></td><td>Jestli tenhle segment zavírá garance, nebo jazyk a důvěra. To rozhoduje, jestli je to segment, nebo celá firma.</td></tr>
+</tbody></table></div>
+
+<h3>Kanál 3 &middot; Realitní makléři se stojícími nájemními inzeráty</h3>
+<div class="tw"><table>
+<thead><tr><th>Krok</th><th>Co konkrétně</th></tr></thead>
+<tbody>
+<tr><td><b>Cíl</b></td><td>Makléři s nájemními inzeráty stojícími 45+ dní v silných čtvrtích. Mají vztah s majitelem a problém, který neumí vyřešit.</td></tr>
+<tr><td><b>Objem</b></td><td>10 makléřů týdně, telefonem nebo osobně.</td></tr>
+<tr><td><b>Nabídka makléři</b></td><td>15 000 Kč za podepsaný byt, polovina při podpisu, polovina po třech měsících. Plus: byt mu zmizí z knihy a klient je spokojený. Plus: každý byt, který Antam odmítne, jde zpátky jemu na dlouhodobý.</td></tr>
+<tr><td><b>Otevření</b></td><td>Ne pitch partnerství. Jeden konkrétní inzerát, jedno konkrétní pozorování, jedna nabídka posoudit ho jeho klientovi zdarma.</td></tr>
+<tr><td><b>KPI</b></td><td>Makléři, kteří poslali jednu adresu. Pak makléři, kteří poslali druhou. Druhá adresa je jediné číslo, které něco znamená.</td></tr>
+<tr><td><b>Stop nebo pokračuj</b></td><td>Po 40 makléřích: pokračuj při 5+ s jednou adresou a 2+ s druhou.</td></tr>
+</tbody></table></div>
+</section>
+
+<hr>
+
+<section id="kvalifikace">
+<h2><span class="n">5</span> Kvalifikace</h2>
+<p class="lede">Kvalifikace není efektivita. Při garanci na každý přijatý byt je vstupní síto zároveň upisovací stůl a špatné ano je přímá ztráta.</p>
+
+<h3>Sedm bran, ptáš se v prvních pěti minutách</h3>
+<p>Jediné selhání ukončuje proces bez ohledu na čísla. <span class="p p-src">SOURCE</span> T-Sales 00:41 BANT před požadavkem, 01:33 zabij nekvalifikované dřív, než se ptáš na peníze.</p>
+<ol>
+<li>Zakazuje SVJ nebo domovní řád krátkodobé ubytování, a je v domě známý odpor sousedů?</li>
+<li>Je jednotka právně použitelná pro ubytovací služby?</li>
+<li>Kdo byt vlastní a kdo rozhoduje: spoluvlastníci, SJM, firma, dědictví?</li>
+<li>Je tam nájemník a kdy mu reálně končí smlouva?</li>
+<li>Omezuje hypotéka nebo pojistka krátkodobý pronájem?</li>
+<li>Kdy je byt fyzicky připravený k focení? Odsud běží čtrnáctidenní lhůta.</li>
+<li>Kolik nocí ročně chce majitel pro sebe?</li>
+</ol>
+
+<h3>Kdo dostane kolik času</h3>
+<div class="tw"><table>
+<thead><tr><th>Pásmo</th><th>Pravidlo</th><th>Co dostane</th><th>Podlaha</th></tr></thead>
+<tbody>
+<tr><td><b>A</b></td><td>Byt ≥ 70 a majitel ≥ 70, všechny brány prošly</td><td>Posouzení do 24 h, prohlídka do 72 h, deck na druhém hovoru</td><td>Kvótuje se</td></tr>
+<tr><td><b>B</b></td><td>Oba ≥ 50, nebo jeden ≥ 70 a druhý ≥ 50</td><td>Posouzení ano, prohlídka před kvótováním, najdi tu jednu opravitelnou věc</td><td>Až po prohlídce</td></tr>
+<tr><td><b>C</b></td><td>Jeden 35 až 50, nebo dopočtená buňka s dobrými parametry adresy</td><td>Ruční přezkum v týdenní dávce, žádný slib termínu</td><td>Nezmiňuje se</td></tr>
+<tr><td><b>D</b></td><td>Selhání brány, nebo byt pod 35, nebo majitel pod 35</td><td>Písemné odmítnutí s důvodem a doporučením jinam</td><td>Nikdy</td></tr>
+</tbody></table></div>
+
+<h3>Co musí být na stole, než Antam utratí čas na underwriting</h3>
+<p>Brány 1 až 4 zodpovězené, adresa, výměra, dispozice, reálný počet lůžek, fotky nebo domluvená prohlídka, počet blokovaných nocí v hrubém, současný nájem a energie. <b>Bez bran 1 až 4 se neupisuje.</b> <span class="p p-inf">INFERENCE</span> Nejdražší chyba, která je zítra k dispozici, je odprezentovat kalkulačku majiteli, jehož SVJ krátkodobé ubytování zakazuje.</p>
+
+<h3>Kdy se poprvé smí mluvit o smluvním minimu</h3>
+<p>Pásmo A nebo B, po prohlídce, po vyčištění bran, po rámcové dohodě o blokovaných nocích, a <b>po změření operator factoru v dané lokalitě</b>. Ne dřív. Ne po telefonu jako háček.</p>
+</section>
+
+<hr>
+
+<section id="skripty">
+<h2><span class="n">6</span> Skripty</h2>
+<p class="lede">Struktura, ne text ke čtení. První dvě třetiny drž doslova, zbytek podle situace. <span class="p p-src">SOURCE</span> T-Sales 00:54. Věty v hranatých závorkách doplň, věty v kulatých jsou režie pro tebe, ty se neříkají.</p>
+
+<div class="sc"><div class="sc-h"><b>A1 &middot; Studený hovor, stojící inzerát</b><button class="cp">Kopírovat</button></div><div class="sc-b"><span class="stage">Otevření</span>Dobrý den, tady Vuong Tran, Antam Homes. Volám kvůli tomu bytu na [ulice], co máte na Sreality od [měsíc]. Je ještě volný?
+<span class="stage">Když ano, hned odzbroj</span>Nevolám si ho pronajmout. Dělám v Praze krátkodobý pronájem. Mám spočítané, kolik reálně vydělaly byty jako ten váš ve [čtvrť] za posledních dvanáct měsíců. Ta čísla vám můžu poslat, ať je máte. Nic za ně nechci a nemusíme spolu nic dělat.
+<span class="stage">Dvě otázky, ať to nepošleš mimo</span>Kolik má metrů a jaká je dispozice?
+[odpověď]
+A jak dlouho jste ochotný ho nechat prázdný, než slevíte z nájmu?
+<span class="br">(Tady poslouchej. Tohle je ta bolest a řekne ti ji sám.)</span>
+<span class="stage">Brány, mimochodem, ne jako výslech</span>Ještě jedna věc, ať vám neslibuju nesmysl: nevíte, jestli SVJ v domě krátkodobé ubytování nezakazuje?
+<span class="stage">Uzavření na adresu</span>Pošlete mi esemeskou adresu a do zítřejšího večera vám pošlu propočet přímo na váš byt, ne na průměr čtvrti. Sedí to?
+<span class="stage">Když je byt už pronajatý</span>Rozumím. Na jak dlouho jste ho pronajal?
+[datum]
+Ozvu se vám měsíc před koncem, jestli vám to nevadí. A ta čísla za vaši čtvrť vám pošlu tak jako tak.</div></div>
+
+<div class="sc"><div class="sc-h"><b>A2 &middot; SMS nebo WhatsApp po nedovolání</b><button class="cp">Kopírovat</button></div><div class="sc-b">Dobrý den, Vuong z Antam Homes. Volal jsem kvůli bytu na [ulice].
+Nechci si ho pronajmout. Dělám krátkodobý pronájem a mám data, kolik vydělaly podobné byty ve [čtvrť] za posledních 12 měsíců.
+Pošlu vám je, ať je máte. Mám je poslat sem, nebo se ozvete?</div></div>
+
+<div class="sc"><div class="sc-h"><b>A3 &middot; Devítislovný e-mail</b><button class="cp">Kopírovat</button></div><div class="sc-b">Předmět: [ulice]
+
+Dobrý den, je ten byt na [ulice] ještě volný?
+
+Vuong
+<span class="br">(Žádný odkaz, žádný obrázek, žádná patička s nabídkou. Cílem je odpověď, ne kliknutí.)</span></div></div>
+
+<div class="sc"><div class="sc-h"><b>A4 &middot; Potvrzení po získání adresy</b><button class="cp">Kopírovat</button></div><div class="sc-b">Díky. Zítra do večera vám pošlu posouzení: kolik ten byt reálně dělá krátkodobě, proti čemu to porovnávám, a jestli se na to podle mě hodí.
+Když se nehodí, napíšu vám to taky.</div></div>
+
+<div class="sc"><div class="sc-h"><b>B &middot; Vietnamská síť, zpráva</b><button class="cp">Kopírovat</button></div><div class="sc-b">Chào anh chị, em là Vuong bên Antam Homes. Em quản lý cho thuê ngắn hạn ở Praha.
+
+Anh chị có biết ai đang để căn hộ trống, hoặc cho thuê dài hạn mà không ưng không?
+
+Em tính giúp xem căn đó cho thuê ngắn hạn ra được bao nhiêu. Miễn phí, không phải ký gì cả. Nếu căn không hợp, em nói thẳng luôn.</div></div>
+<p style="font-size:12.5px;color:var(--muted);margin-top:-4px"><span class="p p-open">OPEN</span> Vietnamský text je moje formulace, ne tvoje. Přečti ho nahlas a přepiš, co ti nesedí do pusy, než ho pošleš prvnímu člověku.</p>
+
+<div class="sc"><div class="sc-h"><b>C &middot; Makléř</b><button class="cp">Kopírovat</button></div><div class="sc-b"><span class="stage">Otevření</span>Dobrý den, [jméno]. Viděl jsem, že máte na [server] byt na [ulice] od [měsíc]. Nevolám vám brát klienta.
+<span class="stage">Nabídka</span>Dělám krátkodobý pronájem, Antam Homes. Když se byt na dlouhodobý nehýbe, můžu majiteli zdarma spočítat, co by dal krátkodobě.
+Vy z toho máte dvě věci. Buď to majiteli sedne, máte vyřešený případ a já vám za podepsaný byt platím 15 000, polovinu při podpisu, polovinu po třech měsících. Nebo mi čísla nevyjdou, byt odmítnu a pošlu vám ho zpátky na dlouhodobý.
+<span class="stage">Uzavření</span>Můžu se na ten byt podívat?</div></div>
+</section>
+
+<hr>
+
+<section id="namitky">
+<h2><span class="n">6b</span> Námitky</h2>
+<p class="lede">Struktura je vždy stejná: uznej, spoj, zeptej se zpátky. <span class="p p-src">SOURCE</span> T-Sales 01:28 AAA. Nikdy nekončíš tvrzením, vždy otázkou.</p>
+
+<div class="obj"><q>Třicet procent je hodně.</q><div class="ans">Chápu, na první poslech to hodně je.
+Vás ale nezajímá moje procento, vás zajímá, co vám zůstane. U vašeho bytu to vychází kolem [X] Kč měsíčně čistého pro vás, proti [Y] z dlouhodobého nájmu. A do smlouvy vám napíšu roční minimum, pod které to nespadne. Tohle minimum je to, co těch třicet procent kupuje.
+Kolik vám ten byt dává teď?</div><div class="why">Nikdy nebraň číslo. Vrať se k jeho čistému a k podlaze, a skonči otázkou. <span class="p p-dec">DECIDED</span> Levnější negarantovaná varianta neexistuje a nebude se stavět.</div></div>
+
+<div class="obj"><q>Jak mi můžete něco garantovat?</q><div class="ans">Protože ten byt napřed spočítám, a když mi čísla nevyjdou, tak ho nevezmu.
+Píšu minimum jen tam, kde ho unesu. Ne každý byt na to má, a to vám radši řeknu předem, než abych vám něco sliboval a pak to neuhrál.</div><div class="why"><span class="p p-open">OPEN</span> Až budeš mít prvních dvacet posouzení, doplň sem reálné číslo odmítnutých bytů. Do té doby žádné číslo neříkej.</div></div>
+
+<div class="obj"><q>Čtyři měsíce výpovědní lhůta je dlouhá.</q><div class="ans">Je. Řeknu vám proč.
+Kalendář mám otevřený zhruba osm měsíců dopředu, takže když se rozejdeme, pořád dojíždějí rezervace, které si hosté už koupili. Ta lhůta je proto, aby o ně nikdo nepřišel, a potvrzené rezervace dojedeme vždycky.
+Prvních dvanáct měsíců je závazek, pak to běží na dobu neurčitou.</div><div class="why"><span class="p p-dec">DECIDED</span> Čtyři měsíce zůstávají. <b>Řekni to sám dřív, než to najde.</b> Podmínka, kterou objeví sám, se čte jako něco, co jsi schoval. Zapiš do CRM, jestli to zvedl on, nebo ty.</div></div>
+
+<div class="obj"><q>A bude to za dva roky vůbec legální?</q><div class="ans">Teď platí pravidla, podle kterých jedeme, a děláme všechno, co k nim patří: evidence hostů, hlášení cizinců, místní poplatek, e-Turista.
+Co bude za tři roky, vám neslíbím. To neovlivňuju. Kdyby něco přišlo, budeme se to snažit řešit, a může to trvat dlouho.
+Jestli tuhle nejistotu nechcete nést, úplně to chápu a nebudu vás přemlouvat.</div><div class="why"><span class="p p-dec">DECIDED</span> Přesně tohle a nic víc. Žádný právní názor, žádná předpověď. <span class="p p-src">SOURCE</span> T-Sales 02:03: skonči, když je klientovi líp nekupovat.</div></div>
+
+<div class="obj"><q>Mám tam nájemníka.</q><div class="ans">Do kdy má smlouvu?
+[datum]
+Dobře. Propočet vám udělám už teď, ať víte, s čím počítat, a ozvu se vám měsíc před koncem. Nic mezitím nepodepisujeme.</div><div class="why">CRM: stav Nurture, datum další akce = konec nájmu minus 30 dní. Tohle je nejlevnější pipeline, jakou máš.</div></div>
+
+<div class="obj"><q>Pošlete mi nějaké informace.</q><div class="ans">Pošlu. Ať to ale nejsou obecné materiály, které vám budou k ničemu.
+Potřebuju od vás dvě věci: adresu a kolik má metrů. Pak vám pošlu propočet na váš byt, ne leták.
+Řeknete mi to teď?</div><div class="why">Tohle je zdržení, ne zájem. Vyměň materiály za adresu, jinak lead umře v e-mailu.</div></div>
+
+<div class="obj"><q>Musím si to rozmyslet.</q><div class="ans">Jasně. Co konkrétně si potřebujete rozmyslet, abych věděl, jestli vám k tomu můžu ještě něco dodat?
+[poslouchej]
+A čeho se na tom nejvíc bojíte?
+[poslouchej]
+Co by muselo platit, abyste do toho šel?</div><div class="why"><span class="p p-src">SOURCE</span> T-Sales 01:17, žebřík otázek na zdržení. Ptej se, nepřesvědčuj. Když z toho nevypadne konkrétní překážka, je to ne a patří do CRM jako ztráta s důvodem.</div></div>
+
+<div class="obj"><q>Bavím se i s někým jiným.</q><div class="ans">To dává smysl. S kým to srovnáváte?
+[jméno]
+Můžou být dobří, neznám jejich čísla. Zeptejte se jich na dvě věci: jestli vám dají roční minimum do smlouvy, a jestli vám umí říct ne, když se ten byt nehodí.
+To jsou ty dvě místa, kde se lišíme.</div><div class="why">Nikdy nepomlouvej konkurenci. Dej mu dvě otázky, které za tebe rozhodnou. Zapiš jméno konkurenta do CRM.</div></div>
+</section>
+
+<hr>
+
+<section id="crm">
+<h2><span class="n">7</span> CRM</h2>
+<p class="lede">Jeden list v tabulce. Žádný nástroj, žádná automatizace, žádná integrace. Sloupce v tomhle pořadí, ať se dá zapisovat zleva doprava během hovoru.</p>
+<div class="tw"><table>
+<thead><tr><th>Sloupec</th><th>Kdy se vyplňuje</th><th>Hodnoty</th></tr></thead>
+<tbody>
+<tr><td>ID</td><td>vznik</td><td>pořadové číslo</td></tr>
+<tr><td>Datum vzniku</td><td>vznik</td><td>datum</td></tr>
+<tr><td>Kanál</td><td>vznik</td><td>Inzerát / Vietnamská síť / Makléř / Web / Doporučení</td></tr>
+<tr><td>Zdroj detail</td><td>vznik</td><td>odkaz na inzerát, jméno makléře, jméno doporučitele</td></tr>
+<tr><td>Jméno, Telefon, E-mail</td><td>vznik</td><td>text</td></tr>
+<tr><td>Ulice, Čtvrť, Dispozice, m²</td><td>hovor 1</td><td>text a číslo</td></tr>
+<tr><td>Brána SVJ / Právní / Vlastnictví / Nájemník</td><td>hovor 1</td><td>OK / NE / Nevím</td></tr>
+<tr><td>Dostupný od</td><td>hovor 1</td><td>datum</td></tr>
+<tr><td>Blokované noci</td><td>hovor 1</td><td>číslo za rok</td></tr>
+<tr><td>Skóre byt, Skóre majitel</td><td>po hovoru 1</td><td>0 až 100</td></tr>
+<tr><td>Pásmo</td><td>po hovoru 1</td><td>A / B / C / D</td></tr>
+<tr><td>Stav</td><td>průběžně</td><td>viz devět stavů níž</td></tr>
+<tr><td><b>Další akce</b></td><td>po každém dotyku</td><td>text, sloveso na začátku</td></tr>
+<tr><td><b>Datum další akce</b></td><td>po každém dotyku</td><td>datum, nikdy prázdné u živého leadu</td></tr>
+<tr><td>Počet dotyků</td><td>průběžně</td><td>číslo</td></tr>
+<tr><td>Námitka</td><td>když padne</td><td>Procenta / Garance / Výpověď / Regulace / Nájemník / Materiály / Rozmyslet / Konkurence</td></tr>
+<tr><td>Kdo zvedl výpovědní lhůtu</td><td>fáze podmínek</td><td>Majitel / Já</td></tr>
+<tr><td>Očekávaný výnos, Podlaha, Rezerva %</td><td>underwriting</td><td>Kč, Kč, %</td></tr>
+<tr><td>Výsledek, Důvod ztráty</td><td>uzavření</td><td>Podepsáno / Ztraceno / Odmítnuto námi</td></tr>
+</tbody></table></div>
+<h3>Devět stavů</h3>
+<div class="tw"><table>
+<thead><tr><th class="num">#</th><th>Stav</th><th>Vstupní podmínka</th><th>Pravidlo další akce</th></tr></thead>
+<tbody>
+<tr><td class="num">1</td><td>Nový</td><td>vznikl lead</td><td>odpověz tentýž den</td></tr>
+<tr><td class="num">2</td><td>Kontaktován</td><td>vytočeno, nedovoláno</td><td>3 dotyky ve 3 dnech</td></tr>
+<tr><td class="num">3</td><td>Rozhovor</td><td>mluvil jsi s rozhodovatelem</td><td>brány do 24 h</td></tr>
+<tr><td class="num">4</td><td>Kvalifikován</td><td>brány OK, adresa je</td><td>underwriting do 24 h</td></tr>
+<tr><td class="num">5</td><td>Upsáno</td><td>posouzení hotové</td><td>prohlídka do 72 h u A a B</td></tr>
+<tr><td class="num">6</td><td>Prohlídka</td><td>viděl jsi byt</td><td>deck do 3 dnů</td></tr>
+<tr><td class="num">7</td><td>Nabídka</td><td>deck odevzdán</td><td>follow-up den 1, 3, 7, 14</td></tr>
+<tr><td class="num">8</td><td>Podepsáno</td><td>smlouva</td><td>onboarding, go-live do 14 dnů</td></tr>
+<tr><td class="num">9</td><td>Nurture</td><td>nájemník, nebo pásmo C</td><td>datum další akce nastaveno dopředu</td></tr>
+</tbody></table></div>
+<h3>Kdy je lead mrtvý</h3>
+<ul>
+<li><b>Ztracen</b>: po follow-upu den 14 bez odpovědi přejde na měsíční dotyk; po dvou měsíčních dotycích bez odpovědi jde na pulz jednou za 90 dní. <span class="p p-src">SOURCE</span> T-Sales 02:25.</li>
+<li><b>Odmítnuto námi</b>: pásmo D nebo selhání brány. Dostane písemný verdikt a doporučení na dlouhodobý pronájem. Není to prohra, je to produkt a je to zdroj vztahu s makléřem.</li>
+<li><b>Nikdy</b> nemá živý lead prázdné Datum další akce. Prázdné pole je způsob, jak lead umře potichu.</li>
+</ul>
+</section>
+
+<hr>
+
+<section id="underwriting">
+<h2><span class="n">8</span> Underwriting a deck</h2>
+<p class="lede">Veřejná kalkulačka je první filtr, ne odpověď. Přesná analýza bytu je obchodní aktivum.</p>
+<div class="tw"><table>
+<thead><tr><th>Krok</th><th>Automaticky</th><th>Ručně</th><th class="num">Čas</th></tr></thead>
+<tbody>
+<tr><td>Pásmo a rozpětí ze čtvrti, dispozice, velikosti</td><td>veřejná kalkulačka</td><td>&mdash;</td><td class="num">2 min</td></tr>
+<tr><td>Měřená nebo dopočtená buňka</td><td>metadata modelu</td><td>dopočtená buňka nikdy nedá A</td><td class="num">1 min</td></tr>
+<tr><td>Parametry adresy: patro, výtah, výhled, terasa, hluk, stav</td><td>&mdash;</td><td>fotky nebo prohlídka</td><td class="num">15 min</td></tr>
+<tr><td>Reálná lůžka a konfigurace proti předpokladu pásma</td><td>&mdash;</td><td>ruční, tohle model neví</td><td class="num">5 min</td></tr>
+<tr><td>Podlaha: Deloitte Rent Index pro danou plochu plus energie</td><td>tabulka</td><td>kontrola plochy 40 / 60 / 85 m²</td><td class="num">5 min</td></tr>
+<tr><td><b>Rezerva</b> = očekávaný čistý výnos děleno podlaha, minus 1</td><td>vzorec</td><td>zapiš do registru garancí</td><td class="num">2 min</td></tr>
+<tr><td>Náklad na dovybavení a launch fee</td><td>&mdash;</td><td>ruční odhad</td><td class="num">10 min</td></tr>
+<tr><td>Sestavení decku</td><td>šablona</td><td>čísla a jedna věta ke každé stránce</td><td class="num">30 min</td></tr>
+<tr class="tot"><td>Cíl na jeden byt</td><td></td><td></td><td class="num">70 min</td></tr>
+</tbody></table></div>
+<div class="note warn"><b>Když to trvá tři hodiny místo sedmdesáti minut</b>, není problém v pečlivosti, ale v tom, že šablona neexistuje. Šablonuj po třetím posouzení, ne po desátém, jinak ti to sežere blok volání.</div>
+<h3>Deck, sedm až devět stran, každá strana mění rozhodnutí</h3>
+<ol>
+<li><b>Váš byt dnes.</b> Jeho nájem, minus energie, minus neobsazenost, ročně. Jeho číslo, ne tvoje.</li>
+<li><b>Co reálně dělaly srovnatelné byty ve vaší čtvrti.</b> 12 měsíců do 7/2026, s poznámkou měřeno nebo dopočteno.</li>
+<li><b>Co si myslíme, že dělá váš byt.</b> Rozpětí, ne bod. Předpoklady vypsané, včetně těch, které se můžou mýlit.</li>
+<li><b>Proč právě tenhle byt.</b> Parametry adresy, které ho posunuly nahoru nebo dolů proti čtvrti.</li>
+<li><b>Vaše peníze.</b> Hrubý výnos, poplatky platforem, 30 %, úklid hostu, energie majiteli, roční čistý. Vedle sebe se stranou 1.</li>
+<li><b>Podlaha.</b> Roční minimum, na čem stojí, na čem je podmíněné a jak ho blokované noci snižují.</li>
+<li><b>Co bychom v bytě změnili a co to stojí.</b> Launch fee rozepsaný.</li>
+<li><b>Jak to běží a co uvidíte.</b> Datum go-live, výkaz k 15., krytí škod.</li>
+<li><b>Další krok.</b> Jedna akce, jedno datum.</li>
+</ol>
+<p><span class="p p-test">TEST</span> U prvních dvaceti posouzení zapiš rozdíl mezi veřejným a interním číslem. Když interní číslo spadne pod veřejné víc než ve čtvrtině případů, veřejná kalkulačka není lead magnet, ale stroj na zklamání, a kalibrace se musí posunout.</p>
+</section>
+
+<hr>
+
+<section id="nabidka">
+<h2><span class="n">9</span> Prezentace nabídky</h2>
+<p class="lede">Pevné pořadí. Podlaha vždy před odměnou. Odměna je odpověď na otázku „jak to funguje“, ne položka v ceníku.</p>
+<div class="tw"><table>
+<thead><tr><th class="num">#</th><th>Co říkáš</th><th>Proč v tomhle pořadí</th></tr></thead>
+<tbody>
+<tr><td class="num">1</td><td>Kde je dnes: jeho nájem minus energie minus prostoje</td><td>Jeho číslo, jeho slovy. Zatím nic neprodáváš.</td></tr>
+<tr><td class="num">2</td><td>Upsané rozpětí pro jeho byt</td><td>Rozpětí, ne bod. <span class="p p-src">SOURCE</span> T-CaseSaaS: nižší a přesný slib zvedá důvěru víc než vyšší a vágní.</td></tr>
+<tr><td class="num">3</td><td><b>Podlaha</b>: roční minimum ve smlouvě</td><td>Tohle je produkt. Tady se rozhoduje.</td></tr>
+<tr><td class="num">4</td><td>Na čem je podlaha podmíněná</td><td>Dostupné noci, standard vybavení k datu go-live, žádné vlastní cenové podlahy, pro rata za blokované noci.</td></tr>
+<tr><td class="num">5</td><td>Odměna 30 %, konečná, úklid platí host</td><td>Až teď, a jako mechanika, ne jako cena.</td></tr>
+<tr><td class="num">6</td><td>Launch fee 25 000 Kč, rozepsaný</td><td>Co za to dostane. Nikdy se neodpouští, aby se zachránil váhající majitel.</td></tr>
+<tr><td class="num">7</td><td>Závazek 12 měsíců, pak doba neurčitá, výpověď 4 měsíce</td><td>Řekni to sám, s kalendářovým důvodem.</td></tr>
+</tbody></table></div>
+<div class="note"><b>Žádné varianty.</b> <span class="p p-dec">DECIDED</span> Jeden 30% offer pro byty, které Antam přijme. Levnější negarantovaná varianta neexistuje, protože alternativy oslabují pozici a zvou k porovnávání procent. Byt, který nabídku neunese, se vyřadí, ne zlevní.</div>
+</section>
+
+<hr>
+
+<section id="pripadovka">
+<h2><span class="n">10</span> Případovka</h2>
+<p class="lede"><span class="p p-dec">DECIDED</span> Anonymní, ale ověřitelná, ze skutečných výkazů. Jméno je bonus, ne podmínka. Cíl: dvě do 60 dnů, aspoň jedna pražská.</p>
+<div class="tw"><table>
+<thead><tr><th>Část</th><th>Co přesně</th><th>Odkud</th></tr></thead>
+<tbody>
+<tr><td>Označení</td><td>Čtvrť, dispozice, m², patro, měsíc go-live. „2+kk, 62 m², Vinohrady, od 3/2026.“</td><td>tvoje evidence</td></tr>
+<tr><td>Před</td><td>Jeho skutečný nájem a energie, označené jako údaj majitele</td><td>majitel, ne model</td></tr>
+<tr><td>Po</td><td>Skutečný čistý výnos majitele za počet měsíců, které existují. <b>Nikdy nepřepočítávej část roku na rok.</b> Čtyřměsíční případ je čtyřměsíční případ, i se jménem sezóny.</td><td>výkazy</td></tr>
+<tr><td>Důkaz</td><td>Jeden skutečný měsíční výkaz, začerněné jméno, adresa a účet, ponechaná hlavička, noci, rozpad platforem, řádek 30 % a součty</td><td>výkaz</td></tr>
+<tr><td><b>Cesta ověření</b></td><td>Věta, že majitel vezme jeden telefonát od vážného zájemce před podpisem</td><td>domluva s majitelem</td></tr>
+<tr><td>Hranice</td><td>Co je měřené, co odhadnuté, a že jiný byt udělá něco jiného</td><td>tvoje formulace</td></tr>
+</tbody></table></div>
+<div class="sc"><div class="sc-h"><b>Žádost majiteli o případovku</b><button class="cp">Kopírovat</button></div><div class="sc-b">Potřeboval bych od vás jednu věc a nechci vás do ničeho tlačit.
+Chci ukázat novým majitelům, jak to vypadá doopravdy: co jste měl z dlouhodobého nájmu předtím a co vám chodí teď. Bez jména, bez adresy. Jenom čtvrť, dispozice, metry a čísla z výkazu.
+A kdyby se někdo vážně rozhodoval, jestli byste mu jednou za čas vzal telefon a řekl mu, jak to s námi máte. Nic prodávat nemusíte.
+Šlo by to?</div></div>
+</section>
+
+<hr>
+
+<section id="makleri">
+<h2><span class="n">11</span> Program pro makléře, v1</h2>
+<p class="lede"><span class="p p-dec">DECIDED</span> Rostoucí odměna od třetího doporučení. Nestavět nic dřív, než makléři začnou reálně posílat.</p>
+<div class="tw"><table>
+<thead><tr><th>Úspěšná doporučení v klouzavých 12 měsících</th><th class="num">Odměna za byt</th></tr></thead>
+<tbody>
+<tr><td>1. a 2.</td><td class="num">15 000 Kč</td></tr>
+<tr><td>3. a 4.</td><td class="num">20 000 Kč</td></tr>
+<tr><td>5. a další</td><td class="num">25 000 Kč</td></tr>
+</tbody></table></div>
+<ul>
+<li>Okno se počítá po datech, ne podle kalendářního roku.</li>
+<li>Výplata beze změny: polovina při podpisu, polovina po třech měsících provozu.</li>
+<li>„Úspěšné“ znamená podepsaný a živý byt, ne představený kontakt.</li>
+<li>Majitelé zůstávají na rovných 15 000 Kč.</li>
+<li><b>Žebřík se nezveřejňuje.</b> O druhém stupni se makléř dozví, až pošle první adresu. <span class="p p-src">SOURCE</span> T-Affiliates: aktivace nejdřív, mašinerie potom.</li>
+<li><span class="p p-inf">INFERENCE</span> Při launch fee 25 000 Kč pokrývá jeden poplatek celý nejvyšší stupeň v okamžiku podpisu. Kanál se financuje sám od prvního bytu.</li>
+<li><span class="p p-open">OPEN</span> Nejvyšší stupeň se přepočítá, až bude změřený hrubý zisk na byt. Limit z knihovny: celkový náklad na získání pod zhruba třetinou celoživotního hrubého zisku.</li>
+</ul>
+<div class="note"><b>Trigger na cokoliv většího</b> (portál, materiály, žebříček, formální smlouva): tři makléři se dvěma a více podepsanými doporučeními. Do té doby je celý program jedna zpráva a jeden sloupec v tabulce.</div>
+</section>
+
+<hr>
+
+<section id="faktor">
+<h2><span class="n">12</span> Operator factor a jednotková ekonomika</h2>
+<p class="lede">Dvě čísla, na kterých visí celý zbytek. Bez nich nesmí padnout žádná podlaha a nedá se spočítat maximální přípustný CAC.</p>
+<h3>Měření operator factoru</h3>
+<ol>
+<li>Read-only výtah portfolia za 12 měsíců do 7/2026: realizovaný výnos a obsazenost na byt.</li>
+<li>Pro každý byt vezmi benchmark PriceLabs pro jeho buňku: čtvrť, dispozice, velikostní pásmo, stejné okno.</li>
+<li>Faktor bytu = realizovaný RevPAR děleno benchmark RevPAR. Vyluč měsíce s rekonstrukcí, dlouhým blokem nebo výpadkem inzerátu.</li>
+<li>Portfolio faktor = vážený průměr přes byto-měsíce, s rozptylem.</li>
+</ol>
+<div class="note warn"><b>Kolik dat stačí, než to změní upisování.</b> <span class="p p-inf">INFERENCE</span> Faktor za celé portfolio spočítáš z 7 až 10 bytů krát 12 měsíců. <b>Faktor za jednotlivý okres z jednoho nebo dvou bytů je šum, ne měření.</b> Veřejná kalkulačka dnes používá 1,00 pro Prahu 1 a 2 a 1,10 jinde jako faktory <i>na okres</i>, a ty s dnešním portfoliem ověřit nejdou. Pravidlo do doby, než data budou: <b>používej jeden portfoliový faktor</b>, a rozdíly mezi okresy ber jako neprokázané, dokud nebudeš mít aspoň 3 byty a 24 byto-měsíců v daném okrese.</div>
+<h3>Jednotková ekonomika, z posledních tří měsíců</h3>
+<div class="tw"><table>
+<thead><tr><th>Číslo</th><th>Jak ho spočítat</th><th>K čemu odemyká</th></tr></thead>
+<tbody>
+<tr><td>Odměna na byt a měsíc</td><td>30 % z výnosu po poplatcích platforem</td><td>základ všeho</td></tr>
+<tr><td>Přímý náklad na byt a měsíc</td><td>podíl práce, software, spotřební materiál, doprava</td><td>hrubá marže</td></tr>
+<tr><td><b>Hrubý zisk na byt a měsíc</b></td><td>rozdíl předchozích dvou</td><td>maximální přípustný CAC, strop expozice, stupně pro makléře</td></tr>
+<tr><td>Hodiny na byt a měsíc</td><td>upřímný odhad, ne přání</td><td>kdy najímat</td></tr>
+<tr><td>Marže v launch fee</td><td>25 000 Kč minus nábytek, styling, focení, hloubkový úklid</td><td>jestli je 30denní pravidlo splněné, nebo jen vypadá</td></tr>
+</tbody></table></div>
+<p><span class="p p-open">OPEN</span> Když hrubá marže vyjde pod 40 %, je špatně buď odměna, nebo provozní model, a je to důležitější zjištění než cokoliv v akvizici.</p>
+</section>
+
+<hr>
+
+<section id="registr">
+<h2><span class="n">13</span> Registr rizika garance, prvních deset bytů</h2>
+<p class="lede">Jeden řádek na upsaný byt, zakládá se u prvního posouzení. <span class="p p-dec">DECIDED</span> Souhrnný strop se zatím nevymýšlí. Sloupce ale musí existovat teď, jinak se nedá spočítat, až přijde čas.</p>
+<div class="tw"><table>
+<thead><tr><th>Byt</th><th>Čtvrť</th><th class="num">Očekávaný roční čistý</th><th class="num">Podlaha</th><th class="num">Rezerva %</th><th class="num">Nárok −10 %</th><th class="num">Nárok −20 %</th><th class="num">Nárok −30 %</th><th>Výročí</th></tr></thead>
+<tbody>
+<tr><td>#1</td><td>&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td class="num">&mdash;</td><td>&mdash;</td></tr>
+<tr><td colspan="9" style="color:var(--muted);font-size:12.5px">Řádky #2 až #10 stejně. Rezerva % = očekávaný čistý děleno podlaha, minus 1. Nárok při šoku s = max(0; podlaha − očekávaný × (1 − s)).</td></tr>
+<tr class="tot"><td colspan="5">Souhrn portfolia</td><td class="num">C(10 %)</td><td class="num">C(20 %)</td><td class="num">C(30 %)</td><td>rozložení výročí</td></tr>
+</tbody></table></div>
+<ul>
+<li><b>Rezerva je to číslo, které rozhoduje, jestli je garance levná, nebo drahá.</b> Byt upsaný na 1,3násobku nájmu nese zhruba 20 % rezervy, jakmile se k podlaze přičte energie. Byt na 1,7násobku nese zhruba 55 %. Rok horší o 20 až 25 % smaže první a nechá druhý stát.</li>
+<li><span class="p p-inf">INFERENCE</span> Intake disciplína řeší riziko „tenhle byt je špatný“. Neřeší riziko „tenhle rok je špatný“. Proto se byty modelují společně, ne každý zvlášť.</li>
+<li><b>Rozkládej výročí smluv.</b> Podlaha se měří 12 měsíců od prvního hosta. Když jde většina bytů živě ve stejné sezóně, zavřou se všechna měřicí okna najednou. Rozložení go-live nezmenší šanci na špatný trh, ale zmenší šanci, že všechny nároky spadnou do jednoho čtvrtletí. Zdarma, začíná to prvním podpisem.</li>
+<li><span class="p p-open">OPEN</span> Strop = α × absorbovatelné(s), kde absorbovatelné se počítá z hrubého zisku <b>při stejném šoku</b>, ne z dnešního běhu. α a hloubka šoku jsou tvoje vstupy, na deset minut, jakmile existuje jednotková ekonomika.</li>
+</ul>
+</section>
+
+<hr>
+
+<section id="experimenty">
+<h2><span class="n">14</span> Log experimentů</h2>
+<p class="lede">Jeden test týdně, zapsaný. Věci, které se dají zjistit jen mluvením s majiteli, jsou experimenty, ne další analýza.</p>
+<div class="tw"><table>
+<thead><tr><th>ID</th><th>Hypotéza</th><th>Vzorek</th><th>Měřítko</th><th>Rozhodnutí</th></tr></thead>
+<tbody>
+<tr><td><b>E1</b></td><td>Majitelé prázdných bytů budou mluvit se studeným voláním</td><td>300 vytočení</td><td>podíl rozhovorů</td><td>pod 10 % ruší kanál 1</td></tr>
+<tr><td><b>E2</b></td><td>Rozhovor jde uzavřít na adresu</td><td>30 rozhovorů</td><td>adresy / rozhovory</td><td>pod 25 % se přepisuje uzavření, ne kanál</td></tr>
+<tr><td><b>E3</b></td><td>Brány neubijí pipeline</td><td>30 leadů</td><td>podíl propadu na branách 1 a 2</td><td>nad 50 % mění cílení na čtvrti</td></tr>
+<tr><td><b>E4</b></td><td>Launch fee 25 000 Kč neubíjí obchody</td><td>20 rozhovorů, které došly k penězům</td><td>kde obchod umřel</td><td>když je to hlavní důvod, testuje se rozpis místo paušálu</td></tr>
+<tr><td><b>E5</b></td><td>Veřejné číslo přežije underwriting</td><td>20 posouzení</td><td>rozdíl veřejné minus interní</td><td>pokles nad ve čtvrtině případů mění kalibraci</td></tr>
+<tr><td><b>E6</b></td><td>Čtyřměsíční výpověď není reálná námitka</td><td>všechny rozhovory ve fázi podmínek</td><td>kdo ji zvedl a jak často</td><td>25 % a víc, nebo 2 ztráty: otevírá se rozhodnutí 5</td></tr>
+<tr><td><b>E7</b></td><td>Makléři aktivují</td><td>40 makléřů</td><td>druhá poslaná adresa</td><td>pod 2 druhé adresy: kanál na údržbu</td></tr>
+</tbody></table></div>
+<div class="note warn"><b>Web je zamrzlý.</b> <span class="p p-dec">DECIDED</span> Žádná změna webu na základě názoru. Web se mění, až konkrétní rozhovor, konkrétní číslo v analytice nebo podepsaný majitel ukáže konkrétní problém. Do té doby je jediný zásah do repa vypnutí zámku a doplnění GA.</div>
+</section>
+
+<hr>
+
+<section id="plan">
+<h2><span class="n">15</span> Plán týdnů 1 až 4</h2>
+<div class="tw"><table>
+<thead><tr><th>Týden</th><th>Doručit</th><th>Rozhodovací brána na konci</th></tr></thead>
+<tbody>
+<tr><td><b>1</b><br>8. až 14. 9.</td><td>Web živě s GA. CRM stojí. Operator factor a jednotková ekonomika změřené. Seznam 150 inzerátů, 20 makléřů, 30 jmen ve vietnamské síti. 100 vytočení. Registr garancí založený.</td><td>Je hrubá marže nad 40 % a portfolio faktor aspoň 1,00? Když ne, mění se nabídka dřív, než se volá dál.</td></tr>
+<tr><td><b>2</b><br>15. až 21. 9.</td><td>100 vytočení. Prvních 10 makléřů. Prvních 10 vietnamských kontaktů. 2 adresy. 1 posouzení. Podmínky garance sepsané do smluvního textu. Šablona odmítnutí.</td><td>Je aspoň 6 rozhovorů týdně? Když ne, problém je v rozvrhu, ne ve strategii.</td></tr>
+<tr><td><b>3</b><br>22. až 28. 9.</td><td>100 vytočení. 2 až 3 adresy. 2 posouzení, 1 prohlídka, 1 deck. Šablona posouzení, když už underwriting leze přes 3 h. Domluvená první případovka.</td><td>Sedí veřejné číslo s interním? Vyhodnotit E5 na prvních posouzeních.</td></tr>
+<tr><td><b>4</b><br>29. 9. až 5. 10.</td><td>100 vytočení. 3. deck. 1 až 2 podpisy. Vyhodnocení E1 až E7. Rozložení výročí u podepsaných.</td><td>Který ze tří kanálů dal nejvíc bytů v pásmu A a B? Ten se posiluje, nejslabší jde na údržbu.</td></tr>
+</tbody></table></div>
+</section>
+
+<hr>
+
+<section id="dashboard">
+<h2><span class="n">Dashboard</span></h2>
+<p class="lede">Jedna strana, každé pondělí, 15 minut. Později ji vyplňuje tým beze změny formátu.</p>
+<div class="dash">
+  <div class="dash-h"><b>Founder dashboard &middot; týden __ z 4</b><em>Severka: podepsané kvalifikované byty</em></div>
+  <div class="dash-grid">
+    <div class="dcell"><k>Vytočení</k><v>__ <small>/100</small></v></div>
+    <div class="dcell"><k>Rozhovory</k><v>__ <small>/8</small></v></div>
+    <div class="dcell"><k>Adresy</k><v>__ <small>/2</small></v></div>
+    <div class="dcell"><k>Pásmo A a B</k><v>__ <small>/1</small></v></div>
+    <div class="dcell"><k>Posouzení</k><v>__</v></div>
+    <div class="dcell"><k>Decky</k><v>__</v></div>
+    <div class="dcell"><k>Podepsáno</k><v>__</v></div>
+    <div class="dcell"><k>Odmítnuto námi</k><v>__</v></div>
+  </div>
+  <div class="dash-grid" style="grid-template-columns:repeat(2,1fr)">
+    <div class="dcell"><k>Nejčastější námitka týdne</k><v style="font-size:15px">__________</v><small>ze sloupce Námitka</small></div>
+    <div class="dcell"><k>Propad na branách</k><v style="font-size:15px">__ %</v><small>hlavně SVJ a nájemník</small></div>
+    <div class="dcell"><k>Underwriting, hodin</k><v style="font-size:15px">__ h</v><small>nad 3 h spouští šablonu</small></div>
+    <div class="dcell"><k>Souhrnná expozice C(20 %)</k><v style="font-size:15px">__ Kč</v><small>z registru garancí</small></div>
+  </div>
+  <div class="dash-grid" style="grid-template-columns:1fr">
+    <div class="dcell"><k>Jeden běžící experiment a jeho stav</k><v style="font-size:15px">E__ &middot; __________</v></div>
+    <div class="dcell"><k>Rozhodnutí, které tenhle týden padlo</k><v style="font-size:15px">__________</v></div>
+    <div class="dcell"><k>Jedna věc, kterou příští týden dělám jinak</k><v style="font-size:15px">__________</v></div>
+  </div>
+</div>
+<h3>Co se dívá kdy</h3>
+<ul>
+<li><b>Denně</b>: nezodpovězené leady, vytočení, doba odpovědi.</li>
+<li><b>Týdně</b>: rozhovory, adresy, kvalifikované byty, prohlídky, decky, podpisy, skladba propadu na branách, jeden experiment.</li>
+<li><b>Měsíčně</b>: hrubý zisk na byt, CAC, doba do uzavření, expozice, operator factor podle okresů, jakmile jsou data.</li>
+</ul>
+</section>
+
+<div class="foot">
+<p class="chain"><b>Alex library</b> → <b>Antam Strategy v2</b> → <b>30denní OS</b> → denní akce a výsledky → úpravy strategie z reálných důkazů</p>
+<p>Zamrzlé vstupy: strategy-2026-09-07.md v2 a všechny položky <span class="p p-dec">DECIDED</span>. Cena, jeden 30% offer, čtyřměsíční výpověď, pozice garance a design webu se v tomhle měsíci neotvírají, pokud nezareaguje explicitní spouštěč v sekci 14. Další užitečná informace nepřijde z přemýšlení, ale ze sta kontaktů týdně a z toho, co ti ti lidé udělají.</p>
+</div>
+
+</main>
+</div>
+</div>
+
+<script>
+document.querySelectorAll("button.cp").forEach(function(b){
+  b.addEventListener("click",function(){
+    var body=b.closest(".sc").querySelector(".sc-b");
+    var t=body.innerText.replace(/\n{3,}/g,"\n\n").trim();
+    navigator.clipboard.writeText(t).then(function(){
+      var o=b.textContent;b.textContent="Zkopírováno";
+      setTimeout(function(){b.textContent=o},1400);
+    }).catch(function(){b.textContent="Nešlo";setTimeout(function(){b.textContent="Kopírovat"},1400)});
+  });
+});
+document.querySelectorAll('.ck input[type=checkbox]').forEach(function(c){
+  var k="antam-os-"+c.id;
+  try{if(localStorage.getItem(k)==="1")c.checked=true}catch(e){}
+  c.addEventListener("change",function(){try{localStorage.setItem(k,c.checked?"1":"0")}catch(e){}});
+});
+</script>
