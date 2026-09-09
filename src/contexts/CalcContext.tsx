@@ -72,7 +72,7 @@ export const parseShare = (raw: string | null) => {
   // ?byt=praha1-constructor-… prošlo jako platná čtvrť a spadlo to až
   // v ownerMonthly na `MARKET_CTVRT["constructor"].parents` (undefined
   // .includes). Stránka neměla error boundary, takže bílá obrazovka.
-  const found = parts.find((p) => Object.hasOwn(MARKET_CTVRT, p));
+  const found = parts.find((p) => Object.prototype.hasOwnProperty.call(MARKET_CTVRT, p));
   // Prázdný slot vzniká jen z `${ctvrt ?? "-"}`, tedy z odkazu, který čtvrť
   // VĚDOMĚ vynechal. Starý odkaz bez slotu (praha2-2kk-year) zůstává
   // nezodpovězený, jak byl.
