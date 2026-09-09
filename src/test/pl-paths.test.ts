@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-// @ts-expect-error - .mjs skript bez typu, schvalne: testuje se konvence, ne API
+// @ts-ignore - .mjs skript bez typu, schvalne: testuje se konvence, ne API
 import { artifactDir, pullWindow } from "../../scripts/pl-window.mjs";
 
 /**

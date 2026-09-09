@@ -666,7 +666,7 @@ describe("model výnosu", () => {
     expect(fromLink.supported, "obnovený odkaz je podporovaný výsledek").toBe(true);
     expect(fromLink).toEqual(direct);
     expect(rentFor("praha1", "2kk", 63, "mix", shared!.ctvrt ?? undefined))
-      .toBe(rentFor("praha1", "2kk", 63, "mix", null ?? undefined));
+      .toBe(rentFor("praha1", "2kk", 63, "mix", undefined));
   });
 
   it("3+kk se s plochou plynule překlápí do 3BR (HEURISTIC, oprava konzistence)", () => {

@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
-// @ts-expect-error - ciste JS odvozeni sdilene s scripts/pl-import.mjs
+// @ts-ignore - ciste JS odvozeni sdilene s scripts/pl-import.mjs
 import { deriveBands, RELIABLE_MIN_N } from "../../scripts/pl-derive.mjs";
 import { MARKET_STR, RELIABLE_MIN_N as MODEL_MIN_N, isReliableN } from "../lib/yield";
-// @ts-expect-error - ciste JS pravidlo okna sdilene s pull skripty
+// @ts-ignore - ciste JS pravidlo okna sdilene s pull skripty
 import { pullWindow, WINDOW_MONTHS, CLOSE_LAG_DAYS } from "../../scripts/pl-window.mjs";
 
 const DISTRICTS = ["praha1","praha2","praha3","praha4","praha5","praha6","praha7","praha8","praha9"] as const;
