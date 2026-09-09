@@ -342,7 +342,7 @@ const translations = {
     pricing_title: "Naše odměna",
     pricing_split1: "Z čistého výnosu zůstává 70 % majiteli.",
     pricing_split2: "Naše odměna za správu je 30 %.",
-    pricing_desc: "Počítá se až z částky, která zůstane po poplatcích platforem a úklidu hrazeném hosty. Bez měsíčního paušálu, uvedení bytu do provozu je jednorázově 25 000 Kč.",
+    pricing_desc: "Počítá se z výnosu po odečtení poplatků platforem, úklidu hrazeného hosty a případných souvisejících daňových nákladů. Bez měsíčního paušálu, uvedení bytu do provozu je jednorázově 25 000 Kč.",
     pr1_name: "Správa",
     pr1_price: "30 % z čistého výnosu",
     pr1_note: "Čísla ve schématu jsou vzor pro 90 000 Kč na účtu, ne konkrétní byt. Úklidový poplatek platí hosté zvlášť a kryje úklid a prádlo. Ze samotného výnosu je naše odměna 30 % a je konečná.",
