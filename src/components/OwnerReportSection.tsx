@@ -8,11 +8,13 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
 
-/* Ukázka portálu: statická stránka v public/ukazka-portalu/, jede s webem,
-   takže nepotřebuje vlastní hosting ani DNS. Běží na vymyšlených bytech,
-   proto je v robots.txt zakázaná. Skutečný portál zůstává na /portal.
-   Až bude demo.antamhomes.com, změní se jen tenhle řádek. */
-const PORTAL_DEMO_URL = "/ukazka-portalu/";
+/* Ukázka portálu je DEMO REŽIM SKUTEČNÉHO PORTÁLU, ne kopie. Portál umí
+   ?demo sám: běží na vymyšlených bytech, nechce přihlášení a je to tatáž
+   aplikace, kterou majitel dostane. Vlastní ukázka na webu tu chvíli byla
+   (public/ukazka-portalu/) a šla pryč 9. 9. 2026: byla to druhá codebase,
+   která by se s portálem rozešla při první změně. Co se změní v portálu,
+   je tím pádem hned i v ukázce. Přihlášení do ostrého portálu je /portal. */
+const PORTAL_DEMO_URL = "https://antam-owner-portal.netlify.app/?demo";
 
 const OwnerReportSection = () => {
   const { lang } = useLanguage();
