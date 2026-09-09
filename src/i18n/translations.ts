@@ -123,7 +123,7 @@ const translations = {
     g_pair2_label: "",
     g_pair2_text: "",
     g_small: "",
-    g_cta: "Poslat byt k výpočtu",
+     g_cta: "POSLAT BYT K VÝPOČTU",
     // Assurance (contact)
     assure1: "Nezávazná poptávka",
     assure2: "Garance výnosu",
