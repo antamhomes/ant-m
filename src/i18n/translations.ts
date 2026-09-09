@@ -338,7 +338,7 @@ const translations = {
 
 
     // Ceník
-    pricing_label: "Ceník",
+     pricing_label: "CENÍK",
     pricing_title: "Naše odměna",
     pricing_split1: "Z čistého výnosu zůstává 70 % majiteli.",
     pricing_split2: "Naše odměna za správu je 30 %.",
@@ -388,7 +388,7 @@ const translations = {
     pr8_name: "Doporučení majitele",
     pr8_price: "Uvedení do provozu zdarma",
     pr8_note: "Doporučte majitele, jehož byt přijmeme do správy, a uvedení do provozu máte zdarma: částku vám vrátíme v plné výši.",
-    pricing_foot: "Drobné opravy do 5\u00a0000 Kč řešíme hned a strháváme z výnosu, větší až po vašem souhlasu. Energie hradí majitel.",
+     pricing_foot: "\n",
 
     // Horizont — dlouhodobě vs krátkodobě
     hz_legend_str: "Krátkodobě s\u00a0Antam Homes (potenciál)",
