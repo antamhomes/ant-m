@@ -858,7 +858,7 @@ const translations = {
     pr1_flow4_v: "56 700 Kč",
     pr1_flow5: "Antam Homes (30%)",
     pr1_flow5_v: "24 300 Kč",
-    pr1_flow_note: "Antam tính trên số tiền thật sự về tài khoản. Không tính trên giá niêm yết, không tính trên phí dọn dẹp.",
+    pr1_flow_note: "\n",
     pr1_stack_title: "",
     pr1_stack_1: "",
     pr1_stack_2: "",
