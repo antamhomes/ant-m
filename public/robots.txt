@@ -16,3 +16,8 @@ Disallow: /portal
 Disallow: /ukazka-portalu
 
 Sitemap: https://www.antamhomes.com/sitemap.xml
+
+# Interní nástroj, nikdy neindexovat.
+User-agent: *
+Disallow: /nastroj
+Disallow: /admin/

@@ -103,7 +103,7 @@ var marketCell = (loc, band) => {
   return null;
 };
 var OPERATOR_FACTOR_DEFAULT_PUBLIC = 1.1;
-var OPERATOR_FACTOR_DEFAULT = 1.1;
+var OPERATOR_FACTOR_DEFAULT = 1;
 var OPERATOR_EVIDENCE = {
   // PŘEMĚŘENO 2. 9. 2026 (audit shodných období). Dřívějších 0,99 se nedalo
   // reprodukovat — odvození nebylo nikde uložené. Nové měření: 12 uzavřených
@@ -121,7 +121,10 @@ var OPERATOR_FACTOR_PUBLIC = {
     Object.entries(OPERATOR_EVIDENCE).map(([loc, e]) => [loc, publicFactorFrom(e.measured, e.weight)])
   )
 };
-var OPERATOR_FACTOR_INTERNAL = OPERATOR_FACTOR_PUBLIC;
+var internalFactorFrom = (measured, weight) => measured <= OPERATOR_FACTOR_DEFAULT ? measured : Math.round((OPERATOR_FACTOR_DEFAULT + weight * (measured - OPERATOR_FACTOR_DEFAULT)) * 1e3) / 1e3;
+var OPERATOR_FACTOR_INTERNAL = Object.fromEntries(
+  Object.entries(OPERATOR_EVIDENCE).map(([loc, e]) => [loc, internalFactorFrom(e.measured, e.weight)])
+);
 var AVAILABILITY = 0.92;
 var operatorFactor = (loc, scope = "public") => (scope === "public" ? OPERATOR_FACTOR_PUBLIC : OPERATOR_FACTOR_INTERNAL)[loc] ?? (scope === "public" ? OPERATOR_FACTOR_DEFAULT_PUBLIC : OPERATOR_FACTOR_DEFAULT);
 var BAND_BLEND = {

@@ -239,11 +239,18 @@ export const marketCell = (loc: MeasuredLocation, band: Band): MarketCell | null
  * Od 31. 8. 2026 veřejný faktor NENÍ paušální srážka: odvozuje se z měření
  * pravidlem pod tímhle blokem. Praha 1 tak jde z 0,95 na naměřených 0,99,
  * protože ta srážka nebyla ničím podložená. Pravidlo, že každý náš byt musí
- * veřejný odhad překonat, bylo opuštěno a nevrací se. Interní podklad pro
- * nabídku majiteli počítá dál s 1,00.
+ * veřejný odhad překonat, bylo opuštěno a nevrací se.
+ *
+ * DVĚ VÝCHOZÍ ČÍSLA, DVA ÚČELY (rozpojeno 9. 9. 2026). Veřejný odhad říká
+ * „takhle na tom okres průměrně je" a smí stát na 1,10, protože nic negarantuje.
+ * Interní podklad pod garancí říká „tohle jsme ochotní podepsat" a nesmí
+ * obsahovat příplatek, který nikdo nezměřil: bez měření je výchozí 1,00.
+ * Doteď se obě čísla rovnala, takže se v Praze 2, 4, 6, 7, 8, 9 a 10
+ * underwritovalo s +10 % za výkon, o kterém tam nemáme jediný datový bod.
  */
 export const OPERATOR_FACTOR_DEFAULT_PUBLIC = 1.1;
-export const OPERATOR_FACTOR_DEFAULT = 1.1;
+/** Underwriting: bez měření žádný operátorský příplatek. */
+export const OPERATOR_FACTOR_DEFAULT = 1.0;
 
 /**
  * Co je kde NAMĚŘENÉ, včetně velikosti vzorku. Veřejný faktor se z tohohle
@@ -306,17 +313,34 @@ export const OPERATOR_FACTOR_PUBLIC: Partial<Record<LocationKey, number>> = {
   ),
 };
 /**
- * Interní faktory jsou ZÁMĚRNĚ TOTOŽNÉ s veřejnými. Rozdíl mezi veřejným
- * odhadem a interním propočtem NENÍ násobitel, ale MNOŽSTVÍ INFORMACÍ:
- * veřejně se neznámá konfigurace mísí mezi pásmy, interně se nahradí tím,
- * co je na prohlídce vidět (viz ObservedConfig níž).
+ * Interní faktor: TÁŽ mechanika jako veřejná, ale kotvená na 1,00 místo 1,10.
+ * Naměřené se krátí k výchozí podle váhy vzorku; co není naměřené, je 1,00.
  *
- * Prohlídka totiž odstraní nejistotu o KONKRÉTNÍM BYTĚ, ale nezvětší vzorek,
- * ze kterého je změřený OKRESNÍ faktor. Zvednout Prahu 3 z 1,155 na naměřených
- * 1,21 jen proto, že jsem byt viděl, by ty dvě různé nejistoty zaměnilo.
- * Faktor se pohne teprve tím, že vlastním bytům přibude historie.
+ * ASYMETRIE MUSÍ BÝT STEJNÁ JAKO U VEŘEJNÉHO (doplněno 9. 9. 2026, chytil to
+ * syntetický test): měření POD kotvou se bere celé, měření NAD kotvou se krátí
+ * vahou. Bez té podmínky by měření pod 1,00 (třeba 0,90) interně vyšlo na
+ * 1,00 + w(0,90 − 1,00) = 0,95, tedy VÝŠ než veřejných 0,90, a interní cesta
+ * by u podvýkonného okresu byla optimističtější než veřejná. Dnes žádný okres
+ * pod 1,00 naměřený není, takže to nic nerozbíjelo; test to hlídá dopředu.
+ *
+ * Proč ne rovnou naměřené číslo: Praha 3 má naměřeno 1,21 na dvou bytech,
+ * z toho jeden má za sebou 54 dní. Vzít to celé by znamenalo underwritovat
+ * garanci na půl sezóny. Váha 0,50 dává 1,105, tedy pod veřejnými 1,155.
+ * Interní číslo tak nikde nevyjde výš než veřejné, což je u podkladu pod
+ * garancí ta správná strana.
+ *
+ * Prohlídka na tenhle faktor nesahá. Odstraní nejistotu o KONKRÉTNÍM BYTĚ
+ * (viz ObservedConfig níž), ale nezvětší vzorek, ze kterého je změřený
+ * OKRESNÍ faktor. Ten se pohne teprve tím, že vlastním bytům přibude historie.
  */
-export const OPERATOR_FACTOR_INTERNAL: Partial<Record<LocationKey, number>> = OPERATOR_FACTOR_PUBLIC;
+export const internalFactorFrom = (measured: number, weight: number): number =>
+  measured <= OPERATOR_FACTOR_DEFAULT
+    ? measured
+    : Math.round((OPERATOR_FACTOR_DEFAULT + weight * (measured - OPERATOR_FACTOR_DEFAULT)) * 1000) / 1000;
+
+export const OPERATOR_FACTOR_INTERNAL: Partial<Record<LocationKey, number>> = Object.fromEntries(
+  Object.entries(OPERATOR_EVIDENCE).map(([loc, e]) => [loc, internalFactorFrom(e.measured, e.weight)]),
+);
 
 /**
  * RevPAR × dny NENÍ tržba na inzerát. PriceLabs počítá obsazenost a RevPAR
