@@ -294,8 +294,8 @@ const ContactSection = () => {
               )}
               <p className="font-body text-[14px] text-muted-foreground">
                 {t(lang, "contact_success_call")}{" "}
-                <a href="tel:+420727952459" className="text-gold-deep font-medium whitespace-nowrap hover:text-primary transition-colors">
-                  +420&nbsp;727&nbsp;952&nbsp;459
+                <a href="tel:+420776607003" className="text-gold-deep font-medium whitespace-nowrap hover:text-primary transition-colors">
+                  +420&nbsp;776&nbsp;607&nbsp;003
                 </a>
               </p>
             </div>
@@ -486,8 +486,8 @@ const ContactSection = () => {
               {/* The no-form path: one tap to a call (VI copy mentions Zalo). */}
               <p className="font-body text-[13px] md:text-sm text-muted-foreground text-center">
                 {t(lang, "contact_phone_line")}{" "}
-                <a href="tel:+420727952459" className="text-gold-deep font-medium whitespace-nowrap hover:text-primary transition-colors">
-                  +420&nbsp;727&nbsp;952&nbsp;459
+                <a href="tel:+420776607003" className="text-gold-deep font-medium whitespace-nowrap hover:text-primary transition-colors">
+                  +420&nbsp;776&nbsp;607&nbsp;003
                 </a>
               </p>
             </>
