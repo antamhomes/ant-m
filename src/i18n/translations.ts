@@ -78,7 +78,7 @@ const translations = {
     step4_title: "Spustíme pronájem",
     step4_desc: "Převezmeme rezervace, hosty, ceny i provoz. První hosté chodí do 14 dnů od přípravy bytu.",
     process_cta: "Poslat byt k výpočtu",
-    process_season: "Byt spuštěný na podzim stihne prosinec, kdy jsou ceny v našich lokalitách až 1,5× nad ročním průměrem.",
+    process_season: "\n",
 
     // About — Kdo za tím stojí (REVIEW: nahradit vlastními slovy + fotkou)
     about_label: "Kdo za tím stojí",
