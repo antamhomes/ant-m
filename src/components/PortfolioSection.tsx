@@ -85,7 +85,7 @@ const copy = {
     statRatio: (r: number) => `${r.toLocaleString("cs-CZ")}× dlouhodobý nájem`,
     newBadge: (m: string) => `V naší správě od ${m}`,
     newNote: "Výsledky doplníme po první sezóně.",
-    statNote: (d: string) => `Số tiền chủ nhà nhận dựa trên đặt phòng thật của từng căn, tính theo mức phí Antam hiện nay là 30%, sau phí Airbnb và Booking.com và không tính phí dọn dẹp. Số liệu là trung bình 12 tháng gần nhất; căn mới tính từ khi Antam bắt đầu quản lý.\nTỷ lệ lấp phòng của khu vực lấy từ PriceLabs. Tiền thuê dài hạn lấy từ hơn 1 300 tin đăng trên Sreality theo quận và diện tích, đồng thời được đối chiếu với Deloitte Rent Index.\nKết quả thực tế có thể thay đổi theo thời gian và không phải cam kết cho tương lai.\n`,
+    statNote: (d: string) => `Částka, kterou majitel obdrží, vychází ze skutečných rezervací každého bytu a je počítána podle naší současné 30% odměny, po odečtení poplatků Airbnb a Booking.com a bez poplatků za úklid. Údaje představují průměr za posledních 12 měsíců; u novějších bytů počítáme období od začátku naší správy. Obsazenost v dané lokalitě vychází z dat PriceLabs. Dlouhodobé nájemné vychází z více než 1 300 nabídek na Sreality podle městské části a velikosti bytu a je porovnáno s Deloitte Rent Indexem. Skutečné výsledky se mohou v čase měnit a nejsou příslibem budoucích výnosů.\n`,
   },
   vi: {
     eyebrow: "Kết quả thực tế",
