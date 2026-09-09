@@ -386,8 +386,8 @@ const translations = {
     pr5_price: "4× ročně zdarma, pak 500 Kč za výjezd",
     pr5_note: "Cesta k bytu kvůli konkrétní závadě mimo plánované kontroly. Úklid a kontroly po pobytu se neúčtují.",
     pr8_name: "Doporučení majitele",
-    pr8_price: "Uvedení do provozu zdarma",
-    pr8_note: "Doporučte majitele, jehož byt přijmeme do správy, a uvedení do provozu máte zdarma: částku vám vrátíme v plné výši.",
+    pr8_price: "25 000 Kč na správu.",
+    pr8_note: "Za každého nového majitele, jehož byt převezmeme do správy, získáte 25 000 Kč na správu.\nA nový majitel získá zvýhodněné uvedení bytu do provozu.\n",
      pricing_foot: "\n",
 
     // Horizont — dlouhodobě vs krátkodobě
@@ -868,7 +868,7 @@ const translations = {
     pr1_stack_6: "",
     pr6_name: "Cam kết thu nhập",
     pr6_price: "đã trong phí",
-    pr6_note: "Mức sàn thu nhập được ấn định trước. Mỗi năm, mức này được ghi rõ trong hợp đồng và bằng tiền thuê dài hạn cộng điện nước. Nếu không đạt, phần thiếu được trừ vào phí của Antam theo hợp đồng.\n",
+    pr6_note: "Minimální výnos je stanoven předem. Každý rok je jeho výše jasně uvedena ve smlouvě a odpovídá dlouhodobému nájemnému plus nákladům na energie. Pokud této částky nedosáhneme, rozdíl se podle smlouvy odečte z odměny Antam Homes.",
     pr7_name: "Hỗ trợ khi khách làm hỏng",
     pr7_price: "đã trong phí",
     pr7_note: "Khách làm hỏng mà không lấy lại được tiền thì Antam chịu. Mỗi căn được hỗ trợ đến 25 000 Kč một năm.",
