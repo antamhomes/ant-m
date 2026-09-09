@@ -89,7 +89,7 @@ const copy = {
   },
   vi: {
     eyebrow: "Kết quả thực tế",
-    title: "Những căn Antam lo, chủ nhà nhận được bao nhiêu",
+    title: "Những căn Antam quản lý, chủ nhà nhận về bao nhiêu",
     desc: "Số liệu thật từ bảng kê hằng tháng, không phải ước tính.",
     guests: (n: number) => `tối đa ${n} khách`,
     soonTitle: "Căn của anh chị có thể ở đây",
