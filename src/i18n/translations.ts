@@ -868,7 +868,7 @@ const translations = {
     pr1_stack_6: "",
     pr6_name: "Cam kết thu nhập",
     pr6_price: "đã trong phí",
-    pr6_note: "Mức tối thiểu mỗi năm ghi trong hợp đồng cho căn nhà mình, ít nhất bằng tiền thuê dài hạn cộng điện nước. Antam không thu thêm gì. Không đạt thì phần thiếu trừ vào phí của Antam, theo hợp đồng.",
+    pr6_note: "Mức sàn thu nhập được ấn định trước. Mỗi năm, mức này được ghi rõ trong hợp đồng và bằng tiền thuê dài hạn cộng điện nước. Nếu không đạt, phần thiếu được trừ vào phí của Antam theo hợp đồng.\n",
     pr7_name: "Hỗ trợ khi khách làm hỏng",
     pr7_price: "đã trong phí",
     pr7_note: "Khách làm hỏng mà không lấy lại được tiền thì Antam chịu. Mỗi căn được hỗ trợ đến 25 000 Kč một năm.",
