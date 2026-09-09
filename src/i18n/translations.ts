@@ -585,11 +585,11 @@ const translations = {
     step2_title: "Chúng tôi xem và đánh giá",
     step2_desc: "Trong 24 giờ, anh chị nhận được dự tính dựa trên giá thực tế của những căn tương tự trong khu vực.",
     step3_title: "Thống nhất kế hoạch khởi động",
-    step3_desc: "Nhà sẵn sàng thì bắt đầu nhận khách. Nếu cần chỉnh thêm, Antam sẽ lên danh sách những việc cần làm và chi phí trước.",
+    step3_desc: "Nếu cần chỉnh thêm, Antam sẽ lên danh sách những việc cần làm và chi phí trước.",
     step4_title: "Bắt đầu đón khách",
     step4_desc: "Nhà sẵn sàng để chụp ảnh thì trong 14 ngày tin đăng đã chạy. Khách, dọn dẹp, giá: Antam lo\u00a0hết.",
     process_cta: "Gửi căn nhà để Antam tính",
-    process_season: "Nhà mở bán từ tháng 10 thì kịp tháng 12. Lúc đó giá ở các khu của Antam cao đến 1,5 lần trung bình năm.",
+    process_season: "\n",
 
     // About — Ai đứng sau (REVIEW: thay bằng lời của Vương + ảnh)
     about_label: "Ai đứng sau",
