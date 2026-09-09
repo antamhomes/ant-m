@@ -404,7 +404,7 @@ const PortfolioSection = () => {
             <summary className="list-none cursor-pointer font-body text-xs text-muted-foreground underline underline-offset-4 decoration-border [&::-webkit-details-marker]:hidden">
               {c.statNoteToggle}
             </summary>
-            <p className="mt-3 font-body text-[11px] sm:text-xs text-muted-foreground/90 leading-relaxed text-pretty">
+            <p className="mt-3 font-body text-[11px] sm:text-xs text-muted-foreground/90 leading-relaxed text-pretty max-w-[58ch]">
               {c.statNote(STATS_ASOF[lang])}
             </p>
           </details>

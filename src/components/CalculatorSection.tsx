@@ -249,7 +249,12 @@ const CalculatorSection = () => {
 
   return (
     <section id="kalkulacka" className="section bg-secondary scroll-mt-20">
-      <div className="container-narrow">
+      {/* 9. 9. 2026: hlavička sekce jde na hlavní levou osu webu (container-wide).
+          Kalkulačka i formulář stály celé v užším kontejneru, takže jejich eyebrow
+          a nadpis začínaly na 248 a 328 px, zatímco všechny ostatní sekce na 120.
+          Při scrollování levá hrana textu skákala. Obsah zůstává úzký, přeskočí
+          jen nadpis. */}
+      <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "calc_label")}</p>
           <h2 className="h-section text-foreground">
@@ -258,7 +263,8 @@ const CalculatorSection = () => {
           </h2>
           <p className="lead">{t(lang, "calc_desc")}</p>
         </Reveal>
-
+      </div>
+      <div className="container-narrow">
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 md:items-start">
           <Reveal id="kalkulacka-zadani" delay={0.05} className="space-y-8 order-2 md:order-1 scroll-mt-20 min-w-0">
             <div>
@@ -653,7 +659,7 @@ const CalculatorSection = () => {
             <summary className="list-none cursor-pointer inline-block font-body text-xs text-muted-foreground underline underline-offset-4 decoration-border [&::-webkit-details-marker]:hidden">
               {t(lang, "calc_disclaimer_toggle")}
             </summary>
-            <p className="mt-3 font-body text-xs text-foreground/75 text-left leading-relaxed">
+            <p className="mt-3 font-body text-xs text-foreground/75 text-left leading-relaxed max-w-[58ch]">
               {/* Okno dat z konstanty (lib/dataWindow), ne z překladu; hlídá data-window.test. */}
               {t(lang, "calc_method_window").replace("{window}", dataWindowLabel(lang))} {t(lang, "calc_disclaimer")}
             </p>

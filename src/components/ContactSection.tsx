@@ -255,12 +255,15 @@ const ContactSection = () => {
 
   return (
     <section id="kontakt" className="section bg-secondary scroll-mt-20">
-      <div className="container-prose md:max-w-[calc(46rem+3rem)]">
+      {/* Viz kalkulačka: hlavička na hlavní osu, formulář zůstává v úzkém sloupci. */}
+      <div className="container-wide">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "contact_label")}</p>
           <h2 className="h-section text-foreground">{t(lang, "contact_fallback_title")}</h2>
           <p className="lead">{t(lang, "contact_fallback_desc")}</p>
         </Reveal>
+      </div>
+      <div className="container-prose md:max-w-[calc(46rem+3rem)]">
 
         {/* 2D-final: pruh se čtyřmi ujištěními odsud pryč. Garanci, blokaci
             termínů i výplatu do 15. dne majitel v tuhle chvíli už zná ze sekcí

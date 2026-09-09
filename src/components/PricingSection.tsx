@@ -127,7 +127,11 @@ const PricingSection = () => {
             <dl className="mt-12 md:mt-14 border-t border-foreground/25">
               {CORE_ROWS.map(({ k }) => (
                 <div key={k} id={k === "pr6" ? "garance" : undefined} className="border-b border-border py-6 md:py-7 scroll-mt-24">
-                  <dt className="flex items-baseline justify-between gap-6">
+                  {/* 9. 9. 2026: „v odměně" bylo tlačené justify-between na protější
+                      hranu řádku, na 1440 to dělalo 541 px prázdna mezi názvem a jeho
+                      vlastním štítkem. Četlo se to jako samostatný prvek u pravého
+                      okraje, ne jako upřesnění toho nadpisu. Teď stojí hned za ním. */}
+                  <dt className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                     <span className="font-display text-[20px] md:text-[22px] font-semibold text-foreground leading-snug">
                       {t(lang, `${k}_name` as const)}
                     </span>

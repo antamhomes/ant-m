@@ -40,7 +40,7 @@ const ProcessSection = () => {
               <div className="absolute left-0 top-0 md:static md:mx-auto md:mb-6 w-11 h-11 rounded-full bg-card border border-gold/60 ring-4 ring-secondary flex items-center justify-center">
                 <span className="font-display text-base font-semibold text-gold-deep tnum">{num}</span>
               </div>
-              <h3 className="font-display text-xl md:text-[1.35rem] font-semibold text-foreground mb-2 leading-snug">
+              <h3 className="font-display text-xl md:text-[1.35rem] font-semibold text-foreground mb-2 leading-snug text-balance">
                 {t(lang, titleKeys[index])}
               </h3>
               <p className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed md:max-w-[26ch] md:mx-auto text-pretty">
