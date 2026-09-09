@@ -830,7 +830,7 @@ const translations = {
     faq12_q: "Hàng xóm và SVJ thì sao?",
     faq12_a: "Yên ổn với hàng xóm thì mới cho thuê lâu dài được. Khách nhận nội quy trước khi đến. Số người tối đa rõ ràng, không tiệc tùng. Hàng xóm có số điện thoại của Antam để gọi. Nếu SVJ cấm rõ, Antam nói thẳng trước khi ký.",
     faq13_q: "Khi nào không nên cho thuê ngắn hạn?",
-    faq13_a: "Không hợp nếu anh chị cần mỗi tháng đúng một khoản, muốn tự ở gần cả năm, hoặc không muốn sắm thêm gì cho nhà. Khi đó cho thuê dài hạn hợp hơn. Còn lại Antam xem được từng căn. Nhà xa trung tâm hay nhà cũ không sao.",
+    faq13_a: "Nếu anh chị ưu tiên thu nhập cố định, muốn ở nhà phần lớn thời gian hoặc chưa muốn đầu tư thêm vào căn hộ, cho thuê dài hạn sẽ hợp hơn.\n",
     faq14_q: "Sao không tự làm qua Airbnb?",
     faq14_a: "Hoàn toàn có thể, nhiều chủ nhà vẫn tự làm. Nhưng đây là việc mỗi ngày: trả lời khách trong vài phút, chỉnh giá theo nhu cầu, lo dọn dẹp giặt giũ và theo kịp từng thay đổi của Airbnb, Booking. Antam sống trong việc này mỗi ngày với mười một căn cùng lúc. Anh chị đỡ mất thời gian, nhà vẫn thu tốt hơn khu xung quanh.",
     faq15_q: "Antam có dùng nền tảng khác không?",
