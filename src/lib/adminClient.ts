@@ -29,7 +29,9 @@ export async function checkAdmin(): Promise<boolean> {
 
 export type EvaluationRow = {
   address_raw: string; district: string; ctvrt: string | null; size: string; m2: number;
-  current_rent: number | null; model_version: string; data_window: string;
+  current_rent: number | null; sleeps: number | null; season: string;
+  capacity_source: string; capacity_resolved: boolean; band: string; inferred_band: string;
+  model_version: string; data_window: string;
   public_monthly: number | null; cons_low: number | null; cons_high: number | null;
   screening_baseline: number | null; ltr_monthly: number | null; energy_monthly: number;
   floor_monthly: number | null; buffer_czk: number | null; buffer_pct: number | null;
@@ -41,7 +43,9 @@ export type EvaluationRow = {
 /** Řádek se skládá jen z toho, co spočítal model. Žádné dopočítávání tady. */
 export const toRow = (i: ScreeningInput, r: ScreeningResult, source: string): EvaluationRow => ({
   address_raw: i.addressRaw, district: i.district, ctvrt: i.ctvrt, size: i.size, m2: i.m2,
-  current_rent: i.currentRent ?? null,
+  current_rent: i.currentRent ?? null, sleeps: r.sleeps, season: r.season,
+  capacity_source: r.capacitySource, capacity_resolved: r.capacityResolved,
+  band: r.band, inferred_band: r.inferredBand,
   model_version: r.modelVersion, data_window: r.dataWindow,
   public_monthly: r.publicMonthly, cons_low: r.consLow, cons_high: r.consHigh,
   screening_baseline: r.screeningBaseline, ltr_monthly: r.ltrMonthly, energy_monthly: r.energyMonthly,

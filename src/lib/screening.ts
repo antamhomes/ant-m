@@ -26,8 +26,9 @@
 import {
   ownerMonthly, rentFor, marketCell, isMeasured, isReliableN, RELIABLE_MIN_N,
   BAND_BLEND, ENERGY, CALC_MODEL_VERSION, OPERATOR_EVIDENCE, operatorFactor,
-  ctvrtiOf, typicalArea,
+  ctvrtiOf, typicalArea, bandFor, BAND_LABEL,
   type SizeKey, type LocationKey, type MeasuredLocation, type Band,
+  type SeasonKey, type ObservedConfig,
 } from "./yield";
 import { dataWindowLabel } from "./dataWindow";
 
@@ -47,6 +48,15 @@ export type ScreeningInput = {
   ctvrt: string | null;
   size: SizeKey;
   m2: number;
+  /**
+   * Reálná kapacita: kolik lidí se v bytě SKUTEČNĚ vyspí. Když je zadaná,
+   * model přestane pásmo hádat z dispozice a plochy a použije `ObservedConfig`,
+   * tedy svou vlastní interní cestu. Hýbe to OBĚMA SMĚRY: 2+kk, kde se reálně
+   * vyspí jen čtyři, spadne z 2BR na 1BR.
+   */
+  sleeps?: number | null;
+  /** Sezóna. Model ji umí, dosud ji nástroj ignoroval. */
+  season?: SeasonKey;
   /** Nepovinné, jen jako druhý srovnávací sloupec. Do verdiktu NEVSTUPUJE. */
   currentRent?: number | null;
 };
@@ -77,6 +87,25 @@ export type ScreeningResult = {
   verdict: Verdict;
   verdictReason: VerdictReason;
   why: string;
+  /** `observed` = pásmo ze zadané kapacity, `inferred` = dohad z dispozice a m². */
+  capacitySource: "observed" | "inferred";
+  /** Pásmo, které by vyšlo z dohadu. Ukazuje, o kolik zadaná kapacita pohnula. */
+  inferredBand: Band;
+  bandLabel: string;
+  season: SeasonKey;
+  /** Kapacita, kterou model bere jako danou; null = hádá se z dispozice. */
+  sleeps: number | null;
+  size: SizeKey;
+  /**
+   * Umí model kapacitu tohohle bytu vůbec rozlišit?
+   *
+   * false znamená, že výsledek je HORNÍ ODHAD, ne odhad. Trh nemá pásmo pod
+   * 1BR, takže uvnitř něj model nerozliší dva hosty od čtyř: byt pro dva
+   * dostane cenu bytu pro čtyři. Není to srážka ani práh, je to konstatování,
+   * že důkaz o kapacitě chybí, a chová se stejně jako dopočtená buňka nebo
+   * malý vzorek: na zelenou to nestačí.
+   */
+  capacityResolved: boolean;
 };
 
 const round = (n: number) => Math.round(n);
@@ -86,6 +115,23 @@ const round = (n: number) => Math.round(n);
  */
 export function screen(input: ScreeningInput): ScreeningResult {
   const { district, size, m2 } = input;
+  const season: SeasonKey = input.season ?? "year";
+  const sleeps = input.sleeps && input.sleeps > 0 ? Math.round(input.sleeps) : null;
+  // Mapování kapacity na pásmo NENÍ nová logika: je to `bandFor` z modelu,
+  // tedy táž funkce, kterou model používá všude jinde (do 4 = 1BR, 5 až 8 =
+  // 2BR, 9 a víc = 3BR). ObservedConfig nenese nic víc než pásmo.
+  /**
+   * Kapacita je NEVYŘEŠENÁ ve dvou případech:
+   *  - zadaná kapacita 3 a míň: pásmo 1BR je nacenění až pro čtyři, pod tím
+   *    model nevidí;
+   *  - 1+kk bez zadané kapacity: model si dosadí čtyři, což u malého studia
+   *    nemusí platit.
+   * Zadané „spí 4“ u 1+kk vyřešené JE: to je vršek pásma, tam model sedí.
+   */
+  const capacityResolved = sleeps !== null ? sleeps >= 4 : size !== "1kk";
+  const observedConfig: ObservedConfig | undefined = sleeps
+    ? { band: bandFor(sleeps), evidence: `zadaná reálná kapacita: ${sleeps} hostů` }
+    : undefined;
   const ctvrt = input.ctvrt && ctvrtiOf(district).some((c) => c.id === input.ctvrt) ? input.ctvrt : null;
   const base = BAND_BLEND[size].base; // jen pro popisek nepodporovaného výsledku
   const factor = operatorFactor(district, "internal");
@@ -100,17 +146,24 @@ export function screen(input: ScreeningInput): ScreeningResult {
     band, cellDerived: false, nMin: null, operatorFactorUsed: factor, operatorMeasured: measured,
     confidence: "low", verdict: "review", verdictReason: "thin_evidence",
     why: "Pro tuhle kombinaci nemáme dost tržních dat. Posoudit ručně, nedopočítávat.",
+    capacitySource: "inferred", inferredBand: band, bandLabel: BAND_LABEL[band].cs,
+    season, sleeps: input.sleeps ?? null, size, capacityResolved: false,
   });
 
   if (!isMeasured(district)) return empty(base);
 
   // Konzervativní cesta: pásmo na spodní hraně (config vypne překlopení podle
   // m²), interní operátorský faktor. Zbytek modelu je totožný s webem.
-  const cons = ownerMonthly(district, size, { m2, ctvrt, scope: "internal" });
+  const cons = ownerMonthly(district, size, {
+    m2, ctvrt, season, scope: "internal", config: observedConfig,
+  });
   if (!cons.supported) return empty(base);
 
   // Veřejné číslo jen pro srovnání a pro experiment E5.
-  const pub = ownerMonthly(district, size, { m2, ctvrt, scope: "public" });
+  // Veřejná cesta beze změny: bez konfigurace, bez sezóny navíc.
+  const pub = ownerMonthly(district, size, { m2, ctvrt, season, scope: "public" });
+  // Co by vyšlo bez zadané kapacity, tedy o kolik s číslem pohnula.
+  const inferredBand = ownerMonthly(district, size, { m2, ctvrt, season, scope: "internal" });
 
   // Vzorek: buňka okresu pro použité pásmo. Čtvrťové odvození nese `derived`
   // z ownerMonthly, tohle je signál o velikosti tržního vzorku okresu.
@@ -122,8 +175,12 @@ export function screen(input: ScreeningInput): ScreeningResult {
   const bufferCzk = screeningBaseline - floor;
   const bufferPct = screeningBaseline / floor - 1;
   const nMin = cell?.nMin ?? null;
-  const thinEvidence = cons.derived || !isReliableN(nMin);
+  // Nevyřešená kapacita je tentýž druh problému jako dopočtená buňka nebo malý
+  // vzorek: chybí důkaz. Proto jde do stejné branky a nesmí dát zelenou.
+  const thinEvidence = cons.derived || !isReliableN(nMin) || !capacityResolved;
 
+  // „Vysoká" nesmí padnout tam, kde model kapacitu nerozlišuje, i kdyby tržní
+  // data byla bezvadná. Tvrdit vysokou jistotu o nevyřešené věci je lež.
   const confidence: Confidence =
     cons.derived || (nMin !== null && nMin < 25) ? "low"
     : !thinEvidence && measured ? "high"
@@ -141,9 +198,11 @@ export function screen(input: ScreeningInput): ScreeningResult {
   } else if (bufferPct >= WORTH_MIN) {
     verdict = "review";
     verdictReason = "thin_evidence";
-    why = cons.derived
-      ? "Ekonomika dobrá, ale pásmo je dopočtené. Chybí důkaz, ne peníze."
-      : "Ekonomika dobrá, ale malý tržní vzorek. Chybí důkaz, ne peníze.";
+    why = !capacityResolved
+      ? "Ekonomika dobrá, ale model tady nerozlišuje kapacitu. Je to horní odhad, ne odhad."
+      : cons.derived
+        ? "Ekonomika dobrá, ale pásmo je dopočtené. Chybí důkaz, ne peníze."
+        : "Ekonomika dobrá, ale malý tržní vzorek. Chybí důkaz, ne peníze.";
   } else {
     verdict = "review";
     verdictReason = "marginal_spread";
@@ -161,6 +220,10 @@ export function screen(input: ScreeningInput): ScreeningResult {
     band: cons.band, cellDerived: cons.derived, nMin,
     operatorFactorUsed: factor, operatorMeasured: measured,
     confidence, verdict, verdictReason, why,
+    capacitySource: observedConfig ? "observed" : "inferred",
+    inferredBand: inferredBand.supported ? inferredBand.band : cons.band,
+    bandLabel: BAND_LABEL[cons.band].cs,
+    season, sleeps, size, capacityResolved,
   };
 }
 

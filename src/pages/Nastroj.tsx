@@ -10,12 +10,17 @@
  */
 import { useEffect, useMemo, useState } from "react";
 import { screen, defaultArea, WORTH_MIN, REVIEW_MIN, type ScreeningResult } from "@/lib/screening";
+import type { SeasonKey } from "@/lib/yield";
 import { ctvrtiOf, type LocationKey, type SizeKey } from "@/lib/yield";
 import { admin, checkAdmin, saveEvaluation, setAction, toRow } from "@/lib/adminClient";
 
 const DISTRICTS: LocationKey[] = ["praha1","praha2","praha3","praha4","praha5","praha6","praha7","praha8","praha9","praha10"];
 const SIZES: SizeKey[] = ["1kk","2kk","3kk","4kk"];
 const SIZE_LABEL: Record<SizeKey, string> = { "1kk": "1+kk", "2kk": "2+kk", "3kk": "3+kk", "4kk": "4+kk" };
+const SEASONS: { id: SeasonKey; label: string }[] = [
+  { id: "year", label: "Celý rok" }, { id: "summer", label: "Léto" },
+  { id: "winter", label: "Zima" }, { id: "xmas", label: "Vánoce" },
+];
 const SOURCES = [
   { id: "phone", label: "Telefon" }, { id: "agent", label: "Makléř" },
   { id: "vn_network", label: "VN síť" }, { id: "referral", label: "Doporučení" }, { id: "web", label: "Web" },
@@ -93,11 +98,24 @@ const Result = ({ r, saving, savedId, onAction }: {
 
       <p className="mt-3 text-[12.5px] text-neutral-500 leading-relaxed">
         Veřejná kalkulačka ukazuje {kc(r.publicMonthly)}, jen pro srovnání.<br />
+        Pásmo: {r.bandLabel}{" "}
+        {r.capacitySource === "observed"
+          ? <>ze zadané kapacity {r.sleeps}{r.inferredBand !== r.band ? <> (dohad z metrů by dal {r.inferredBand})</> : null}</>
+          : <>dohadem z dispozice a metrů, kapacita nezadaná</>}<br />
         Data: {r.cellDerived ? "dopočtená buňka" : "měřená buňka"} · vzorek n={r.nMin ?? "—"} · {r.dataWindow}<br />
         Faktor: {r.operatorMeasured ? "naměřený" : "bez měření"} → interní {dec(r.operatorFactorUsed, 3)}<br />
         Jistota: {r.confidence === "high" ? "vysoká" : r.confidence === "medium" ? "střední" : "nízká"}
       </p>
       <p className="mt-2 text-[12.5px] text-neutral-700">{r.why}</p>
+      {!r.capacityResolved && (
+        <p className="mt-2 text-[12px] text-[#96352E] leading-relaxed">
+          <b>Horní odhad, ne odhad.</b> Trh nemá pásmo pod 1 ložnicí, takže model tady kapacitu
+          nerozliší: byt pro dva dostane cenu bytu pro čtyři.
+          {r.sleeps === null && r.size === "1kk"
+            ? " Zadej reálnou kapacitu, ať víme, na čem jsme."
+            : " Na garanci tenhle výsledek nestačí, ať vyjde jakkoliv."}
+        </p>
+      )}
       <p className="mt-3 text-[11.5px] text-neutral-400 leading-relaxed">
         Násobek je proti samotnému nájmu, rezerva proti podlaze, tedy nájem plus energie.
         Různé jmenovatele, proto se ta dvě čísla nedají porovnávat mezi sebou.
@@ -129,6 +147,8 @@ const Tool = () => {
   const [ctvrt, setCtvrt] = useState<string | null>(null);
   const [size, setSize] = useState<SizeKey>("2kk");
   const [m2, setM2] = useState<string>(String(defaultArea("praha1", "2kk")));
+  const [sleeps, setSleeps] = useState("");
+  const [season, setSeason] = useState<SeasonKey>("year");
   const [rent, setRent] = useState("");
   const [source, setSource] = useState("phone");
   const [result, setResult] = useState<ScreeningResult | null>(null);
@@ -136,12 +156,14 @@ const Tool = () => {
   const [saving, setSaving] = useState(false);
 
   const ctvrti = useMemo(() => ctvrtiOf(district), [district]);
-  useEffect(() => { setCtvrt(null); setM2(String(defaultArea(district, size))); }, [district, size]);
+  useEffect(() => { setCtvrt(null); setM2(String(defaultArea(district, size))); setSleeps(""); }, [district, size]);
 
   const run = async () => {
     const input = {
       addressRaw: address.trim(), district, ctvrt, size,
       m2: Number(m2) || defaultArea(district, size),
+      sleeps: sleeps ? Number(sleeps) : null,
+      season,
       currentRent: rent ? Number(rent) : null,
     };
     const r = screen(input);
@@ -195,6 +217,26 @@ const Tool = () => {
           <input className={inputCls} inputMode="numeric" value={rent} onChange={(e) => setRent(e.target.value.replace(/[^\d]/g, ""))} placeholder="—" />
         </Field>
       </div>
+
+      <Field label="Reálná kapacita: kolik lidí se vyspí">
+        <div className="flex flex-wrap gap-1.5">
+          <button type="button" className={chip(sleeps === "")} onClick={() => setSleeps("")}>Nevím</button>
+          {[2, 3, 4, 5, 6, 8, 10].map((n) => (
+            <button key={n} type="button" className={chip(sleeps === String(n))} onClick={() => setSleeps(String(n))}>{n}</button>
+          ))}
+        </div>
+        <span className="block text-[11.5px] text-neutral-400 mt-1.5">
+          Když to víš, model přestane pásmo hádat z dispozice a metrů. Hýbe to oběma směry.
+        </span>
+      </Field>
+
+      <Field label="Sezóna">
+        <div className="flex flex-wrap gap-1.5">
+          {SEASONS.map((s) => (
+            <button key={s.id} type="button" className={chip(season === s.id)} onClick={() => setSeason(s.id)}>{s.label}</button>
+          ))}
+        </div>
+      </Field>
 
       <Field label="Zdroj">
         <div className="flex flex-wrap gap-1.5">

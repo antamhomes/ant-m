@@ -8,7 +8,7 @@ import {
   OPERATOR_EVIDENCE, OPERATOR_FACTOR_INTERNAL, OPERATOR_FACTOR_PUBLIC,
   OPERATOR_FACTOR_DEFAULT, OPERATOR_FACTOR_DEFAULT_PUBLIC,
   internalFactorFrom, publicFactorFrom, operatorFactor,
-  isMeasured, ctvrtiOf, typicalArea,
+  isMeasured, ctvrtiOf, typicalArea, bandFor,
   type LocationKey, type SizeKey,
 } from "@/lib/yield";
 import { screen, WORTH_MIN, REVIEW_MIN } from "@/lib/screening";
@@ -146,6 +146,71 @@ describe("I9 · žádný address-level uplift bez ruční úpravy", () => {
     const r = screen({ addressRaw: "Penthouse s terasou a výhledem", district: "praha1", ctvrt: null, size: "2kk", m2: 60 });
     const s = screen({ addressRaw: "suterén bez oken", district: "praha1", ctvrt: null, size: "2kk", m2: 60 });
     expect(r.screeningBaseline).toBe(s.screeningBaseline);
+  });
+});
+
+describe("zadaná kapacita: interní cesta modelu, ne nová logika", () => {
+  it("bez kapacity se pásmo hádá, se zadanou je pozorované", () => {
+    const base = { addressRaw: "", district: "praha2" as LocationKey, ctvrt: null, size: "2kk" as SizeKey, m2: 58 };
+    expect(screen(base).capacitySource).toBe("inferred");
+    expect(screen({ ...base, sleeps: 6 }).capacitySource).toBe("observed");
+  });
+
+  it("mapování kapacity na pásmo je bandFor z modelu, ne vlastní tabulka", () => {
+    const base = { addressRaw: "", district: "praha1" as LocationKey, ctvrt: null, size: "2kk" as SizeKey, m2: 55 };
+    for (const n of [1, 2, 3, 4, 5, 6, 7, 8, 9, 12]) {
+      const r = screen({ ...base, sleeps: n });
+      if (r.supported) expect(r.band, `kapacita ${n}`).toBe(bandFor(n));
+    }
+  });
+
+  it("hýbe to OBĚMA směry: 2+kk pro čtyři spadne pod dohad", () => {
+    const base = { addressRaw: "", district: "praha2" as LocationKey, ctvrt: "praha2/vinohrady", size: "2kk" as SizeKey, m2: 58 };
+    const inferred = screen(base);
+    const four = screen({ ...base, sleeps: 4 });
+    const six = screen({ ...base, sleeps: 6 });
+    expect(four.screeningBaseline!).toBeLessThan(inferred.screeningBaseline!);
+    expect(six.screeningBaseline!).toBeGreaterThan(four.screeningBaseline!);
+  });
+
+  it("HRANICE MODELU: u 1+kk do čtyř hostů kapacita výsledkem nehne", () => {
+    const base = { addressRaw: "", district: "praha1" as LocationKey, ctvrt: "praha1/nove_mesto", size: "1kk" as SizeKey, m2: 22 };
+    const two = screen({ ...base, sleeps: 2 });
+    const four = screen({ ...base, sleeps: 4 });
+    // Trh nemá pásmo pod 1BR, takže tohle NENÍ chyba testu, ale mez modelu.
+    expect(two.screeningBaseline).toBe(four.screeningBaseline);
+    expect(two.band).toBe("1BR");
+  });
+
+  it("GUARD: nevyřešená kapacita nikdy nedá zelenou ani vysokou jistotu", () => {
+    const studio = { addressRaw: "", district: "praha1" as LocationKey, ctvrt: "praha1/nove_mesto", size: "1kk" as SizeKey, m2: 22 };
+    // 98% rezerva, měřená buňka, n=1606, měřený faktor: bez guardu by to byla zelená.
+    const two = screen({ ...studio, sleeps: 2 });
+    expect(two.bufferPct!).toBeGreaterThan(WORTH_MIN);
+    expect(two.cellDerived).toBe(false);
+    expect(two.capacityResolved).toBe(false);
+    expect(two.verdict).not.toBe("worth");
+    expect(two.verdictReason).toBe("thin_evidence");
+    expect(two.confidence).not.toBe("high");
+
+    // 1+kk bez zadané kapacity je taky nevyřešené: model si dosadí čtyři.
+    const unknown = screen(studio);
+    expect(unknown.capacityResolved).toBe(false);
+    expect(unknown.verdict).not.toBe("worth");
+
+    // Zadané „spí 4" u 1+kk je vršek pásma, tam model sedí.
+    expect(screen({ ...studio, sleeps: 4 }).capacityResolved).toBe(true);
+    // 2+kk bez kapacity se hádá z m², ale uvnitř pásma to není mimo rozlišení.
+    expect(screen({ addressRaw: "", district: "praha2", ctvrt: null, size: "2kk", m2: 58 }).capacityResolved).toBe(true);
+  });
+
+  it("sezóna se propisuje do výsledku", () => {
+    const base = { addressRaw: "", district: "praha1" as LocationKey, ctvrt: null, size: "2kk" as SizeKey, m2: 55 };
+    const year = screen(base);
+    const xmas = screen({ ...base, season: "xmas" as const });
+    expect(year.season).toBe("year");
+    expect(xmas.season).toBe("xmas");
+    expect(xmas.screeningBaseline!).toBeGreaterThan(year.screeningBaseline!);
   });
 });
 
