@@ -546,7 +546,7 @@ const translations = {
     svc3_title: "Đặt giá",
     svc3_desc: "Giá thay đổi theo mùa và nhu cầu, không để một mức quanh năm. Mục tiêu là kín lịch nhưng vẫn giữ được giá tốt.",
     svc4_title: "Khách và liên lạc",
-    svc4_desc: "Khách hỏi thì Antam trả lời nhanh, cần gì thì hỗ trợ. Khách hài lòng để lại đánh giá tốt, khách sau nhìn vào cũng yên tâm đặt hơn.",
+    svc4_desc: "Chăm khách chu đáo thì dễ có đánh giá tốt. Đánh giá càng tốt, khách sau càng yên tâm đặt phòng.\n",
     svc5_title: "Dọn dẹp, kiểm tra, sửa chữa",
     svc5_desc: "Khách đi là dọn dẹp sạch sẽ, kiểm tra kỹ. Hỏng nhỏ được sửa ngay, việc lớn thì có thợ.",
     svc6_title: "Bảng kê hàng tháng",
