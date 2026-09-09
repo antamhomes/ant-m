@@ -886,7 +886,7 @@ const translations = {
     pr5_price: "4 lần mỗi năm miễn phí, sau đó 500 Kč một lần",
     pr5_note: "Khi có sự cố cần đến tận nhà, Antam xử lý. Kiểm tra và dọn dẹp thường xuyên không tính vào đây.\n",
     pr8_name: "Giới thiệu chủ nhà mới",
-    pr8_price: "Miễn phí đưa nhà vào vận hành",
+    pr8_price: "Nhận 25.000 Kč phí quản lý\n",
     pr8_note: "Anh chị giới thiệu một chủ nhà và Antam nhận căn đó, thì phí đưa nhà vào vận hành của anh chị được hoàn lại đủ.",
     pricing_foot: "\n",
 
