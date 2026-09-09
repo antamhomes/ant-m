@@ -214,7 +214,7 @@ button.cp:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid va
   <li><input type="checkbox" id="z2"><label class="t" for="z2"><span class="clock">08:20 &ndash; 09:00 &middot; 40 min</span><b>Vytoč všech 15.</b> Skript A1. Cílem není ano. Cílem je 15 vytočených čísel a poznámka u každého.<span class="sub">Když někdo zvedne a mluví, dokonči hovor. Zbytek dotoč zítra.</span></label></li>
   <li><input type="checkbox" id="z3"><label class="t" for="z3"><span class="clock">09:00 &ndash; 09:15 &middot; 15 min</span><b>Zapiš, co se stalo.</b> Kolik zvedlo, kolik mluvilo, první věta, kterou ti řekli, a první námitka. Tohle je surovina experimentu E1.</label></li>
   <li><input type="checkbox" id="z4"><label class="t" for="z4"><span class="clock">09:15 &ndash; 09:45 &middot; 30 min</span><b>Založ CRM.</b> Jeden list podle specifikace v sekci 7. Nic víc. Žádný nástroj, žádná automatizace.</label></li>
-  <li><input type="checkbox" id="z5"><label class="t" for="z5"><span class="clock">09:45 &ndash; 10:30 &middot; 45 min</span><b>Změř operator factor.</b> Read-only, portfolio proti PriceLabs benchmarku, 12 měsíců do 7/2026. Postup v sekci 12.<span class="sub">Do doby, než je hotový, nesmí padnout žádná podlaha v žádné nabídce.</span></label></li>
+  <li><input type="checkbox" id="z5"><label class="t" for="z5"><span class="clock">09:45 &ndash; 10:30 &middot; 45 min</span><b>Rozpoj interní a veřejný operator factor.</b> Faktor je změřený od 2. 9., viz sekce 12. Úkol není měřit, ale zařídit, aby upisování neměřených okresů nejelo na 1,10. <span class="sub">Do té doby nesmí padnout žádná podlaha v okrese bez měření.</span></label></li>
   <li><input type="checkbox" id="z6"><label class="t" for="z6"><span class="clock">10:30 &ndash; 11:00 &middot; 30 min</span><b>Jednotková ekonomika.</b> Poslední tři měsíce výkazů: odměna na byt, přímé náklady na byt, hodiny na byt, marže na 25 000 Kč launch fee. Sekce 12, druhá tabulka.</label></li>
   <li><input type="checkbox" id="z7"><label class="t" for="z7"><span class="clock">11:00 &ndash; 11:10 &middot; 10 min</span><b>Web živě.</b> <code>SITE_LOCK_ENABLED = false</code>, doplnit <code>VITE_GA_MEASUREMENT_ID</code>, commit, push, Publish v Lovable. Zkontroluj, že se v GA objeví realtime návštěva.<span class="sub">Jediný zásah do repa, který tenhle měsíc děláš.</span></label></li>
 </ul>
@@ -623,14 +623,19 @@ A kdyby se někdo vážně rozhodoval, jestli byste mu jednou za čas vzal telef
 <section id="faktor">
 <h2><span class="n">12</span> Operator factor a jednotková ekonomika</h2>
 <p class="lede">Dvě čísla, na kterých visí celý zbytek. Bez nich nesmí padnout žádná podlaha a nedá se spočítat maximální přípustný CAC.</p>
-<h3>Měření operator factoru</h3>
-<ol>
-<li>Read-only výtah portfolia za 12 měsíců do 7/2026: realizovaný výnos a obsazenost na byt.</li>
-<li>Pro každý byt vezmi benchmark PriceLabs pro jeho buňku: čtvrť, dispozice, velikostní pásmo, stejné okno.</li>
-<li>Faktor bytu = realizovaný RevPAR děleno benchmark RevPAR. Vyluč měsíce s rekonstrukcí, dlouhým blokem nebo výpadkem inzerátu.</li>
-<li>Portfolio faktor = vážený průměr přes byto-měsíce, s rozptylem.</li>
-</ol>
-<div class="note warn"><b>Kolik dat stačí, než to změní upisování.</b> <span class="p p-inf">INFERENCE</span> Faktor za celé portfolio spočítáš z 7 až 10 bytů krát 12 měsíců. <b>Faktor za jednotlivý okres z jednoho nebo dvou bytů je šum, ne měření.</b> Veřejná kalkulačka dnes používá 1,00 pro Prahu 1 a 2 a 1,10 jinde jako faktory <i>na okres</i>, a ty s dnešním portfoliem ověřit nejdou. Pravidlo do doby, než data budou: <b>používej jeden portfoliový faktor</b>, a rozdíly mezi okresy ber jako neprokázané, dokud nebudeš mít aspoň 3 byty a 24 byto-měsíců v daném okrese.</div>
+<h3>Operator factor: změřený je, problém je jinde</h3>
+<div class="note"><b>Oprava mojí chyby z 7. 9.</b> Psal jsem, že faktor je nezměřený a je to úkol na den jedna. Není. Je změřený 2. 9. 2026 a sedí v <code>yield.ts</code> v <code>OPERATOR_EVIDENCE</code> i s metodikou: <code>guest.accommodation</code> po slevách, EUR z Booking.com přepočtené měsíčním kurzem ČNB, 12 uzavřených měsíců 2025_08 až 2026_07 proti <code>avg_revenue</code> okresu. Pravidlo <code>publicFactorFrom</code>, které nepříznivé měření bere celé a příznivé krátí podle váhy vzorku, je lepší ošetření tenkých vzorků, než jsem navrhoval já.</div>
+<div class="tw"><table>
+<thead><tr><th>Okres</th><th class="num">Naměřeno</th><th class="num">Váha</th><th class="num">Použito</th><th>Vzorek</th></tr></thead>
+<tbody>
+<tr><td>Praha 1</td><td class="num">1,032</td><td class="num">1,00</td><td class="num">1,032</td><td>3 byty × 12 měsíců</td></tr>
+<tr><td>Praha 3</td><td class="num">1,21</td><td class="num">0,50</td><td class="num">1,155</td><td>2 byty, jeden jen 54 dní</td></tr>
+<tr><td>Praha 5</td><td class="num">1,08</td><td class="num">1,00</td><td class="num">1,08</td><td>1 byt, 113 dní</td></tr>
+<tr class="tot"><td>Praha 2, 4, 6, 7, 8, 9</td><td class="num">nic</td><td class="num">&mdash;</td><td class="num">1,10</td><td><b>bez měření</b></td></tr>
+</tbody></table></div>
+<div class="note warn"><b>Tohle je ta díra.</b> <span class="p p-inf">INFERENCE</span> Dvě ze tří solidních měření vyšla <b>pod</b> výchozí 1,10. Praha 1 dala 1,032. Přesto každý neměřený okres dostává 1,10, tedy desetiprocentní příplatek bez jediného důkazu. Dokud to byl lead magnet, byla to zvolená optimističnost. Od chvíle, kdy <b>každý přijatý byt nese podlahu</b>, teče ten příplatek přímo do rezervy, a rezerva je to, co rozhoduje o solventnosti garance.
+<br><br><b>Konkrétní zásah:</b> <code>OPERATOR_FACTOR_INTERNAL</code> je dnes jen alias na veřejné. Rozpoj to. Veřejná kalkulačka ať zůstane na 1,10, to je tvoje rozhodnutí a je na generování leadů. <b>Upisovací scope pro neměřený okres ať jede na 1,00</b>, ne na 1,10. Podlaha se nesmí počítat z faktoru, který nikdo nezměřil.</div>
+<p><span class="p p-open">OPEN</span> Doplnit měření pro Prahu 4, kde máš čtyři byty. Chybí tam, i když portfolio na to je. Zjistit proč: buď je to krátká historie, nebo to jen nikdo nespočítal.</p>
 <h3>Jednotková ekonomika, z posledních tří měsíců</h3>
 <div class="tw"><table>
 <thead><tr><th>Číslo</th><th>Jak ho spočítat</th><th>K čemu odemyká</th></tr></thead>
@@ -690,7 +695,7 @@ A kdyby se někdo vážně rozhodoval, jestli byste mu jednou za čas vzal telef
 <div class="tw"><table>
 <thead><tr><th>Týden</th><th>Doručit</th><th>Rozhodovací brána na konci</th></tr></thead>
 <tbody>
-<tr><td><b>1</b><br>8. až 14. 9.</td><td>Web živě s GA. CRM stojí. Operator factor a jednotková ekonomika změřené. Seznam 150 inzerátů, 20 makléřů, 30 jmen ve vietnamské síti. 100 vytočení. Registr garancí založený.</td><td>Je hrubá marže nad 40 % a portfolio faktor aspoň 1,00? Když ne, mění se nabídka dřív, než se volá dál.</td></tr>
+<tr><td><b>1</b><br>8. až 14. 9.</td><td>Web živě s GA. CRM stojí. Interní operator factor rozpojený od veřejného. Jednotková ekonomika změřená. Seznam 150 inzerátů, 20 makléřů, 30 jmen ve vietnamské síti. 100 vytočení. Registr garancí založený.</td><td>Je hrubá marže nad 40 %? A jede upisování neměřených okresů na 1,00 místo 1,10? Když ne, mění se to dřív, než padne první podlaha.</td></tr>
 <tr><td><b>2</b><br>15. až 21. 9.</td><td>100 vytočení. Prvních 10 makléřů. Prvních 10 vietnamských kontaktů. 2 adresy. 1 posouzení. Podmínky garance sepsané do smluvního textu. Šablona odmítnutí.</td><td>Je aspoň 6 rozhovorů týdně? Když ne, problém je v rozvrhu, ne ve strategii.</td></tr>
 <tr><td><b>3</b><br>22. až 28. 9.</td><td>100 vytočení. 2 až 3 adresy. 2 posouzení, 1 prohlídka, 1 deck. Šablona posouzení, když už underwriting leze přes 3 h. Domluvená první případovka.</td><td>Sedí veřejné číslo s interním? Vyhodnotit E5 na prvních posouzeních.</td></tr>
 <tr><td><b>4</b><br>29. 9. až 5. 10.</td><td>100 vytočení. 3. deck. 1 až 2 podpisy. Vyhodnocení E1 až E7. Rozložení výročí u podepsaných.</td><td>Který ze tří kanálů dal nejvíc bytů v pásmu A a B? Ten se posiluje, nejslabší jde na údržbu.</td></tr>

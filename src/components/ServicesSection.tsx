@@ -1,3 +1,4 @@
+import { Camera, MessageSquare, ReceiptText, TrendingUp, Wrench } from "lucide-react";
 import Reveal, { stagger } from "@/components/Reveal";
 import ReviewsBlock from "@/components/ReviewsBlock";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -23,20 +24,36 @@ import { t, type TranslationKey } from "@/i18n/translations";
  * Sekci uzavírají recenze hostů: 520+ hodnocení tady nejsou popularita,
  * ale doklad, že hostitelská část provozu opravdu funguje.
  */
-/* AD 2. 9. 2026: emoji jen tady a jen jako orientační značka provozu.
-   Zkoušely se i zlaté line-ikony; vrátily sekci k „premium šabloně", kterou
-   zbytek webu záměrně nedělá. Šest barevných emoji je těch 10 % energie,
-   které si vážný zbytek stránky může dovolit, a na telefonu se skenují
-   rychleji než další elegantní typografie. Pravidlo: emoji = co se v bytě
-   dělá, nikdy ne peníze, garance, nadpis ani CTA. Pro odečítačky jsou
-   aria-hidden, význam nesou nadpisy. */
+/* AD 7. 9. 2026: emoji pryč, značku provozu nesou line-ikony ve firemní zlaté.
+   Emoji tady od 2. 9. dělaly rychlé skenování, ale nesly barvy, které ke
+   značce nepatří (modrá, žlutá, zelená), a vedle Playfairu působily levně.
+   Zlaté ikony se zkoušely už 2. 9. a tehdy propadly, protože seděly ve
+   vlastních rámečcích a udělaly ze sekce „premium šablonu". Tady rámečky
+   nejsou: ikona je malý znak na účaří nadpisu, přesně tam, kde stálo emoji,
+   ve stejné velikosti a ve zlaté z wordmarku. Pravidlo zůstává: značka = co
+   se v bytě dělá, nikdy ne peníze, garance, nadpis ani CTA. Pro odečítačky
+   jsou aria-hidden, význam nesou nadpisy. */
+/* Smeták: lucide koště nemá, tohle je dokreslené ve stejném stylu (24×24,
+   currentColor, kulaté konce, žádná výplň), aby mezi ostatními ikonami
+   nešlo poznat, že je odjinud. Násada, rozšířená hlava, páska a dvě štětiny: šikmý smeták se v 19 px slil do fajfky. */
+const Broom = ({ strokeWidth = 2, ...props }: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" width={24} height={24} fill="none" stroke="currentColor"
+    strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...props}>
+    <path d="M12 2v7" />
+    <path d="M9 9h6l2 12H7Z" />
+    <path d="M7.9 15.5h8.2" />
+    <path d="M10.6 15.5 10.2 21" />
+    <path d="M13.4 15.5 13.8 21" />
+  </svg>
+);
+
 const items = [
-  { emoji: "📈", title: "svc3_title", desc: "svc3_desc" }, // ceny a obsazenost — nejsilnější, jde první
-  { emoji: "📸", title: "svc2_title", desc: "svc2_desc" }, // fotky a prezentace
-  { emoji: "💬", title: "svc4_title", desc: "svc4_desc" }, // hosté
-  { emoji: "🧹", title: "svc5_title", desc: "svc5_desc" }, // úklid a provoz
-  { emoji: "🛠️", title: "svc1_title", desc: "svc1_desc" }, // příprava bytu
-  { emoji: "📊", title: "svc6_title", desc: "svc6_desc" }, // vyúčtování
+  { Icon: TrendingUp,   title: "svc3_title", desc: "svc3_desc" }, // ceny a obsazenost — nejsilnější, jde první
+  { Icon: Camera,       title: "svc2_title", desc: "svc2_desc" }, // fotky a prezentace
+  { Icon: MessageSquare, title: "svc4_title", desc: "svc4_desc" }, // hosté
+  { Icon: Broom,        title: "svc5_title", desc: "svc5_desc" }, // úklid a provoz
+  { Icon: Wrench,       title: "svc1_title", desc: "svc1_desc" }, // příprava bytu
+  { Icon: ReceiptText,  title: "svc6_title", desc: "svc6_desc" }, // vyúčtování
 ] as const;
 
 /**
@@ -86,10 +103,8 @@ const ServicesSection = () => {
               delay={stagger(i, 0.05)}
               className="py-5 sm:py-6 border-t border-gold/25"
             >
-              <h3 className="flex items-baseline gap-2.5 font-display text-[1.15rem] md:text-[1.2rem] font-semibold text-primary-foreground mb-2 leading-snug">
-                <span aria-hidden="true" className="shrink-0 text-[18px] md:text-[19px] leading-none not-italic font-normal">
-                  {it.emoji}
-                </span>
+              <h3 className="flex items-start gap-2.5 font-display text-[1.15rem] md:text-[1.2rem] font-semibold text-primary-foreground mb-2 leading-snug">
+                <it.Icon aria-hidden="true" strokeWidth={1.5} className="shrink-0 w-[19px] h-[19px] mt-[3px] text-gold-on-dark" />
                 {t(lang, it.title)}
               </h3>
               <p className="font-body text-[15px] md:text-[15.5px] text-primary-foreground/70 leading-relaxed text-pretty">
