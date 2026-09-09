@@ -304,11 +304,13 @@ describe("garance výnosu", () => {
     expect(vi.hero_cta).not.toBe(vi.contact_submit);
   });
 
-  it("české hero má jediné tlačítko a vede na kalkulačku", () => {
+  it("hero má v obou jazycích jediné tlačítko a vede na kalkulačku", () => {
     // HeroSection čte prázdné hero_cta2 jako „jedno CTA" a přepne cíl na
-    // #kalkulacka. Vietnamská verze druhé tlačítko má a míří na formulář.
+    // #kalkulacka. Do 9. 9. 2026 měla vietnamština dvě tlačítka (primární na
+    // formulář, sekundární na kalkulačku). Sjednoceno na jedno v obou jazycích:
+    // dvě různé stavby hera ve dvou jazycích byla nesrovnalost, ne odstupňování.
     expect(cs.hero_cta2).toBe("");
-    expect(vi.hero_cta2).not.toBe("");
+    expect(vi.hero_cta2).toBe("");
   });
 
   it("nikde neslibuje garanci z kalkulačky", () => {

@@ -533,7 +533,7 @@ const translations = {
     hero_desc: "Quản lý cho thuê ngắn hạn tại Praha, từ giá, đặt phòng, khách, dọn dẹp đến sửa chữa. Chủ nhà theo dõi kết quả và nhận tiền mỗi tháng.",
     hero_extra: "Phí Antam gắn với kết quả · Không ràng buộc · Phản hồi trong 24 giờ",
     hero_cta: "Nhờ Antam tính miễn phí",
-    hero_cta2: "Tự tính thử trước",
+    hero_cta2: "",
 
     // Services
     services_label: "Antam lo những gì",

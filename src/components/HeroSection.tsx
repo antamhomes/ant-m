@@ -30,10 +30,10 @@ const enter = (y: number, delay: number, duration = 0.7) =>
  */
 const HeroSection = () => {
   const { lang } = useLanguage();
-  // Empty copy keys switch off hero elements per language. CZ runs a short hero:
-  // one sentence, one button straight to the calculator, no proof line (the
-  // numbers live in Portfolio with their context). VI keeps the two-step hero,
-  // where the primary button goes to the form and the secondary to the calculator.
+  // Empty copy keys switch off hero elements per language. Od 9. 9. 2026 jedou
+  // obě jazykové verze stejný krátký hero: jedna věta, jedno tlačítko rovnou do
+  // kalkulačky, pod ním proof line. VI mělo do té doby dvě tlačítka a primární
+  // mířilo na formulář; parita je teď záměr, ne shoda náhod.
   const secondCta = t(lang, "hero_cta2");
   const proof = t(lang, "hero_extra");
   const primaryHref = secondCta ? "#kontakt" : "#kalkulacka";
