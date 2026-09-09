@@ -207,7 +207,7 @@ const translations = {
     calc_band_viable: "Výsledek vypadá zajímavě. U tohoto bytu bude rozhodovat konkrétní stav, kapacita a patro.",
     calc_band_weak: "Rozdíl proti dlouhodobému nájmu je u tohoto typu bytu menší. Pokud má byt něco navíc: výhled, terasu, výjimečný stav nebo vyšší kapacitu, pošlete nám ho k posouzení.",
     // Metodika: okno dat doplní komponenta z lib/dataWindow ({window}), nikdy natvrdo.
-    calc_method_window: "Tržní data: realizované ceny a obsazenost krátkodobých pronájmů za {window}, podle okresu, čtvrti a počtu ložnic.",
+    calc_method_window: "Odhad krátkodobého pronájmu vychází z dat PriceLabs podle lokality a počtu ložnic. Používáme úroveň trhu, které naše spravované byty běžně dosahují, ne nejvyšší výsledky v lokalitě.\n",
     calc_month_suffix: "/ měsíc",
     calc_edit: "Upravit",
     calc_split_aria: "70 % majitel, 30 % Antam Homes",
@@ -216,7 +216,7 @@ const translations = {
     calc_share_copy: "Zkopírujte si odkaz:",
     calc_approx_prefix: "přibližně",
     calc_disclaimer_short: "Orientační kalkulace, nikoli nabídka. Garance výnosu vzniká až písemným ujednáním pro konkrétní byt.",
-    calc_disclaimer: "Odhad vychází z\u00a0dat srovnatelných krátkodobých pronájmů ve\u00a0vybrané lokalitě a\u00a0z\u00a0výsledků bytů, které skutečně spravujeme. Lokalitu, dispozici a\u00a0plochu používáme k\u00a0výběru odpovídající části trhu. Výsledek je orientační, nikoli nabídka; přesnější odhad připravíme po\u00a0posouzení konkrétního bytu. Kde je vzorek nabídek malý, číslo neukazujeme. Provize platforem se\u00a0v\u00a0modelu počítá 17\u00a0%, ve\u00a0skutečnosti se\u00a0pohybuje mezi 15 a\u00a021\u00a0%. Dlouhodobý nájem počítáme z\u00a0mediánu aktuálních nabídek na\u00a0Sreality podle čtvrti a\u00a0skutečné plochy. Skutečný výnos kolísá podle stavu bytu, sezóny, recenzí i\u00a0regulace. Garance výnosu vzniká až\u00a0písemným ujednáním pro\u00a0konkrétní byt.",
+    calc_disclaimer: "Dlouhodobý nájem počítáme z aktuálních nabídek na Sreality podle čtvrti a skutečné plochy bytu. U krátkodobého pronájmu počítáme s 17% provizí platforem.\nVýsledek je orientační a může se lišit podle stavu bytu, sezóny a recenzí. Přesnější propočet a případnou garanci připravíme až pro konkrétní byt.\n",
     calc_disclaimer_toggle: "Jak počítáme a co výsledek ovlivní",
     calc_excluded_note: "Naše odměna je 30 % z čistého výnosu a je konečná. Úklid hradí hosté, energie majitel.",
     calc_method_note: "Z tržeb se nejdřív odečte provize Airbnb nebo Booking.com. Zbytek dělíme 70/30. DPH z provize odvádíme my ze své odměny.",
