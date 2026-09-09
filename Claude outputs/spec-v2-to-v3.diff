@@ -1,0 +1,182 @@
+--- /tmp/claude-0/-home-claude/3de950ff-e60e-5002-b551-f431a1bd9f1a/scratchpad/spec-v2.md	2026-09-09 12:52:56.337595327 +0000
++++ underwriting-mvp-spec.md	2026-09-09 12:53:11.900506417 +0000
+@@ -1,6 +1,6 @@
+ # Antam: interní vyhodnocovač bytu, specifikace MVP
+ 
+-Verze 2, 9. 9. 2026. **Report only, nic se neimplementuje, dokud spec neschválíš.**
++Verze 3, 9. 9. 2026. Schváleno s pěti rozhodnutími a jednou opravou (viz 11). Implementace fáze 1 je odblokovaná po odsouhlasení tohohle diffu.
+ 
+ Verze 1 téhle specifikace byla přebouchaná: tři tabulky, devět stavů, pět obrazovek. Varoval jsi přesně před tím a stejně to tak vylezlo. Tohle je přepis podle toho, co jsi popsal: **napíšu adresu, dispozici a m², a ono mi řekne, jestli to stojí za další práci.**
+ 
+@@ -39,7 +39,9 @@
+ ## 2. Obrazovka 1: vstup
+ 
+ ```
+-Adresa            [ Vinohradská 123, Praha            ]
++Adresa            [ Vinohradská 123                   ]  text, ukládá se jak napsáno
++Praha             [ 1  2  3  4  5  6  7  8  9  10 ]
++Čtvrť             [ Vinohrady  Vršovice  …  Ostatní ]     podle zvoleného okresu
+ Dispozice         [ 1kk  2+kk  3+kk  4+kk ]
+ Plocha            [ 58 ] m²
+ Současný nájem    [        ] Kč / měsíc   (nepovinné)
+@@ -47,17 +49,15 @@
+                   [ VYHODNOTIT ]
+ ```
+ 
+-**Adresa → okres a čtvrť automaticky. [SPEC] s povinnou pojistkou.**
++**[DEC] Žádné geokódování ve v1.** Okres a čtvrť se vybírají ručně, adresa je jen text a ukládá se přesně tak, jak ji napíšeš.
+ 
+-Adresa se geokóduje a z výsledku se odvodí katastrální území, které se mapuje na jednu ze 13 měřených čtvrtí, jinak na „Ostatní Praha X“.
++Důvod je jednoduchý: ekonomické rozhodnutí nesmí tiše viset na špatném geokódu. Dva taps navíc jsou levnější než jeden tichý omyl v tržní buňce. Zároveň se tím z jednoduchého nástroje nestane geokódovací projekt.
+ 
+-Tohle je jediné místo, kde se nástroj může **tiše** splést: špatně rozpoznaná adresa dá jinou tržní buňku a tím jiný verdikt. Proto:
++Datový model ale počítá s pozdějším doplněním, aby to nechtělo migraci: `geo_source` enum(`manual`,`geocoded`) a `geo_confidence` existují od začátku a ve v1 jsou vždy `manual` a `null`.
+ 
+-- rozpoznaná lokalita se **vždy zobrazí** ve výsledku a jde jedním klikem přepsat;
+-- když geokódování selže nebo vrátí něco mimo Prahu, spadne to na ruční výběr okresu a čtvrti a **nic se nedopočítává**;
+-- **[OPEN]** ověřit podmínky Mapy.cz API pro tohle použití; když nevyjde, ruční výběr čtvrti je plnohodnotná varianta a stojí tě jeden klik navíc.
++**[DEC]** Po zhruba 50 vyhodnoceních se rozhodne, jestli ušetřené taps za geokódování stojí.
+ 
+-**[INV] L1** Bez potvrzené lokality se verdikt nezobrazí.
++**[INV] L1** Bez zvoleného okresu se verdikt nezobrazí.
+ 
+ ---
+ 
+@@ -66,9 +66,9 @@
+ ```
+ 🟢  STOJÍ ZA PROVĚŘENÍ
+ 
+-Vinohrady · Praha 2 · 2+kk · 58 m²          [ změnit lokalitu ]
++Vinohrady · Praha 2 · 2+kk · 58 m²          Vinohradská 123
+ 
+-Interní konzervativní odhad     52 000 – 58 000 Kč / měsíc
++Screeningový baseline           52 000 – 58 000 Kč / měsíc
+ Nájem plus energie (podlaha)    33 400 Kč / měsíc
+ Rozdíl                          +18 600 Kč / měsíc · +223 000 Kč / rok
+ Násobek proti nájmu             1,56×
+@@ -82,7 +82,7 @@
+ 
+ Proč: silný rozestup proti nájmu, měřená buňka, dostatečný vzorek.
+ 
+-⚠ Před branami a před konkrétním bytem. Tohle číslo může jenom klesnout.
++⚠ Před branami a před konkrétním bytem. Není to nabídka ani finální underwriting.
+ 
+         [ POKRAČOVAT V PROVĚŘENÍ ]     [ ZAHODIT ]
+ ```
+@@ -95,18 +95,24 @@
+ 
+ | | Podmínka | Znamená |
+ |---|---|---|
+-| 🟢 **STOJÍ ZA PROVĚŘENÍ** | rezerva ≥ `WORTH_MIN` a buňka měřená a `n ≥ 50` | tlač na adresu, fotky, prohlídku |
+-| 🟡 **K RUČNÍMU POSOUZENÍ** | rezerva ≥ `WORTH_MIN`, ale buňka dopočtená nebo `n < 50`; nebo rezerva v pásmu `REVIEW` | podívej se na to, ale ne dnes; do týdenní dávky |
+-| 🔴 **NESTOJÍ** | rezerva < `REVIEW_MIN` | slušně ukonči, pošli data za čtvrť, jdi dál |
++| 🟢 **STOJÍ ZA PROVĚŘENÍ** | rezerva ≥ 35 % a buňka měřená a `n ≥ 50` | tlač na adresu, fotky, prohlídku |
++| 🟡 **K RUČNÍMU POSOUZENÍ** | rezerva 10 až 35 %; **nebo** rezerva ≥ 35 %, ale buňka dopočtená nebo `n < 50` | podívej se na to, ale ne dnes; do týdenní dávky |
++| 🔴 **NESTOJÍ** | rezerva < 10 % | slušně ukonči, pošli data za čtvrť, jdi dál |
+ 
+-**[OPEN] Prahy, tvoje čísla, ne odvozená:**
++**[DEC] Prahy v0:** `WORTH_MIN = 0,35`, `REVIEW_MIN = 0,10`.
+ 
+-| Konstanta | Návrh | |
++Zdůvodnění, které je součástí rozhodnutí, ať se za měsíc neztratí: **fáze 1 není rozhodnutí o přijetí.** Její cena za omyl je asymetrická. Když pustí horší byt do žluté, stojí to pár minut pozornosti. Když omylem hodí dobrý byt do červené, zahodíš jednotku, na které bys vydělával roky. Proto je pre-screen citlivější a finální underwriting smí být brutálně konzervativní.
++
++**[DEC]** Tohle jsou v0 prahy, ne ekonomika. Ukládá se spojité `buffer_pct`; po prvních 20 až 30 vyhodnocených bytech se reportuje rozdělení a kolik ze zelených, žlutých a červených nakonec postoupilo nebo umřelo. **Do té doby se neladí.**
++
++**[SPEC] Žlutá má dvě různé populace a je potřeba je rozlišit ve výstupu**, jinak z ní bude hromada „možná“, kterou nikdy nezpracuješ. Proto se ukládá a zobrazuje `verdict_reason`:
++
++| `verdict_reason` | Co to je | Co s tím |
+ |---|---|---|
+-| `WORTH_MIN` | 0,35 | pod tím není zelená |
+-| `REVIEW_MIN` | 0,20 | pod tím červená |
++| `thin_evidence` | ekonomika dobrá (≥ 35 %), ale dopočtená buňka nebo malý vzorek | tohle honit dřív: chybí důkaz, ne peníze |
++| `marginal_spread` | rezerva 10 až 35 %, důkaz v pořádku | tohle honit později: peníze jsou těsné |
+ 
+-**[SPEC]** Práh pro zelenou musí zůstat **výš**, než bude práh pro pozdější ACCEPT (kolem 0,20), protože brány a fakta o bytu s rezervou hýbou jenom dolů. Těch 15 bodů je záměrná rezerva na neznámý propad. Po dvaceti případech se nahradí naměřeným.
++**[SPEC] Předpověď, ať se dá zkontrolovat.** Ze skladby veřejného modelu (medián 1,53× nájem, pásma 29 / 54 / 16 %) a z toho, že screeningová cesta srazí poměr zhruba o 12 až 15 %, čekám zhruba **25 až 30 % zelených, 45 až 50 % žlutých a 20 až 25 % červených**. Když ti po třiceti vyhodnoceních vyjde něco výrazně jiného, není špatně prah, ale můj odhad skladby trhu, a to je užitečnější zjištění.
+ 
+ ---
+ 
+@@ -125,13 +131,17 @@
+ 2. **Band blend** na spodní hraně (`weight = 0`), místo váženého středu. Neznámá konfigurace se u upisování řeší dolů, ne doprostřed.
+ 3. **Availability 0,92** beze změny. Není to opatrnost, je to převod RevPAR na tržbu na inzerát.
+ 
+-`expected = cons_low`. Ano, očekávaná hodnota pro rozhodování o riziku je spodní hrana.
++`screening_baseline = cons_low`. **[DEC]** Spodní hrana rozpětí, ne střed.
++
++**[DEC] Přesné názvosloví, protože na tom záleží.** Tohle je `screening_baseline`, konzervativní podklad pro screening rizika. **Není** to naše očekávaná tržba. Fáze 2 se od něj může pohnout **oběma směry**, jakmile je znám konkrétní byt. Slovo `expected` se v kódu ani v UI nepoužívá.
++
++**[DEC]** Žádný address-level uplift se nedopočítává automaticky nikdy. Terasa, výhled, parkování, reálná kapacita ani stav nezvednou baseline samy: musí je někdo zadat jako ruční úpravu ve fázi 2, s důvodem a jistotou.
+ 
+ ### 5.3 Podlaha a rezerva
+ 
+ ```
+ floor_monthly = ltr(okres, čtvrť, deloitte_plocha(dispozice)) + ENERGY[dispozice]
+-buffer_pct    = expected_monthly / floor_monthly − 1
++buffer_pct    = screening_baseline / floor_monthly − 1
+ ```
+ 
+ Deloitte plochy 40 / 60 / 85 m² pro 1BR / 2BR / 3BR **[DEC]** z 30. 8. Když zadáš současný nájem, ukáže se vedle Deloitte hodnoty jako druhý sloupec, ale **do verdiktu nevstupuje**: podlaha stojí na indexu, ne na tom, co majitel dneska vybírá.
+@@ -145,7 +155,9 @@
+ 
+ Jedna tabulka, `evaluations`. Zapisuje se **každé** vyhodnocení, i to zahozené.
+ 
+-`id`, `created_at`, `author`, `address_raw`, `geo_confidence`, `district`, `ctvrt`, `ctvrt_manual` bool, `size`, `m2`, `current_rent` null, `model_version`, `data_window`, `public_monthly`, `cons_low`, `cons_high`, `expected_monthly`, `floor_monthly`, `buffer_pct`, `cell_derived`, `n_min`, `operator_factor_used`, `operator_measured` bool, `confidence`, `verdict`, `action` enum(`continue`,`discard`,`none`), `source` enum(`phone`,`web`,`agent`,`vn_network`,`referral`), `note`.
++`id`, `created_at`, `author`, `address_raw`, `geo_source` enum(`manual`,`geocoded`), `geo_confidence` null, `district`, `ctvrt`, `size`, `m2`, `current_rent` null, `model_version`, `data_window`, `public_monthly`, `cons_low`, `cons_high`, `screening_baseline`, `floor_monthly`, `buffer_pct`, `cell_derived`, `n_min`, `operator_factor_used`, `operator_measured` bool, `confidence`, `verdict`, `verdict_reason` null, `action` enum(`continue`,`discard`,`none`), `source` enum(`phone`,`web`,`agent`,`vn_network`,`referral`), `note`.
++
++**[DEC]** `geo_source` a `geo_confidence` existují od začátku, i když jsou ve v1 vždy `manual` a `null`. Geokódování se pak přidá bez migrace.
+ 
+ Proč ukládat i zahozené: je to zadarmo a je to tvůj jediný zdroj pro experiment E5 z OS, tedy jak se liší veřejné číslo od interního, a pro to, jak vlastně vypadá trh, na který voláš. Po měsíci volání z toho vypadne rozložení rezerv v Praze, které dnes nikdo nemá.
+ 
+@@ -159,7 +171,7 @@
+ 
+ - sedm bran ručně (SVJ, právní použitelnost, vlastnictví, nájemník, hypotéka, připravenost k focení, noci pro majitele);
+ - fakta o bytu (přesné m², patro, výtah, reálná lůžka, stav, terasa a výhled, náklad na dovybavení);
+-- ruční úpravy, každá povinně s důvodem, jistotou, autorem a časem, v append-only tabulce, která je zároveň audit i budoucí kalibrační dataset;
++- ruční úpravy **oběma směry**, každá povinně s důvodem, jistotou, autorem a časem, v append-only tabulce, která je zároveň audit i budoucí kalibrační dataset. Lepší reálná kapacita, terasa, výhled, parkování nebo mimořádný stav baseline zvednou; brány a špatný stav ho srazí. **[DEC]** Z prvních pár případů se nesmí odvodit pravidlo: přepis úprav na koeficienty je samostatná kalibrační úloha po dostatečném počtu opakovaných případů.
+ - finální rozpětí, navržená podlaha, rezerva v Kč a %, pro rata snížení podlahy za blokované noci (2/365, 3/365 v sezóně);
+ - verdikt ACCEPT / REVIEW / DECLINE;
+ - dvě tlačítka: **GENEROVAT PITCH DECK** a **GENEROVAT ODMÍTNUTÍ**;
+@@ -189,23 +201,34 @@
+ | # | Invariant |
+ |---|---|
+ | **I1** | Interní operator factor okresu bez `OPERATOR_EVIDENCE` je 1,00. Test **selže**, když je `OPERATOR_FACTOR_INTERNAL` alias `OPERATOR_FACTOR_PUBLIC`. |
+-| **I2** | `expected_monthly ≤ public_monthly` pro každou buňku populace. |
++| **I2** | `screening_baseline ≤ public_monthly` pro každou buňku populace. |
+ | I3 | Fáze 1 nikdy nevrátí ACCEPT. |
+ | I4 | Dopočtená buňka nebo `n < 50` nemůže dát zelenou. |
+-| I5 | Bez potvrzené lokality není verdikt. |
++| I5 | Bez zvoleného okresu není verdikt. |
+ | I6 | `buffer_pct` se ze stejných vstupů přepočítá identicky (golden fixtures). |
+ | I7 | Každý řádek `evaluations` nese `model_version` a `data_window`. |
+ | I8 | `evaluations` nemá GRANT UPDATE ani DELETE. |
+-| I9 | Ruční výběr čtvrti a geokódovaná čtvrť dávají při stejném vstupu stejný výsledek. |
++| I9 | `screening_baseline` se nikdy nezvýší address-level faktorem bez ručně zadané úpravy. |
++| I10 | Slovo `expected` se v kódu ani v UI nevyskytuje jako název screeningového čísla. |
+ 
+ ---
+ 
+-## 10. Co potřebuju od tebe, než se píše kód
++## 10. Kde to žije
++
++**[DEC]** Privátní autentizovaná cesta uvnitř stávající admin domény portálu, ne samostatný produkt ani subdoména. Cesta musí být přímo bookmarkovatelná a přidatelná na plochu telefonu, tedy stabilní URL, `manifest` pro instalaci a žádné přesměrování přes rozcestník po přihlášení.
++
++---
++
++## 11. Rozhodnutí z 9. 9. a jedna oprava
++
++| # | Věc | Rozhodnutí |
++|---|---|---|
++| 1 | Prahy | `WORTH_MIN = 0,35`, `REVIEW_MIN = 0,10`, obojí v0. Neladit před 20 až 30 případy. |
++| 2 | Baseline | Spodní hrana. Přejmenováno na `screening_baseline`; `expected` se nepoužívá. |
++| 3 | Model | Edge function, jedna generovaná implementace. |
++| 4 | Umístění | Privátní cesta v portálu, bookmarkovatelná. |
++| 5 | Geokódování | Ne ve v1. Ruční okres a čtvrť, `geo_source` a `geo_confidence` v modelu od začátku. |
+ 
+-1. **[OPEN]** Prahy `WORTH_MIN` a `REVIEW_MIN`, nebo souhlas s 0,35 a 0,20.
+-2. **[OPEN]** Souhlas s tím, že `expected` je spodní hrana rozpětí, ne střed.
+-3. **[OPEN]** Souhlas s edge function místo kopie modelu do portálu.
+-4. **[OPEN]** Kde to má žít: vlastní subdoména nebo cesta v portálu. Doporučuju samostatnou stránku, kterou si dáš na plochu telefonu.
+-5. **[OPEN]** Jestli geokódování řešit hned, nebo v první verzi jet na ručním výběru čtvrti a adresu jen ukládat jako text. Ruční výběr je o jeden klik pomalejší a nemůže se tiše splést.
++**Oprava mého tvrzení.** Ve v2 jsem napsal, že fakta o konkrétním bytu s rezervou hýbou jenom dolů, a odvodil z toho odstup prahů. Není to pravda a odporuje to i mé vlastní fázi 2, kde jsou úpravy obousměrné. Brány jsou převážně downside, ale kapacita, terasa, výhled, parkování nebo stav můžou baseline zvednout. Věta ve výsledku je opravená a zdůvodnění odstupu prahů teď stojí na asymetrii ceny omylu, ne na jednosměrnosti.
+ 
+ **Pořadí zůstává:** odemknout web a ověřit GA → rozpojit interní a veřejný faktor (risk logic, jde hned a nečeká na tenhle spec) → první reálné leady → tenhle vyhodnocovač → tři ruční posouzení → z nich fáze 2.

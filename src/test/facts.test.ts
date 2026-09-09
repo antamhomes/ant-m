@@ -894,12 +894,18 @@ describe("model výnosu", () => {
     expect(publicFactorFrom(1.21, 0.5)).toBe(1.155);
     expect(publicFactorFrom(1.08, 1), "pod výchozí -> celé").toBe(1.08);
     expect(publicFactorFrom(1.21, 1), "plná váha -> celé naměřené").toBe(1.21);
-    // Interní faktor je od 31. 8. 2026 TOTOŽNÝ s veřejným: rozdíl mezi režimy
-    // je množství informací o konkrétním bytě, ne násobitel. Prohlídka odstraní
-    // nejistotu o bytě, ale nezvětší vzorek, ze kterého je faktor okresu měřený.
-    expect(operatorFactor("praha1", "internal")).toBe(1.032);
-    expect(operatorFactor("praha5", "internal")).toBe(1.08);
-    expect(operatorFactor("praha3", "internal")).toBe(1.155);
+    // Interní faktor je od 9. 9. 2026 ROZPOJENÝ od veřejného: táž mechanika,
+    // ale kotvená na 1,00 místo 1,10, protože je to podklad pod garancí.
+    // Bez měření se neúčtuje žádný operátorský příplatek.
+    expect(operatorFactor("praha1", "internal"), "naměřeno 1,032 při plné váze").toBe(1.032);
+    expect(operatorFactor("praha5", "internal"), "naměřeno 1,08 při plné váze").toBe(1.08);
+    expect(operatorFactor("praha3", "internal"), "1,21 při váze 0,5 -> 1,105, tedy pod veřejnými 1,155").toBe(1.105);
+    for (const loc of ["praha2", "praha4", "praha6", "praha7", "praha8", "praha9", "praha10"] as const)
+      expect(operatorFactor(loc, "internal"), `${loc} bez měření: underwriting bez příplatku`).toBe(1);
+    // Podklad pod garancí nesmí být nikde optimističtější než veřejný odhad.
+    for (const loc of Object.keys(MARKET_STR) as MeasuredLocation[])
+      expect(operatorFactor(loc, "internal"), `${loc}: interní nad veřejným`)
+        .toBeLessThanOrEqual(operatorFactor(loc, "public"));
 
     // RevPAR × dny NENÍ tržba na inzerát: PriceLabs počítá RevPAR z dostupných
     // nocí, avg_revenue je za celý kalendářní měsíc. Rozklad 27 segmentů dal 0,92.
@@ -973,21 +979,22 @@ describe("model výnosu", () => {
   });
 
   it("INVARIANT: přepnutí na interní režim samo o sobě číslo nezvedne", () => {
-    // Rozdíl mezi veřejným a interním NENÍ násobitel, ale množství informací.
-    // Bez zaznamenaného pozorování musí interní sedět na veřejném do koruny.
+    // Interní režim smí číslo jen SNÍŽIT, nikdy zvednout: je to podklad pod
+    // garancí, ne prodejní odhad. Bez zaznamenaného pozorování se liší jen
+    // kotvou operátorského faktoru (1,00 místo 1,10).
     for (const loc of Object.keys(MARKET_STR) as MeasuredLocation[])
       for (const size of ["1kk", "2kk", "3kk", "4kk"] as const) {
         const m2 = typicalArea(loc, size);
         const pub = ownerMonthly(loc, size, { m2 });
         const int = ownerMonthly(loc, size, { m2, scope: "internal" });
         if (!pub.supported || !int.supported) throw new Error(`${loc} ${size}`);
-        expect(int.low, `${loc} ${size}`).toBe(pub.low);
-        expect(int.high, `${loc} ${size}`).toBe(pub.high);
-        expect(int.trace.factor, `${loc} ${size}: faktor se scope neliší`).toBe(pub.trace.factor);
+        expect(int.low, `${loc} ${size}`).toBeLessThanOrEqual(pub.low);
+        expect(int.high, `${loc} ${size}`).toBeLessThanOrEqual(pub.high);
+        expect(int.trace.factor, `${loc} ${size}: interní faktor nad veřejným`).toBeLessThanOrEqual(pub.trace.factor);
         expect(int.trace.config).toBe(null);
       }
-    // Prohlídka nezvětší vzorek okresu, takže se faktor scope nemění.
-    for (const loc of ["praha1", "praha2", "praha3", "praha5", "praha9"] as const)
+    // Tam, kde je měření při plné váze, obě čísla splývají: kotva se neuplatní.
+    for (const loc of ["praha1", "praha5"] as const)
       expect(operatorFactor(loc, "internal"), loc).toBe(operatorFactor(loc, "public"));
   });
 

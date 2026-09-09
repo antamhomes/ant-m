@@ -10,7 +10,7 @@
  * Je to závora, ne trezor: hosting je statický, takže překlady zůstávají
  * v JS bundlu a hash hesla je v kódu. Zastaví návštěvníky a roboty, ne vývojáře.
  */
-export const SITE_LOCK_ENABLED = true;
+export const SITE_LOCK_ENABLED = false;
 
 /** SHA-256 hex hesla. */
 export const SITE_LOCK_HASH = "3288e7ad839118c425a4f74d77f2f03b243c09b0631e5cb5f6fa0db50f57df97";
