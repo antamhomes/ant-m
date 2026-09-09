@@ -596,7 +596,7 @@ const translations = {
     about_title: "Antam bắt đầu từ nhà của mình.",
     about_p1: "Antam Homes là dịch vụ quản lý cho thuê ngắn hạn tại Praha. Antam đang lo từ căn nhỏ 22 m² đến căn 110 m², ở Praha và Mladá Boleslav. Tỷ lệ kín phòng của các căn này cao hơn khu xung quanh, số cụ thể ở mục Kết quả.",
     about_p2: "Các căn Antam đang quản lý thường đạt kết quả tốt hơn những căn tương đương trong cùng khu vực. Để làm được điều đó, chỉ đăng lên Airbnb hay Booking là chưa đủ. Giá phải được điều chỉnh đúng theo từng thời điểm, hình ảnh phải đủ thu hút để\u00a0khách muốn xem, thông tin phải rõ ràng, phản hồi phải nhanh và lịch đặt phòng phải được theo dõi sát. Từng chi tiết nhỏ đều có thể ảnh hưởng trực tiếp đến doanh thu.",
-    about_p3: "Thị trường thay đổi liên tục nên cách vận hành cũng phải thay đổi theo. Antam theo dõi kết quả hằng ngày, xem điều gì đang hiệu quả, điều gì cần điều chỉnh và liên tục cải thiện cách vận hành từng căn. Mục tiêu không chỉ là theo kịp thị trường, mà là duy trì kết quả tốt hơn so với những căn đang cạnh tranh trực tiếp trong cùng khu vực.",
+    about_p3: "\n",
     about_p4: "Antam bắt đầu từ nhà của mình và của gia đình. Hiện nay Antam lo 11 căn ở Praha và quanh Praha, hơn 520 đánh giá của khách trên Airbnb và Booking.",
     about_scale: "Antam nhận cả căn lẻ lẫn nhiều căn của cùng một chủ.",
     about_p5: "Antam không chỉ lo những công việc hằng ngày như khách, dọn dẹp hay đặt phòng. Mỗi căn hộ được xem như một hoạt động kinh doanh riêng, cần được theo dõi và cải thiện liên tục.",
