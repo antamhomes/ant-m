@@ -249,12 +249,10 @@ const CalculatorSection = () => {
 
   return (
     <section id="kalkulacka" className="section bg-secondary scroll-mt-20">
-      {/* 9. 9. 2026: hlavička sekce jde na hlavní levou osu webu (container-wide).
-          Kalkulačka i formulář stály celé v užším kontejneru, takže jejich eyebrow
-          a nadpis začínaly na 248 a 328 px, zatímco všechny ostatní sekce na 120.
-          Při scrollování levá hrana textu skákala. Obsah zůstává úzký, přeskočí
-          jen nadpis. */}
-      <div className="container-wide">
+      {/* Hlavička MUSÍ zůstat ve stejném sloupci jako pole kalkulačky. Pokus
+          srovnat ji s hlavní osou webu (container-wide) ji odsadil 128 px vlevo
+          od popisků polí — uvnitř jedné sekce pak byly tři různé levé hrany. */}
+      <div className="container-narrow">
         <Reveal className="section-head">
           <p className="eyebrow eyebrow-center">{t(lang, "calc_label")}</p>
           <h2 className="h-section text-foreground">
@@ -263,8 +261,7 @@ const CalculatorSection = () => {
           </h2>
           <p className="lead">{t(lang, "calc_desc")}</p>
         </Reveal>
-      </div>
-      <div className="container-narrow">
+
         <div className="grid md:grid-cols-2 gap-8 md:gap-10 md:items-start">
           <Reveal id="kalkulacka-zadani" delay={0.05} className="space-y-8 order-2 md:order-1 scroll-mt-20 min-w-0">
             <div>
@@ -651,7 +648,7 @@ const CalculatorSection = () => {
 
         {/* Metodika za rozklikem na všech šířkách (brief 8/2026, bod 2); viditelná
             zůstává jen krátká věta, bez které by odhad mohl mást. */}
-        <div className="mt-6 sm:mt-8 max-w-prose mx-auto border-t border-border/60 pt-4 sm:pt-5 space-y-2.5">
+        <div className="mt-6 sm:mt-8 max-w-prose border-t border-border/60 pt-4 sm:pt-5 space-y-2.5">
           <p className="font-body text-xs md:text-[13px] text-foreground/75 leading-relaxed">
             {t(lang, "calc_disclaimer_short")}
           </p>

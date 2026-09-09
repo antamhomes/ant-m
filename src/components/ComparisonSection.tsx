@@ -43,7 +43,7 @@ const ComparisonSection = () => {
         <Reveal delay={0.05} className="border-t border-border">
           <div
             aria-hidden="true"
-            className="hidden md:grid md:grid-cols-[1fr_1fr_1fr] gap-x-8 px-1 pt-4 pb-3"
+            className="hidden md:grid md:grid-cols-[1fr_1fr_1fr] gap-x-8 pt-4 pb-3"
           >
             <span />
             <span className="font-body text-xs uppercase tracking-[0.14em] text-muted-foreground">

@@ -35,15 +35,17 @@ import { t, type TranslationKey } from "@/i18n/translations";
    jsou aria-hidden, význam nesou nadpisy. */
 /* Smeták: lucide koště nemá, tohle je dokreslené ve stejném stylu (24×24,
    currentColor, kulaté konce, žádná výplň), aby mezi ostatními ikonami
-   nešlo poznat, že je odjinud. Násada, rozšířená hlava, páska a dvě štětiny: šikmý smeták se v 19 px slil do fajfky. */
+   nešlo poznat, že je odjinud. Nasada, rozsirena hlava, paska a dve stetiny: sikmy smetak se v 19 px slil do fajfky.
+   9. 9. 2026 rozsireno na x 4-20: kresba byla jen 10 z 24 jednotek siroka, takze
+   mezi lucide ikonami (16-20) vypadala v radku odsazena doprava. */
 const Broom = ({ strokeWidth = 2, ...props }: React.SVGProps<SVGSVGElement>) => (
   <svg viewBox="0 0 24 24" width={24} height={24} fill="none" stroke="currentColor"
     strokeWidth={strokeWidth} strokeLinecap="round" strokeLinejoin="round" {...props}>
     <path d="M12 2v7" />
-    <path d="M9 9h6l2 12H7Z" />
-    <path d="M7.9 15.5h8.2" />
-    <path d="M10.6 15.5 10.2 21" />
-    <path d="M13.4 15.5 13.8 21" />
+    <path d="M7.2 9h9.6l3.2 12H4Z" />
+    <path d="M5.4 15.5h13.2" />
+    <path d="M9.8 15.5 9.1 21" />
+    <path d="M14.2 15.5 14.9 21" />
   </svg>
 );
 
