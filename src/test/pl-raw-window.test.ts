@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-// @ts-expect-error - .mjs skript bez typu
+// @ts-ignore - .mjs skript bez typu
 import { extractFromResponse } from "../../scripts/pl-raw.mjs";
 
 const W = ["2025_08","2025_09","2025_10","2025_11","2025_12","2026_01",
