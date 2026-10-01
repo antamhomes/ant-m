@@ -16,6 +16,7 @@ export default defineTool({
       email: "antamhomes@gmail.com",
       phone: "727 952 459",
       officePhone: "607 338 126",
+      vietnamesePhone: "776 607 003",
       website: "https://www.antamhomes.com",
       vietnameseVersion: "https://www.antamhomes.com/vn",
       serviceArea: "Praha a okolí",
@@ -25,7 +26,7 @@ export default defineTool({
       content: [
         {
           type: "text" as const,
-          text: `Antam Homes (Donut Point, s.r.o., IČO 21904022)\nEmail: ${info.email}\nTelefon: ${info.phone}\nKancelář: ${info.officePhone}\nWeb: ${info.website} (Vietnamese: ${info.vietnameseVersion})\nOblast: ${info.serviceArea}`,
+          text: `Antam Homes (Donut Point, s.r.o., IČO 21904022)\nEmail: ${info.email}\nTelefon: ${info.phone}\nKancelář: ${info.officePhone}\nTiếng Việt: ${info.vietnamesePhone}\nWeb: ${info.website} (Vietnamese: ${info.vietnameseVersion})\nOblast: ${info.serviceArea}`,
         },
       ],
       structuredContent: info,

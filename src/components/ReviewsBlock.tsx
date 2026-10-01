@@ -64,7 +64,7 @@ const ReviewsBlock = () => {
           >
             <Quote className="w-5 h-5 text-gold mb-3" aria-hidden="true" />
             <p className="font-body text-sm md:text-base text-primary-foreground/85 leading-relaxed text-pretty">
-              „{r.text}“
+              {lang === "cs" ? "„" : "“"}{r.text}{lang === "cs" ? "“" : "”"}
             </p>
             <footer className="mt-3 font-body text-xs text-primary-foreground/65">{r.meta}</footer>
           </blockquote>

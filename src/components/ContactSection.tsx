@@ -4,6 +4,12 @@ import { Send, Loader2, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
 import { sendInquiry } from "@/lib/inquiry";
+
+// Česká linka pro českou stránku, vietnamská pro /vn (stejně jako v patičce).
+const CONTACT_PHONE = {
+  cs: { href: "tel:+420727952459", label: "+420\u00a0727\u00a0952\u00a0459" },
+  vi: { href: "tel:+420776607003", label: "+420\u00a0776\u00a0607\u00a0003" },
+} as const;
 import { mirrorInquiryToPortal } from "@/lib/portalLead";
 import { trackEvent } from "@/lib/analytics";
 import { calcEchoLabel, leadSummaryLine, type LeadCalcPayload } from "@/lib/leadBand";
@@ -295,8 +301,8 @@ const ContactSection = () => {
               )}
               <p className="font-body text-[14px] text-muted-foreground">
                 {t(lang, "contact_success_call")}{" "}
-                <a href="tel:+420776607003" className="text-gold-deep font-medium whitespace-nowrap hover:text-primary transition-colors">
-                  +420&nbsp;776&nbsp;607&nbsp;003
+                <a href={CONTACT_PHONE[lang].href} className="text-gold-deep font-medium whitespace-nowrap hover:text-primary transition-colors">
+                  {CONTACT_PHONE[lang].label}
                 </a>
               </p>
             </div>
@@ -487,8 +493,8 @@ const ContactSection = () => {
               {/* The no-form path: one tap to a call (VI copy mentions Zalo). */}
               <p className="font-body text-[13px] md:text-sm text-muted-foreground text-center">
                 {t(lang, "contact_phone_line")}{" "}
-                <a href="tel:+420776607003" className="text-gold-deep font-medium whitespace-nowrap hover:text-primary transition-colors">
-                  +420&nbsp;776&nbsp;607&nbsp;003
+                <a href={CONTACT_PHONE[lang].href} className="text-gold-deep font-medium whitespace-nowrap hover:text-primary transition-colors">
+                  {CONTACT_PHONE[lang].label}
                 </a>
               </p>
             </>
