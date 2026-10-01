@@ -512,11 +512,14 @@ const translations = {
   },
 
   vi: {
+    // Patch 135 (1. 10. 2026): /vn drobný tisk zkrácen na českou délku (calc_method_window, calc_disclaimer,
+    // statNote v PortfolioSection) a g_step1 nese jedinou větu o odmítnutí bytu (stejně jako CZ). Návrh (Claude).
     // Patch 134 (1. 10. 2026): poslední audit, CZ i VI. Fakta podle Vuonga: blokace nejméně 30 dní předem,
     // nabídka online do 14 dnů (ne první hosté), doporučený majitel má slevu na uvedení do provozu.
     // Návrh (Claude), ne Vuongova slova. CZ: svc4_desc až svc6_desc, druhá věta about_p1; z portal_desc pryč
     // „Správu přebíráme, kontrolu ne.“ VI: hero_desc (druhá věta), pricing_desc, pr7_note, pr8_note (poslední věta),
-    // comp3_short, faq3_a (začátek), calc_season_summer, calc_season_winter, faq9_q.
+    // comp3_short, faq3_a (začátek), calc_season_summer, calc_season_winter, faq9_q, hero_cta, g_step1_title
+    // (z hlavního tlačítka a nadpisu kroku pryč „miễn phí“: 30 % je filtr, ne akce).
     // Patch 133 (1. 10. 2026): VI hlas, jen texty, fakta beze změny.
     // Vráceno znění ze 17. 8. (translations.origin.ts): svc1_desc až svc4_desc, comp1_long, comp1_short,
     // comp4_long, report_title, contact_fallback_title.
@@ -542,7 +545,7 @@ const translations = {
     hero_title2: "Chủ nhà an tâm hơn.",
     hero_desc: "Quản lý cho thuê ngắn hạn tại Praha, từ giá, đặt phòng, khách, dọn dẹp đến sửa chữa. Mỗi tháng chủ nhà có bảng kê và nhận tiền.",
     hero_extra: "Phí Antam gắn với kết\u00a0quả · Hỏi\u00a0không\u00a0ràng\u00a0buộc · Gọi\u00a0lại\u00a0trong\u00a024\u00a0giờ",
-    hero_cta: "Nhờ Antam tính miễn phí",
+    hero_cta: "Tính thử thu nhập",
     hero_cta2: "",
 
     // Services
@@ -629,8 +632,8 @@ const translations = {
     g_num3_label: "",
     g_num3_value: "",
     g_num_note: "",
-    g_step1_title: "Xem trước miễn phí",
-    g_step1: "Antam xem vị trí, tình trạng nhà và mức thu có thể đạt. Con số nào ghi được vào hợp đồng, Antam nói rõ trước.",
+    g_step1_title: "Antam xem nhà trước",
+    g_step1: "Antam xem vị trí, tình trạng nhà và mức thu có thể đạt. Căn nào không tin chắc vào con số thì Antam không nhận.",
     g_step2_title: "Ghi rõ trong hợp đồng",
     g_step2: "Mức tối thiểu được thống nhất trước khi ký, riêng cho từng căn, bằng tiền thuê dài hạn cộng điện nước.",
     g_step3_title: "Nếu không đạt",
@@ -717,7 +720,7 @@ const translations = {
     calc_band_strong: "Căn này rất hợp cho thuê ngắn hạn.",
     calc_band_viable: "Con số nhìn ổn. Với căn này, tình trạng nhà, sức chứa và tầng sẽ quyết định.",
     calc_band_weak: "Với dạng căn này, chênh lệch so với cho thuê dài hạn không nhiều. Nếu nhà có gì đặc biệt: view đẹp, sân thượng, tình trạng tốt hay ở được nhiều người hơn, anh chị cứ gửi cho Antam xem.",
-    calc_method_window: "Số liệu thị trường: giá thực tế và tỷ lệ lấp đầy của các căn cho thuê ngắn hạn trong {window}, theo quận, khu vực và số phòng ngủ.",
+    calc_method_window: "Ước tính cho thuê ngắn hạn lấy từ số liệu PriceLabs trong {window}, theo khu vực và số phòng ngủ. Antam cố ý tính ở mức dè dặt, mức mà các căn Antam quản lý thường đạt. Tiền thuê dài hạn tính theo các tin đang đăng trên Sreality, theo quận và đúng diện tích. Phí nền tảng tính 17%. Con số chỉ để tham khảo, thực tế còn tùy tình trạng nhà, mùa và đánh giá của khách. Con số chính xác hơn thì Antam tính riêng cho từng căn.",
     calc_month_suffix: "/ tháng",
     calc_edit: "Chỉnh lại",
     calc_split_aria: "70% chủ nhà, 30% Antam Homes",
@@ -726,7 +729,7 @@ const translations = {
     calc_share_copy: "Sao chép đường link:",
     calc_approx_prefix: "khoảng",
     calc_disclaimer_short: "Con số mang tính tham khảo, không phải báo giá hay cam kết. Cam kết thu nhập chỉ có khi ghi trong hợp đồng cho từng căn.\n",
-    calc_disclaimer: "Ước tính dựa trên dữ liệu của các căn cho thuê ngắn hạn tương tự trong khu vực và kết quả thực tế từ những căn Antam đang quản lý. Khu vực, dạng căn và diện tích được dùng để chọn nhóm căn phù hợp để so sánh. Kết quả mang tính tham khảo, không phải báo giá hay cam kết; Antam sẽ tính chính xác hơn sau khi xem căn cụ thể. Nơi mẫu số liệu còn ít thì Antam không hiện con số. Phí nền tảng trong mô hình tính 17%, thực tế tùy tin đăng dao động từ 15 đến 21%. Tiền thuê dài hạn tính theo mức giữa của các tin đang đăng trên Sreality (hơn 1\u00a0300 tin mới) theo quận và đúng diện tích. Thực tế còn tùy tình trạng nhà, mùa, đánh giá của khách và quy định về cho thuê ngắn hạn. Cam kết thu nhập chỉ có khi được ghi vào hợp đồng cho từng căn.",
+    calc_disclaimer: "Cam kết thu nhập chỉ có khi được ghi vào hợp đồng cho từng căn.",
     calc_disclaimer_toggle: "Antam tính thế nào và điều gì ảnh hưởng",
     calc_excluded_note: "Antam nhận 30% trên doanh thu ròng: phần tiền Airbnb, Booking trả về, sau khi trừ phí dọn dẹp. Là con số cuối cùng, không cộng thêm gì, và trong đó có cả cam kết thu nhập. Phí dọn dẹp khách trả riêng và thuộc về Antam (dọn dẹp, giặt giũ). Điện nước chủ nhà lo.",
     calc_method_note: "Phí nền tảng tính trên toàn bộ giá đặt phòng, gồm cả phí dọn dẹp. Khoản này trừ trước, phần còn lại chia 70/30. VAT của phí nền tảng do Antam nộp từ phí của mình, không trừ vào tiền của chủ nhà.",
