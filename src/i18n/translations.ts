@@ -294,7 +294,7 @@ const translations = {
     report_row_base: "Čistý výnos po provizi platforem a úklidovém poplatku",
     report_row_net: "Majiteli",
     report_period: "2+kk · Praha 1 · průměrný měsíc",
-    report_note: "Skutečný byt z portfolia, průměr za 12 měsíců do 7/2026, přepočteno na aktuální odměnu 30 %. Je to Elegant Museum View Apartment z Výsledků výš, kde je částka zaokrouhlená na 64 000 Kč. Úklid hradí hosté, energie majitel.",
+    report_note: "\n",
     report_cta: "",
 
     // FAQ
