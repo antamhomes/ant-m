@@ -543,7 +543,7 @@ const translations = {
     hero_subtitle: "ANTAM HOMES · QUẢN LÝ CĂN HỘ CHO THUÊ NGẮN HẠN",
     hero_title1: "Thu nhập tốt hơn. ",
     hero_title2: "Chủ nhà an tâm hơn.",
-    hero_desc: "Quản lý hoàn toàn cho thuê ngắn hạn tại Praha. Mỗi tháng chủ nhà có bảng kê và nhận\u00a0tiền.",
+    hero_desc: "Quản lý trọn gói căn hộ cho thuê ngắn hạn tại Praha.\n",
     hero_extra: "Phí Antam gắn với kết\u00a0quả · Hỏi\u00a0không\u00a0ràng\u00a0buộc · Sẽ gọi\u00a0lại\u00a0trong\u00a024\u00a0giờ",
     hero_cta: "Tính thử thu nhập",
     hero_cta2: "",
