@@ -756,3 +756,10 @@ přesně změřený/deklarovaný efekt správy a nic jiného.
    okresní geometrie (dnes jen kolem vlastních bytů), dá se horní konec
    rozpětí kotvit na měřený percentil místo faktoru. Dnes neproveditelné
    bez nových dat; zapsáno, aby se to nevymýšlelo znovu.
+
+*Doplněno 20. 10. 2026 večer:* deep dive vrstvy bez kvóty je hotový a
+změřený — drift trhu po 7/2026, faktory proti okolním comps, offset
+nearby vs polygon (9–17 %) a percentily jsou v
+**docs/pricelabs-audit-2026-10.md**, data v data/pricelabs-capi-2026-10/.
+Pozn. k bodu 3: median BOOKED price je všude pod nabídkovým p50, takže
+nabídkové percentily jako strop potenciálu nepoužívat (ceníky ≠ realizace).
