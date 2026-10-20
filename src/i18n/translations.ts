@@ -333,7 +333,7 @@ const translations = {
     faq12_q: "Co na to sousedé a SVJ?",
     faq12_a: "Hosté dostávají pravidla domu předem, byt má danou kapacitu a žádné party. Sousedé mají kontakt, na který se dovolají. Pokud stanovy vašeho SVJ krátkodobé ubytování zakazují, řekneme vám to před podpisem.",
     faq13_q: "Pro koho krátkodobý pronájem nedává smysl?",
-    faq13_a: "Pokud potřebujete každý měsíc přesně stejný příjem nebo chcete byt většinu roku využívat sami, bude pro vás vhodnější jiná forma pronájmu. Jinak se na byt rádi podíváme. Lokalita mimo centrum ani starší dům překážkou nejsou.",
+    faq13_a: "Dlouhodobý pronájem dává větší smysl, pokud chcete jistý příjem každý měsíc a nepotřebujete z bytu vytěžit maximum.",
     faq14_q: "Proč to nedělat sám přes Airbnb?",
     faq14_a: "Můžete, někteří majitelé to zvládají. Je to práce na každý den: odpovědi hostům do minut, ceny podle poptávky, úklid, prádlo a každá změna, kterou Airbnb a Booking vymyslí. My v tom žijeme denně pro jedenáct bytů najednou.",
     faq15_q: "Pracujete i s jinými platformami nebo firmami?",
