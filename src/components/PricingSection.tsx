@@ -40,7 +40,6 @@ const MORE_ROWS = ["pr2", "pr3", "pr4", "pr5", "pr8"] as const;
 const PricingSection = () => {
   const { lang } = useLanguage();
   const flows = ([1, 2, 3, 4, 5] as const).filter((n) => t(lang, `pr1_flow${n}` as const));
-  const stack = ([1, 2, 3, 4, 5, 6] as const).filter((n) => t(lang, `pr1_stack_${n}` as const));
 
   return (
     <section id="cenik" className="section-cont chapter-edge bg-secondary scroll-mt-20">
@@ -59,66 +58,85 @@ const PricingSection = () => {
           </h2>
         </Reveal>
 
-        <div className="max-w-3xl">
+        {/* 20. 10. 2026 (zadání V.): sekce má říct „70 % je vaše" a dovést oko
+            k částce pro majitele. Vzorový měsíc stojí vpravo jako výpis: tržba,
+            úklid, čistý výnos a pod nimi výplata majitele jako největší částka
+            sekce. 30 % je přiznané větou a výčtem, co všechno obsahuje;
+            v korunách se nevyčísluje, aby vizuálně nesoupeřilo s příjmem
+            majitele. Žádné karty, bary ani koláče, jen typografie a linky. */}
+        <div className="max-w-5xl">
           <Reveal delay={0.05}>
-            <p className="font-display text-muted-foreground leading-[1.35] text-[clamp(1.1rem,1.6vw,1.35rem)] text-balance tnum">
-              {t(lang, "pricing_split2")}
-            </p>
-            <p className="mt-5 font-body text-[15.5px] md:text-base text-muted-foreground leading-relaxed max-w-[58ch]">
-              {t(lang, "pricing_desc")}
-            </p>
-
-            {/* Tok peněz ze vzorového vyúčtování. Bez rámečku: je to výpočet,
-                který si má čtenář přepočítat, ne kartička. */}
-            <dl className="mt-7 border-t border-foreground/25">
-              {flows.map((n) => {
-                const owner = n === 4;
-                return (
-                  <div
-                    key={n}
-                    className={`flex items-baseline justify-between gap-6 py-3.5 tnum ${
-                      owner ? "border-y border-foreground/25" : "border-b border-border"
-                    }`}
-                  >
-                    <dt className={`font-body text-[14.5px] sm:text-[15px] ${owner ? "font-medium text-foreground" : "text-muted-foreground"}`}>
-                      {t(lang, `pr1_flow${n}` as const)}
-                    </dt>
-                    <dd
-                      className={`m-0 whitespace-nowrap font-display ${
-                        owner ? "text-[26px] sm:text-[30px] font-semibold text-gold-deep" : "text-[19px] sm:text-[21px] text-foreground/80"
-                      }`}
-                    >
-                      {t(lang, `pr1_flow${n}_v` as const)}
-                    </dd>
-                  </div>
-                );
-              })}
-            </dl>
-
-            {t(lang, "pr1_flow_note") && (
-              <p className="mt-4 font-body text-[14.5px] text-foreground leading-relaxed max-w-[62ch]">
-                {t(lang, "pr1_flow_note")}
-              </p>
-            )}
-
-            {t(lang, "pr1_stack_title") && (
-              <div className="mt-7">
-                <p className="font-body text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-                  {t(lang, "pr1_stack_title")}
+            <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-x-16 xl:gap-x-24 lg:items-start">
+              <div>
+                <p className="font-display text-muted-foreground leading-[1.35] text-[clamp(1.1rem,1.6vw,1.35rem)] text-balance tnum">
+                  {t(lang, "pricing_split2")}
                 </p>
-                <ul className="mt-2.5 space-y-1">
-                  {stack.map((n) => (
-                    <li key={n} className="flex items-baseline gap-2.5 font-body text-[14.5px] text-muted-foreground">
-                      <span aria-hidden="true" className="text-gold-deep">·</span>
-                      <span>{t(lang, `pr1_stack_${n}` as const)}</span>
-                    </li>
-                  ))}
-                </ul>
+                <p className="mt-4 font-body text-[15.5px] md:text-base text-muted-foreground leading-relaxed max-w-[58ch]">
+                  {t(lang, "pricing_desc")}
+                </p>
+                {/* Co ve 30 % je: nahrazuje provozní práci majitele. Sekundární;
+                    na desktopu doplňuje levý sloupec, na mobilu až za výplatou. */}
+                <div className="hidden lg:block mt-12 pt-5 border-t border-border max-w-[46ch]">
+                  <p className="font-body text-[13.5px] font-medium text-foreground/85 tnum">{t(lang, "pr1_incl_title")}</p>
+                  <p className="mt-1.5 font-body text-[13px] text-muted-foreground leading-relaxed">{t(lang, "pr1_incl_items")}</p>
+                </div>
               </div>
-            )}
 
-            {/* pr1_note odešla (patch 2): opakovala pricing_desc. Klíč zůstává. */}
+              <div className="mt-10 lg:mt-1">
+                <p className="font-body text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                  {t(lang, "pr1_example_label")}
+                </p>
+                <dl className="mt-3 border-t border-foreground/25">
+                  {flows.map((n) => {
+                    const net = n === 3;
+                    return (
+                      <div
+                        key={n}
+                        className={`flex items-baseline justify-between gap-6 py-3.5 tnum ${
+                          net ? "border-b border-foreground/25" : "border-b border-border"
+                        }`}
+                      >
+                        <dt className={`font-body text-[14.5px] sm:text-[15px] ${net ? "font-medium text-foreground" : "text-muted-foreground"}`}>
+                          {t(lang, `pr1_flow${n}` as const)}
+                        </dt>
+                        <dd
+                          className={`m-0 whitespace-nowrap font-display ${
+                            net ? "text-[21px] sm:text-[23px] font-semibold text-foreground" : "text-[18px] sm:text-[20px] text-foreground/80"
+                          }`}
+                        >
+                          {t(lang, `pr1_flow${n}_v` as const)}
+                        </dd>
+                      </div>
+                    );
+                  })}
+                </dl>
+                {/* Výplata majitele: pointa sekce a největší peněžní číslo na stránce.
+                    Antamových 30 % se v korunách neukazuje; sazba je řečená výš. */}
+                <div className="mt-8 md:mt-9">
+                  <p className="font-body text-[11px] uppercase tracking-[0.16em] font-semibold text-gold-deep">
+                    {t(lang, "pr1_result_label")}
+                  </p>
+                  <p className="m-0 mt-2.5 font-display font-semibold text-gold-deep tnum leading-none whitespace-nowrap text-[46px] sm:text-[54px] md:text-[58px]">
+                    {t(lang, "pr1_result_v")}
+                  </p>
+                  <p className="mt-2.5 font-body text-[13.5px] text-muted-foreground tnum">{t(lang, "pr1_result_sub")}</p>
+                </div>
+              </div>
 
+              <div className="lg:hidden mt-9 pt-5 border-t border-border">
+                <p className="font-body text-[13.5px] font-medium text-foreground/85 tnum">{t(lang, "pr1_incl_title")}</p>
+                <p className="mt-1.5 font-body text-[13px] text-muted-foreground leading-relaxed">{t(lang, "pr1_incl_items")}</p>
+              </div>
+            </div>
+
+            {/* Jednorázové uvedení do provozu: přiznané, ale potichu; detail nese
+                rozbalovací ceník níž. Nesmí soupeřit s měsíčním příjmem majitele. */}
+            <p className="mt-9 font-body text-[13px] text-muted-foreground tnum">{t(lang, "pr1_setup_line")}</p>
+          </Reveal>
+        </div>
+
+        <div className="max-w-3xl">
+          <Reveal delay={0.08}>
             {/* Garance a krytí škod: jediné místo, kde je vidět, co je v těch 30 % navíc.
                 AD 2. 9. 2026: o stupeň víc váhy. Jsou to dvě podstatné podmínky
                 obchodu, ale mezi ostatními poznámkami se četly jako další řádek
