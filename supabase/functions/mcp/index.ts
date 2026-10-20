@@ -747,6 +747,7 @@ function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope
   const k = operatorFactor(location, scope);
   const market = split(Math.round(lowGross * k * AVAILABILITY), marketOcc);
   const antam = split(Math.round(highGross * k * AVAILABILITY), marketOcc);
+  const marketAnchor = split(Math.round(highGross * AVAILABILITY), marketOcc);
   return {
     supported: true,
     band,
@@ -755,6 +756,7 @@ function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope
     guests,
     market,
     antam,
+    marketAnchor,
     low: market.net,
     high: antam.net,
     mid: Math.round((market.net + antam.net) / 2),
@@ -826,7 +828,7 @@ var estimate_yield_default = defineTool({
     }
     const yearly = ownerMonthly(location, sz, { m2 });
     const yearlyNet = yearly.supported ? yearly.antam.net : r.antam.net;
-    const yearlyMarketNet = yearly.supported ? yearly.market.net : r.market.net;
+    const yearlyMarketNet = yearly.supported ? yearly.marketAnchor.net : r.marketAnchor.net;
     const result = {
       currency: "CZK",
       location: label,
@@ -841,14 +843,14 @@ var estimate_yield_default = defineTool({
       realizedMarketNightlyRate: r.adr,
       ownerRangeMonthly: { low: r.low, high: r.high, mid: r.mid },
       marketAverage: {
-        occupancyRate: r.market.occupancy,
-        grossMonthlyRevenue: r.market.gross,
-        platformCommission: r.market.platformFee,
-        netRevenueAfterPlatform: r.market.netRevenue,
-        managementCommission: r.market.mgmt,
-        netMonthlyIncomeForOwner: r.market.net,
+        occupancyRate: r.marketAnchor.occupancy,
+        grossMonthlyRevenue: r.marketAnchor.gross,
+        platformCommission: r.marketAnchor.platformFee,
+        netRevenueAfterPlatform: r.marketAnchor.netRevenue,
+        managementCommission: r.marketAnchor.mgmt,
+        netMonthlyIncomeForOwner: r.marketAnchor.net,
         netYearlyAverage: yearlyMarketNet * 12,
-        multipleVsLongTermRent: Math.round(r.market.net / longTermRent * 10) / 10
+        multipleVsLongTermRent: Math.round(r.marketAnchor.net / longTermRent * 10) / 10
       },
       withAntamHomes: {
         occupancyRate: r.antam.occupancy,
@@ -864,13 +866,13 @@ var estimate_yield_default = defineTool({
       platformCommissionRate: PLATFORM_FEE,
       managementCommissionRate: MGMT_FEE,
       longTermRentBenchmark: longTermRent,
-      note: "Nightly rate = realized market price of the whole district for this bedroom band (PriceLabs STR index, official district boundary, 12 closed months to 7/2026). marketAverage uses the district's market occupancy; withAntamHomes applies the measured Antam operator factor (revenue ratio against the market mean, from reconciling eleven managed flats against PriceLabs) to the same market data. It is a measured revenue ratio, not an occupancy uplift: Antam's flats run 92-96 % occupancy at 63-77 % of market ADR, so the effect shows up in revenue, not in an assumed occupancy number. The Antam Homes fee is 30 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Guests pay the cleaning fee separately; it is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included. Long-term rent = median of 1 300+ fresh Sreality listings (8/2026) by district and actual floor area, cross-checked against Deloitte Rent Index Q2/2026. If floorAreaM2 was not supplied, floorAreaAssumed is true and the district-typical area was used for both the band blend and the rent, which makes the estimate noticeably less precise for atypically small or large flats."
+      note: "Nightly rate = realized market price of the whole district for this bedroom band (PriceLabs STR index, official district boundary, 12 closed months to 7/2026). marketAverage is the pure market anchor: the same flat configuration and the same deductions with NO operator factor, so it is directly checkable against PriceLabs market data. withAntamHomes applies the measured Antam operator factor (revenue ratio against the market mean, from reconciling eleven managed flats against PriceLabs) to that same anchor. It is a measured revenue ratio, not an occupancy uplift: Antam's flats run 92-96 % occupancy at 63-77 % of market ADR, so the effect shows up in revenue, not in an assumed occupancy number. The Antam Homes fee is 30 % of net revenue: what the platform pays out, after deducting the cleaning fee. The fee is final; nothing is added on top, and it also covers the Czech VAT due on the platform commission. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Guests pay the cleaning fee separately; it is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included. Long-term rent = median of 1 300+ fresh Sreality listings (8/2026) by district and actual floor area, cross-checked against Deloitte Rent Index Q2/2026. If floorAreaM2 was not supplied, floorAreaAssumed is true and the district-typical area was used for both the band blend and the rent, which makes the estimate noticeably less precise for atypically small or large flats."
     };
     return {
       content: [
         {
           type: "text",
-          text: `${label}, ${sz}, ${m2} m2 (band ${r.band}${r.derived ? ", derived from smaller flats" : ""}): owner range ~${czk(r.low)} to ${czk(r.high)} CZK/month. Realized market rate ${czk(r.adr)} CZK/night. Market average (occupancy ${Math.round(r.market.occupancy * 100)} %): owner nets ~${czk(r.market.net)} CZK/month. With Antam Homes (occupancy ${Math.round(r.antam.occupancy * 100)} %): owner nets ~${czk(r.antam.net)} CZK/month (gross ${czk(r.antam.gross)} CZK, platform commission ${czk(r.antam.platformFee)} CZK, Antam Homes 30 % ${czk(r.antam.mgmt)} CZK). Long-term rent benchmark ~${czk(longTermRent)} CZK/month, roughly ${result.withAntamHomes.multipleVsLongTermRent}x (market average ${result.marketAverage.multipleVsLongTermRent}x).`
+          text: `${label}, ${sz}, ${m2} m2 (band ${r.band}${r.derived ? ", derived from smaller flats" : ""}): owner range ~${czk(r.marketAnchor.net)} to ${czk(r.high)} CZK/month. Realized market rate ${czk(r.adr)} CZK/night. Market average (same flat, same deductions, no operator effect; occupancy ${Math.round(r.marketAnchor.occupancy * 100)} %): owner nets ~${czk(r.marketAnchor.net)} CZK/month. With Antam Homes (occupancy ${Math.round(r.antam.occupancy * 100)} %): owner nets ~${czk(r.antam.net)} CZK/month (gross ${czk(r.antam.gross)} CZK, platform commission ${czk(r.antam.platformFee)} CZK, Antam Homes 30 % ${czk(r.antam.mgmt)} CZK). Long-term rent benchmark ~${czk(longTermRent)} CZK/month, roughly ${result.withAntamHomes.multipleVsLongTermRent}x (market average ${result.marketAverage.multipleVsLongTermRent}x).`
         }
       ],
       structuredContent: result
