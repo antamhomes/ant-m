@@ -142,24 +142,59 @@ const PricingSection = () => {
                   <dd className="m-0 mt-2 font-body text-[14.5px] text-muted-foreground leading-relaxed max-w-[62ch]">
                     {/* Garance: věta z bývalého nadpisu sekce + pravidlo (nejméně nájem plus
                         energie, rozdíl z naší odměny), které pr6_note nese už od 2. 9. 2026. */}
-                    {k === "pr6"
-                      ? <><span className="text-foreground">{t(lang, "g_title1")}{t(lang, "g_title2")}</span> {t(lang, "pr6_note")}</>
-                      : t(lang, `${k}_note` as const)}
+                    {/* 20. 10. 2026: tučný úvod (g_title1+2 + dlouhá pr6_note) říkal
+                        totéž co kroky pod ním, dvakrát. Zbyla jedna věta; mechaniku
+                        nese tok 01 → 02 → 03. */}
+                    {t(lang, `${k}_note` as const)}
                   </dd>
                   {k === "pr6" && (
-                    /* Tři kroky garance: posouzení, minimum ve smlouvě, výsledek pod minimem. */
-                    <dd className="m-0 mt-5 grid sm:grid-cols-3 gap-y-4 sm:gap-x-8">
-                      {G_STEPS.map(({ title, desc }, i) => (
-                        <Reveal key={title} delay={stagger(i, 0.06)}>
-                          <p className="font-display text-[15px] font-semibold text-foreground mb-1 leading-snug">
-                            <span className="text-gold-deep tnum mr-2">{i + 1}.</span>
-                            {t(lang, title)}
-                          </p>
-                          <p className="font-body text-[13.5px] text-muted-foreground leading-relaxed text-pretty">
-                            {t(lang, desc)}
-                          </p>
-                        </Reveal>
-                      ))}
+                    /* 20. 10. 2026: kroky garance jako vizuální tok 01 → 02 → 03,
+                       čitelný za pár vteřin: velká zlatá serifová čísla, tenká zlatá
+                       linka mezi nimi, krok 03 (pointa) o stupeň silnější. Žádné
+                       karty, rámečky ani stíny; na telefonu kroky pod sebou a linka
+                       pokračuje svisle. */
+                    <dd className="m-0 mt-8 md:mt-10">
+                      <ol className="list-none m-0 p-0 grid sm:grid-cols-3 sm:gap-x-8">
+                        {G_STEPS.map(({ title, desc }, i) => {
+                          const last = i === G_STEPS.length - 1;
+                          return (
+                            <Reveal as="li" key={title} delay={stagger(i, 0.07)} className="flex sm:block gap-4">
+                              {/* Číslo + spojnice: vodorovná od sm, na telefonu svislá pod číslem. */}
+                              <div className="flex flex-col items-center sm:flex-row sm:items-center sm:gap-3 shrink-0 sm:mb-3">
+                                <span
+                                  aria-hidden="true"
+                                  className={`font-display tnum font-semibold leading-none text-[30px] md:text-[36px] ${
+                                    last ? "text-gold-deep" : "text-gold-deep/60"
+                                  }`}
+                                >
+                                  0{i + 1}
+                                </span>
+                                {!last && (
+                                  <>
+                                    <span aria-hidden="true" className="hidden sm:flex flex-1 items-center min-w-0">
+                                      <span className="h-px flex-1 bg-gradient-to-r from-gold/45 to-gold/15" />
+                                      <ChevronRight className="w-3.5 h-3.5 -ml-1 text-gold/50 shrink-0" strokeWidth={1.8} />
+                                    </span>
+                                    <span aria-hidden="true" className="sm:hidden w-px flex-1 bg-gradient-to-b from-gold/45 to-gold/15 mt-2.5" />
+                                  </>
+                                )}
+                              </div>
+                              <div className={last ? "sm:mt-0" : "pb-7 sm:pb-0"}>
+                                <p className="font-display text-[16px] md:text-[17px] font-semibold text-foreground leading-snug text-balance">
+                                  {t(lang, title)}
+                                </p>
+                                <p
+                                  className={`mt-1.5 font-body text-[13.5px] leading-relaxed text-pretty max-w-[30ch] ${
+                                    last ? "text-foreground/85" : "text-muted-foreground"
+                                  }`}
+                                >
+                                  {t(lang, desc)}
+                                </p>
+                              </div>
+                            </Reveal>
+                          );
+                        })}
+                      </ol>
                     </dd>
                   )}
                 </div>
