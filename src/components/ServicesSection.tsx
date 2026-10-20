@@ -116,9 +116,12 @@ const ServicesSection = () => {
           ))}
         </div>
 
+        {/* 20. 10. 2026 (zadání V.): about_p3 je teď payoff celé sekce („Tất cả
+            những việc này, Antam lo.“ / „Tohle všechno bereme na sebe.“), proto
+            display řez nad zlatým vlasem jako u položek, ne tělový odstavec. */}
         {t(lang, "about_p3") && (
-          <Reveal delay={0.18} className="max-w-prose mt-10 md:mt-12">
-            <p className="font-body text-[15px] md:text-base text-primary-foreground/90 leading-relaxed text-pretty">
+          <Reveal delay={0.18} className="mt-10 md:mt-12 pt-6 border-t border-gold/25">
+            <p className="font-display text-[19px] md:text-[22px] font-medium text-primary-foreground leading-snug text-pretty">
               {t(lang, "about_p3")}
             </p>
           </Reveal>

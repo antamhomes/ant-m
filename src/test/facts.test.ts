@@ -121,23 +121,24 @@ describe("odměna za správu", () => {
 });
 
 describe("ceník", () => {
-  it("vzorový tok peněz v ceníku sedí matematicky (účet − úklid, 70/30)", () => {
-    // Vzor je 90 000 Kč na účtu (rozhodnutí majitele 29. 8. 2026). Test nehlídá
-    // konkrétní částku, ale aritmetiku: kdyby se vzor znovu měnil, musí sedět.
-    const num = (v: string) => Number(strip(v).replace(/[^0-9]/g, ""));
-    for (const dict of [cs, vi]) {
-      const bank = num(dict.pr1_flow1_v);
-      const cleaning = num(dict.pr1_flow2_v);
-      const owner = num(dict.pr1_flow4_v);
-      const fee = num(dict.pr1_flow5_v);
-      const net = bank - cleaning;
-      expect(bank).toBeGreaterThan(0);
-      expect(owner).toBe(Math.round(net * 0.7));
-      expect(fee).toBe(Math.round(net * 0.3));
-      expect(owner + fee).toBe(net);
+  it("vzorový výpočet z ceníku odešel a nevrací se (počítá kalkulačka)", () => {
+    // PŘEPSÁNO 20. 10. 2026 (zadání V., ceník v2): sekce nese jen tři fakta —
+    // 70 % majiteli, 30 % Antam a jen z výnosu, 25 000 Kč jednorázově. Vzorový
+    // tok peněz (90 000 − 9 000, 56 700) odešel celý; počítání má kalkulačka.
+    // Test dřív hlídal aritmetiku vzoru, teď hlídá, že se vzor nevrátí.
+    // pr1_note se nikde nerenderuje a schválně se tu nehlídá: větu o konečné
+    // odměně z něj čte test „je konečná“ výš.
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const k of [
+        "pr1_flow1", "pr1_flow1_v", "pr1_flow2", "pr1_flow2_v",
+        "pr1_flow3", "pr1_flow3_v", "pr1_flow4", "pr1_flow4_v",
+        "pr1_flow5", "pr1_flow5_v", "pr1_flow_note", "pr1_example_label",
+        "pr1_result_label", "pr1_result_v", "pr1_result_sub", "pr1_setup_line",
+      ] as const)
+        expect(strip(dict[k]), `${lang}.${k} zůstává prázdné`).toBe("");
     }
-    expect(strip(cs.pr1_note)).toMatch(/90 000/);
-    expect(strip(vi.pr1_note)).toMatch(/90 000/);
+    const pricing = readFileSync("src/components/PricingSection.tsx", "utf8");
+    expect(pricing, "komponenta vzorové klíče už nečte").not.toMatch(/pr1_flow|pr1_result|pr1_example/);
   });
 
   it("stará doporučovací mechanika (15 000 zpět, 1 % z výnosu) zmizela", () => {
@@ -196,10 +197,17 @@ describe("ceník", () => {
   });
 
   // QA-01 (1. 9. 2026): viditelný lead ceníku nesmí působit, že jednorázové
-  // uvedení do provozu neexistuje. 25 000 Kč je v pr2_price; od 1. 9. i nahoře.
+  // uvedení do provozu neexistuje. Od 20. 10. 2026 (ceník v2) fakt nese vlastní
+  // vždy viditelný řádek pr1_setup_* nad rozbalovacím ceníkem, ne pricing_desc.
   it("viditelný lead ceníku přiznává jednorázové uvedení do provozu", () => {
-    expect(strip(cs.pricing_desc)).toMatch(/25 000 Kč/);
+    expect(strip(cs.pr1_setup_price)).toMatch(/25 000 Kč/);
+    expect(strip(vi.pr1_setup_price)).toMatch(/25 000 Kč/);
     expect(strip(cs.pricing_desc)).not.toMatch(/[Žž]ádné fixní/);
+    const pricing = readFileSync("src/components/PricingSection.tsx", "utf8");
+    expect(
+      pricing.indexOf('"pr1_setup_name"'),
+      "řádek s poplatkem je vidět bez rozbalení <details>",
+    ).toBeLessThan(pricing.indexOf("<details"));
   });
 
   it("netvrdí, že vstupní poplatky neexistují", () => {
@@ -217,8 +225,9 @@ describe("garance výnosu", () => {
     expect(cs.g_desc).toBeTruthy();
     expect(vi.g_desc).toBeTruthy();
     // Definice minima (nájem + energie) se z českého leadu garance přesunula
-    // níž, do řádku ceníku a do FAQ. Test hlídá ten fakt, ne místo, kde stojí.
-    for (const key of ["pr6_note", "faq18_a"] as const) {
+    // níž. Od 20. 10. 2026 je pr6_note jedna věta o smlouvě (zadání V.,
+    // kroky 01–03) a definici nese FAQ. Test hlídá fakt, ne místo, kde stojí.
+    for (const key of ["faq18_a"] as const) {
       expect(strip(cs[key]), `cs.${key}`).toMatch(/nájem/);
       expect(strip(cs[key]), `cs.${key}`).toMatch(/energie/);
     }
@@ -267,7 +276,8 @@ describe("garance výnosu", () => {
       for (const k of ["pr6_note", "faq18_a"] as const) expect(strip(d[k]).length).toBeGreaterThan(20);
       for (const k of ["g_step1", "g_step2", "g_step3"] as const) expect(strip(d[k]).length).toBeGreaterThan(10);
     }
-    expect(strip(cs.pr6_note)).toMatch(/nájem plus energie/);
+    // pr6_note je od 20. 10. 2026 jedna věta o smlouvě; definici nese FAQ.
+    expect(strip(cs.pr6_note)).toMatch(/smlouvě/);
     expect(strip(cs.faq18_a)).toMatch(/plus energie/);
     const index = readFileSync("src/pages/Index.tsx", "utf8");
     expect(index, "Garance už není samostatná sekce").not.toMatch(/import\("@\/components\/GaranceSection"\)|<GaranceSection/);
@@ -936,6 +946,28 @@ describe("model výnosu", () => {
         }
         expect(Math.round(r.market.occupancy * 100)).toBe(marketOccPct(loc as MeasuredLocation, band as Band));
       }
+  });
+
+  it("tržní kotva je čistý trh a potenciál je přesně kotva × faktor (20. 10. 2026)", () => {
+    // Zadání V. (kalkulačka v2): jediné pole, které se smí veřejně popisovat
+    // jako „průměr trhu“, je marketAnchor — táž konfigurace bytu a tytéž
+    // srážky jako antam, ale BEZ operátorského faktoru. Identita
+    // antam = kotva × faktor dělá rozdíl obou čísel přezkoumatelným: je to
+    // celý efekt správy a nic jiného. r.market/low faktor nese dál (graf,
+    // lead, underwriting) a veřejně se jako průměr trhu popisovat nesmí.
+    for (const loc of Object.keys(MARKET_STR) as MeasuredLocation[])
+      for (const size of ["1kk", "2kk", "3kk", "4kk"] as const) {
+        const r = ownerMonthly(loc, size, { m2: typicalArea(loc, size) });
+        if (!r.supported) throw new Error(`${loc} ${size}`);
+        const k = operatorFactor(loc, "public");
+        expect(r.antam.gross / r.marketAnchor.gross, `${loc} ${size}`).toBeCloseTo(k, 3);
+        expect(r.marketAnchor.net, `${loc} ${size}: kotva nad potenciálem`).toBeLessThanOrEqual(r.antam.net);
+        expect(r.marketAnchor.occupancy).toBe(r.antam.occupancy);
+      }
+    // a web i MCP kotvu opravdu používají
+    expect(readFileSync("src/components/CalculatorSection.tsx", "utf8")).toContain("calc_market_anchor");
+    const mcp = readFileSync("src/lib/mcp/tools/estimate-yield.ts", "utf8");
+    expect(mcp, "marketAverage v MCP = čistá kotva").toContain("marketAnchor");
   });
 
   /** Kalibrační portfolio: skutečné plochy (PortfolioSection) a skutečný výsledek

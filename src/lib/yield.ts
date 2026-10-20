@@ -1244,6 +1244,17 @@ export type OwnerMonthly = {
   market: Split;
   /** vršek rozpětí: vyšší konfigurace téhož bytu × operátorský faktor */
   antam: Split;
+  /**
+   * ČISTÁ TRŽNÍ KOTVA (20. 10. 2026, zadání V.): táž konfigurace bytu a tytéž
+   * srážky jako `antam`, ale BEZ operátorského faktoru. Odpovídá na otázku
+   * „co by majiteli vydělal průměrný byt v okolí za stejných podmínek“ a je
+   * přímo ověřitelná proti PriceLabs (RevPAR × dny × dostupnost → srážky).
+   * `antam.net = marketAnchor.net × faktor` drží identicky (hlídá test).
+   * POZOR: `market`/`low` NEJSOU čistý trh — nesou faktor i prezentační
+   * spodek a žijí dál kvůli underwritingu, grafu a leadům. Kotva je jediné
+   * pole, které se smí veřejně popisovat slovy „průměr trhu“.
+   */
+  marketAnchor: Split;
   /** true = pásmo dopočítané z menšího pásma čtvrti × celoměstský poměr */
   derived: boolean;
   /** orientační kapacita z dispozice (přesně se určí při prohlídce) */
@@ -1337,8 +1348,11 @@ export function ownerMonthly(
   const k = operatorFactor(location, scope);
   const market = split(Math.round(lowGross * k * AVAILABILITY), marketOcc);
   const antam = split(Math.round(highGross * k * AVAILABILITY), marketOcc);
+  // Kotva = highGross bez faktoru: stejné překlopení pásma (plná váha w),
+  // žádný prezentační spodek. Potenciál s Antam je pak PŘESNĚ kotva × faktor.
+  const marketAnchor = split(Math.round(highGross * AVAILABILITY), marketOcc);
   return {
-    supported: true, band, adr, derived, guests, market, antam,
+    supported: true, band, adr, derived, guests, market, antam, marketAnchor,
     low: market.net, high: antam.net, mid: Math.round((market.net + antam.net) / 2),
     trace: { base: cfg.base, next: nextCell ? cfg.next ?? null : null, w, ctvrt: usedCtvrt, factor: k, availability: AVAILABILITY,
       config: observed ? { band: observed.band, evidence: observed.evidence } : null },

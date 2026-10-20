@@ -526,6 +526,19 @@ const CalculatorSection = () => {
                           {t(lang, "calc_month_suffix")}
                         </span>
                       </p>
+                      {/* TRŽNÍ KOTVA (20. 10. 2026, zadání V.): týž byt a tytéž srážky,
+                          jen bez operátorského faktoru (r.marketAnchor) — číslo přímo
+                          ověřitelné proti PriceLabs. Z headline dělá čitelné rozpětí
+                          trh → Antam; rozdíl je změřený efekt správy. Skryje se, když
+                          se obě čísla po zaokrouhlení na tisíce potkají. */}
+                      {Math.round(result.r.marketAnchor.net / 1000) < Math.round(result.r.high / 1000) && (
+                        <p className="mt-1.5 font-body text-[13px] text-primary-foreground/70 tnum">
+                          {t(lang, "calc_market_anchor").replace(
+                            "{v}",
+                            `${(Math.round(result.r.marketAnchor.net / 1000) * 1000).toLocaleString("cs-CZ")} Kč`,
+                          )}
+                        </p>
+                      )}
                       {/* ŘÁDEK 2 (patch 2): benefit v Kč za rok A násobek v jedné větě,
                           „+X Kč ročně · přibližně Y× dlouhodobý nájem (Z Kč)“.
                           Samostatný blok „Dlouhodobý pronájem“ i šipka „→ přibližně 2× více“

@@ -701,3 +701,58 @@ z auditu 2. 9. 2026: tržba po slevách, Booking přepočtený měsíčním kurz
 
 Do té doby platí to, co je popsané výš: veřejně beze změny, reálné
 případy přes interní `ObservedConfig` po prohlídce.
+
+## 6. Tržní kotva a audit PriceLabs přístupu (20. 10. 2026, zadání V.)
+
+### Co se změnilo v modelu
+
+`OwnerMonthly` nese nové pole `marketAnchor`: táž konfigurace bytu (stejné
+překlopení pásma, plná váha w) a tytéž srážky (provize platformy, 70/30),
+ale **bez operátorského faktoru**. Je to jediné číslo, které se smí veřejně
+popisovat slovy „průměr trhu“, a drží identita `antam.gross =
+marketAnchor.gross × faktor` (hlídá facts.test.ts). Karta kalkulačky ho
+ukazuje pod headline („Průměrný byt v okolí, při stejných podmínkách: ~X“),
+MCP `estimate_rental_yield` ho hlásí jako `marketAverage` — do té doby obě
+místa jako „průměr trhu“ popisovala `r.market`, které faktor neslo taky.
+
+Headline (potenciál s Antam), `low/high/mid`, graf Horizont, leady ani
+interní underwriting (`/nastroj`, garance) se NEMĚNÍ ani o korunu. Kotva
+je aditivní: dělá z headline čitelné rozpětí trh → Antam, kde rozdíl je
+přesně změřený/deklarovaný efekt správy a nic jiného.
+
+### Audit: co PriceLabs MCP dnes reálně umí (ověřeno živými voláními)
+
+1. **market_research (custom OSM geometrie)** — zdroj všech okresních a
+   čtvrťových dat. Měsíční occ/ADR/RevPAR/avg_revenue/active_listings/
+   median_bw/median_los + YoY. Kvóta ~20 dotazů/den, každý pull vyžaduje
+   ruční výběr geometrie (SOP v docs/pricelabs-pull.md). Beze změny.
+2. **get_neighbourhood_data (DS API, per vlastní listing)** — percentily
+   nabídkových cen okolních comps po ložnicích (p25/p50/p75/p90 + počet),
+   budoucí tržní obsazenost vs. STLY, price surge data. Ověřeno na 402:
+   2BR p50 3 954 Kč (n=245) proti našemu Nové Město 2BR ADR 4 031 (−2 %)
+   — nezávislá validace okresních dat, zdarma mimo kvótu market_research.
+3. **get_listing_neighborhood_market (CAPI, per vlastní listing)** —
+   measíční řady Nearby Listings po ložnicích od 10/2024 do běžícího
+   měsíce (revenue, booked/available days, booking window, LOS, 7-day
+   pickup) + Future Percentile Prices (p25/50/75/90 + median booked price)
+   13 měsíců dopředu. Jediný zdroj ČERSTVÝCH měsíců (8–10/2026) bez kvóty,
+   ale jen kolem vlastních bytů (jiný vzorek než oficiální polygon okresu,
+   do modelu se nemíchá bez samostatného rozhodnutí).
+4. **get_account_review_report / get_listing_performance_metrics /
+   get_pms_reservations** — výkon vlastních bytů; vstup pro přeměření
+   OPERATOR_EVIDENCE, až bude nové tržní okno (viz níž).
+
+### Další kroky (vyžadují rozhodnutí/účast člověka, NEJSOU v patchi)
+
+1. **Refresh okna na 2025_10..2026_09** (dva nové uzavřené měsíce). Rozsah:
+   10 okresů × 2–4 pásma + 13 čtvrtí × 3 pásma ≈ 60+ pullů ⇒ ~3 dny kvóty,
+   každá geometrie chce ruční potvrzení podle SOP. Po refreshi zároveň
+   přeměřit OPERATOR_EVIDENCE na novém okně (P3 Garden APT a P4/B-dům už
+   budou mít celou sezónu) — teprve tím se pohnou faktory a váhy.
+2. **Kalibrace odvozených 3BR** (P3/P7/P4 tenká měření ~20 % nad odvozeným)
+   — otevřený bod §4, podle pravidel repa jen se samostatnou analýzou a
+   předregistrací.
+3. **Percentilový strop potenciálu**: až budou percentily (DS API) i pro
+   okresní geometrie (dnes jen kolem vlastních bytů), dá se horní konec
+   rozpětí kotvit na měřený percentil místo faktoru. Dnes neproveditelné
+   bez nových dat; zapsáno, aby se to nevymýšlelo znovu.

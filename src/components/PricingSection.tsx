@@ -39,7 +39,7 @@ const MORE_ROWS = ["pr2", "pr3", "pr4", "pr5", "pr8"] as const;
 
 const PricingSection = () => {
   const { lang } = useLanguage();
-  const flows = ([1, 2, 3, 4, 5] as const).filter((n) => t(lang, `pr1_flow${n}` as const));
+  const core = ([1, 2, 3] as const);
 
   return (
     <section id="cenik" className="section-cont chapter-edge bg-secondary scroll-mt-20">
@@ -58,80 +58,49 @@ const PricingSection = () => {
           </h2>
         </Reveal>
 
-        {/* 20. 10. 2026 (zadání V.): sekce má říct „70 % je vaše" a dovést oko
-            k částce pro majitele. Vzorový měsíc stojí vpravo jako výpis: tržba,
-            úklid, čistý výnos a pod nimi výplata majitele jako největší částka
-            sekce. 30 % je přiznané větou a výčtem, co všechno obsahuje;
-            v korunách se nevyčísluje, aby vizuálně nesoupeřilo s příjmem
-            majitele. Žádné karty, bary ani koláče, jen typografie a linky. */}
+        {/* 20. 10. 2026 v2 (zadání V.): žádný vzorový výpočet, kalkulačku má
+            stránka jinde. Sekce nese jen tři fakta: 70 % majiteli, 30 % Antam
+            (a jen z výnosu), 25 000 Kč jednorázově. Těžiště 30 % je obchodní
+            provoz (průzkum trhu, cenová strategie, optimalizace výnosu),
+            každodenní servis je druhý plán. Bez koláčů, barů a karet; Antamova
+            odměna se nikdy nevyčísluje v korunách. */}
         <div className="max-w-5xl">
           <Reveal delay={0.05}>
-            <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:gap-x-16 xl:gap-x-24 lg:items-start">
+            <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-x-20 xl:gap-x-28 lg:items-start">
+              {/* Levá: druhá strana dělení, jedna věta podmínky. Víc vzduchu než textu. */}
               <div>
-                <p className="font-display text-muted-foreground leading-[1.35] text-[clamp(1.1rem,1.6vw,1.35rem)] text-balance tnum">
+                <p className="font-display text-foreground leading-[1.3] text-[clamp(1.25rem,1.9vw,1.6rem)] tnum">
                   {t(lang, "pricing_split2")}
                 </p>
-                <p className="mt-4 font-body text-[15.5px] md:text-base text-muted-foreground leading-relaxed max-w-[58ch]">
+                <p className="mt-2.5 font-body text-[15.5px] md:text-base text-muted-foreground leading-relaxed">
                   {t(lang, "pricing_desc")}
                 </p>
-                {/* Co ve 30 % je: nahrazuje provozní práci majitele. Sekundární;
-                    na desktopu doplňuje levý sloupec, na mobilu až za výplatou. */}
-                <div className="hidden lg:block mt-12 pt-5 border-t border-border max-w-[46ch]">
-                  <p className="font-body text-[13.5px] font-medium text-foreground/85 tnum">{t(lang, "pr1_incl_title")}</p>
-                  <p className="mt-1.5 font-body text-[13px] text-muted-foreground leading-relaxed">{t(lang, "pr1_incl_items")}</p>
-                </div>
               </div>
 
-              <div className="mt-10 lg:mt-1">
-                <p className="font-body text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
-                  {t(lang, "pr1_example_label")}
+              {/* Pravá: co ve 30 % je. Napřed obchodní práce, pak provoz. */}
+              <div className="mt-12 lg:mt-1">
+                <h3 className="font-display text-[20px] md:text-[22px] font-semibold text-foreground leading-snug text-balance tnum max-w-[20ch]">
+                  {t(lang, "pr1_incl_title")}
+                </h3>
+                <ul className="mt-5 list-none m-0 p-0 border-t border-foreground/25">
+                  {core.map((n) => (
+                    <li key={n} className="border-b border-border py-3 font-display text-[17px] md:text-[18px] font-semibold text-foreground leading-snug">
+                      {t(lang, `pr1_core_${n}` as const)}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-4 font-body text-[13px] text-muted-foreground leading-relaxed max-w-[52ch]">
+                  {t(lang, "pr1_incl_items")}
                 </p>
-                <dl className="mt-3 border-t border-foreground/25">
-                  {flows.map((n) => {
-                    const net = n === 3;
-                    return (
-                      <div
-                        key={n}
-                        className={`flex items-baseline justify-between gap-6 py-3.5 tnum ${
-                          net ? "border-b border-foreground/25" : "border-b border-border"
-                        }`}
-                      >
-                        <dt className={`font-body text-[14.5px] sm:text-[15px] ${net ? "font-medium text-foreground" : "text-muted-foreground"}`}>
-                          {t(lang, `pr1_flow${n}` as const)}
-                        </dt>
-                        <dd
-                          className={`m-0 whitespace-nowrap font-display ${
-                            net ? "text-[21px] sm:text-[23px] font-semibold text-foreground" : "text-[18px] sm:text-[20px] text-foreground/80"
-                          }`}
-                        >
-                          {t(lang, `pr1_flow${n}_v` as const)}
-                        </dd>
-                      </div>
-                    );
-                  })}
-                </dl>
-                {/* Výplata majitele: pointa sekce a největší peněžní číslo na stránce.
-                    Antamových 30 % se v korunách neukazuje; sazba je řečená výš. */}
-                <div className="mt-8 md:mt-9">
-                  <p className="font-body text-[11px] uppercase tracking-[0.16em] font-semibold text-gold-deep">
-                    {t(lang, "pr1_result_label")}
-                  </p>
-                  <p className="m-0 mt-2.5 font-display font-semibold text-gold-deep tnum leading-none whitespace-nowrap text-[46px] sm:text-[54px] md:text-[58px]">
-                    {t(lang, "pr1_result_v")}
-                  </p>
-                  <p className="mt-2.5 font-body text-[13.5px] text-muted-foreground tnum">{t(lang, "pr1_result_sub")}</p>
-                </div>
-              </div>
-
-              <div className="lg:hidden mt-9 pt-5 border-t border-border">
-                <p className="font-body text-[13.5px] font-medium text-foreground/85 tnum">{t(lang, "pr1_incl_title")}</p>
-                <p className="mt-1.5 font-body text-[13px] text-muted-foreground leading-relaxed">{t(lang, "pr1_incl_items")}</p>
               </div>
             </div>
 
-            {/* Jednorázové uvedení do provozu: přiznané, ale potichu; detail nese
-                rozbalovací ceník níž. Nesmí soupeřit s měsíčním příjmem majitele. */}
-            <p className="mt-9 font-body text-[13px] text-muted-foreground tnum">{t(lang, "pr1_setup_line")}</p>
+            {/* Jednorázové uvedení do provozu: třetí fakt, nejnižší priorita,
+                ale na očích. Detail nese rozbalovací ceník níž. */}
+            <div className="mt-12 md:mt-14 pt-5 border-t border-border flex flex-wrap items-baseline gap-x-5 gap-y-1">
+              <p className="m-0 font-body text-[13.5px] text-foreground/85">{t(lang, "pr1_setup_name")}</p>
+              <p className="m-0 font-body text-[13px] text-muted-foreground tnum">{t(lang, "pr1_setup_price")}</p>
+            </div>
           </Reveal>
         </div>
 
