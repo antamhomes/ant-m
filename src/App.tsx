@@ -36,6 +36,16 @@ const App = () => {
     );
   }
 
+  // Průvodce příjezdem je pro hosty s odkazem — závoru webu obchází, aby k němu
+  // hosté s kufrem na ulici nemuseli zadávat heslo webu.
+  if (typeof window !== "undefined" && isGuidePath(window.location.pathname.toLowerCase())) {
+    return (
+      <Suspense fallback={<div className="px-5 py-16 text-sm text-neutral-400">Načítám…</div>}>
+        <Guide />
+      </Suspense>
+    );
+  }
+
   if (!unlocked) return <SiteLock onUnlock={() => setUnlocked(true)} />;
 
   // Při build-time prerenderu (entry-ssg) není window; cestu dodá globál.
