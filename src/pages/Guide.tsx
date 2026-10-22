@@ -62,7 +62,14 @@ const Guide = () => {
       {/* Hlavička */}
       <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur">
         <div className="mx-auto flex max-w-lg items-center justify-between px-5 py-3.5">
-          <Wordmark on="light" size="sm" />
+          <div className="flex items-center gap-3">
+            <Wordmark on="light" size="sm" />
+            {apartment && (
+              <span className="rounded-full border border-gold/60 px-2.5 py-0.5 text-xs font-semibold text-primary">
+                Byt {apartment.label}
+              </span>
+            )}
+          </div>
           {/* Přepínač jazyků — zatím jen CZ; další viz src/guide/i18n */}
           <div className="flex gap-1" role="group" aria-label="Jazyk">
             {Object.keys(GUIDE_LANGS).map((lang) => (

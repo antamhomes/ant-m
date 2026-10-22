@@ -102,7 +102,7 @@ const ArrivalWizard = ({ apartment, t, onOpenInApartment }: Props) => {
 
       <div className="space-y-5">
         <h2 className="font-display text-2xl text-primary">{step.title}</h2>
-        <Body lines={step.body} missing={t.nav.textMissing} />
+        {step.id !== "done" && <Body lines={step.body} missing={t.nav.textMissing} />}
 
         {step.showNavigate && (
           <a
