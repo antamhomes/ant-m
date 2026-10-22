@@ -259,8 +259,10 @@ const ContactSection = () => {
     }
   };
 
+  // 20. 10. 2026 (audit, bod 9): formulář pokračuje v myšlence sekce Jak začít
+  // nad ním, ne nová kapitola. section-cont zmenšuje horní odsazení o ~třetinu.
   return (
-    <section id="kontakt" className="section bg-secondary scroll-mt-20">
+    <section id="kontakt" className="section-cont bg-secondary scroll-mt-20">
       {/* Viz kalkulačka: hlavička zůstává nad formulářem ve stejném sloupci. */}
       <div className="container-prose md:max-w-[calc(46rem+3rem)]">
         <Reveal className="section-head">
