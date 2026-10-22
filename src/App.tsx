@@ -9,6 +9,10 @@ import NotFound from "./pages/NotFound.tsx";
 const Nastroj = lazy(() => import("./pages/Nastroj.tsx"));
 const TOOL_PATHS = new Set(["/nastroj", "/nastroj/", "/admin/nastroj", "/admin/nastroj/"]);
 
+/** Průvodce příjezdem pro hosty (/guide, /guide/b01…b05). Vlastní chunk. */
+const Guide = lazy(() => import("./pages/Guide.tsx"));
+const isGuidePath = (p: string) => p === "/guide" || p.startsWith("/guide/");
+
 /**
  * Two pages (Czech "/" and Vietnamese "/vn") plus a 404, so no router library:
  * the language provider owns the URL. Kept deliberately small: no query client,
