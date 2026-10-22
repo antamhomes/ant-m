@@ -8,7 +8,6 @@ import byt2 from "@/assets/byt-2.jpg.asset.json";
 import byt3 from "@/assets/byt-3.jpg.asset.json";
 import byt4 from "@/assets/byt-4.jpg.asset.json";
 import byt5 from "@/assets/byt-5.jpg.asset.json";
-import byt6 from "@/assets/byt-6.jpg.asset.json";
 
 /** Results shown on the cards: owner's monthly income, rounded to thousands, plus occupancy.
  *  Method confirmed by the owner 28. 8. 2026: take what the platform actually pays out (already net
@@ -23,8 +22,10 @@ import byt6 from "@/assets/byt-6.jpg.asset.json";
  *  first stay (`since`).
  *  `ratio` (patch 127) is COMPUTED, not typed: owner income / rentFor(district, actual m²),
  *  the same function the calculator uses (Sreality medians 8/2026, district level × citywide
- *  size curve; Deloitte Q2/2026 kept as a test anchor). Mladá Boleslav has no rent source,
- *  so Klement shows no multiple (audit 28. 8., finding 5).
+ *  size curve; Deloitte Q2/2026 kept as a test anchor).
+ *  Klement (Mladá Boleslav): správa skončila 10/2026, ale měřená karta ZŮSTÁVÁ se
+ *  stejnými čísly jako historický výsledek (rozhodnutí V. 22. 10. 2026). Druhá karta
+ *  „od 8/2026" bez čísel odešla: slibovala výsledky po sezóně, která už nepřijde.
  *  Market (patch 127): ONE source with the calculator (MARKET_OCC from the PriceLabs district
  *  dataset, 12 months, bedroom band of the flat); the old 90-day comp-set probes are gone, so
  *  the page no longer shows two different "market" numbers for one district.
@@ -55,7 +56,6 @@ const items: Item[] = [
   { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", m2: 110, guests: 13, newSince: "7/2026" },
   { src: byt1.url, name: "Secret Garden Studio\u00a0I", loc: "Praha 4", m2: 22, guests: 4, newSince: "7/2026" },
   { src: byt2.url, name: "Secret Garden Studio\u00a0II", loc: "Praha 4", m2: 22, guests: 4, newSince: "7/2026" },
-  { src: byt6.url, name: "Klement apartment", loc: "Mladá Boleslav", m2: 80, guests: 8, newSince: "8/2026" },
 ];
 
 const fmtCzk = (n: number) => n.toLocaleString("cs-CZ").replace(/\s/g, "\u00a0");

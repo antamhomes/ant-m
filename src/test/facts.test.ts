@@ -225,8 +225,8 @@ describe("garance výnosu", () => {
     expect(cs.g_desc).toBeTruthy();
     expect(vi.g_desc).toBeTruthy();
     // Definice minima (nájem + energie) se z českého leadu garance přesunula
-    // níž. Od 20. 10. 2026 je pr6_note jedna věta o smlouvě (zadání V.,
-    // kroky 01–03) a definici nese FAQ. Test hlídá fakt, ne místo, kde stojí.
+    // níž. Od 22. 10. 2026 nese mechaniku pr6_note (minimum do smlouvy, rozdíl
+    // z odměny) a definici nese FAQ. Test hlídá fakt, ne místo, kde stojí.
     for (const key of ["faq18_a"] as const) {
       expect(strip(cs[key]), `cs.${key}`).toMatch(/nájem/);
       expect(strip(cs[key]), `cs.${key}`).toMatch(/energie/);
@@ -263,27 +263,34 @@ describe("garance výnosu", () => {
     expect(mcp).toEqual(cards);
   });
 
-  it("garance je sloučená do Ceníku: pravidlo a tři kroky, žádná ilustrační dvojice", () => {
-    // Patch 2 (7. 9. 2026, spec §1/§6): samostatná sekce Garance odešla, řádek
-    // „Garance výnosu · v odměně“ v Ceníku nese pravidlo (g_desc) a tři kroky.
-    // Ilustrační 28 000 / 31 500 se už nekreslí: majitel svůj nájem viděl na
-    // kartě a dvojice s cizím bytem mu neříkala nic. Test dřív odvozoval čísla
-    // z rentFor a hlídal jejich shodu; teď hlídá, že se nevrátí.
+  it("garance je v Ceníku jako benefit: mechaniku nese pr6_note, kroky 01–03 odešly", () => {
+    // Patch 2 (7. 9. 2026, spec §1/§6): samostatná sekce Garance odešla do
+    // Ceníku. Ilustrační 28 000 / 31 500 se už nekreslí. PŘEPSÁNO 22. 10. 2026
+    // (zadání V., finální pass ceníku): tok 01 → 02 → 03 zaváděl do sekce druhý
+    // vizuální systém a na mobilu stál výšku. Mechaniku teď nesou dvě věty
+    // v pr6_note (minimum do smlouvy, rozdíl z naší odměny) a vedle garance
+    // stojí krytí škod (pr7) jako druhý benefit. Kroky g_step* a titulek
+    // g_title* se vyprázdnily po vzoru g_num* a test hlídá, že se nevrátí.
     for (const d of [cs, vi]) {
-      for (const k of ["g_num1_value", "g_num2_value", "g_num3_value", "g_num_note"] as const)
+      for (const k of [
+        "g_num1_value", "g_num2_value", "g_num3_value", "g_num_note",
+        "g_title1", "g_title2", "g_step1_title", "g_step1",
+        "g_step2_title", "g_step2", "g_step3_title", "g_step3",
+      ] as const)
         expect(strip(d[k]), `${k} zůstává prázdné`).toBe("");
       // pravidlo minima = nájem + energie zůstává řečené v Ceníku a ve FAQ
       for (const k of ["pr6_note", "faq18_a"] as const) expect(strip(d[k]).length).toBeGreaterThan(20);
-      for (const k of ["g_step1", "g_step2", "g_step3"] as const) expect(strip(d[k]).length).toBeGreaterThan(10);
     }
-    // pr6_note je od 20. 10. 2026 jedna věta o smlouvě; definici nese FAQ.
-    expect(strip(cs.pr6_note)).toMatch(/smlouvě/);
+    // pr6_note od 22. 10. 2026 nese mechaniku: minimum ve smlouvě, rozdíl z odměny.
+    expect(strip(cs.pr6_note)).toMatch(/smlouv/);
+    expect(strip(cs.pr6_note)).toMatch(/odměny/);
     expect(strip(cs.faq18_a)).toMatch(/plus energie/);
     const index = readFileSync("src/pages/Index.tsx", "utf8");
     expect(index, "Garance už není samostatná sekce").not.toMatch(/import\("@\/components\/GaranceSection"\)|<GaranceSection/);
     const pricing = readFileSync("src/components/PricingSection.tsx", "utf8");
-    for (const k of ["g_title1", "pr6_note", "g_step1", "g_step2", "g_step3", "g_cta"]) expect(pricing).toContain(k);
-    expect(pricing, "kotva #garance vede na řádek v Ceníku").toContain('"garance"');
+    for (const k of ['"pr6"', '"pr7"', "g_cta"]) expect(pricing).toContain(k);
+    expect(pricing, "kroky garance se do Ceníku nevrací").not.toMatch(/g_step|G_STEPS/);
+    expect(pricing, "kotva #garance vede na benefit v Ceníku").toContain('"garance"');
   });
 
   // PŘEPSÁNO 2C (1. 9. 2026). Do té doby test vyžadoval JEDEN identický popisek
@@ -1460,6 +1467,8 @@ describe("obsazenost na kartách portfolia", () => {
   });
 
   it("každý byt má rozumnou obsazenost a měřené okno", () => {
+    // 22. 10. 2026: Klement ve správě skončil, ale měřená karta zůstává jako
+    // historický výsledek (rozhodnutí V.), takže měřených bytů je dál šest.
     expect(OCCUPANCY_BY_FLAT.length).toBeGreaterThanOrEqual(6);
     for (const f of OCCUPANCY_BY_FLAT) {
       expect(f.occupancy, f.name).toBeGreaterThan(50);

@@ -988,8 +988,9 @@ export const marketOccPct = (loc: MeasuredLocation, band: Band): number | null =
  * Trh na kartách portfolia: JEDEN zdroj s kalkulačkou (MARKET_STR, 12 měsíců,
  * celá čtvrť, pásmo podle ložnic bytu). Dřív tu bylo 90denní okno comp setů
  * kolem našich listingů (P1 77, P3 73, P5 74), takže stránka měla dvě různá
- * čísla „trhu“ pro tutéž čtvrť. mb = Mladá Boleslav: čtvrťová data nemáme,
- * zůstává PriceLabs comp set 90 dní; jen pro karty, kalkulačka MB nenabízí.
+ * čísla „trhu“ pro tutéž čtvrť. mb = Mladá Boleslav: comp set 90 dní z doby
+ * správy Klementu. Správa skončila 10/2026, karta zůstává jako historický
+ * výsledek (rozhodnutí V. 22. 10. 2026), takže mb drží poslední měřené číslo.
  */
 export const MARKET_OCC = {
   praha1: marketOccPct("praha1", "2BR")!,
@@ -1170,7 +1171,7 @@ export const annualDamageCover = (rooms: number) =>
  * occupancy: z rezervací v Hospitable (byty starší tří měsíců, okno od 46. dne
  * provozu do 31. 7. 2026) — NAMĚŘENÁ ČÍSLA, nesahat.
  * market: MARKET_OCC lokality, od patche 127 z téhož datasetu jako kalkulačka
- * (celá čtvrť, 12 měsíců, pásmo podle ložnic bytu); MB comp set 90 dní.
+ * (celá čtvrť, 12 měsíců, pásmo podle ložnic bytu).
  * bedrooms z Hospitable (30. 8. 2026).
  * Byt 302 (Praha 1) měří 93 % proti trhu 77 %, ale publikovaný není.
  * Karty v PortfolioSection musí ukazovat stejná čísla; hlídá to facts.test.ts.
@@ -1182,7 +1183,7 @@ export const OCCUPANCY_BY_FLAT: {
   { name: "Modern Museum View Apartment",  loc: "Praha 1", kat: "Nové Město",        m2: 52, bedrooms: 2, occupancy: 94, market: MARKET_OCC.praha1, days: 318 },
   { name: "Modern AC Apartment",           loc: "Praha 3", kat: "Žižkov",        m2: 55, bedrooms: 2, occupancy: 96, market: MARKET_OCC.praha3, days: 139 },
   { name: "Moderní apartmán se zahradou",  loc: "Praha 3", kat: "Žižkov",        m2: 60, bedrooms: 2, occupancy: 85, market: MARKET_OCC.praha3, days: 54 },
-  { name: "Klement apartment s terasou",   loc: "Mladá Boleslav", kat: "Mladá Boleslav", m2: 85, bedrooms: 2, occupancy: 91, market: MARKET_OCC.mb, days: 54 },
+  { name: "Klement apartment s terasou",   loc: "Mladá Boleslav", kat: "Mladá Boleslav", m2: 85, bedrooms: 2, occupancy: 91, market: MARKET_OCC.mb, days: 54 },
   { name: "My Mozart studio",                loc: "Praha 5", kat: "Smíchov",        m2: 40, bedrooms: 1, occupancy: 97, market: MARKET_OCC.praha5, days: 113 },
 ];
 
