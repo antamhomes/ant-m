@@ -694,7 +694,7 @@ var OCCUPANCY_BY_FLAT = [
   { name: "Modern Museum View\xA0Apartment", loc: "Praha 1", kat: "Nov\xE9 M\u011Bsto", m2: 52, bedrooms: 2, occupancy: 94, market: MARKET_OCC.praha1, days: 318 },
   { name: "Modern AC\xA0Apartment", loc: "Praha 3", kat: "\u017Di\u017Ekov", m2: 55, bedrooms: 2, occupancy: 96, market: MARKET_OCC.praha3, days: 139 },
   { name: "Modern\xED apartm\xE1n se\xA0zahradou", loc: "Praha 3", kat: "\u017Di\u017Ekov", m2: 60, bedrooms: 2, occupancy: 85, market: MARKET_OCC.praha3, days: 54 },
-  { name: "Klement apartment s\xA0terasou", loc: "Mlad\xE1 Boleslav", kat: "Mlad\xE1 Boleslav", m2: 85, bedrooms: 2, occupancy: 91, market: MARKET_OCC.mb, days: 54 },
+  { name: "Klement apartment s terasou", loc: "Mlad\xE1 Boleslav", kat: "Mlad\xE1 Boleslav", m2: 85, bedrooms: 2, occupancy: 91, market: MARKET_OCC.mb, days: 54 },
   { name: "My Mozart studio", loc: "Praha 5", kat: "Sm\xEDchov", m2: 40, bedrooms: 1, occupancy: 97, market: MARKET_OCC.praha5, days: 113 }
 ];
 var SIZE_PRESET = {
@@ -888,10 +888,10 @@ var apartments = [
   { name: "Modern Museum View Apartment (405)", location: "Praha 1", maxGuests: 8, floorAreaM2: 52, ownerMonthlyCzk: 57e3, occupancyPct: 94, period: "12 months to 2026-07" },
   { name: "Modern AC Apartment", location: "Praha 3", maxGuests: 6, floorAreaM2: 55, ownerMonthlyCzk: 5e4, occupancyPct: 96, period: "2026-02 to 2026-07" },
   { name: "Modern\xED apartm\xE1n se zahradou", location: "Praha 3", maxGuests: 6, floorAreaM2: 60, ownerMonthlyCzk: 42e3, occupancyPct: 85, period: "2026-04 to 2026-07" },
-  { name: "Secret garden studio I", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
-  { name: "Secret garden studio II", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
+  // Správa skončila 10/2026; karta i tahle položka zůstávají jako historický měřený výsledek (rozhodnutí V. 22. 10. 2026).
   { name: "Klement apartment s terasou", location: "Mlad\xE1 Boleslav", maxGuests: 8, floorAreaM2: 85, ownerMonthlyCzk: 3e4, occupancyPct: 91, period: "2026-04 to 2026-07" },
-  { name: "Klement apartment", location: "Mlad\xE1 Boleslav", maxGuests: 8, managedSince: "2026-08", note: "new, results after the first season" }
+  { name: "Secret garden studio I", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
+  { name: "Secret garden studio II", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" }
 ].map((a) => "ownerMonthlyCzk" in a ? { ...a, vsLongTermRent: ratioFor(a.location, a.floorAreaM2, a.ownerMonthlyCzk) ?? void 0 } : a);
 var list_portfolio_default = defineTool2({
   name: "list_portfolio",
