@@ -36,8 +36,10 @@ const SitePlan = ({ apartment, t }: Props) => {
         </text>
         {/* Vlastní vchody B04/B05 */}
         <rect x="215" y="150" width="90" height="60" rx="6" fill="hsl(var(--charcoal-light))" />
-        <text x="260" y="185" textAnchor="middle" fill="hsl(var(--primary-foreground))" fontSize="10" fontWeight="600">
-          {p.ownEntrance}
+        <text x="260" y="177" textAnchor="middle" fill="hsl(var(--primary-foreground))" fontSize="10" fontWeight="600">
+          {p.ownEntrance.split(" (").map((part, i) => (
+            <tspan key={i} x="260" dy={i ? 14 : 0}>{i ? `(${part}` : part}</tspan>
+          ))}
         </text>
         {/* Parkovací místa za vjezdovou bránou */}
         {Array.from({ length: 5 }, (_, i) => (

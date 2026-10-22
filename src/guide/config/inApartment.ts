@@ -1,3 +1,4 @@
+import remote from "../assets/remote.jpg.asset.json";
 import type { ApartmentId, GuidePhoto, Hotspot } from "../types";
 import type { GuideStrings } from "../i18n";
 import type { LucideIcon } from "lucide-react";
@@ -78,9 +79,9 @@ export const buildTiles = (
       (id === "waste"
         ? [
             {
-              src: null,
+              src: remote.url,
               alt: "Výklenek s popelnicí",
-              hotspots: [{ x: 45, y: 75, label: tt.waste.hotspots.bin } satisfies Hotspot],
+              hotspots: [{ x: 50, y: 78, label: tt.waste.hotspots.bin } satisfies Hotspot],
             },
           ]
         : [{ src: null, alt: tile.title }]);
