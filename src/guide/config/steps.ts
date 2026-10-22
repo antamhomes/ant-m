@@ -1,5 +1,11 @@
 import type { GuideStrings } from "../i18n";
 import type { Apartment } from "./apartments";
+import houseStreet from "../assets/house-street.png.asset.json";
+import driveway from "../assets/driveway.png.asset.json";
+import aerial from "../assets/aerial.png.asset.json";
+import entrance from "../assets/entrance.jpg.asset.json";
+import lockboxes from "../assets/lockboxes.jpg.asset.json";
+import remote from "../assets/remote.jpg.asset.json";
 import type { ArrivalMode, GuideStep } from "../types";
 
 /**
@@ -27,9 +33,9 @@ export const buildSteps = (
       body: s.find.body,
       showNavigate: true,
       photos: [
-        { src: null, alt: "Dům z ulice" },
+        { src: houseStreet.url, alt: "Dům z ulice" },
         {
-          src: null,
+          src: driveway.url,
           alt: "Příjezdová cesta",
           hotspots: [{ x: 45, y: 75, label: s.find.hotspots.driveway }],
         },
@@ -41,7 +47,7 @@ export const buildSteps = (
       body: s.entrance.body,
       photos: [
         {
-          src: null,
+          src: entrance.url,
           alt: "Vchod na pozemek",
           hotspots: [
             { x: 19, y: 65, label: s.entrance.hotspots.gate },
@@ -57,7 +63,7 @@ export const buildSteps = (
       body: s.keys.body,
       photos: [
         {
-          src: null,
+          src: lockboxes.url,
           alt: "Schránky na klíče",
           // Zvýrazňujeme JEN schránku vybraného bytu; kód se nikdy nezobrazuje.
           hotspots: [
@@ -73,7 +79,7 @@ export const buildSteps = (
       carOnly: true,
       photos: [
         {
-          src: null,
+          src: remote.url,
           alt: "Výklenek s dálkovým ovladačem",
           hotspots: [{ x: 59, y: 43, label: s.parking.hotspots.remote }],
         },
@@ -84,7 +90,7 @@ export const buildSteps = (
       title: apartment.entrance === "own" ? s.pathOwn.title : s.pathMain.title,
       body: apartment.entrance === "own" ? s.pathOwn.body : s.pathMain.body,
       showSitePlan: true,
-      photos: [{ src: null, alt: "Cesta k bytu" }],
+      photos: [{ src: aerial.url, alt: "Cesta k bytu" }],
     },
     {
       id: "done",
