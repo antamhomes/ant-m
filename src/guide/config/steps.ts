@@ -81,7 +81,7 @@ export const buildSteps = (
         {
           src: remote.url,
           alt: "Výklenek s dálkovým ovladačem",
-          hotspots: [{ x: 59, y: 43, label: s.parking.hotspots.remote }],
+          hotspots: [{ x: 63, y: 43, label: s.parking.hotspots.remote }],
         },
       ],
     },
