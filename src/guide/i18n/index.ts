@@ -4,6 +4,8 @@
  */
 import cs, { type GuideStrings } from "./cs";
 
+export type { GuideStrings };
+
 export type GuideLang = "cs";
 
 export const GUIDE_LANGS: Record<GuideLang, GuideStrings> = { cs };
