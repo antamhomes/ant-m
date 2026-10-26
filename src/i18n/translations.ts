@@ -371,15 +371,23 @@ const translations = {
     pr1_result_v: "",
     pr1_result_sub: "",
     pr1_incl_title: "Ve 30 % je celý provoz",
-    pr1_incl_items: "Prodejní kanály · Hosté · Úklid · Kontroly bytu · Opravy · Vyúčtování",
+    pr1_incl_items: "Hosté · Prodejní kanály · Úklid · Kontroly · Opravy · Měsíční vyúčtování",
     // Plakát 70/30 (22. 10. 2026, zadání V.). Labely a základ dělení; formulace návrh (Claude).
     pr1_owner_label: "Majiteli zůstává",
-    pr1_fee_label: "Naše odměna",
-    pr1_base_note: "z příjmu po poplatcích platforem a úklidu",
-    pr1_ops_plus: "+ kompletní provoz",
-    pr1_core_1: "Průzkum trhu",
-    pr1_core_2: "Cenová strategie",
-    pr1_core_3: "Optimalizace výnosu",
+    pr1_fee_label: "Odměna Antam",
+    pr1_base_note: "",
+    pr1_ops_plus: "",
+    pr1_core_1: "",
+    pr1_core_2: "",
+    pr1_core_3: "",
+    // 22. 10. 2026 v5 (zadání V.: „jak by to udělal profesionál"): hero nese
+    // jen 70 %, třicítka je řádek sazebníku. pricing_lead a pr1_fee_value jsou
+    // moje skladba z existujících faktů; pr1_fee_scope spojuje obchodní
+    // trojici s „Kompletní správa" (V. v náčrtu). pr1_core_*, ops_plus a
+    // base_note se vyprázdnily, obsah nese scope a lead.
+    pricing_lead: "Počítáme z příjmu po poplatcích platforem a úklidu. Naše odměna je 30 %, jen když byt vydělává.",
+    pr1_fee_value: "30 %",
+    pr1_fee_scope: "Průzkum trhu · Cenová strategie · Optimalizace výnosu · Kompletní správa",
     pr1_setup_name: "Uvedení do provozu",
     pr1_setup_price: "25\u00a0000\u00a0Kč · jednorázově",
     pr1_setup_line: "",
@@ -581,11 +589,7 @@ const translations = {
     hero_subtitle: "ANTAM HOMES · QUẢN LÝ CĂN HỘ CHO THUÊ NGẮN HẠN",
     hero_title1: "Thu nhập tốt hơn. ",
     hero_title2: "Chủ nhà an tâm hơn.",
-<<<<<<< HEAD
     hero_desc: "Antam vận hành và tối ưu toàn bộ việc cho thuê ngắn hạn tại Praha. Mỗi tháng chủ nhà có bảng kê và nhận\u00a0tiền.",
-=======
-    hero_desc: "Vận hành toàn bộ việc cho thuê ngắn hạn tại Praha.",
->>>>>>> 57b45af87ba6108fcc2e52057624f0887300686d
     hero_extra: "Phí Antam gắn với kết\u00a0quả · Hỏi\u00a0không\u00a0ràng\u00a0buộc · Sẽ gọi\u00a0lại\u00a0trong\u00a024\u00a0giờ",
     hero_cta: "Tính thử thu nhập",
     hero_cta2: "",
@@ -921,15 +925,20 @@ const translations = {
     pr1_result_v: "",
     pr1_result_sub: "",
     pr1_incl_title: "30% đã bao gồm toàn bộ vận hành",
-    pr1_incl_items: "Quản lý kênh bán · Khách · Dọn dẹp · Kiểm tra căn hộ · Sửa chữa · Báo cáo",
+    pr1_incl_items: "Khách · Quản lý kênh bán · Dọn dẹp · Kiểm tra căn hộ · Sửa chữa · Báo cáo hàng tháng",
     // Plakát 70/30 (22. 10. 2026). VI labely jsou návrh (Claude).
     pr1_owner_label: "Chủ nhà giữ",
     pr1_fee_label: "Phí quản lý Antam",
-    pr1_base_note: "trên doanh thu sau phí nền tảng và phí dọn dẹp",
-    pr1_ops_plus: "+ toàn bộ vận hành",
-    pr1_core_1: "Nghiên cứu thị trường",
-    pr1_core_2: "Chiến lược giá",
-    pr1_core_3: "Tối ưu doanh thu",
+    pr1_base_note: "",
+    pr1_ops_plus: "",
+    pr1_core_1: "",
+    pr1_core_2: "",
+    pr1_core_3: "",
+    // 22. 10. 2026 v5: pricing_lead, pr1_fee_value, pr1_fee_scope — návrh (Claude),
+    // skladba z existujících faktů (70 % po poplatcích, 30 % jen z výdělku).
+    pricing_lead: "Antam tính trên doanh thu sau phí nền tảng và phí dọn dẹp. Phí quản lý là 30%, chỉ khi căn hộ có doanh thu.",
+    pr1_fee_value: "30%",
+    pr1_fee_scope: "Nghiên cứu thị trường · Chiến lược giá · Tối ưu doanh thu · Toàn bộ vận hành",
     pr1_setup_name: "Phí đưa nhà vào vận hành",
     pr1_setup_price: "25\u00a0000\u00a0Kč · một lần",
     pr1_setup_line: "",
