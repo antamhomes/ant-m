@@ -24,7 +24,10 @@ import { trackEvent } from "@/lib/analytics";
  */
 
 /** Jednorázové a doplňkové položky za rozbalovákem. */
-const MORE_ROWS = ["pr2", "pr3", "pr4", "pr5", "pr8"] as const;
+const MORE_ROWS = ["pr2", "pr3", "pr4", "pr9", "pr5", "pr8"] as const;
+
+/** Tři cesty (29. 10. 2026): správa, vlastní provoz, přestavba běžícího bytu. */
+const PATHS = ["path_us", "path_self", "path_live"] as const;
 
 /** Dva benefity v odměně: garance (pr6, nese kotvu #garance) a krytí škod (pr7). */
 const BENEFITS = ["pr6", "pr7"] as const;
@@ -41,12 +44,13 @@ const PricingSection = () => {
         </Reveal>
 
         <Reveal delay={0.05}>
-          {/* ECONOMICS: jediné hero číslo. Lead visí první řádkou na účaří
-              číslice (items-baseline) a nese přesný základ i odměnu. */}
+          {/* ECONOMICS: jediné hero číslo. Od 29. 10. 2026 je to naše odměna
+              (20 % + DPH), ne podíl majitele: dvě cesty už nejdou vyjádřit jedním
+              podílem. Lead visí první řádkou na účaří číslice (items-baseline). */}
           <div className="lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:gap-x-20 xl:gap-x-28 lg:items-baseline">
             <div aria-hidden="true">
               <p className="m-0 font-display font-medium text-foreground leading-[0.8] tracking-[-0.03em] tnum text-[clamp(6rem,14vw,12rem)]">
-                70<span className="text-[0.4em] font-normal text-gold-deep align-baseline">{lang === "cs" ? " " : ""}%</span>
+                20<span className="text-[0.4em] font-normal text-gold-deep align-baseline">{lang === "cs" ? " " : ""}%</span>
               </p>
               <p className="mt-4 font-body text-[12px] md:text-[13px] uppercase tracking-[0.24em] text-foreground">
                 {t(lang, "pr1_owner_label")}
@@ -56,6 +60,26 @@ const PricingSection = () => {
               {t(lang, "pricing_lead")}
             </p>
           </div>
+
+          {/* TŘI CESTY (29. 10. 2026): správa, vlastní provoz, přestavba. Karty
+              nesou jen tři fakta každá; detail je v rozbalovacím ceníku níž. */}
+          <div className="mt-12 md:mt-16 grid gap-5 md:grid-cols-3">
+            {PATHS.map((k, i) => (
+              <div key={k} className={`rounded-sm border px-5 py-5 md:px-6 md:py-6 ${i === 1 ? "border-gold/60 bg-card" : "border-border bg-card"}`}>
+                <h3 className="m-0 font-display text-[21px] md:text-[23px] font-semibold text-foreground leading-snug">
+                  {t(lang, `${k}_t` as const)}
+                </h3>
+                <ul className="mt-4 mb-0 list-none p-0 space-y-2">
+                  {(["1", "2", "3"] as const).map((n) => (
+                    <li key={n} className="font-body text-[14.5px] md:text-[15px] text-muted-foreground leading-relaxed text-pretty tnum">
+                      {t(lang, `${k}_${n}` as const)}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <p className="mt-4 mb-0 font-body text-[13px] text-muted-foreground">{t(lang, "path_note")}</p>
 
           {/* VALUE: sazebník. Silná linka otevírá listinu, mezi řádky tenká;
               název vlevo, hodnota vpravo v tabulkových číslicích. */}

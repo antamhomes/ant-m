@@ -12,7 +12,7 @@ const META: Record<PageKey, { cs: { title: string; desc: string }; vi: { title: 
     pathVi: "/vn",
     cs: {
       title: "Správa krátkodobých pronájmů a Airbnb v Praze | Antam Homes",
-      desc: "Správa krátkodobého pronájmu v Praze: hosté, úklid, ceny i vyúčtování. Ke každému přijatému bytu písemné roční minimum. Odměna 30 % z čistého výnosu.",
+      desc: "Krátkodobý pronájem v Praze: správa za 20 % + DPH s písemným ročním minimem, nebo hotový systém k vlastnímu provozu. Obě cesty spočítáme vedle sebe.",
     },
     vi: {
       title: "Quản lý cho thuê ngắn hạn & Airbnb tại Praha | Antam Homes",
@@ -50,7 +50,7 @@ export const buildBusinessJsonLd = (lang: "cs" | "vi") => {
     description: meta[lang].desc,
     email: t(lang, "footer_email"),
     telephone: t(lang, "footer_phone"),
-    priceRange: "30 % z čistého výnosu",
+    priceRange: "20 % + DPH z čistého výnosu, nebo jednorázově od 79 000 Kč",
     areaServed: { "@type": "City", name: "Praha" },
     address: { "@type": "PostalAddress", streetAddress: "Příčná 1892/4", addressLocality: "Praha 1", postalCode: "110 00", addressCountry: "CZ" },
     knowsLanguage: ["cs", "vi"],

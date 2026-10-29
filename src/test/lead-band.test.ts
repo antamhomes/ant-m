@@ -66,10 +66,13 @@ describe("classifyBand na skutečném modelu", () => {
     return classifyBand({ supported: r.supported, oversized: false, ownerHigh: r.supported ? r.high : null, ltrMonth: ltr, size, bucket });
   };
 
-  it("Staré Město 2+kk běžný je strong, Praha 4 Ostatní 2+kk běžný je weak (audit, 7. 9. 2026)", () => {
+  it("Staré Město 2+kk běžný je strong, Praha 4 Ostatní 2+kk větší je weak (audit 7. 9. 2026, odměna 20 % + DPH od 29. 10. 2026)", () => {
     expect(ctvrtiOf("praha1").map((c) => c.id)).toContain("stare_mesto");
     expect(bandOf("praha1", "stare_mesto", "2kk", "m").band).toBe("strong");
-    expect(bandOf("praha4", undefined, "2kk", "m").band).toBe("weak");
+    // Od 29. 10. 2026 (20 % + DPH místo 30 %) zůstává majiteli víc, Praha 4
+    // 2+kk Běžný se tím přehoupl těsně nad 1,3× do viable; Větší zůstává weak.
+    expect(bandOf("praha4", undefined, "2kk", "m").band).toBe("viable");
+    expect(bandOf("praha4", undefined, "2kk", "l").band).toBe("weak");
   });
 
   it("1kk Větší v Praze 6 je viable jen díky výjimce (bez ní by byl weak)", () => {

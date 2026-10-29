@@ -14,8 +14,9 @@ describe("poradi sekci", () => {
   it("Index.tsx montuje sekce presne v poradi spec §1", () => {
     const index = src("src/pages/Index.tsx");
     const order = [...index.matchAll(/<Suspense fallback=\{null\}><(\w+) \/><\/Suspense>/g)].map((m) => m[1]);
+    // 29. 10. 2026: ChoiceSection (dvě cesty) stojí hned pod hero, před důkazy.
     expect(order).toEqual([
-      "PortfolioSection", "CalculatorSection", "PricingSection", "ProcessSection", "ContactSection",
+      "ChoiceSection", "PortfolioSection", "CalculatorSection", "PricingSection", "ProcessSection", "ContactSection",
       "ComparisonSection", "ServicesSection", "OwnerReportSection", "AboutSection", "FAQSection", "FinalCtaSection",
       "Footer", "StickyMobileCTA", "CookieConsent",
     ]);
@@ -38,9 +39,11 @@ describe("komprese", () => {
     for (const k of ["portal_title", "portal_desc", "portal_open", "report_row_net", "report_multi"]) expect(report).toContain(k);
   });
 
-  it("Srovnani ma tri radky a poctive odmitnuti", () => {
+  it("Srovnani ma tri radky, treti sloupec Provozuji sam a poctive odmitnuti", () => {
     const cmp = src("src/components/ComparisonSection.tsx");
     expect((cmp.match(/comp\d_title/g) ?? []).length).toBe(3);
+    expect(cmp).toContain("selfTerm_label");
+    expect((cmp.match(/comp\d_self/g) ?? []).length).toBe(3);
     expect(cmp).not.toContain("comp4_title");
     expect(cmp).toContain("faq13_a");
   });
@@ -63,7 +66,7 @@ describe("komprese", () => {
     const faq = src("src/components/FAQSection.tsx");
     expect(faq.indexOf('"faq9_q"')).toBeGreaterThan(-1);
     expect(faq.indexOf('"faq9_q"')).toBeLessThan(faq.indexOf('"faq18_q"'));
-    expect(cs.faq9_a).toMatch(/po naší odměně 30 %/);
+    expect(cs.faq9_a).toMatch(/po naší odměně 20 % \+ DPH/);
   });
 });
 

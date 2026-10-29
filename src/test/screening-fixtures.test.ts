@@ -50,7 +50,8 @@ describe("golden fixtures", () => {
 
   const stareMesto = g("praha1", "praha1/stare_mesto", "2kk", 60);
   expect(stareMesto.verdict).toBe("worth");
-  expect(stareMesto.screeningBaseline).toBe(47073);
+  // 29. 10. 2026: 47 073 × (1 − 0,242) / (1 − 0,30) = 50 973 (odměna 20 % + DPH).
+  expect(stareMesto.screeningBaseline).toBe(50973);
   expect(stareMesto.floorMonthly).toBe(34606);
   expect(stareMesto.operatorFactorUsed).toBe(1.032);
   expect(stareMesto.confidence).toBe("high");

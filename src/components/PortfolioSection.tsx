@@ -11,7 +11,7 @@ import byt5 from "@/assets/byt-5.jpg.asset.json";
 
 /** Results shown on the cards: owner's monthly income, rounded to thousands, plus occupancy.
  *  Method confirmed by the owner 28. 8. 2026: take what the platform actually pays out (already net
- *  of its own commission), subtract the cleaning fee, then apply the 70/30 split. Airbnb settles in
+ *  of its own commission), subtract the cleaning fee, then apply the 20 % + VAT fee. Airbnb settles in
  *  CZK, Booking.com in EUR, converted at 25,00. The local tourist tax was collected separately
  *  online and is paid by the guest (owner, 28. 8. 2026); it is deliberately not mentioned in the
  *  footnote, because it is not something the owner reading this has to care about.
@@ -47,12 +47,12 @@ const ratioOf = (item: Item) => item.stats && item.m2 ? ratioFor(item.loc, item.
  *  byt-1…7 are Lovable assets; 402/405 (Praha 1, Čelakovského sady) are small webp files in public/portfolio.
  *  Order: measured results first (the section pays off the hero claim), longest window leading; flats without a full season follow with their honest badge. */
 const items: Item[] = [
-  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 64000, occupancy: 96, market: MARKET_OCC.praha1 } },
-  { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 57000, occupancy: 94, market: MARKET_OCC.praha1 } },
-  { src: "/portfolio/byt-modern-ac.webp", name: "Modern AC\u00a0Apartment", loc: "Praha 3", m2: 55, guests: 6, stats: { owner: 50000, occupancy: 96, market: MARKET_OCC.praha3, since: "2/2026" } },
+  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 69000, occupancy: 96, market: MARKET_OCC.praha1 } },
+  { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 62000, occupancy: 94, market: MARKET_OCC.praha1 } },
+  { src: "/portfolio/byt-modern-ac.webp", name: "Modern AC\u00a0Apartment", loc: "Praha 3", m2: 55, guests: 6, stats: { owner: 54000, occupancy: 96, market: MARKET_OCC.praha3, since: "2/2026" } },
   // Praha 3, ne Praha 4: potvrzeno majitelem 28. 8. 2026 i PSČ 130 00 v Hospitable.
-  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 3", m2: 60, guests: 6, stats: { owner: 42000, occupancy: 85, market: MARKET_OCC.praha3, since: "4/2026" } },
-  { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", m2: 85, guests: 8, stats: { owner: 30000, occupancy: 91, market: MARKET_OCC.mb, since: "4/2026" } },
+  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 3", m2: 60, guests: 6, stats: { owner: 45000, occupancy: 85, market: MARKET_OCC.praha3, since: "4/2026" } },
+  { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", m2: 85, guests: 8, stats: { owner: 32000, occupancy: 91, market: MARKET_OCC.mb, since: "4/2026" } },
   { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", m2: 110, guests: 13, newSince: "7/2026" },
   { src: byt1.url, name: "Secret Garden Studio\u00a0I", loc: "Praha 4", m2: 22, guests: 4, newSince: "7/2026" },
   { src: byt2.url, name: "Secret Garden Studio\u00a0II", loc: "Praha 4", m2: 22, guests: 4, newSince: "7/2026" },
@@ -85,7 +85,7 @@ const copy = {
     statRatio: (r: number) => `${r.toLocaleString("cs-CZ")}× dlouhodobý nájem`,
     newBadge: (m: string) => `V naší správě od ${m}`,
     newNote: "Výsledky doplníme po první sezóně.",
-    statNote: (d: string) => `Částka, kterou majitel obdrží, vychází ze skutečných rezervací každého bytu a je počítána podle naší současné 30% odměny, po odečtení poplatků Airbnb a Booking.com a bez poplatků za úklid. Údaje představují průměr za posledních 12 měsíců; u novějších bytů počítáme období od začátku naší správy. Obsazenost v dané lokalitě vychází z dat PriceLabs. Dlouhodobé nájemné vychází z více než 1 300 nabídek na Sreality podle městské části a velikosti bytu a je porovnáno s Deloitte Rent Indexem. Skutečné výsledky se mohou v čase měnit a nejsou příslibem budoucích výnosů.\n`,
+    statNote: (d: string) => `Částka, kterou majitel obdrží, vychází ze skutečných rezervací každého bytu a je počítána podle naší současné odměny 20 % + DPH, po odečtení poplatků Airbnb a Booking.com a bez poplatků za úklid. Údaje představují průměr za posledních 12 měsíců; u novějších bytů počítáme období od začátku naší správy. Obsazenost v dané lokalitě vychází z dat PriceLabs. Dlouhodobé nájemné vychází z více než 1 300 nabídek na Sreality podle městské části a velikosti bytu a je porovnáno s Deloitte Rent Indexem. Skutečné výsledky se mohou v čase měnit a nejsou příslibem budoucích výnosů.\n`,
   },
   vi: {
     eyebrow: "Kết quả thực tế",
@@ -111,7 +111,7 @@ const copy = {
     statRatio: (r: number) => `gấp ${r.toLocaleString("vi-VN")} lần cho thuê dài hạn`,
     newBadge: (m: string) => `Antam lo từ ${m}`,
     newNote: "Số liệu sẽ có sau mùa đầu tiên.",
-    statNote: (d: string) => `Số tiền chủ nhà nhận tính từ đặt phòng thật của từng căn, theo mức phí Antam hiện nay 30%, sau khi trừ phí Airbnb, Booking.com và không tính phí dọn dẹp. Đây là trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Tỷ lệ lấp phòng của khu lấy từ PriceLabs. Tiền thuê dài hạn lấy từ hơn 1\u00a0300 tin đăng trên Sreality theo quận và diện tích, có đối chiếu với Deloitte Rent\u00a0Index. Kết quả đã qua không phải là cam kết cho\u00a0tương\u00a0lai.`,
+    statNote: (d: string) => `Số tiền chủ nhà nhận tính từ đặt phòng thật của từng căn, theo mức phí Antam hiện nay 20% + VAT, sau khi trừ phí Airbnb, Booking.com và không tính phí dọn dẹp. Đây là trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Tỷ lệ lấp phòng của khu lấy từ PriceLabs. Tiền thuê dài hạn lấy từ hơn 1\u00a0300 tin đăng trên Sreality theo quận và diện tích, có đối chiếu với Deloitte Rent\u00a0Index. Kết quả đã qua không phải là cam kết cho\u00a0tương\u00a0lai.`,
   },
 };
 

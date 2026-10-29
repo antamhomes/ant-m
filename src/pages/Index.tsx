@@ -6,6 +6,8 @@ import { CalcProvider } from "@/contexts/CalcContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 // Below-the-fold sections are code-split so the first paint ships less JS.
+// Volba (29. 10. 2026): dvě cesty hned pod hero, před důkazy.
+const ChoiceSection = lazy(() => import("@/components/ChoiceSection"));
 const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
 const CalculatorSection = lazy(() => import("@/components/CalculatorSection"));
 // GaranceSection je od patche 2 (7. 9. 2026) sloučená do Ceníku: cena
@@ -70,6 +72,7 @@ const Index = () => {
             a portál, kdo jsme, otázky. Do 7. 9. 2026 stálo mezi číslem a
             formulářem sedm sekcí a ≈8 000 px (audit B4).
             Vlastní Suspense hranice: pomalý chunk nikdy nedrží ostatní. */}
+        <Suspense fallback={null}><ChoiceSection /></Suspense>
         <Suspense fallback={null}><PortfolioSection /></Suspense>
         <Suspense fallback={null}><CalculatorSection /></Suspense>
         <Suspense fallback={null}><PricingSection /></Suspense>

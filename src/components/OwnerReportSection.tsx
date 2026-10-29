@@ -20,17 +20,17 @@ const OwnerReportSection = () => {
   const { lang } = useLanguage();
 
   /* Skutečný byt místo vzoru (29. 8. 2026: řádek Rezervace odstraněn na Vuongovo přání): byt 402 (Praha 1), průměr 12 uzavřených měsíců
-     do 7/2026 z Hospitable, přepočteno na odměnu 30 %. Metoda: payout
+     do 7/2026 z Hospitable, přepočteno na odměnu 20 % + DPH (24,2 %). Metoda: payout
      platforem minus úklid, zrušené rezervace vyloučené, EUR × 25,00;
-     91 324 × 0,30 = 27 397; majiteli 63 927 (na kartě zaokrouhleno 64 000). */
+     91 324 × 0,242 = 22 100; majiteli 69 224 (na kartě zaokrouhleno 69 000). */
   // CZ has no side text and no CTA: the card sits centred and the multi-flat line
   // goes under it. VI keeps its side column (report_text + report_cta).
   const hasSide = !!(t(lang, "report_text") || t(lang, "report_cta"));
   const rows = [
     { icon: BedDouble, key: "report_row_occupancy" as const, value: lang === "cs" ? "96\u00a0%" : "96%" },
     { icon: FileBarChart, key: "report_row_base" as const, value: "91\u00a0324\u00a0Kč" },
-    { icon: Receipt, key: "report_row_costs" as const, value: "27\u00a0397\u00a0Kč" },
-    { icon: Wallet, key: "report_row_net" as const, value: "63\u00a0927\u00a0Kč", highlight: true },
+    { icon: Receipt, key: "report_row_costs" as const, value: "22\u00a0100\u00a0Kč" },
+    { icon: Wallet, key: "report_row_net" as const, value: "69\u00a0224\u00a0Kč", highlight: true },
   ];
 
   return (

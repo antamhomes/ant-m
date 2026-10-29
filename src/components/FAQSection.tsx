@@ -20,6 +20,7 @@ const groups: Group[] = [
       { q: "faq18_q", a: "faq18_a" }, // garance výnosu
       { q: "faq4_q", a: "faq4_a" },   // přehled + vyúčtování (kdy chodí peníze)
       { q: "faq6_q", a: "faq6_a" },   // úklid a energie
+      { q: "faq16_q", a: "faq16_a" }, // kolik stojí příprava (29. 10. 2026: tři ceny, patří sem)
     ],
   },
   {
@@ -35,6 +36,8 @@ const groups: Group[] = [
     items: [
       { q: "faq3_q", a: "faq3_a" },   // byt pro sebe
       { q: "faq7_q", a: "faq7_a" },   // doba / výpověď
+      { q: "faq19_q", a: "faq19_a" }, // přechod mezi cestami (29. 10. 2026)
+      { q: "faq14_q", a: "faq14_a" }, // proč to nedělat sám: teď je to nabídka, ne námitka
     ],
   },
 ];

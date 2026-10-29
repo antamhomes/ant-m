@@ -1198,7 +1198,10 @@ export const SIZE_PRESET: Record<SizeKey, { m2: number }> = {
   "4kk": { m2: MEDIAN_AREA["4kk"] },
 };
 
-export const MGMT_FEE = 0.30;      // odměna Antam Homes z čistého výnosu
+export const MGMT_FEE = 0.20;      // odměna Antam Homes z čistého výnosu, bez DPH (29. 10. 2026, dřív 0,30 konečná)
+export const MGMT_VAT = 0.21;      // DPH k odměně; Antam Homes je plátce
+/** Co majitel skutečně zaplatí z čistého výnosu, pokud sám není plátce DPH: 20 % × 1,21 = 24,2 %. */
+export const MGMT_FEE_GROSS = Math.round(MGMT_FEE * (1 + MGMT_VAT) * 1000) / 1000;
 // Změřeno 27. 8. 2026 na 7 bytech (Hospitable, 12 měsíců): skutečná provize je
 // 17,3 až 20,6 % z ceny pokoje podle listingu. 0,17 je dolní okraj měřeného
 // pásma, tedy záměrně optimistická strana; disclaimer uvádí pásmo 15 až 21 %.
@@ -1206,7 +1209,14 @@ export const PLATFORM_FEE = 0.17;
 export const DAYS = 30.44;  // průměrná délka měsíce
 
 /** Uvedení do provozu, vybavení a obnova — vstupy pro záložku Za 5 let */
-export const LAUNCH_FEE = 25000;
+export const LAUNCH_FEE = 49000;      // příprava zařízeného bytu ke správě, bez DPH (29. 10. 2026, dřív 25 000)
+/** Příprava prázdného bytu ke správě podle dispozice, bez DPH; vybavení zvlášť. */
+export const SETUP_EMPTY_BY_SIZE = { "2kk": 120000, "3kk": 150000, "4kk": 190000 } as const;
+/** Vlastní provoz (předání systému) podle dispozice, bez DPH; zařízený byt bez návrhu a nákupu = LAUNCH_SELF. */
+export const TURNKEY_BY_SIZE = { "2kk": 180000, "3kk": 270000, "4kk": 360000 } as const;
+export const LAUNCH_SELF = 79000;
+export const REBUILD_FEE = 29000;      // přestavba výnosu běžícího inzerátu
+export const REVENUE_OS_MONTH = 3490;  // řízení cen pro vlastní provoz, měsíčně bez DPH
 export const KIT_PER_ROOM = 30000;    // dovybavení bytu zařízeného pro nájemníka
 export const EMPTY_PER_ROOM = 100000; // kompletní vybavení prázdného bytu
 export const RENEW_PER_ROOM_YEAR = 4000;
@@ -1228,8 +1238,7 @@ export const YEAR_ONE_RAMP = 0.85;    // nová nabídka nenajede hned na plný v
  */
 export const RENT_GROWTH = 0;
 export const STR_GROWTH = 0;
-export const PROJECT_FEE = 0.20;           // odměna za řízení projektu, z rozpočtu
-export const PROJECT_FEE_THRESHOLD = 30000;// pod tímto rozpočtem je řízení v ceně uvedení do provozu
+export const PROCUREMENT_FEE = 0.12;       // zajištění vybavení: k pořizovací ceně (29. 10. 2026; dřív řízení projektu 20 % nad 30 000)
 
 /** Jedna varianta výsledku: obsazenost, hrubé tržby, provize, dělení. */
 export type Split = {
@@ -1272,7 +1281,7 @@ export type OwnerMonthly = {
 const split = (gross: number, occupancy: number): Split => {
   const platformFee = Math.round(PLATFORM_FEE * gross);
   const netRevenue = gross - platformFee;
-  const mgmt = Math.round(netRevenue * MGMT_FEE);
+  const mgmt = Math.round(netRevenue * MGMT_FEE_GROSS); // odměna včetně DPH: veřejná kalkulačka počítá pro majitele, který DPH neodečte
   return { occupancy, gross, platformFee, netRevenue, mgmt, net: netRevenue - mgmt };
 };
 
@@ -1287,8 +1296,9 @@ const split = (gross: number, occupancy: number): Split => {
  * Spodek i vršek jdou z tržního RevPAR × sezónní násobek × dny × AVAILABILITY
  * × operátorský faktor; liší se jen vahou překlopení do vyššího pásma podle
  * plochy. Z hrubého se odečte provize platformy (počítá se z celé ceny
- * rezervace včetně úklidu), zbytek se dělí 70/30. DPH z provize neodečítáme,
- * hradí ji Antam ze své odměny. Energie majitel platí zvlášť a nejsou tu.
+ * rezervace včetně úklidu), ze zbytku je odměna 20 % + DPH (24,2 % pro majitele,
+ * který DPH neodečte). DPH z provize platformy neodečítáme. Energie majitel
+ * platí zvlášť a nejsou tu.
  *
  * Když pro čtvrť nebo pásmo tržní vzorek nestačí, vrací { supported: false }
  * a web ukáže „posoudíme individuálně“, nikdy cizí číslo.

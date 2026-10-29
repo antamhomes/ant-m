@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { CalcProvider } from "../contexts/CalcContext";
 import CalculatorSection from "../components/CalculatorSection";
-import { ownerMonthly, rentFor, bucketFor, typicalArea } from "../lib/yield";
+import { ownerMonthly, rentFor, bucketFor, bucketsFor, typicalArea } from "../lib/yield";
 import { classifyBand } from "../lib/leadBand";
 import { dataWindowLabel } from "../lib/dataWindow";
 import translations from "../i18n/translations";
@@ -31,8 +31,10 @@ const cta = () => card().querySelector("a[href='#kontakt']") as HTMLAnchorElemen
 const ctaText = () => strip(cta().textContent ?? "");
 const shareBtn = () => [...card().querySelectorAll("button")].find((b) => /WhatsApp|Zalo|Zkopírov/.test(b.textContent ?? ""));
 
-const bandFor = (loc: "praha1" | "praha4" | "praha9", ctvrt: string | undefined, size: "2kk") => {
-  const m2 = bucketFor(size, typicalArea(loc, size)).representativeM2!;
+const bandFor = (loc: "praha1" | "praha4" | "praha9", ctvrt: string | undefined, size: "2kk", bucket?: "s" | "m" | "l") => {
+  // 29. 10. 2026: od odměny 20 % + DPH zůstává majiteli víc, takže Praha 4
+  // 2+kk Běžný už není weak; slabý příklad je stejný byt v pásmu Větší.
+  const m2 = (bucket ? bucketsFor(size).find((b) => b.id === bucket)! : bucketFor(size, typicalArea(loc, size))).representativeM2!;
   const r = ownerMonthly(loc, size, { season: "year", m2, ctvrt });
   const ltr = rentFor(loc, size, m2, "mix", ctvrt);
   if (!r.supported) throw new Error("fixture musi byt podporovana");
@@ -91,11 +93,12 @@ describe("karta vysledku podle pasma", () => {
     expect(shareBtn()).toBeTruthy();
   });
 
-  it("SLABY byt (Praha 4 Ostatni 2+kk): stejne cislo, neutralni radek 2, vedlejsi CTA, bez slibu a bez sdileni", () => {
-    const f = bandFor("praha4", undefined, "2kk");
+  it("SLABY byt (Praha 4 Ostatni 2+kk Vetsi): stejne cislo, neutralni radek 2, vedlejsi CTA, bez slibu a bez sdileni", () => {
+    const f = bandFor("praha4", undefined, "2kk", "l");
     expect(f.band.band).toBe("weak");
     setup();
     pick("praha4");
+    fireEvent.click(screen.getByRole("button", { name: /Větší/ }));
     const tx = text();
     // číslo se NEMĚNÍ podle pásma
     expect(tx).toContain(`~${strip((Math.round(f.r.high / 1000) * 1000).toLocaleString("cs-CZ"))} Kč`);

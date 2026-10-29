@@ -8,7 +8,7 @@ import { t, type TranslationKey } from "@/i18n/translations";
  * CO ZA VÁS ŘEŠÍME (obnoveno 2B).
  *
  * services_* a svc1–svc6 v repu byly napsané, ale nerenderovaly se nikde.
- * Přitom je to jediná sekce, která odpovídá na otázku „za co platím 30 %".
+ * Přitom je to jediná sekce, která odpovídá na otázku „za co platím 20 % + DPH".
  *
  * ZÁMĚRNĚ TO NENÍ MŘÍŽKA ŠESTI KARET S IKONAMI. Šest podstatných jmen
  * (ceny, inzeráty, hosté, úklid, údržba, reporting) sděluje rozsah, ale ne

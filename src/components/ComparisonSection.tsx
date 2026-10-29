@@ -18,10 +18,12 @@ import { t } from "@/i18n/translations";
 // Patch 2 (7. 9. 2026): tři řádky místo čtyř. „Přehled plateb“ (comp4) byl
 // nejslabší argument a sekce stojí nově ZA formulářem jako ujištění, ne jako
 // krok před ním. Klíče comp4_* v překladech zůstávají.
+// 29. 10. 2026: třetí sloupec „Provozuji sám" (dodatek 2): stejný systém,
+// jiný provozovatel. Řádky zůstávají tři.
 const rows = [
-  { title: "comp2_title", long: "comp2_long", short: "comp2_short" },
-  { title: "comp3_title", long: "comp3_long", short: "comp3_short" },
-  { title: "comp1_title", long: "comp1_long", short: "comp1_short" },
+  { title: "comp2_title", long: "comp2_long", short: "comp2_short", self: "comp2_self" },
+  { title: "comp3_title", long: "comp3_long", short: "comp3_short", self: "comp3_self" },
+  { title: "comp1_title", long: "comp1_long", short: "comp1_short", self: "comp1_self" },
 ] as const;
 
 const ComparisonSection = () => {
@@ -43,7 +45,7 @@ const ComparisonSection = () => {
         <Reveal delay={0.05} className="border-t border-border">
           <div
             aria-hidden="true"
-            className="hidden md:grid md:grid-cols-[1fr_1fr_1fr] gap-x-8 pt-4 pb-3"
+            className="hidden md:grid md:grid-cols-[0.8fr_1fr_1fr_1fr] gap-x-8 pt-4 pb-3"
           >
             <span />
             <span className="font-body text-xs uppercase tracking-[0.14em] text-muted-foreground">
@@ -51,6 +53,9 @@ const ComparisonSection = () => {
             </span>
             <span className="font-body text-xs uppercase tracking-[0.14em] text-gold-deep">
               {t(lang, "shortTerm_label")}
+            </span>
+            <span className="font-body text-xs uppercase tracking-[0.14em] text-gold-deep">
+              {t(lang, "selfTerm_label")}
             </span>
           </div>
 
@@ -60,9 +65,9 @@ const ComparisonSection = () => {
                 as="div"
                 key={r.title}
                 delay={stagger(i, 0.05)}
-                className="grid grid-cols-2 md:grid-cols-[1fr_1fr_1fr] gap-x-6 md:gap-x-8 gap-y-1 py-4 md:py-5 border-t border-border first:border-t-0 md:first:border-t"
+                className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-[0.8fr_1fr_1fr_1fr] gap-x-6 md:gap-x-8 gap-y-3 md:gap-y-1 py-4 md:py-5 border-t border-border first:border-t-0 md:first:border-t"
               >
-                <dt className="col-span-2 md:col-span-1 font-display text-[17px] md:text-[1.05rem] font-semibold text-foreground mb-1 md:mb-0">
+                <dt className="sm:col-span-3 md:col-span-1 font-display text-[17px] md:text-[1.05rem] font-semibold text-foreground mb-1 md:mb-0">
                   {t(lang, r.title)}
                 </dt>
                 <dd className="m-0">
@@ -79,6 +84,14 @@ const ComparisonSection = () => {
                   </span>
                   <span className="font-body text-[14.5px] md:text-[15px] text-foreground leading-relaxed text-pretty">
                     {t(lang, r.short)}
+                  </span>
+                </dd>
+                <dd className="m-0">
+                  <span className="md:hidden block font-body text-[11px] uppercase tracking-[0.12em] text-gold-deep mb-1">
+                    {t(lang, "selfTerm_label")}
+                  </span>
+                  <span className="font-body text-[14.5px] md:text-[15px] text-foreground leading-relaxed text-pretty">
+                    {t(lang, r.self)}
                   </span>
                 </dd>
               </Reveal>
