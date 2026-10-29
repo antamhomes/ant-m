@@ -62,10 +62,11 @@ const PricingSection = () => {
           </div>
 
           {/* TŘI CESTY (29. 10. 2026): správa, vlastní provoz, přestavba. Karty
-              nesou jen tři fakta každá; detail je v rozbalovacím ceníku níž. */}
+              nesou jen tři fakta každá; detail je v rozbalovacím ceníku níž. Zlatý rámeček
+              má správa: je to hlavní cesta, vlastní provoz je alternativa. */}
           <div className="mt-12 md:mt-16 grid gap-5 md:grid-cols-3">
             {PATHS.map((k, i) => (
-              <div key={k} className={`rounded-sm border px-5 py-5 md:px-6 md:py-6 ${i === 1 ? "border-gold/60 bg-card" : "border-border bg-card"}`}>
+              <div key={k} className={`rounded-sm border px-5 py-5 md:px-6 md:py-6 ${i === 0 ? "border-gold/60 bg-card" : "border-border bg-card"}`}>
                 <h3 className="m-0 font-display text-[21px] md:text-[23px] font-semibold text-foreground leading-snug">
                   {t(lang, `${k}_t` as const)}
                 </h3>
