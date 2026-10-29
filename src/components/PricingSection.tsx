@@ -147,20 +147,17 @@ const PricingSection = () => {
 
           <p className="mt-4 mb-0 font-body text-[13px] text-muted-foreground">{t(lang, "path_note")}</p>
 
+          {/* PODROBNÝ CENÍK (29. 10. 2026 odpoledne): jen název a cena na lince,
+              žádné odstavce. Co je v ceně, říká FAQ a MCP; tady se platí. */}
           <details className="group mt-7 md:mt-9">
             <summary className="list-none cursor-pointer font-body text-sm text-gold-deep underline underline-offset-4 decoration-gold/40 [&::-webkit-details-marker]:hidden">
               {t(lang, "pricing_more")}
             </summary>
-            <dl className="mt-4 border-t border-border">
+            <dl className="mt-5 m-0 border-t border-foreground/15 max-w-[72ch]">
               {MORE_ROWS.map((k) => (
-                <div key={k} className="border-b border-border py-4">
-                  <dt className="font-display text-[16px] text-foreground">
-                    {t(lang, `${k}_name` as const)}
-                    <span className="ml-2 font-body text-[13px] text-muted-foreground tnum">{t(lang, `${k}_price` as const)}</span>
-                  </dt>
-                  <dd className="m-0 mt-1 font-body text-[14px] text-muted-foreground leading-relaxed max-w-[62ch]">
-                    {t(lang, `${k}_note` as const)}
-                  </dd>
+                <div key={k} className="grid sm:grid-cols-[1fr_auto] gap-x-8 gap-y-0.5 py-3.5 border-b border-foreground/15">
+                  <dt className="m-0 font-body text-[15px] text-foreground leading-snug">{t(lang, `${k}_name` as const)}</dt>
+                  <dd className="m-0 font-body tnum text-[15px] text-foreground/80 leading-snug sm:text-right">{t(lang, `${k}_price` as const)}</dd>
                 </div>
               ))}
             </dl>
