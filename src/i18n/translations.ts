@@ -385,7 +385,7 @@ const translations = {
     // moje skladba z existujících faktů; pr1_fee_scope spojuje obchodní
     // trojici s „Kompletní správa" (V. v náčrtu). pr1_core_*, ops_plus a
     // base_note se vyprázdnily, obsah nese scope a lead.
-    pricing_lead: "Správa: počítáme z příjmu po poplatcích platforem a úklidu. Naše odměna je 20 % + DPH, jen když byt vydělává. Vlastní provoz: za systém zaplatíte jednou a žádná procenta z výnosu dál neplatíte.",
+    pricing_lead: "Z příjmu po poplatcích platforem a úklidu, jen když byt vydělává. Kdo chce provozovat sám, zaplatí za systém jednou a procenta neplatí.",
     pr1_fee_value: "20 % + DPH",
     pr1_fee_scope: "Průzkum trhu · Cenová strategie · Optimalizace výnosu · Kompletní správa",
     pr1_setup_name: "Příprava bytu ke správě",
@@ -557,7 +557,7 @@ const translations = {
     choice_live_self_d: "Opravíme ceník, inzerát a nastavení kanálů.",
     choice_live_us_t: "Provozujeme za vás",
     choice_live_us_d: "Převezmeme provoz běžícího bytu.",
-    choice_note: "Rozdíl není v tom, jestli krátkodobý pronájem funguje. Rozdíl je v tom, co si chcete nechat: čas, nebo marži. Spočítáme obě cesty pro váš byt, včetně dlouhodobého nájmu, a řekneme, kterou bychom vybrali.",
+    choice_note: "Spočítáme obě cesty pro váš byt, včetně dlouhodobého nájmu, a řekneme, kterou bychom vybrali.",
     choice_cta: "Spočítat obě cesty",
     selfTerm_label: "Provozuji sám",
     comp1_self: "Kontrolu po pobytu děláte vy nebo váš úklid.",
@@ -977,7 +977,7 @@ const translations = {
     pr1_core_3: "",
     // 22. 10. 2026 v5: pricing_lead, pr1_fee_value, pr1_fee_scope — návrh (Claude),
     // skladba z existujících faktů (70 % po poplatcích, 30 % jen z výdělku).
-    pricing_lead: "Quản lý: Antam tính trên doanh thu sau phí nền tảng và phí dọn dẹp. Phí 20% + VAT, chỉ khi nhà có doanh thu. Tự vận hành: trả một lần cho hệ thống, sau đó không mất phần trăm.",
+    pricing_lead: "Tính trên doanh thu sau phí nền tảng và phí dọn dẹp, chỉ khi nhà có doanh thu. Ai muốn tự vận hành thì trả một lần cho hệ thống, không mất phần trăm.",
     pr1_fee_value: "20% + VAT",
     pr1_fee_scope: "Nghiên cứu thị trường · Chiến lược giá · Tối ưu doanh thu · Toàn bộ vận hành",
     pr1_setup_name: "Phí chuẩn bị nhà",
@@ -1149,7 +1149,7 @@ const translations = {
     choice_live_self_d: "Antam sửa giá, tin đăng và cài đặt kênh.",
     choice_live_us_t: "Antam vận hành",
     choice_live_us_d: "Antam nhận vận hành căn đang chạy.",
-    choice_note: "Khác biệt không phải cho thuê ngắn hạn có ăn hay không. Khác biệt là anh chị muốn giữ gì: thời gian, hay phần lời. Antam tính cả hai cách cho nhà mình, kể cả cho thuê dài hạn, và nói thẳng Antam sẽ chọn cách nào.",
+    choice_note: "Antam tính cả hai cách cho nhà mình, kể cả cho thuê dài hạn, và nói thẳng Antam sẽ chọn cách nào.",
     choice_cta: "Tính cả hai cách",
     selfTerm_label: "Tự vận hành",
     comp1_self: "Chủ nhà hoặc người dọn kiểm tra sau mỗi khách.",

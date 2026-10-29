@@ -12,6 +12,7 @@ import { trackEvent } from "@/lib/analytics";
  * přestavba jsou vnitřní architektura, sem patří jen volba.
  *
  * Všechny čtyři karty vedou na formulář; sekce nic nepočítá, jen třídí.
+ * Karty nenesou vlastní odkazový text: jedno tlačítko pod mřížkou stačí.
  */
 type Cell = { t: TranslationKey; d: TranslationKey; target: string };
 const ROWS: { label: TranslationKey; self: Cell; us: Cell }[] = [
@@ -43,10 +44,6 @@ const ChoiceSection = () => {
         <p className="mt-2 mb-0 font-body text-[14.5px] md:text-[15px] text-muted-foreground leading-relaxed text-pretty">
           {t(lang, c.d)}
         </p>
-        <span className="mt-3 inline-flex items-center gap-1 font-body text-[12px] uppercase tracking-[0.14em] text-gold-deep">
-          {t(lang, "nav_freeConsultation")}
-          <ChevronRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5" />
-        </span>
       </a>
     </Reveal>
   );
@@ -87,6 +84,8 @@ const ChoiceSection = () => {
           </div>
         </Reveal>
 
+        {/* Jedna věta a jedno tlačítko. Odstavec „Rozdíl není v tom…" odešel
+            (29. 10. 2026 odpoledne: stěna textu), karty samy nesou žádný odkaz. */}
         <Reveal delay={0.12} className="mt-9 md:mt-12 max-w-prose">
           <p className="font-body text-[15px] md:text-[16px] text-muted-foreground leading-relaxed text-pretty">
             {t(lang, "choice_note")}
