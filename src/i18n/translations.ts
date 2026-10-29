@@ -566,6 +566,10 @@ const translations = {
     // DIPTYCH ceníku (29. 10. 2026, zadání V.: dvě nabídky pořádně oddělené).
     // Formulace návrh (Claude), fakta z dodatku 3.
     pricing_h2: "Dvě cesty. Jeden systém.",
+    // Váš čas: 10 až 15 h týdně je odhad z vnějšího rozboru, V. má potvrdit z vlastní praxe.
+    pr_time_name: "Váš čas",
+    pr1_time_value: "téměř žádný",
+    pr4_time_value: "10 až 15 hodin týdně",
     pr1_vat_tag: "+ DPH",
     pr1_basis: "Z příjmu po poplatcích platforem a úklidu. Jen když byt vydělává, jinak nic.",
     pr1_term_name: "Závazek",
@@ -1177,6 +1181,9 @@ const translations = {
     comp3_self: "Giữ lịch cho mình lúc nào cũng được.",
     // DIPTYCH ceníku (29. 10. 2026). VI věty jsou návrh (Claude).
     pricing_h2: "Hai cách. Một hệ thống.",
+    pr_time_name: "Thời gian của anh chị",
+    pr1_time_value: "gần như không",
+    pr4_time_value: "10 đến 15 giờ mỗi tuần",
     pr1_vat_tag: "+ VAT",
     pr1_basis: "Tính trên doanh thu sau phí nền tảng và phí dọn dẹp. Nhà có thu thì Antam mới nhận, không thì không.",
     pr1_term_name: "Hợp đồng",

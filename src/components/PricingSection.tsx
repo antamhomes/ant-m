@@ -27,8 +27,9 @@ const MORE_ROWS = ["pr2", "pr3", "pr4", "pr9", "pr5", "pr8"] as const;
 
 type Row = { name: TranslationKey; value: TranslationKey; id?: string };
 
-/** Řádky správy: příprava, garance (kotva #garance, "pr6"), krytí škod ("pr7"), závazek. */
+/** Řádky správy: váš čas (29. 10. 2026: jediná měna, ve které se obě cesty opravdu liší), příprava, garance (kotva #garance, "pr6"), krytí škod ("pr7"), závazek. */
 const US_ROWS: Row[] = [
+  { name: "pr_time_name", value: "pr1_time_value" },
   { name: "pr1_setup_name", value: "pr1_setup_price" },
   { name: "pr6_name", value: "pr6_price", id: "garance" },
   { name: "pr7_name", value: "pr7_price" },
@@ -37,6 +38,7 @@ const US_ROWS: Row[] = [
 
 /** Řádky vlastního provozu: zařízený byt, řízení cen, předání, stabilizace. */
 const SELF_ROWS: Row[] = [
+  { name: "pr_time_name", value: "pr4_time_value" },
   { name: "pr4_row1_name", value: "pr4_row1_value" },
   { name: "pr4_row2_name", value: "pr4_row2_value" },
   { name: "pr4_row3_name", value: "pr4_row3_value" },
