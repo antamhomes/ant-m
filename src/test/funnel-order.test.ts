@@ -14,9 +14,10 @@ describe("poradi sekci", () => {
   it("Index.tsx montuje sekce presne v poradi spec §1", () => {
     const index = src("src/pages/Index.tsx");
     const order = [...index.matchAll(/<Suspense fallback=\{null\}><(\w+) \/><\/Suspense>/g)].map((m) => m[1]);
-    // 29. 10. 2026: ChoiceSection (dvě cesty) stojí hned pod hero, před důkazy.
+    // 29. 10. 2026: ChoiceSection odmontována (dvě cesty nese hero a ceník).
+    expect(index).not.toMatch(/<ChoiceSection/);
     expect(order).toEqual([
-      "ChoiceSection", "PortfolioSection", "CalculatorSection", "PricingSection", "ProcessSection", "ContactSection",
+      "PortfolioSection", "CalculatorSection", "PricingSection", "ProcessSection", "ContactSection",
       "ComparisonSection", "ServicesSection", "OwnerReportSection", "AboutSection", "FAQSection", "FinalCtaSection",
       "Footer", "StickyMobileCTA", "CookieConsent",
     ]);
