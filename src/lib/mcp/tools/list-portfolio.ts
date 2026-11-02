@@ -5,24 +5,27 @@ import { ratioFor } from "../../yield";
 // (already net of its own commission), minus the cleaning fee, then the 20 % + VAT fee. Airbnb
 // settles in CZK, Booking.com in EUR (converted at 25,00); the local tourist tax was collected
 // separately online and is not owner income. Monthly average over the last 12 full
-// months (to 31 Jul 2026) or since the first stay for newer flats. Recomputed 28 Aug 2026 from
-// Hospitable and cross-checked against PriceLabs; three "checkpoint voided" duplicate
-// reservations with zero revenue are excluded.
+// months (to 31 Oct 2026) or since the first stay for newer flats. Recomputed 2 Nov 2026 from
+// Hospitable (accepted stays only); the Booking.com city tax collected inside the price on 402/405
+// is excluded from owner income (it is remitted to the city). Klement: historical figure to 7/2026.
 // vsLongTermRent (patch 127) is computed by the same ratioFor as the website cards: owner income /
 // long-term rent for the flat's district and actual floor area (Deloitte Q2/2026 + MF size gradient).
 type Apt =
   | { name: string; location: string; maxGuests: number; managedSince: string; note: string }
   | { name: string; location: string; maxGuests: number; floorAreaM2: number; ownerMonthlyCzk: number; occupancyPct: number; period: string; vsLongTermRent?: number };
 const apartments: Apt[] = ([
-  { name: "Secret garden loft", location: "Praha 4", maxGuests: 13, managedSince: "2026-07", note: "new, results after the first season" },
-  { name: "Elegant Museum View Apartment (402)", location: "Praha 1", maxGuests: 8, floorAreaM2: 52, ownerMonthlyCzk: 69000, occupancyPct: 96, period: "12 months to 2026-07" },
-  { name: "Modern Museum View Apartment (405)", location: "Praha 1", maxGuests: 8, floorAreaM2: 52, ownerMonthlyCzk: 62000, occupancyPct: 94, period: "12 months to 2026-07" },
-  { name: "Modern AC Apartment", location: "Praha 3", maxGuests: 6, floorAreaM2: 55, ownerMonthlyCzk: 54000, occupancyPct: 96, period: "2026-02 to 2026-07" },
-  { name: "Moderní apartmán se zahradou", location: "Praha 3", maxGuests: 6, floorAreaM2: 60, ownerMonthlyCzk: 45000, occupancyPct: 85, period: "2026-04 to 2026-07" },
+  { name: "Elegant Museum View Apartment (402)", location: "Praha 1", maxGuests: 8, floorAreaM2: 52, ownerMonthlyCzk: 64000, occupancyPct: 94, period: "12 months to 2026-10" },
+  { name: "Modern Museum View Apartment (405)", location: "Praha 1", maxGuests: 8, floorAreaM2: 52, ownerMonthlyCzk: 58000, occupancyPct: 94, period: "12 months to 2026-10" },
+  { name: "Modern AC Apartment", location: "Praha 3", maxGuests: 6, floorAreaM2: 55, ownerMonthlyCzk: 57000, occupancyPct: 97, period: "2026-02 to 2026-10" },
+  { name: "Moderní apartmán se zahradou", location: "Praha 3", maxGuests: 6, floorAreaM2: 60, ownerMonthlyCzk: 52000, occupancyPct: 92, period: "2026-04 to 2026-10" },
   // Správa skončila 10/2026; karta i tahle položka zůstávají jako historický měřený výsledek (rozhodnutí V. 22. 10. 2026).
   { name: "Klement apartment s terasou", location: "Mladá Boleslav", maxGuests: 8, floorAreaM2: 85, ownerMonthlyCzk: 32000, occupancyPct: 91, period: "2026-04 to 2026-07" },
-  { name: "Secret garden studio I", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
-  { name: "Secret garden studio II", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
+  { name: "Secret Garden Loft", location: "Praha 4", maxGuests: 13, floorAreaM2: 110, ownerMonthlyCzk: 55000, occupancyPct: 79, period: "2026-07 to 2026-10" },
+  // Two identical studios in one house, shown as one entry: average per studio.
+  { name: "Secret Garden Studios (2 units, average per studio)", location: "Praha 4", maxGuests: 4, floorAreaM2: 22, ownerMonthlyCzk: 24000, occupancyPct: 95, period: "2026-07 to 2026-10" },
+  { name: "Secret Garden Apartment", location: "Praha 4", maxGuests: 6, managedSince: "2026-09", note: "new, still ramping up, results after the first season" },
+  { name: "Secret Garden 2BR Apartment", location: "Praha 4", maxGuests: 6, managedSince: "2026-09", note: "new, still ramping up, results after the first season" },
+  { name: "Rustic AC Studio, Vinohrady", location: "Praha 2", maxGuests: 4, managedSince: "2026-09", note: "new, still ramping up, results after the first season" },
 ] as Apt[]).map((a) => ("ownerMonthlyCzk" in a ? { ...a, vsLongTermRent: ratioFor(a.location, a.floorAreaM2, a.ownerMonthlyCzk) ?? undefined } : a));
 
 export default defineTool({

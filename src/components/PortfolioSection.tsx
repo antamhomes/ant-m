@@ -3,7 +3,6 @@ import Reveal from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MARKET_OCC, ratioFor } from "@/lib/yield";
 import byt1 from "@/assets/byt-1.jpg.asset.json";
-import byt2 from "@/assets/byt-2.jpg.asset.json";
 import byt3 from "@/assets/byt-3.jpg.asset.json";
 import byt4 from "@/assets/byt-4.jpg.asset.json";
 import byt5 from "@/assets/byt-5.jpg.asset.json";
@@ -14,11 +13,15 @@ import byt5 from "@/assets/byt-5.jpg.asset.json";
  *  CZK, Booking.com in EUR, converted at 25,00. The local tourist tax was collected separately
  *  online and is paid by the guest (owner, 28. 8. 2026); it is deliberately not mentioned in the
  *  footnote, because it is not something the owner reading this has to care about.
- *  Recomputed 28. 8. 2026 from Hospitable and cross-checked against PriceLabs (six flats match to
- *  0,0 %, the rest within 0,9 %). Three "checkpoint voided" duplicates with zero revenue are
- *  excluded; they inflated night counts, not money.
- *  Window: last 12 full months (1. 8. 2025 – 31. 7. 2026) or, for flats that joined later, from the
- *  first stay (`since`).
+ *  Recomputed 2. 11. 2026 from Hospitable (accepted stays only; cancelled and checkpoint rows
+ *  excluded). Since this recompute the Booking.com city tax on 402/405 (collected inside the
+ *  price and remitted to the city) is EXCLUDED from owner income; the 8/2026 figures had it in,
+ *  which overstated 402/405 by roughly 5 000 Kč a month. VAT lines inside the Booking.com price
+ *  stay in (for a private owner they are simply part of the price).
+ *  Window: last 12 full months (1. 11. 2025 – 31. 10. 2026) or, for flats that joined later, from the
+ *  first stay (`since`). Secret Garden units (7/2026) have Booking.com reservations spanning
+ *  several units that Hospitable shows under each of them; until that is deduplicated they keep
+ *  the "since" badge instead of a number.
  *  `ratio` (patch 127) is COMPUTED, not typed: owner income / rentFor(district, actual m²),
  *  the same function the calculator uses (Sreality medians 8/2026, district level × citywide
  *  size curve; Deloitte Q2/2026 kept as a test anchor).
@@ -33,28 +36,36 @@ import byt5 from "@/assets/byt-5.jpg.asset.json";
  *  three months get one.
  *  Flats younger than ~3 months get no numbers yet (`newSince`), only a note.
  *  Refresh monthly: STATS_ASOF + the numbers below. */
-const STATS_ASOF = { cs: "31. 7. 2026", vi: "31/7/2026" };
+const STATS_ASOF = { cs: "31. 10. 2026", vi: "31/10/2026" };
 
 type Stats = { owner: number; occupancy: number; market: number; since?: string };
 /** focus: kam se má ořez fotky držet, když má snímek jiný poměr než rám.
  *  Default je střed; u fotky, které centrování usekne to podstatné, stačí
  *  dopsat "top" nebo "bottom", layout se nemění. */
-type Item = { src: string; name: string; loc: string; guests: number; m2?: number; stats?: Stats; newSince?: string; focus?: "top" | "bottom" };
+type Item = { src: string; name: string; loc: string; guests: number; m2?: number; stats?: Stats; newSince?: string; focus?: "top" | "bottom"; /** karta za víc stejných jednotek: částka je průměr na jednotku */ each?: boolean };
 const ratioOf = (item: Item) => item.stats && item.m2 ? ratioFor(item.loc, item.m2, item.stats.owner) : null;
 
 /** The apartments shown publicly (owner's choice); capacities from Hospitable.
  *  byt-1…7 are Lovable assets; 402/405 (Praha 1, Čelakovského sady) are small webp files in public/portfolio.
  *  Order: measured results first (the section pays off the hero claim), longest window leading; flats without a full season follow with their honest badge. */
 const items: Item[] = [
-  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 69000, occupancy: 96, market: MARKET_OCC.praha1 } },
-  { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 62000, occupancy: 94, market: MARKET_OCC.praha1 } },
-  { src: "/portfolio/byt-modern-ac.webp", name: "Modern AC\u00a0Apartment", loc: "Praha 3", m2: 55, guests: 6, stats: { owner: 54000, occupancy: 96, market: MARKET_OCC.praha3, since: "2/2026" } },
+  { src: "/portfolio/byt-402.webp", name: "Elegant Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 64000, occupancy: 94, market: MARKET_OCC.praha1 } },
+  { src: "/portfolio/byt-405.webp", name: "Modern Museum View\u00a0Apartment", loc: "Praha 1", m2: 52, guests: 8, stats: { owner: 58000, occupancy: 94, market: MARKET_OCC.praha1 } },
+  { src: "/portfolio/byt-modern-ac.webp", name: "Modern AC\u00a0Apartment", loc: "Praha 3", m2: 55, guests: 6, stats: { owner: 57000, occupancy: 97, market: MARKET_OCC.praha3, since: "2/2026" } },
   // Praha 3, ne Praha 4: potvrzeno majitelem 28. 8. 2026 i PSČ 130 00 v Hospitable.
-  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 3", m2: 60, guests: 6, stats: { owner: 45000, occupancy: 85, market: MARKET_OCC.praha3, since: "4/2026" } },
+  { src: byt4.url, name: "Moderní apartmán se zahradou", loc: "Praha 3", m2: 60, guests: 6, stats: { owner: 52000, occupancy: 92, market: MARKET_OCC.praha3, since: "4/2026" } },
   { src: byt5.url, name: "Klement apartment s\u00a0terasou", loc: "Mladá Boleslav", m2: 85, guests: 8, stats: { owner: 32000, occupancy: 91, market: MARKET_OCC.mb, since: "4/2026" } },
-  { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", m2: 110, guests: 13, newSince: "7/2026" },
-  { src: byt1.url, name: "Secret Garden Studio\u00a0I", loc: "Praha 4", m2: 22, guests: 4, newSince: "7/2026" },
-  { src: byt2.url, name: "Secret Garden Studio\u00a0II", loc: "Praha 4", m2: 22, guests: 4, newSince: "7/2026" },
+  // Secret Garden (Praha 4): měřeno od prvního pobytu (7/2026) do 31. 10. 2026, obsazenost od 46. dne.
+  { src: byt3.url, name: "Secret Garden Loft", loc: "Praha 4", m2: 110, guests: 13, stats: { owner: 55000, occupancy: 79, market: MARKET_OCC.praha4, since: "7/2026" } },
+  // Dvě identická studia v jednom domě jako jedna karta: průměr na studio
+  // (27 318 + 21 035) / 2 = 24 176 Kč, obsazenost (55 + 53) / (57 + 57) = 95 %.
+  // Rozdíl mezi nimi je jen rozdělení rezervací mezi dvě stejné jednotky.
+  { src: byt1.url, name: "Secret Garden Studia (2\u00d7)", loc: "Praha 4", m2: 22, guests: 4, each: true, stats: { owner: 24000, occupancy: 95, market: MARKET_OCC.praha4, since: "7/2026" } },
+  // Nové od 9/2026 (rozjezd, bez čísel). Fotky zatím přímo z galerie Hospitable
+  // (CDN assets.hospitable.com); nahradit lokálními webp v public/portfolio, až budou.
+  { src: "https://assets.hospitable.com/property_images/2348510/36u4zL1zpSzt8JoPuELe74fU5bfOYmkyyYP5J2rX.jpg", name: "Secret Garden Apartment", loc: "Praha 4", guests: 6, newSince: "9/2026" },
+  { src: "https://assets.hospitable.com/property_images/2498070/TxwGsfvZqfobKZoFcIiGylDPTquzaZeTVRKaNReb.jpg", name: "Secret Garden 2BR\u00a0Apartment", loc: "Praha 4", guests: 6, newSince: "9/2026" },
+  { src: "https://assets.hospitable.com/property_images/2498943/yr8enftJzBQepdEMZUWLDcaOobeKPvCnxU13dhhc.jpg", name: "Rustic AC Studio, Vinohrady", loc: "Praha 2", guests: 4, newSince: "9/2026" },
 ];
 
 const fmtCzk = (n: number) => n.toLocaleString("cs-CZ").replace(/\s/g, "\u00a0");
@@ -72,6 +83,7 @@ const copy = {
     prevFlat: "Předchozí byt",
     nextFlat: "Další byt",
     featOwner: "průměrně měsíčně majiteli",
+    statOwnerEach: "majiteli měsíčně, za studio",
     calcBridge: "Odhad v\u00a0kalkulačce vychází z\u00a0trhu. Výsledky výš jsou skutečné byty z\u00a0naší správy.",
     statNoteToggle: "Jak počítáme částky na kartách",
     showLess: "Zobrazit méně",
@@ -83,7 +95,7 @@ const copy = {
     statPeriodSince: (m: string) => `průměr od ${m}`,
     statRatio: (r: number) => `${r.toLocaleString("cs-CZ")}× dlouhodobý nájem`,
     newBadge: (m: string) => `V naší správě od ${m}`,
-    newNote: "Výsledky doplníme po první sezóně.",
+    newNote: "Ještě se rozjíždí, výsledky doplníme po první sezóně.",
     statNote: (d: string) => `Částka, kterou majitel obdrží, vychází ze skutečných rezervací každého bytu a je počítána podle naší současné odměny 20 % + DPH, po odečtení poplatků Airbnb a Booking.com a bez poplatků za úklid. Údaje představují průměr za posledních 12 měsíců; u novějších bytů počítáme období od začátku naší správy. Obsazenost v dané lokalitě vychází z dat PriceLabs. Dlouhodobé nájemné vychází z více než 1 300 nabídek na Sreality podle městské části a velikosti bytu a je porovnáno s Deloitte Rent Indexem. Skutečné výsledky se mohou v čase měnit a nejsou příslibem budoucích výnosů.\n`,
   },
   vi: {
@@ -98,6 +110,7 @@ const copy = {
     prevFlat: "Căn trước",
     nextFlat: "Căn sau",
     featOwner: "trung bình mỗi tháng chủ nhà nhận",
+    statOwnerEach: "chủ nhà nhận / tháng, mỗi studio",
     calcBridge: "Ước tính ở phần tính thử dựa trên thị trường. Kết quả ở trên là những căn thật Antam đang quản lý.",
     statNoteToggle: "Antam tính số trên thẻ thế nào",
     showLess: "Thu gọn",
@@ -109,7 +122,7 @@ const copy = {
     statPeriodSince: (m: string) => `trung bình từ ${m}`,
     statRatio: (r: number) => `gấp ${r.toLocaleString("vi-VN")} lần cho thuê dài hạn`,
     newBadge: (m: string) => `Antam lo từ ${m}`,
-    newNote: "Số liệu sẽ có sau mùa đầu tiên.",
+    newNote: "Mới bắt đầu, số liệu sẽ có sau mùa đầu tiên.",
     statNote: (d: string) => `Số tiền chủ nhà nhận tính từ đặt phòng thật của từng căn, theo mức phí Antam hiện nay 20% + VAT, sau khi trừ phí Airbnb, Booking.com và không tính phí dọn dẹp. Đây là trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Tỷ lệ lấp phòng của khu lấy từ PriceLabs. Tiền thuê dài hạn lấy từ hơn 1\u00a0300 tin đăng trên Sreality theo quận và diện tích, có đối chiếu với Deloitte Rent\u00a0Index. Kết quả đã qua không phải là cam kết cho\u00a0tương\u00a0lai.`,
   },
 };
@@ -134,7 +147,7 @@ const Tile = ({ item, big, c, lang }: { item: Item; big?: boolean; c: (typeof co
               {fmtCzk(item.stats.owner)}
               <span className="ml-2 text-[0.42em] font-normal text-white/85">Kč</span>
             </span>
-            <span className="mt-1.5 block font-body text-[12px] sm:text-[13px] text-white/85 leading-tight">{c.statOwner}</span>
+            <span className="mt-1.5 block font-body text-[12px] sm:text-[13px] text-white/85 leading-tight">{item.each ? c.statOwnerEach : c.statOwner}</span>
           </p>
         </>
       )}
@@ -144,7 +157,7 @@ const Tile = ({ item, big, c, lang }: { item: Item; big?: boolean; c: (typeof co
         {item.name}
       </h3>
       <p className="m-0 mt-1 font-body text-[13px] sm:text-sm text-muted-foreground leading-relaxed">
-        {item.loc} · {item.m2}&nbsp;m² · {c.guests(item.guests)}
+        {item.loc}{item.m2 ? <> · {item.m2}&nbsp;m²</> : null} · {c.guests(item.guests)}
       </p>
       {item.stats ? (
         <p className="m-0 mt-1 font-body text-[13px] sm:text-sm text-foreground/80 leading-relaxed">

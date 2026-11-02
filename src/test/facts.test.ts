@@ -297,17 +297,19 @@ describe("garance výnosu", () => {
     expect(strip(cs.hero_desc).split(" ").length).toBeLessThanOrEqual(18);
   });
 
-  it("vietnamské hero teaser drží a sedí s kartami portfolia (62/69 tis.)", () => {
+  it("vietnamské hero teaser drží a sedí s kartami portfolia (58/64 tis.)", () => {
+    // 2. 11. 2026: přeměřeno za 11/2025 až 10/2026, městský poplatek z Booking.com
+    // vyloučen z příjmu majitele: 402 = 64 000, 405 = 58 000.
     // Při odměně 30 % vycházelo 405 na 57 000 a 402 na 64 000. Od 29. 10. 2026
     // (20 % + DPH) stejné rezervace dají 62 000 a 69 000 (× 0,758 / 0,70,
     // zaokrouhleno na tisíce). Kdyby se karty znovu přepočítaly, posune se i teaser.
     // vi.hero_extra čísla od 10/2026 nenese (jen „13 căn"), hlídáme karty a MCP.
     const cards = readFileSync("src/components/PortfolioSection.tsx", "utf8");
-    expect(cards).toMatch(/owner: 62000/);
-    expect(cards).toMatch(/owner: 69000/);
+    expect(cards).toMatch(/owner: 58000/);
+    expect(cards).toMatch(/owner: 64000/);
     const mcp = readFileSync("src/lib/mcp/tools/list-portfolio.ts", "utf8");
-    expect(mcp).toMatch(/ownerMonthlyCzk: 62000/);
-    expect(mcp).toMatch(/ownerMonthlyCzk: 69000/);
+    expect(mcp).toMatch(/ownerMonthlyCzk: 58000/);
+    expect(mcp).toMatch(/ownerMonthlyCzk: 64000/);
   });
 
   it("karty portfolia a MCP hlásí stejné částky", () => {

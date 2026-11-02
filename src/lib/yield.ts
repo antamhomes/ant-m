@@ -1169,7 +1169,7 @@ export const annualDamageCover = (rooms: number) =>
 /**
  * Obsazenost jednotlivých bytů proti trhu jejich lokality.
  * occupancy: z rezervací v Hospitable (byty starší tří měsíců, okno od 46. dne
- * provozu do 31. 7. 2026) — NAMĚŘENÁ ČÍSLA, nesahat.
+ * provozu do 31. 10. 2026, přeměřeno 2. 11. 2026; Klement historicky do 7/2026) — NAMĚŘENÁ ČÍSLA, nesahat.
  * market: MARKET_OCC lokality, od patche 127 z téhož datasetu jako kalkulačka
  * (celá čtvrť, 12 měsíců, pásmo podle ložnic bytu).
  * bedrooms z Hospitable (30. 8. 2026).
@@ -1179,15 +1179,19 @@ export const annualDamageCover = (rooms: number) =>
 export const OCCUPANCY_BY_FLAT: {
   name: string; loc: string; kat?: string; m2: number; bedrooms: number; occupancy: number; market: number; days: number;
 }[] = [
-  { name: "Elegant Museum View Apartment", loc: "Praha 1", kat: "Nové Město",        m2: 52, bedrooms: 2, occupancy: 96, market: MARKET_OCC.praha1, days: 319 },
+  { name: "Elegant Museum View Apartment", loc: "Praha 1", kat: "Nové Město",        m2: 52, bedrooms: 2, occupancy: 94, market: MARKET_OCC.praha1, days: 318 },
   { name: "Modern Museum View Apartment",  loc: "Praha 1", kat: "Nové Město",        m2: 52, bedrooms: 2, occupancy: 94, market: MARKET_OCC.praha1, days: 318 },
-  { name: "Modern AC Apartment",           loc: "Praha 3", kat: "Žižkov",        m2: 55, bedrooms: 2, occupancy: 96, market: MARKET_OCC.praha3, days: 139 },
-  { name: "Moderní apartmán se zahradou",  loc: "Praha 3", kat: "Žižkov",        m2: 60, bedrooms: 2, occupancy: 85, market: MARKET_OCC.praha3, days: 54 },
+  { name: "Modern AC Apartment",           loc: "Praha 3", kat: "Žižkov",        m2: 55, bedrooms: 2, occupancy: 97, market: MARKET_OCC.praha3, days: 231 },
+  { name: "Moderní apartmán se zahradou",  loc: "Praha 3", kat: "Žižkov",        m2: 60, bedrooms: 2, occupancy: 92, market: MARKET_OCC.praha3, days: 146 },
   { name: "Klement apartment s terasou",   loc: "Mladá Boleslav", kat: "Mladá Boleslav", m2: 85, bedrooms: 2, occupancy: 91, market: MARKET_OCC.mb, days: 54 },
-  { name: "My Mozart studio",                loc: "Praha 5", kat: "Smíchov",        m2: 40, bedrooms: 1, occupancy: 97, market: MARKET_OCC.praha5, days: 113 },
+  { name: "My Mozart studio",                loc: "Praha 5", kat: "Smíchov",        m2: 40, bedrooms: 1, occupancy: 98, market: MARKET_OCC.praha5, days: 205 },
+  // Secret Garden (od 7/2026, přeměřeno 2. 11. 2026): okno od 46. dne provozu do 31. 10. 2026.
+  { name: "Secret Garden Loft",            loc: "Praha 4", kat: "Libuš",          m2: 110, bedrooms: 1, occupancy: 79, market: MARKET_OCC.praha4, days: 52 },
+  // Dvě studia jako jedna položka (průměr obou): 108 nocí ze 114 dní.
+  { name: "Secret Garden Studia (2×)",     loc: "Praha 4", kat: "Libuš",          m2: 22, bedrooms: 1, occupancy: 95, market: MARKET_OCC.praha4, days: 114 },
 ];
 
-/** Vážený průměr naší obsazenosti: 1 240 obsazených nocí z 1 317 dní okna. */
+/** Vážený průměr naší obsazenosti (2. 11. 2026): 1 357 obsazených nocí z 1 438 dní okna. */
 export const OCCUPANCY_OURS = 94;
 
 /** Plocha, kterou dispozice předvyplní (medián MF); posuvník ji přepíše. */

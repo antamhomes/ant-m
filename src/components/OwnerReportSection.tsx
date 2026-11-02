@@ -14,10 +14,12 @@ const PORTAL_DEMO_URL = "https://antam-owner-portal.netlify.app/?demo";
 
 /**
  * VYÚČTOVÁNÍ JAKO DOKUMENT (2. 11. 2026, vizuál C9). Skutečný byt 402 (Praha 1),
- * průměr 12 uzavřených měsíců do 7/2026 z Hospitable, přepočteno na odměnu
- * 20 % + DPH. Metoda: payout platforem (už po jejich provizi) minus úklid,
- * zrušené rezervace vyloučené, EUR × 25,00. 91 324 × 0,20 = 18 265; DPH 21 %
- * z odměny = 3 835; dohromady 22 100; majiteli 69 224 (na kartě 69 000).
+ * průměr 12 uzavřených měsíců 11/2025 až 10/2026 z Hospitable, přepočteno na
+ * odměnu 20 % + DPH. Metoda: payout platforem (už po jejich provizi) minus úklid
+ * minus městský poplatek vybraný v ceně na Booking.com (odvádí se městu),
+ * zrušené rezervace vyloučené, EUR × 25,00. Rok: 1 076 355 − 68 000 = 1 008 355;
+ * měsíc 84 030. 84 030 × 0,20 = 16 806; DPH 21 % z odměny = 3 529; dohromady
+ * 20 335; majiteli 63 695 (na kartě 64 000).
  * Čte se shora dolů: co byt vydělal, co se odečetlo, co přišlo majiteli.
  * Žádný řádek není vymyšlený; provize platforem a úklid se do výpisu nepíší
  * částkou, protože je platforma strhne před výplatou a majitel je nevidí.
@@ -27,15 +29,15 @@ const OwnerReportSection = () => {
   const cs = lang === "cs";
   const pct = (n: string) => (cs ? `${n} %` : `${n}%`);
   const rows: { label: string; value: string; kind?: "sum" | "minus" | "total" }[] = [
-    { label: t(lang, "report_row_base"), value: "91 324 Kč", kind: "sum" },
-    { label: cs ? "Odměna Antam Homes, 20 % z příjmu" : "Phí Antam Homes, 20% doanh thu", value: "− 18 265 Kč", kind: "minus" },
-    { label: cs ? "DPH 21 % z odměny" : "VAT 21% trên phí", value: "− 3 835 Kč", kind: "minus" },
-    { label: t(lang, "report_row_net"), value: "69 224 Kč", kind: "total" },
+    { label: t(lang, "report_row_base"), value: "84\u00a0030\u00a0Kč", kind: "sum" },
+    { label: cs ? "Odměna Antam Homes, 20 % z příjmu" : "Phí Antam Homes, 20% doanh thu", value: "\u2212\u00a016\u00a0806\u00a0Kč", kind: "minus" },
+    { label: cs ? "DPH 21 % z odměny" : "VAT 21% trên phí", value: "\u2212\u00a03\u00a0529\u00a0Kč", kind: "minus" },
+    { label: t(lang, "report_row_net"), value: "63\u00a0695\u00a0Kč", kind: "total" },
   ];
   const meta = [
     [cs ? "Byt" : "Căn hộ", "2+kk, 52 m², Praha 1"],
-    [cs ? "Období" : "Kỳ", cs ? "průměrný měsíc, 8/2025 až 7/2026" : "tháng trung bình, 8/2025 đến 7/2026"],
-    [t(lang, "report_row_occupancy"), pct("96")],
+    [cs ? "Období" : "Kỳ", cs ? "průměrný měsíc, 11/2025 až 10/2026" : "tháng trung bình, 11/2025 đến 10/2026"],
+    [t(lang, "report_row_occupancy"), pct("94")],
     [cs ? "Výplata" : "Thanh toán", cs ? "do 15. dne následujícího měsíce" : "trước ngày 15 tháng sau"],
   ];
 
@@ -114,8 +116,8 @@ const OwnerReportSection = () => {
               </ol>
               <p className="mt-4 mb-0 font-body text-[12px] text-muted-foreground leading-relaxed text-pretty">
                 {cs
-                  ? "Příjem je to, co platformy vyplatily po své provizi, bez úklidu, který platí hosté. Průměr 12 měsíců z Hospitable, přepočteno na současnou odměnu. Minulý výsledek není příslib."
-                  : "Doanh thu là số nền tảng đã trả sau phí của họ, không gồm phí dọn do khách trả. Trung bình 12 tháng từ Hospitable, tính theo mức phí hiện nay. Kết quả đã qua không phải cam kết."}
+                  ? "Příjem je to, co platformy vyplatily po své provizi, bez úklidu, který platí hosté, a bez městského poplatku. Průměr 12 měsíců z Hospitable, přepočteno na současnou odměnu. Minulý výsledek není příslib."
+                  : "Doanh thu là số nền tảng đã trả sau phí của họ, không gồm phí dọn do khách trả và phí lưu trú của thành phố. Trung bình 12 tháng từ Hospitable, tính theo mức phí hiện nay. Kết quả đã qua không phải cam kết."}
               </p>
             </article>
           </Reveal>

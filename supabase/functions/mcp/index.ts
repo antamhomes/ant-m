@@ -690,12 +690,16 @@ var DAMAGE_COVER_PER_ROOM = 5e3;
 var DAMAGE_COVER_MAX = 25e3;
 var annualDamageCover = (rooms) => Math.min(Math.max(0, Math.round(rooms)) * DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX);
 var OCCUPANCY_BY_FLAT = [
-  { name: "Elegant Museum View\xA0Apartment", loc: "Praha 1", kat: "Nov\xE9 M\u011Bsto", m2: 52, bedrooms: 2, occupancy: 96, market: MARKET_OCC.praha1, days: 319 },
+  { name: "Elegant Museum View\xA0Apartment", loc: "Praha 1", kat: "Nov\xE9 M\u011Bsto", m2: 52, bedrooms: 2, occupancy: 94, market: MARKET_OCC.praha1, days: 318 },
   { name: "Modern Museum View\xA0Apartment", loc: "Praha 1", kat: "Nov\xE9 M\u011Bsto", m2: 52, bedrooms: 2, occupancy: 94, market: MARKET_OCC.praha1, days: 318 },
-  { name: "Modern AC\xA0Apartment", loc: "Praha 3", kat: "\u017Di\u017Ekov", m2: 55, bedrooms: 2, occupancy: 96, market: MARKET_OCC.praha3, days: 139 },
-  { name: "Modern\xED apartm\xE1n se\xA0zahradou", loc: "Praha 3", kat: "\u017Di\u017Ekov", m2: 60, bedrooms: 2, occupancy: 85, market: MARKET_OCC.praha3, days: 54 },
+  { name: "Modern AC\xA0Apartment", loc: "Praha 3", kat: "\u017Di\u017Ekov", m2: 55, bedrooms: 2, occupancy: 97, market: MARKET_OCC.praha3, days: 231 },
+  { name: "Modern\xED apartm\xE1n se\xA0zahradou", loc: "Praha 3", kat: "\u017Di\u017Ekov", m2: 60, bedrooms: 2, occupancy: 92, market: MARKET_OCC.praha3, days: 146 },
   { name: "Klement apartment s terasou", loc: "Mlad\xE1 Boleslav", kat: "Mlad\xE1 Boleslav", m2: 85, bedrooms: 2, occupancy: 91, market: MARKET_OCC.mb, days: 54 },
-  { name: "My Mozart studio", loc: "Praha 5", kat: "Sm\xEDchov", m2: 40, bedrooms: 1, occupancy: 97, market: MARKET_OCC.praha5, days: 113 }
+  { name: "My Mozart studio", loc: "Praha 5", kat: "Sm\xEDchov", m2: 40, bedrooms: 1, occupancy: 98, market: MARKET_OCC.praha5, days: 205 },
+  // Secret Garden (od 7/2026, přeměřeno 2. 11. 2026): okno od 46. dne provozu do 31. 10. 2026.
+  { name: "Secret Garden Loft", loc: "Praha 4", kat: "Libu\u0161", m2: 110, bedrooms: 1, occupancy: 79, market: MARKET_OCC.praha4, days: 52 },
+  // Dvě studia jako jedna položka (průměr obou): 108 nocí ze 114 dní.
+  { name: "Secret Garden Studia (2\xD7)", loc: "Praha 4", kat: "Libu\u0161", m2: 22, bedrooms: 1, occupancy: 95, market: MARKET_OCC.praha4, days: 114 }
 ];
 var SIZE_PRESET = {
   "1kk": { m2: MEDIAN_AREA["1kk"] },
@@ -887,15 +891,18 @@ var estimate_yield_default = defineTool({
 // src/lib/mcp/tools/list-portfolio.ts
 import { defineTool as defineTool2 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var apartments = [
-  { name: "Secret garden loft", location: "Praha 4", maxGuests: 13, managedSince: "2026-07", note: "new, results after the first season" },
-  { name: "Elegant Museum View Apartment (402)", location: "Praha 1", maxGuests: 8, floorAreaM2: 52, ownerMonthlyCzk: 69e3, occupancyPct: 96, period: "12 months to 2026-07" },
-  { name: "Modern Museum View Apartment (405)", location: "Praha 1", maxGuests: 8, floorAreaM2: 52, ownerMonthlyCzk: 62e3, occupancyPct: 94, period: "12 months to 2026-07" },
-  { name: "Modern AC Apartment", location: "Praha 3", maxGuests: 6, floorAreaM2: 55, ownerMonthlyCzk: 54e3, occupancyPct: 96, period: "2026-02 to 2026-07" },
-  { name: "Modern\xED apartm\xE1n se zahradou", location: "Praha 3", maxGuests: 6, floorAreaM2: 60, ownerMonthlyCzk: 45e3, occupancyPct: 85, period: "2026-04 to 2026-07" },
+  { name: "Elegant Museum View Apartment (402)", location: "Praha 1", maxGuests: 8, floorAreaM2: 52, ownerMonthlyCzk: 64e3, occupancyPct: 94, period: "12 months to 2026-10" },
+  { name: "Modern Museum View Apartment (405)", location: "Praha 1", maxGuests: 8, floorAreaM2: 52, ownerMonthlyCzk: 58e3, occupancyPct: 94, period: "12 months to 2026-10" },
+  { name: "Modern AC Apartment", location: "Praha 3", maxGuests: 6, floorAreaM2: 55, ownerMonthlyCzk: 57e3, occupancyPct: 97, period: "2026-02 to 2026-10" },
+  { name: "Modern\xED apartm\xE1n se zahradou", location: "Praha 3", maxGuests: 6, floorAreaM2: 60, ownerMonthlyCzk: 52e3, occupancyPct: 92, period: "2026-04 to 2026-10" },
   // Správa skončila 10/2026; karta i tahle položka zůstávají jako historický měřený výsledek (rozhodnutí V. 22. 10. 2026).
   { name: "Klement apartment s terasou", location: "Mlad\xE1 Boleslav", maxGuests: 8, floorAreaM2: 85, ownerMonthlyCzk: 32e3, occupancyPct: 91, period: "2026-04 to 2026-07" },
-  { name: "Secret garden studio I", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" },
-  { name: "Secret garden studio II", location: "Praha 4", maxGuests: 4, managedSince: "2026-07", note: "new, results after the first season" }
+  { name: "Secret Garden Loft", location: "Praha 4", maxGuests: 13, floorAreaM2: 110, ownerMonthlyCzk: 55e3, occupancyPct: 79, period: "2026-07 to 2026-10" },
+  // Two identical studios in one house, shown as one entry: average per studio.
+  { name: "Secret Garden Studios (2 units, average per studio)", location: "Praha 4", maxGuests: 4, floorAreaM2: 22, ownerMonthlyCzk: 24e3, occupancyPct: 95, period: "2026-07 to 2026-10" },
+  { name: "Secret Garden Apartment", location: "Praha 4", maxGuests: 6, managedSince: "2026-09", note: "new, still ramping up, results after the first season" },
+  { name: "Secret Garden 2BR Apartment", location: "Praha 4", maxGuests: 6, managedSince: "2026-09", note: "new, still ramping up, results after the first season" },
+  { name: "Rustic AC Studio, Vinohrady", location: "Praha 2", maxGuests: 4, managedSince: "2026-09", note: "new, still ramping up, results after the first season" }
 ].map((a) => "ownerMonthlyCzk" in a ? { ...a, vsLongTermRent: ratioFor(a.location, a.floorAreaM2, a.ownerMonthlyCzk) ?? void 0 } : a);
 var list_portfolio_default = defineTool2({
   name: "list_portfolio",
