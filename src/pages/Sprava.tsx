@@ -1,7 +1,6 @@
 import { lazy, Suspense } from "react";
 import PageShell from "@/components/PageShell";
 import PageHero from "@/components/PageHero";
-import TodayStrip from "@/components/TodayStrip";
 
 const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
 const CalculatorSection = lazy(() => import("@/components/CalculatorSection"));
@@ -21,7 +20,7 @@ const FinalCtaSection = lazy(() => import("@/components/FinalCtaSection"));
 const Sprava = () => (
   <PageShell page="sprava">
     <PageHero page="sprava" />
-    <TodayStrip />
+    {/* Dnes: pás provozu je vypnutý, dokud nejede z reálných dat (TodayStrip.tsx, MOCK). Zapnout = vrátit <TodayStrip /> sem. */}
     <Suspense fallback={null}><PortfolioSection /></Suspense>
     <Suspense fallback={null}><CalculatorSection /></Suspense>
     <Suspense fallback={null}><ServicesSection /></Suspense>

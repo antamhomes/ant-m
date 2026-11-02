@@ -135,7 +135,7 @@ const PricingSection = ({ variant = "both" }: { variant?: PricingVariant }) => {
         </h3>
         <p className="mt-7 md:mt-9 mb-0 font-display font-medium leading-[0.85] tracking-[-0.03em] tnum text-foreground text-[clamp(3rem,6.2vw,4.9rem)]">
           270 000<span className="text-[0.42em] font-normal text-gold-deep align-baseline"> Kč</span>
-          <span className="block mt-3 md:inline md:mt-0 md:ml-3 align-baseline font-body font-normal tracking-normal text-[0.29em] text-muted-foreground">{t(lang, "pr4_big_tag")}</span>
+          <span className="block mt-3 md:inline md:mt-0 md:ml-3 align-baseline font-body font-normal tracking-normal text-[0.29em] text-muted-foreground whitespace-nowrap">{t(lang, "pr4_big_tag")}</span>
         </p>
         <p className="mt-4 mb-0 font-body text-[15px] md:text-[16px] leading-relaxed text-muted-foreground max-w-[40ch] text-pretty">
           {t(lang, "pr4_basis")}

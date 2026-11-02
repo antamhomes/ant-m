@@ -1,7 +1,6 @@
 import { lazy, Suspense } from "react";
 import PageShell from "@/components/PageShell";
 import HeroSection from "@/components/HeroSection";
-import TodayStrip from "@/components/TodayStrip";
 
 // Below-the-fold sections are code-split so the first paint ships less JS.
 const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
@@ -23,7 +22,7 @@ const FinalCtaSection = lazy(() => import("@/components/FinalCtaSection"));
 const Index = () => (
   <PageShell page="home">
     <HeroSection />
-    <TodayStrip />
+    {/* Dnes: pás provozu je vypnutý, dokud nejede z reálných dat (TodayStrip.tsx, MOCK). Zapnout = vrátit <TodayStrip /> sem. */}
     <Suspense fallback={null}><PortfolioSection /></Suspense>
     <Suspense fallback={null}><CalculatorSection /></Suspense>
     <Suspense fallback={null}><PricingSection variant="both" /></Suspense>
