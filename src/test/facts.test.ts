@@ -15,8 +15,8 @@ import { readFileSync } from "node:fs";
 import { describe, it, expect } from "vitest";
 import translations from "@/i18n/translations";
 import {
-  ENERGY, MGMT_FEE, MGMT_VAT, MGMT_FEE_GROSS, PLATFORM_FEE, LAUNCH_FEE, SETUP_EMPTY_BY_SIZE, TURNKEY_BY_SIZE,
-  LAUNCH_SELF, REBUILD_FEE, PROCUREMENT_FEE, ROOMS,
+  ENERGY, MGMT_FEE, MGMT_VAT, MGMT_FEE_GROSS, PLATFORM_FEE, LAUNCH_FEE, TURNKEY_BY_SIZE,
+  REBUILD_FEE, PROCUREMENT_FEE, PROCUREMENT_FEE_SELF, PROCUREMENT_SELF_CAP, ROOMS,
   DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX, annualDamageCover, ownerMonthly,
   OCCUPANCY_BY_FLAT, MEDIAN_AREA, rentFor,
   MARKET_STR, MARKET_OCC, SEASONS_BY_LOC, isMeasured, bandFor,
@@ -172,38 +172,44 @@ describe("ceník", () => {
     expect(strip(vi.pr8_note)).toMatch(/25 000 Kč/);
   });
 
-  it("příprava ke správě: 49 000 Kč zařízený byt, 120/150/190 tisíc prázdný, stejná čísla v kopii (29. 10. 2026)", () => {
-    expect(LAUNCH_FEE).toBe(49000);
-    expect(SETUP_EMPTY_BY_SIZE).toEqual({ "2kk": 120000, "3kk": 150000, "4kk": 190000 });
+  it("příprava ke správě: 39 000 Kč za náklady, zařízený i prázdný byt; vybavení za pořizovací ceny + 12 % (2. 11. 2026, Offer v2)", () => {
+    expect(LAUNCH_FEE).toBe(39000);
+    expect(PROCUREMENT_FEE).toBe(0.12);
     for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
-      expect(strip(dict.pr2_price), `${lang}.pr2_price`).toMatch(/49 000 Kč/);
-      expect(strip(dict.pr2_price), `${lang}.pr2_price`).toMatch(/120 000/);
-      expect(strip(dict.pr2_price), `${lang}.pr2_price`).toMatch(/190 000/);
-      expect(strip(dict.pr2_note), `${lang}.pr2_note`).toMatch(/150 000/);
-      expect(strip(dict.faq16_a), `${lang}.faq16_a`).toMatch(/49 000/);
-      expect(strip(dict.faq16_a), `${lang}.faq16_a`).toMatch(/120 000/);
-      expect(strip(dict.faq16_a), `${lang}.faq16_a`).toMatch(/190 000/);
+      expect(strip(dict.pr1_setup_price), `${lang}.pr1_setup_price`).toMatch(/39 000 Kč/);
+      expect(strip(dict.pr2_price), `${lang}.pr2_price`).toMatch(/39 000 Kč/);
+      expect(strip(dict.faq16_a), `${lang}.faq16_a`).toMatch(/39 000/);
+      expect(strip(dict.faq16_a), `${lang}.faq16_a`).toMatch(/12\s?%/);
+      expect(strip(dict.pr1_furnish_value), `${lang}.pr1_furnish_value`).toMatch(/12\s?%/);
+      // pevné sazby za prázdný byt (120/150/190 tisíc) a stará příprava 49 000 jsou pryč
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(strip(value), `${lang}.${key}`).not.toMatch(/49 000 Kč|120 000 Kč|190 000 Kč|150 000 Kč/);
+      }
     }
   });
 
-  it("vlastní provoz: systém 180/270/360 tisíc, zařízený byt 79 000, přestavba 29 000, vybavení + 12 % (29. 10. 2026)", () => {
+  it("vlastní provoz: systém 180/270/360 tisíc zařízený i prázdný, přestavba 29 000, vybavení + 20 % do 500 000 (2. 11. 2026, Offer v2)", () => {
     expect(TURNKEY_BY_SIZE).toEqual({ "2kk": 180000, "3kk": 270000, "4kk": 360000 });
-    expect(LAUNCH_SELF).toBe(79000);
     expect(REBUILD_FEE).toBe(29000);
-    expect(PROCUREMENT_FEE).toBe(0.12);
+    expect(PROCUREMENT_FEE_SELF).toBe(0.20);
+    expect(PROCUREMENT_SELF_CAP).toBe(500000);
     for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
       expect(strip(dict.pr4_price), `${lang}.pr4_price`).toMatch(/180 000 · 3\+kk 270 000 · 4\+kk 360 000/);
-      expect(strip(dict.pr4_note), `${lang}.pr4_note`).toMatch(/79 000/);
       expect(strip(dict.pr4_note), `${lang}.pr4_note`).toMatch(/3 490/);
-      expect(strip(dict.pr9_price), `${lang}.pr9_price`).toMatch(/29 000/);
+      expect(strip(dict.pr4_note), `${lang}.pr4_note`).toMatch(/90/);
+      expect(strip(dict.pr4_furnish_value), `${lang}.pr4_furnish_value`).toMatch(/20\s?%/);
       expect(strip(dict.pr3_price), `${lang}.pr3_price`).toMatch(/12\s?%/);
-      expect(strip(dict.path_note), `${lang}.path_note`).toMatch(/12\s?%/);
-      // tři cesty v ceníku nesou stejná čísla
-      expect(strip(dict.path_us_1), `${lang}.path_us_1`).toMatch(/20\s?%/);
-      expect(strip(dict.path_us_2), `${lang}.path_us_2`).toMatch(/49 000/);
-      expect(strip(dict.path_self_1), `${lang}.path_self_1`).toMatch(/180 000/);
-      expect(strip(dict.path_self_1), `${lang}.path_self_1`).toMatch(/360 000/);
-      expect(strip(dict.path_live_1), `${lang}.path_live_1`).toMatch(/29 000/);
+      expect(strip(dict.pr3_price), `${lang}.pr3_price`).toMatch(/20\s?%/);
+      expect(strip(dict.path_note), `${lang}.path_note`).toMatch(/20\s?%/);
+      expect(strip(dict.path_note), `${lang}.path_note`).toMatch(/500 000/);
+      expect(strip(dict.pr9_price), `${lang}.pr9_price`).toMatch(/29 000/);
+      expect(strip(dict.faq19_a), `${lang}.faq19_a`).toMatch(/39 000/);
+      // zařízený byt za 79 000 (Launch) z veřejného ceníku odešel: systém stojí stejně
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(strip(value), `${lang}.${key}`).not.toMatch(/79 000/);
+      }
     }
     // stará mechanika „řízení projektu 20 % nad 30 000 Kč" je pryč
     for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const)
@@ -246,8 +252,8 @@ describe("ceník", () => {
   // uvedení do provozu neexistuje. Od 20. 10. 2026 (ceník v2) fakt nese vlastní
   // vždy viditelný řádek pr1_setup_* nad rozbalovacím ceníkem, ne pricing_desc.
   it("viditelný lead ceníku přiznává jednorázové uvedení do provozu", () => {
-    expect(strip(cs.pr1_setup_price)).toMatch(/od 49 000 Kč/);
-    expect(strip(vi.pr1_setup_price)).toMatch(/từ 49 000 Kč/);
+    expect(strip(cs.pr1_setup_price)).toMatch(/39 000 Kč/);
+    expect(strip(vi.pr1_setup_price)).toMatch(/39 000 Kč/);
     expect(strip(cs.pricing_desc)).not.toMatch(/[Žž]ádné fixní/);
     const pricing = readFileSync("src/components/PricingSection.tsx", "utf8");
     expect(
@@ -1337,8 +1343,8 @@ describe("model výnosu", () => {
     }
     // graf počítá jen plně vybavený byt: bez přepínače vybavení, start = uvedení do provozu
     expect(hz).not.toContain("setFurn");
-    expect(strip(cs.hz_furnish_note)).toContain("49 000");
-    expect(strip(vi.hz_furnish_note)).toContain("49 000");
+    expect(strip(cs.hz_furnish_note)).toContain("39 000");
+    expect(strip(vi.hz_furnish_note)).toContain("39 000");
   });
 
   it("byt 302 zůstává nepublikovaný, dokud tržní model dává víc než jeho měření", () => {

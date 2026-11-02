@@ -21,6 +21,8 @@ const ComparisonSection = lazy(() => import("@/components/ComparisonSection"));
 const ServicesSection = lazy(() => import("@/components/ServicesSection"));
 const OwnerReportSection = lazy(() => import("@/components/OwnerReportSection"));
 const AboutSection = lazy(() => import("@/components/AboutSection"));
+// Provozní systém (2. 11. 2026, patch 2): důkaz za cenou, hned pod ceníkem.
+const SystemSection = lazy(() => import("@/components/SystemSection"));
 const ProcessSection = lazy(() => import("@/components/ProcessSection"));
 const ContactSection = lazy(() => import("@/components/ContactSection"));
 const FAQSection = lazy(() => import("@/components/FAQSection"));
@@ -75,6 +77,7 @@ const Index = () => {
         <Suspense fallback={null}><PortfolioSection /></Suspense>
         <Suspense fallback={null}><CalculatorSection /></Suspense>
         <Suspense fallback={null}><PricingSection /></Suspense>
+        <Suspense fallback={null}><SystemSection /></Suspense>
         <Suspense fallback={null}><ProcessSection /></Suspense>
         <Suspense fallback={null}><ContactSection /></Suspense>
         <Suspense fallback={null}><ComparisonSection /></Suspense>

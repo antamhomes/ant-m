@@ -17,7 +17,7 @@ describe("poradi sekci", () => {
     // 29. 10. 2026: ChoiceSection odmontována (dvě cesty nese hero a ceník).
     expect(index).not.toMatch(/<ChoiceSection/);
     expect(order).toEqual([
-      "PortfolioSection", "CalculatorSection", "PricingSection", "ProcessSection", "ContactSection",
+      "PortfolioSection", "CalculatorSection", "PricingSection", "SystemSection", "ProcessSection", "ContactSection",
       "ComparisonSection", "ServicesSection", "OwnerReportSection", "AboutSection", "FAQSection", "FinalCtaSection",
       "Footer", "StickyMobileCTA", "CookieConsent",
     ]);
@@ -25,10 +25,11 @@ describe("poradi sekci", () => {
     expect(index).not.toMatch(/import\("@\/components\/HorizonSection"\)|<HorizonSection/);
   });
 
-  it("mezi kalkulackou a formularem stoji jen Cenik a Jak zacit", () => {
+  it("mezi kalkulackou a formularem stoji Cenik, Provozni system a Jak zacit", () => {
+    // 2. 11. 2026: SystemSection je důkaz za cenou vlastního provozu, patří hned pod ceník.
     const index = src("src/pages/Index.tsx");
     const between = index.slice(index.indexOf("<CalculatorSection />"), index.indexOf("<ContactSection />"));
-    expect([...between.matchAll(/<(\w+Section) \/>/g)].map((m) => m[1])).toEqual(["CalculatorSection", "PricingSection", "ProcessSection"]);
+    expect([...between.matchAll(/<(\w+Section) \/>/g)].map((m) => m[1])).toEqual(["CalculatorSection", "PricingSection", "SystemSection", "ProcessSection"]);
   });
 });
 

@@ -50,7 +50,7 @@ export const buildBusinessJsonLd = (lang: "cs" | "vi") => {
     description: meta[lang].desc,
     email: t(lang, "footer_email"),
     telephone: t(lang, "footer_phone"),
-    priceRange: "20 % + DPH z čistého výnosu, nebo jednorázově od 79 000 Kč",
+    priceRange: "20 % + DPH z příjmu po poplatcích, nebo systém jednorázově od 180 000 Kč",
     areaServed: { "@type": "City", name: "Praha" },
     address: { "@type": "PostalAddress", streetAddress: "Příčná 1892/4", addressLocality: "Praha 1", postalCode: "110 00", addressCountry: "CZ" },
     knowsLanguage: ["cs", "vi"],

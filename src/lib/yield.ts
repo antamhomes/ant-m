@@ -1209,12 +1209,10 @@ export const PLATFORM_FEE = 0.17;
 export const DAYS = 30.44;  // průměrná délka měsíce
 
 /** Uvedení do provozu, vybavení a obnova — vstupy pro záložku Za 5 let */
-export const LAUNCH_FEE = 49000;      // příprava zařízeného bytu ke správě, bez DPH (29. 10. 2026, dřív 25 000)
-/** Příprava prázdného bytu ke správě podle dispozice, bez DPH; vybavení zvlášť. */
-export const SETUP_EMPTY_BY_SIZE = { "2kk": 120000, "3kk": 150000, "4kk": 190000 } as const;
-/** Vlastní provoz (předání systému) podle dispozice, bez DPH; zařízený byt bez návrhu a nákupu = LAUNCH_SELF. */
+export const LAUNCH_FEE = 39000;      // příprava bytu ke správě, bez DPH, za náklady (2. 11. 2026, Offer v2; dřív 49 000 / 25 000)
+/** Prázdný byt u správy: stejná příprava 39 000 + vybavení za pořizovací ceny + PROCUREMENT_FEE (2. 11. 2026; pevné sazby 120/150/190 tisíc zrušeny). */
+/** Vlastní provoz (Provozní systém Antam) podle dispozice, bez DPH, zařízený i prázdný byt; vybavení zvlášť za pořizovací ceny + PROCUREMENT_FEE_SELF. */
 export const TURNKEY_BY_SIZE = { "2kk": 180000, "3kk": 270000, "4kk": 360000 } as const;
-export const LAUNCH_SELF = 79000;
 export const REBUILD_FEE = 29000;      // přestavba výnosu běžícího inzerátu
 export const REVENUE_OS_MONTH = 3490;  // řízení cen pro vlastní provoz, měsíčně bez DPH
 export const KIT_PER_ROOM = 30000;    // dovybavení bytu zařízeného pro nájemníka
@@ -1238,7 +1236,10 @@ export const YEAR_ONE_RAMP = 0.85;    // nová nabídka nenajede hned na plný v
  */
 export const RENT_GROWTH = 0;
 export const STR_GROWTH = 0;
-export const PROCUREMENT_FEE = 0.12;       // zajištění vybavení: k pořizovací ceně (29. 10. 2026; dřív řízení projektu 20 % nad 30 000)
+export const PROCUREMENT_FEE = 0.12;       // zajištění vybavení u správy: k pořizovací ceně (29. 10. 2026; dřív řízení projektu 20 % nad 30 000)
+/** Zajištění vybavení u vlastního provozu: 20 % do PROCUREMENT_SELF_CAP, nad to PROCUREMENT_FEE (2. 11. 2026, Offer v2). */
+export const PROCUREMENT_FEE_SELF = 0.20;
+export const PROCUREMENT_SELF_CAP = 500000;
 
 /** Jedna varianta výsledku: obsazenost, hrubé tržby, provize, dělení. */
 export type Split = {

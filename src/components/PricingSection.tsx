@@ -31,15 +31,16 @@ type Row = { name: TranslationKey; value: TranslationKey; id?: string };
 const US_ROWS: Row[] = [
   { name: "pr_time_name", value: "pr1_time_value" },
   { name: "pr1_setup_name", value: "pr1_setup_price" },
+  { name: "pr1_furnish_name", value: "pr1_furnish_value" },
   { name: "pr6_name", value: "pr6_price", id: "garance" },
   { name: "pr7_name", value: "pr7_price" },
   { name: "pr1_term_name", value: "pr1_term_value" },
 ];
 
-/** Řádky vlastního provozu: zařízený byt, řízení cen, předání, stabilizace. */
+/** Řádky vlastního provozu (2. 11. 2026, Offer v2): vybavení + 20 %, řízení cen, předání, 90 dní. Zařízený byt za 79 000 odešel: systém stojí stejně, vybavení se platí zvlášť. */
 const SELF_ROWS: Row[] = [
   { name: "pr_time_name", value: "pr4_time_value" },
-  { name: "pr4_row1_name", value: "pr4_row1_value" },
+  { name: "pr1_furnish_name", value: "pr4_furnish_value" },
   { name: "pr4_row2_name", value: "pr4_row2_value" },
   { name: "pr4_row3_name", value: "pr4_row3_value" },
   { name: "pr4_row4_name", value: "pr4_row4_value" },
@@ -116,9 +117,11 @@ const PricingSection = () => {
                 {t(lang, "pr4_basis")}
               </p>
               {rows(SELF_ROWS, false)}
-              <p className="mt-4 mb-0 font-body text-[13px] leading-relaxed text-muted-foreground max-w-[52ch]">
-                {t(lang, "pr4_incl_items")}
-              </p>
+              {/* Most k sekci Provozní systém (2. 11. 2026): místo seznamu úkonů jedna
+                  věta s odkazem, ať se 270 000 spojí s tím, co za to je. */}
+              <a href="#system" className="mt-4 mb-0 inline-block font-body text-[13.5px] leading-relaxed text-gold-deep underline underline-offset-4 decoration-gold/40 max-w-[52ch]">
+                {t(lang, "pr4_system_link")}
+              </a>
               <a
                 href="#kontakt"
                 onClick={() => trackEvent("cta_click", { location: "pricing", target: "own" })}
