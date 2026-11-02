@@ -63,18 +63,18 @@ describe("odměna za správu", () => {
 
   it("je 20 % + DPH všude v české i vietnamské kopii", () => {
     expect(strip(cs.pr1_price)).toMatch(/20 % .*\+ DPH/);
-    expect(strip(vi.pr1_price)).toMatch(/20% .*\+ VAT/); // vietnamština píše procenta bez mezery
+    expect(strip(vi.pr1_price)).toMatch(/20% .*\+ DPH/); // vietnamština píše procenta bez mezery; DPH i ve VI (rozhodnutí V. 2. 11. 2026)
     for (const key of ["calc_net_sub", "calc_excluded_note", "faq5_a", "faq9_a", "report_row_costs"]) {
       expect(strip(cs[key]), `cs.${key}`).toMatch(/20\s?%/);
       expect(strip(cs[key]), `cs.${key} říká + DPH`).toMatch(/DPH/);
       expect(strip(vi[key]), `vi.${key}`).toMatch(/20\s?%/);
-      expect(strip(vi[key]), `vi.${key} říká + VAT`).toMatch(/VAT/);
+      expect(strip(vi[key]), `vi.${key} říká + DPH`).toMatch(/DPH/);
     }
     // Od 29. 10. 2026 nesou pricing_split1/2 dvě cesty (správa × vlastní
     // provoz), ne dělení 70/30. Sazba zůstává jen v první větě.
     expect(strip(cs.pricing_split1), "cs.pricing_split1").toMatch(/20\s?% \+ DPH/);
     expect(strip(cs.pricing_split2), "cs.pricing_split2").toMatch(/bez procent/);
-    expect(strip(vi.pricing_split1), "vi.pricing_split1").toMatch(/20% \+ VAT/);
+    expect(strip(vi.pricing_split1), "vi.pricing_split1").toMatch(/20% \+ DPH/);
     expect(strip(vi.pricing_split2), "vi.pricing_split2").toMatch(/không phần trăm/);
   });
 
@@ -106,7 +106,7 @@ describe("odměna za správu", () => {
 
   it("dělí příjem po poplatcích: majiteli zbytek po 20 % + DPH, neplátci počítáme 24,2 %", () => {
     expect(strip(cs.calc_split_aria)).toMatch(/20 % \+ DPH/);
-    expect(strip(vi.calc_split_aria)).toMatch(/20% \+ VAT/);
+    expect(strip(vi.calc_split_aria)).toMatch(/20% \+ DPH/);
     expect(strip(cs.calc_method_note)).toMatch(/24,2 %/);
     expect(strip(vi.calc_method_note)).toMatch(/24,2%/);
   });
@@ -133,7 +133,7 @@ describe("odměna za správu", () => {
     for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const)
       for (const [key, value] of Object.entries(dict)) {
         if (typeof value !== "string") continue;
-        expect(strip(value), `${lang}.${key}`).not.toMatch(/20 % včetně DPH|konečná odměna|20% đã gồm VAT/i);
+        expect(strip(value), `${lang}.${key}`).not.toMatch(/20 % včetně DPH|konečná odměna|20% đã gồm (VAT|DPH)/i);
       }
     expect(strip(cs.pr1_note)).toMatch(/20 % \+ DPH/);
   });

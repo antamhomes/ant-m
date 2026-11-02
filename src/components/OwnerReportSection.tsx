@@ -30,15 +30,15 @@ const OwnerReportSection = () => {
   const pct = (n: string) => (cs ? `${n} %` : `${n}%`);
   const rows: { label: string; value: string; kind?: "sum" | "minus" | "total" }[] = [
     { label: t(lang, "report_row_base"), value: "84\u00a0030\u00a0Kč", kind: "sum" },
-    { label: cs ? "Odměna Antam Homes, 20 % z příjmu" : "Phí Antam Homes, 20% doanh thu", value: "\u2212\u00a016\u00a0806\u00a0Kč", kind: "minus" },
-    { label: cs ? "DPH 21 % z odměny" : "VAT 21% trên phí", value: "\u2212\u00a03\u00a0529\u00a0Kč", kind: "minus" },
+    { label: cs ? "Odměna Antam Homes, 20 % z příjmu" : "Phí Antam, 20%", value: "\u2212\u00a016\u00a0806\u00a0Kč", kind: "minus" },
+    { label: cs ? "DPH 21 % z odměny" : "DPH 21% trên phí Antam", value: "\u2212\u00a03\u00a0529\u00a0Kč", kind: "minus" },
     { label: t(lang, "report_row_net"), value: "63\u00a0695\u00a0Kč", kind: "total" },
   ];
   const meta = [
     [cs ? "Byt" : "Căn hộ", "2+kk, 52 m², Praha 1"],
     [cs ? "Období" : "Kỳ", cs ? "průměrný měsíc, 11/2025 až 10/2026" : "tháng trung bình, 11/2025 đến 10/2026"],
     [t(lang, "report_row_occupancy"), pct("94")],
-    [cs ? "Výplata" : "Thanh toán", cs ? "do 15. dne následujícího měsíce" : "trước ngày 15 tháng sau"],
+    [cs ? "Výplata" : "Tiền về", cs ? "do 15. dne následujícího měsíce" : "trước ngày 15 tháng sau"],
   ];
 
   return (
@@ -117,7 +117,7 @@ const OwnerReportSection = () => {
               <p className="mt-4 mb-0 font-body text-[12px] text-muted-foreground leading-relaxed text-pretty">
                 {cs
                   ? "Příjem je to, co platformy vyplatily po své provizi, bez úklidu, který platí hosté, a bez městského poplatku. Průměr 12 měsíců z Hospitable, přepočteno na současnou odměnu. Minulý výsledek není příslib."
-                  : "Doanh thu là số nền tảng đã trả sau phí của họ, không gồm phí dọn do khách trả và phí lưu trú của thành phố. Trung bình 12 tháng từ Hospitable, tính theo mức phí hiện nay. Kết quả đã qua không phải cam kết."}
+                  : "Tiền nền tảng trả về là sau phí của Airbnb, Booking.com, không gồm phí dọn dẹp do khách trả và phí lưu trú nộp cho thành phố. Trung bình 12 tháng, số liệu từ Hospitable, tính theo mức phí hiện nay. Kết quả đã qua không phải là cam kết cho tương lai."}
               </p>
             </article>
           </Reveal>
