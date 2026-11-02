@@ -1,99 +1,37 @@
-import { lazy, Suspense, useEffect } from "react";
-import Navbar from "@/components/Navbar";
-import SEO from "@/components/SEO";
+import { lazy, Suspense } from "react";
+import PageShell from "@/components/PageShell";
 import HeroSection from "@/components/HeroSection";
-import { CalcProvider } from "@/contexts/CalcContext";
-import { useLanguage } from "@/contexts/LanguageContext";
+import TodayStrip from "@/components/TodayStrip";
 
 // Below-the-fold sections are code-split so the first paint ships less JS.
-// Volba (ChoiceSection) odmontována 29. 10. 2026 odpoledne: dvě cesty nese
-// hero a ceník, třetí opakování stránku zadrhávalo. Soubor zůstává.
 const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
 const CalculatorSection = lazy(() => import("@/components/CalculatorSection"));
-// GaranceSection je od patche 2 (7. 9. 2026) sloučená do Ceníku: cena
-// a garance odpovídají na jednu otázku majitele („co si berete a co když to
-// nevyjde“), dvě sekce ji říkaly dvakrát. Soubor odešel do _to_delete.
 const PricingSection = lazy(() => import("@/components/PricingSection"));
-// HorizonSection zůstává v repu (čte ho facts.test.ts), ale od 2B se
-// nemountuje: generický pětiletý model a rozpětí patří do personalizovaného
-// decku, ne na homepage. Odsud odešel i poslední veřejný výskyt low/high.
 const ComparisonSection = lazy(() => import("@/components/ComparisonSection"));
-const ServicesSection = lazy(() => import("@/components/ServicesSection"));
-const OwnerReportSection = lazy(() => import("@/components/OwnerReportSection"));
 const AboutSection = lazy(() => import("@/components/AboutSection"));
-// Provozní systém (2. 11. 2026, patch 2): důkaz za cenou, hned pod ceníkem.
-const SystemSection = lazy(() => import("@/components/SystemSection"));
-const ProcessSection = lazy(() => import("@/components/ProcessSection"));
 const ContactSection = lazy(() => import("@/components/ContactSection"));
-const FAQSection = lazy(() => import("@/components/FAQSection"));
 const FinalCtaSection = lazy(() => import("@/components/FinalCtaSection"));
-const Footer = lazy(() => import("@/components/Footer"));
-const StickyMobileCTA = lazy(() => import("@/components/StickyMobileCTA"));
-const CookieConsent = lazy(() => import("@/components/CookieConsent"));
 
-/** Honour a #anchor in the URL (e.g. /#kalkulacka) once its lazy section has mounted. */
-const ScrollToHash = () => {
-  useEffect(() => {
-    const id = window.location.hash.replace(/^#/, "");
-    if (!id) return;
-    let tries = 0;
-    const timer = window.setInterval(() => {
-      const el = document.getElementById(id);
-      tries += 1;
-      if (el || tries > 40) {
-        window.clearInterval(timer);
-        el?.scrollIntoView({ block: "start" });
-      }
-    }, 100);
-    return () => window.clearInterval(timer);
-  }, []);
-  return null;
-};
-
-const Index = () => {
-  const { lang } = useLanguage();
-
-  return (
-    <div className="min-h-screen">
-      <SEO page="home" />
-      <a
-        href="#obsah"
-        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:px-4 focus:py-2 focus:rounded-sm focus:bg-primary focus:text-primary-foreground focus:font-body focus:text-sm"
-      >
-        {lang === "cs" ? "Přeskočit na obsah" : "Bỏ qua đến nội dung"}
-      </a>
-      <Navbar />
-      <main id="obsah">
-        <CalcProvider>
-        <HeroSection />
-        {/* TRYCHTÝŘ VEDENÝ KALKULAČKOU (patch 2, docs/funnel-spec-2026-09-07.md §1).
-            Primární cesta: slib → důkaz → moje číslo → co si berete a co když
-            to nevyjde (Ceník + garance v jedné sekci) → jak se začne → poptávka.
-            Všechno za formulářem je ujištění pro čtenáře, kterého číslo
-            nepřesvědčilo: nájem vs. krátkodobě, co děláme každý den, vyúčtování
-            a portál, kdo jsme, otázky. Do 7. 9. 2026 stálo mezi číslem a
-            formulářem sedm sekcí a ≈8 000 px (audit B4).
-            Vlastní Suspense hranice: pomalý chunk nikdy nedrží ostatní. */}
-        <Suspense fallback={null}><PortfolioSection /></Suspense>
-        <Suspense fallback={null}><CalculatorSection /></Suspense>
-        <Suspense fallback={null}><PricingSection /></Suspense>
-        <Suspense fallback={null}><SystemSection /></Suspense>
-        <Suspense fallback={null}><ProcessSection /></Suspense>
-        <Suspense fallback={null}><ContactSection /></Suspense>
-        <Suspense fallback={null}><ComparisonSection /></Suspense>
-        <Suspense fallback={null}><ServicesSection /></Suspense>
-        <Suspense fallback={null}><OwnerReportSection /></Suspense>
-        <Suspense fallback={null}><AboutSection /></Suspense>
-        <Suspense fallback={null}><FAQSection /></Suspense>
-        <Suspense fallback={null}><FinalCtaSection /></Suspense>
-        <ScrollToHash />
-        </CalcProvider>
-      </main>
-      <Suspense fallback={null}><Footer /></Suspense>
-      <Suspense fallback={null}><StickyMobileCTA /></Suspense>
-      <Suspense fallback={null}><CookieConsent /></Suspense>
-    </div>
-  );
-};
+/**
+ * HOMEPAGE = TŘÍDIČ (2. 11. 2026, tři stránky). Jedna otázka: kdo bude byt
+ * provozovat. Slib → důkaz → moje číslo → dvě cesty s cenou (tlačítka vedou
+ * na /sprava a /vlastni-provoz) → srovnání s nájmem → kdo jsme → formulář.
+ * Co patří jen jednomu z těch dvou lidí (provozní systém, garance v plném
+ * znění, vyúčtování, služby, postup, FAQ), bydlí na jeho stránce.
+ * Do 2. 11. tu stálo všechno a stránka mluvila ke dvěma lidem najednou.
+ */
+const Index = () => (
+  <PageShell page="home">
+    <HeroSection />
+    <TodayStrip />
+    <Suspense fallback={null}><PortfolioSection /></Suspense>
+    <Suspense fallback={null}><CalculatorSection /></Suspense>
+    <Suspense fallback={null}><PricingSection variant="both" /></Suspense>
+    <Suspense fallback={null}><ComparisonSection /></Suspense>
+    <Suspense fallback={null}><AboutSection /></Suspense>
+    <Suspense fallback={null}><ContactSection /></Suspense>
+    <Suspense fallback={null}><FinalCtaSection /></Suspense>
+  </PageShell>
+);
 
 export default Index;

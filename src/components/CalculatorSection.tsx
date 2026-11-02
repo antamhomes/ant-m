@@ -254,7 +254,6 @@ const CalculatorSection = () => {
           od popisků polí — uvnitř jedné sekce pak byly tři různé levé hrany. */}
       <div className="container-narrow">
         <Reveal className="section-head">
-          <p className="eyebrow eyebrow-center">{t(lang, "calc_label")}</p>
           <h2 className="h-section text-foreground">
             {t(lang, "calc_title1")}
             <span className="text-gradient-gold">{t(lang, "calc_title2")}</span>
@@ -262,11 +261,11 @@ const CalculatorSection = () => {
           <p className="lead">{t(lang, "calc_desc")}</p>
         </Reveal>
 
-        <div className="grid md:grid-cols-2 gap-8 md:gap-10 md:items-start">
+        <div className="grid md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-8 md:gap-12 md:items-start">
           <Reveal id="kalkulacka-zadani" delay={0.05} className="space-y-8 order-2 md:order-1 scroll-mt-20 min-w-0">
             <div>
               <label htmlFor="calc-location" id="calc-location-label" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
-                <MapPin className="w-4 h-4 text-gold" />
+                <MapPin className="w-4 h-4 text-muted-foreground" />
                 {t(lang, "calc_location")}
               </label>
               {/* Mobile: native select (úspora místa) */}
@@ -306,7 +305,7 @@ const CalculatorSection = () => {
             {needsCtvrt && location !== null && (
               <div id="kalkulacka-ctvrt" className="scroll-mt-24">
                 <p id="calc-area-label" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
-                  <MapPin className="w-4 h-4 text-gold" />
+                  <MapPin className="w-4 h-4 text-muted-foreground" />
                   {t(lang, "calc_area")}
                 </p>
                 <div role="group" aria-labelledby="calc-area-label" className="flex flex-wrap gap-2">
@@ -340,7 +339,7 @@ const CalculatorSection = () => {
                 a plochu; podle ní se počítají energie a obnova vybavení. */}
             <div>
               <p id="calc-disposition-label" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-1.5">
-                <Home className="w-4 h-4 text-gold" />
+                <Home className="w-4 h-4 text-muted-foreground" />
                 {t(lang, "calc_size")}
               </p>
               <div role="group" aria-labelledby="calc-disposition-label" className="grid grid-cols-4 gap-2">
@@ -366,7 +365,7 @@ const CalculatorSection = () => {
                 Poslední volba se neextrapoluje a jde na individuální posouzení. */}
             <div>
               <p id="calc-size-label" className="flex items-center gap-2 font-body text-sm font-semibold text-foreground mb-3">
-                <Ruler className="w-4 h-4 text-gold" />
+                <Ruler className="w-4 h-4 text-muted-foreground" />
                 {t(lang, "calc_m2")}
               </p>
               <div id="calc-size" role="group" aria-labelledby="calc-size-label" aria-describedby="calc-size-hint" className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -403,7 +402,7 @@ const CalculatorSection = () => {
             {/* Rok je výchozí rozhodnutí; sezónu si rozklikne, kdo ji chce. */}
             <details className="group">
               <summary className="list-none cursor-pointer inline-flex items-center gap-2 font-body text-sm font-semibold text-gold-deep underline underline-offset-4 decoration-gold/40 [&::-webkit-details-marker]:hidden">
-                <Calculator className="w-4 h-4 text-gold" />
+                <Calculator className="w-4 h-4 text-muted-foreground" />
                 {t(lang, "calc_season_toggle")}
               </summary>
               <div className="mt-3 grid grid-cols-2 gap-2">
@@ -446,18 +445,23 @@ const CalculatorSection = () => {
             style={{ "--calc-order": 2 } as CSSProperties}
             className="calc-result flex items-start md:sticky md:top-24 scroll-mt-24"
           >
-            <div className="w-full bg-gradient-dark rounded-md p-5 sm:p-7 md:p-9 space-y-4 sm:space-y-5">
+            <div className={`w-full p-5 sm:p-7 md:p-9 space-y-4 sm:space-y-5 ${location === null ? "border border-foreground/20 bg-transparent" : "bg-gradient-dark"}`}>
               {location === null ? (
                 /* PRÁZDNÝ START: bez lokality žádné číslo. Tichá výzva místo
                    výchozí Prahy 1; na mobilu stojí ZA vstupy (--calc-order 2). */
                 <div className="space-y-4">
-                  <p className="font-display text-2xl sm:text-[1.75rem] font-semibold text-primary-foreground leading-snug text-balance">
+                  {/* 2. 11. 2026 (vizuál, polish): prázdný stav je tichý rámeček,
+                      ne nejsilnější objekt sekce. Hlavní objekt je až číslo. */}
+                  <p className="font-display text-[3rem] sm:text-[3.75rem] leading-none text-foreground/15 tnum select-none" aria-hidden="true">
+                    0&nbsp;Kč
+                  </p>
+                  <p className="font-body text-lg font-medium text-foreground leading-snug text-balance">
                     {t(lang, "calc_empty_title")}
                   </p>
-                  <p className="font-body text-[14.5px] text-primary-foreground/80 leading-relaxed">
+                  <p className="font-body text-[14.5px] text-muted-foreground leading-relaxed">
                     {t(lang, "calc_empty_text")}
                   </p>
-                  <a href="#kontakt" className="inline-flex items-center gap-1 font-body text-[13px] text-primary-foreground/70 underline underline-offset-4 decoration-primary-foreground/30 hover:text-primary-foreground">
+                  <a href="#kontakt" className="inline-flex items-center gap-1 font-body text-[13px] text-muted-foreground underline underline-offset-4 decoration-foreground/30 hover:text-foreground">
                     {t(lang, "calc_empty_link")}
                   </a>
                 </div>
@@ -468,7 +472,7 @@ const CalculatorSection = () => {
                   {/* ŽÁDNÝ eyebrow „Potenciál příjmu s Antam Homes" (1. 9. 2026):
                       ohlašoval potenciál nad větou, že pro tuhle lokalitu číslo
                       nemáme. Titulek si stav řekne sám. */}
-                  <p className="font-display text-2xl sm:text-[1.75rem] font-semibold text-primary-foreground leading-snug text-balance">
+                  <p className="font-body text-2xl sm:text-[1.75rem] font-medium text-primary-foreground leading-snug text-balance">
                     {t(lang, oversized ? "calc_oversized_title" : "calc_unsupported_title")}
                   </p>
                   <p className="font-body text-[14.5px] text-primary-foreground/80 leading-relaxed">
@@ -504,7 +508,7 @@ const CalculatorSection = () => {
                   {result.r?.supported && (
                   <div className="space-y-4 sm:space-y-5">
                     <div>
-                      <p className="font-body text-xs text-primary-foreground/65 uppercase tracking-[0.15em] mb-1">
+                      <p className="font-body text-[13.5px] text-primary-foreground/80 mb-0.5">
                         {t(lang, "calc_net")}
                       </p>
                       <p className="font-body text-[12px] text-primary-foreground/60 -mt-0.5 mb-1">
@@ -519,7 +523,7 @@ const CalculatorSection = () => {
                           Rozpětí se NENAHRAZUJE jinou formou nejistoty („od X“, „až X“,
                           pásmo spolehlivosti): veřejný výsledek je záměrně jedno číslo. */}
                       <p className="flex flex-wrap items-baseline gap-x-2 leading-tight tnum">
-                        <span className="font-display text-[2.25rem] min-[360px]:text-[2.75rem] sm:text-5xl md:text-[3.25rem] font-bold text-gradient-gold-on-dark whitespace-nowrap">
+                        <span className="font-display text-[2.6rem] min-[360px]:text-[3rem] sm:text-[3.6rem] md:text-[clamp(3rem,4.6vw,4.4rem)] font-semibold tracking-[-0.02em] text-[#F7F1E8] whitespace-nowrap">
                           ~{(Math.round(result.r.high / 1000) * 1000).toLocaleString("cs-CZ")}&nbsp;Kč
                         </span>
                         <span className="font-body text-sm font-normal text-primary-foreground/65 whitespace-nowrap">
@@ -548,7 +552,7 @@ const CalculatorSection = () => {
                           podmínka pro obě věty, aby si neodporovaly. */}
                       {result.ratio > 0 && (
                         betterThanLtr ? (
-                          <p className={`mt-2 font-body text-[15px] sm:text-base font-semibold tnum text-pretty ${weak ? "text-primary-foreground/80" : "text-gold"}`}>
+                          <p className={`mt-3 font-body text-[15px] sm:text-base font-medium tnum text-pretty ${weak ? "text-primary-foreground/80" : "text-primary-foreground"}`}>
                             {t(lang, "calc_vs_ltr_year")
                               .replace("{delta}", `${(Math.round(((result.r.high - result.ltr) * 12) / 1000) * 1000).toLocaleString("cs-CZ")}\u00a0Kč`)
                               .replace("{ratio}", ratioRounded.toLocaleString("cs-CZ"))

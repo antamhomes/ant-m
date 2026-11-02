@@ -14,7 +14,7 @@ const FinalCtaSection = () => {
   return (
     <section className="bg-gradient-dark border-t border-gold/15">
       <Reveal className="container-narrow py-14 md:py-16 text-center">
-        <h2 className="font-display text-2xl md:text-3xl font-medium text-primary-foreground leading-snug mb-3">
+        <h2 className="font-body text-2xl md:text-3xl font-medium text-primary-foreground leading-snug mb-3">
           {t(lang, "final_title")}
         </h2>
         <p className="font-body text-[15px] md:text-base text-primary-foreground/70 mb-7 max-w-md mx-auto text-pretty">

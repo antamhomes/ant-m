@@ -35,7 +35,6 @@ const HeroSection = () => {
   // kalkulačky, pod ním proof line. VI mělo do té doby dvě tlačítka a primární
   // mířilo na formulář; parita je teď záměr, ne shoda náhod.
   const secondCta = t(lang, "hero_cta2");
-  const proof = t(lang, "hero_extra");
   const primaryHref = secondCta ? "#kontakt" : "#kalkulacka";
   const ref = useRef<HTMLElement>(null);
   const mediaRef = useRef<HTMLImageElement>(null);
@@ -78,13 +77,6 @@ const HeroSection = () => {
         {/* Text na vlastní ploše: žádný závoj přes fotku, žádný radiální gradient. */}
         <div className="order-2 lg:order-1 relative z-10 flex flex-col justify-between px-6 sm:px-10 lg:pl-[max(1.5rem,calc((100vw-75rem)/2+1.5rem))] lg:pr-14 pt-[clamp(11rem,34vh,19rem)] sm:pt-[clamp(13rem,36vh,24rem)] pb-14 lg:pt-32 lg:pb-16">
           <div>
-            <p
-              {...enter(12, 0.35, 0.6)}
-              className="font-body text-[0.7rem] sm:text-xs tracking-[0.22em] uppercase mb-6 text-gold-on-dark"
-            >
-              {t(lang, "hero_subtitle")}
-            </p>
-
             <h1
               {...enter(20, 0.45, 0.8)}
               className="font-display text-[clamp(2.1rem,3.5vw,3.3rem)] font-medium leading-[1.08] tracking-[-0.018em] text-balance text-[#F7F1E8] max-w-[17ch]"
@@ -123,35 +115,17 @@ const HeroSection = () => {
               )}
             </div>
 
-            {/* Proof teaser under the CTAs: one checkable fact, no adjectives.
-                The numbers must match the portfolio cards one scroll below. */}
-            {proof && (
-              <p
-                {...enter(10, 1.0, 0.6)}
-                className="mt-6 font-body text-[13px] sm:text-sm tracking-wide text-[rgba(232,222,208,0.72)] tnum max-w-[46ch]"
-              >
-                {proof}
-              </p>
-            )}
+            {/* 2. 11. 2026 (vizuál): místo řádku statistik tři věty, které
+                zodpoví co, pro koho, kolik a proč věřit. Čísla ze stejných
+                zdrojů jako karty a Kdo jsme. */}
+            <ul {...enter(10, 1.0, 0.6)} className="mt-8 m-0 p-0 list-none space-y-1.5 font-body text-[13.5px] sm:text-sm leading-relaxed text-[rgba(232,222,208,0.78)] tnum max-w-[46ch]">
+              {(["hero_fact1", "hero_fact2", "hero_fact3"] as const).map((k) => (
+                <li key={k} className="text-sm pl-4 relative before:content-[''] before:absolute before:left-0 before:top-[0.78em] before:w-1.5 before:h-px before:bg-[rgba(232,222,208,0.5)]">
+                  {t(lang, k)}
+                </li>
+              ))}
+            </ul>
           </div>
-
-          {/* Tři čísla ze stejných klíčů jako sekce Kdo jsme (about_stat*),
-              aby se hero a medailonek nemohly rozejít. */}
-          <dl
-            {...enter(12, 1.15, 0.6)}
-            className="mt-8 lg:mt-10 grid grid-cols-2 items-end gap-x-6 gap-y-5 lg:flex lg:flex-wrap lg:items-start lg:gap-x-12 border-t border-white/15 pt-6"
-          >
-            {(["about_stat1", "about_stat2"] as const).map((k) => (
-              <div key={k}>
-                <dt className="font-body text-[10px] uppercase tracking-[0.15em] text-white/45">
-                  {t(lang, `${k}_label` as const)}
-                </dt>
-                <dd className="m-0 mt-1.5 font-display text-[1.7rem] text-[#F7F1E8] tnum leading-none">
-                  {t(lang, `${k}_value` as const)}
-                </dd>
-              </div>
-            ))}
-          </dl>
         </div>
 
         {/* Fotka bez závoje. Měkký přechod jen na levé hraně, ať se švem

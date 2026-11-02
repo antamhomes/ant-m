@@ -1,61 +1,67 @@
-import Reveal, { stagger } from "@/components/Reveal";
+import Reveal from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { t } from "@/i18n/translations";
+import { t, type TranslationKey } from "@/i18n/translations";
 
-const numberLabels = ["01", "02", "03", "04"];
-const titleKeys = ["step1_title", "step2_title", "step3_title", "step4_title"] as const;
-const descKeys = ["step1_desc", "step2_desc", "step3_desc", "step4_desc"] as const;
+/**
+ * Kroky podle stránky (2. 11. 2026): správa končí spuštěním a provozem u nás,
+ * vlastní provoz zaškolením, předáním a 90 dny. Kroky 1 a 2 jsou společné.
+ */
+export type ProcessVariant = "managed" | "own";
+const STEPS: Record<ProcessVariant, { title: TranslationKey; desc: TranslationKey }[]> = {
+  managed: [
+    { title: "step1_title", desc: "step1_desc" },
+    { title: "step2_title", desc: "step2_desc" },
+    { title: "step3_title_managed", desc: "step3_desc_managed" },
+    { title: "step4_title_managed", desc: "step4_desc_managed" },
+  ],
+  own: [
+    { title: "step1_title", desc: "step1_desc" },
+    { title: "step2_title", desc: "step2_desc" },
+    { title: "step3_title_own", desc: "step3_desc_own" },
+    { title: "step4_title_own", desc: "step4_desc_own" },
+  ],
+};
 
 /**
  * Four steps in one row on desktop (a thin gold connector runs behind the
  * numbers), a compact vertical timeline on mobile.
  */
-const ProcessSection = () => {
+const ProcessSection = ({ variant = "managed" }: { variant?: ProcessVariant }) => {
   const { lang } = useLanguage();
+  const steps = STEPS[variant];
 
   return (
     <section id="jak-zacina" className="section bg-background scroll-mt-20">
       <div className="container-wide">
         <Reveal className="section-head">
-          <p className="eyebrow eyebrow-center">{t(lang, "process_label")}</p>
           <h2 className="h-section-sm text-foreground">{t(lang, "process_title")}</h2>
           {t(lang, "process_desc") && <p className="lead">{t(lang, "process_desc")}</p>}
         </Reveal>
 
-        <ol className="relative grid grid-cols-1 md:grid-cols-4 gap-7 sm:gap-10 md:gap-8">
-          {/* Desktop connector */}
-          <div
-            aria-hidden="true"
-            className="hidden md:block absolute left-[12.5%] right-[12.5%] top-[22px] h-px bg-gradient-to-r from-gold/20 via-gold/70 to-gold/20"
-          />
-          {/* Mobile track */}
-          <div aria-hidden="true" className="md:hidden absolute left-[22px] top-3 bottom-3 w-px bg-border" />
-
-          {numberLabels.map((num, index) => (
-            <Reveal as="li"
-              key={num} delay={stagger(index, 0.08)}
-              className="relative pl-16 md:pl-0 md:text-center"
-            >
-              {/* Number badge */}
-              <div className="absolute left-0 top-0 md:static md:mx-auto md:mb-6 w-11 h-11 rounded-full bg-card border border-gold/60 ring-4 ring-secondary flex items-center justify-center">
-                <span className="font-display text-base font-semibold text-gold-deep tnum">{num}</span>
+        {/* 2. 11. 2026 (vizuál): čísla jako text, bez koleček a spojovací linky.
+            Je to pořadí, tak je číslované; nic víc nepotřebuje. */}
+        <ol className="m-0 p-0 list-none grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-9 border-t border-foreground/15 pt-8">
+          {steps.map((step, index) => (
+            <li key={step.title} className="grid grid-cols-[2.25rem_1fr] gap-x-2 sm:block">
+              <span className="font-body text-sm text-muted-foreground tnum sm:block sm:mb-3">{index + 1}</span>
+              <div>
+                <h3 className="font-body text-[1.1rem] md:text-[1.2rem] font-medium text-foreground mb-2 leading-snug text-balance">
+                  {t(lang, step.title)}
+                </h3>
+                <p className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed text-pretty sm:max-w-[28ch]">
+                  {t(lang, step.desc)}
+                </p>
               </div>
-              <h3 className="font-display text-xl md:text-[1.35rem] font-semibold text-foreground mb-2 leading-snug text-balance">
-                {t(lang, titleKeys[index])}
-              </h3>
-              <p className="font-body text-[15px] md:text-base text-muted-foreground leading-relaxed md:max-w-[26ch] md:mx-auto text-pretty">
-                {t(lang, descKeys[index])}
-              </p>
-            </Reveal>
+            </li>
           ))}
         </ol>
 
-        <Reveal delay={0.2} className="text-center mt-10 md:mt-14">
+        <Reveal delay={0.2} className="mt-10 md:mt-12">
           {/* Tlačítko odsud odešlo (patch 2): formulář stojí hned pod sekcí,
               tlačítko na 700 px daleký cíl bylo nadbytečné. Klíč process_cta zůstává.
               Sezónní důvod začít teď: prosincový faktor je reálně až 1,5× (SEASONS_BY_LOC),
               žádné odpočty ani umělý tlak. */}
-          <p className="font-body text-[13px] text-muted-foreground max-w-md mx-auto text-pretty">
+          <p className="font-body text-[13px] text-muted-foreground max-w-md text-pretty">
             {t(lang, "process_season")}
           </p>
         </Reveal>

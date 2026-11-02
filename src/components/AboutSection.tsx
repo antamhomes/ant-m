@@ -39,7 +39,6 @@ const AboutSection = () => {
       <div className="container-wide">
         <div className="max-w-4xl">
           <Reveal className="section-head">
-            <p className="eyebrow eyebrow-center">{t(lang, "about_label")}</p>
             <h2 className="h-section-sm text-foreground">{t(lang, "about_title")}</h2>
           </Reveal>
 

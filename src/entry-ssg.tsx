@@ -8,13 +8,14 @@ import App from "./App";
  * Proč: stránka je SPA a boti bez JavaScriptu (GPTBot, PerplexityBot, ClaudeBot,
  * části Bingu) viděli prázdné <body>. Google si JS vyrenderuje, generativní
  * vyhledávače většinou ne, takže /vn nešlo citovat. Tohle vyrenderuje skutečnou
- * aplikaci do dist/index.html a dist/vn/index.html.
+ * aplikaci do dist/index.html, dist/vn/index.html a od 2. 11. 2026 i do
+ * podstránek /sprava a /vlastni-provoz v obou jazycích (lib/pages.ts).
  *
  * Klient dál dělá createRoot().render(), který obsah při mountu nahradí; výměnu
  * kryje brand splash, žádná hydratace se neřeší. `onAllReady` počká i na lazy
  * sekce z Index.tsx.
  */
-export const renderPage = (path: "/" | "/vn"): Promise<string> =>
+export const renderPage = (path: string): Promise<string> =>
   new Promise((resolve, reject) => {
     (globalThis as { __ANTAM_SSG_PATH__?: string }).__ANTAM_SSG_PATH__ = path;
     const chunks: Buffer[] = [];

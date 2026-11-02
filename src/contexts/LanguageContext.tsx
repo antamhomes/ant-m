@@ -1,30 +1,31 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, ReactNode } from "react";
-
-type Language = "cs" | "vi";
+import { pathFor, resolvePath, type Language, type PageKey } from "@/lib/pages";
 
 interface LanguageContextType {
   lang: Language;
+  /** Která stránka je otevřená (home / sprava / vlastni-provoz); 404 se chová jako home. */
+  page: PageKey;
   toggleLang: () => void;
-  /** Client-side navigation to a language URL (keeps the #anchor). */
-  goTo: (path: "/" | "/vn") => void;
+  /** Client-side navigation (keeps the #anchor). */
+  goTo: (path: string) => void;
 }
 
 const LanguageContext = createContext<LanguageContextType>({
   lang: "cs",
+  page: "home",
   toggleLang: () => {},
   goTo: () => {},
 });
 
-const VI_PREFIX = "/vn";
-
 export const langFromPath = (pathname: string): Language =>
-  pathname.toLowerCase().startsWith(VI_PREFIX) ? "vi" : "cs";
+  pathname.toLowerCase().startsWith("/vn") ? "vi" : "cs";
 
 /**
- * Language is derived from the URL (`/` = Czech, `/vn` = Vietnamese) so that
- * refreshing or sharing a link keeps the chosen language and the canonical /
- * hreflang tags always match the address bar. Two routes only, so plain
- * history.pushState replaces a router library.
+ * Language AND page are derived from the URL (`/` = Czech, `/vn` = Vietnamese;
+ * `/sprava`, `/vlastni-provoz` and their `/vn/` twins are the subpages, see
+ * lib/pages.ts) so that refreshing or sharing a link keeps both and the
+ * canonical / hreflang tags always match the address bar. Six routes, so
+ * plain history.pushState still replaces a router library.
  */
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [pathname, setPathname] = useState(() =>
@@ -39,21 +40,26 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
     return () => window.removeEventListener("popstate", onPop);
   }, []);
 
-  const goTo = useCallback((path: "/" | "/vn") => {
+  const goTo = useCallback((path: string) => {
     if (window.location.pathname !== path) {
       window.history.pushState(null, "", path + window.location.hash);
       setPathname(path);
+      window.scrollTo(0, 0);
     }
   }, []);
 
-  const lang = langFromPath(pathname);
+  const resolved = resolvePath(pathname);
+  const lang = resolved?.lang ?? langFromPath(pathname);
+  const page = resolved?.page ?? "home";
   const value = useMemo<LanguageContextType>(
     () => ({
       lang,
+      page,
       goTo,
-      toggleLang: () => goTo(lang === "cs" ? VI_PREFIX : "/"),
+      // Přepnutí jazyka drží stránku: /sprava ↔ /vn/sprava.
+      toggleLang: () => goTo(pathFor(page, lang === "cs" ? "vi" : "cs")),
     }),
-    [lang, goTo]
+    [lang, page, goTo]
   );
 
   return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;

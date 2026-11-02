@@ -46,11 +46,13 @@ html {
     --input: 36 14% 88%;
     --ring: 36 50% 48%;
 
-    --radius: 0.5rem;
+    /* 2. 11. 2026 (vizuál): jeden rádius, skoro žádný. Hloubka z linek a ploch, ne ze stínů. */
+    --radius: 0.125rem;
 
     --gold: 36 50% 48%;
     /* Deeper gold used for small uppercase labels — accessible on cream */
-    --gold-deep: 34 70% 28%;
+    /* 2. 11. 2026: odkazy a popisky inkoustem, zlato zůstává wordmarku a jednomu tlačítku. */
+    --gold-deep: 168 30% 18%;
     --gold-light: 36 55% 72%;
     --warm-cream: 0 0% 100%;
     --warm-sand: 36 18% 94%;
@@ -60,9 +62,9 @@ html {
     --charcoal-light: 168 41% 16%;
 
     /* Premium shadow tokens — long, soft, slightly tinted */
-    --shadow-soft: 0 12px 32px -16px hsl(var(--charcoal) / 0.18);
-    --shadow-elegant: 0 30px 60px -25px hsl(var(--charcoal) / 0.28), 0 8px 20px -10px hsl(var(--charcoal) / 0.12);
-    --shadow-gold: 0 18px 40px -18px hsl(var(--gold) / 0.45);
+    --shadow-soft: none;
+    --shadow-elegant: none;
+    --shadow-gold: none;
 
     --font-display: 'Playfair Display', Georgia, serif;
     --font-body: 'DM Sans', system-ui, sans-serif;
@@ -99,10 +101,14 @@ html {
   /* Only 400/500/600 of the body font ship; bold text uses 600. */
   strong, b { font-weight: 600; }
 
-  h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-display);
+  /* 2. 11. 2026 (vizuál): patkové písmo nese jen H1 a velká čísla. Nadpisy
+     sekcí jdou v DM Sans, aby serif byl událost, ne tapeta. */
+  h1 { font-family: var(--font-display); letter-spacing: -0.01em; }
+  h2, h3, h4, h5, h6 {
+    font-family: var(--font-body);
+    font-weight: 500;
     line-height: 1.2;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.015em;
   }
   h1 { line-height: 1.15; }
   h2 { line-height: 1.2; }
@@ -188,27 +194,27 @@ html {
      .h-section-sm so the page has one rhythm (patch 126). Backgrounds alternate
      bg-background / bg-secondary; dark only Služby and the closing CTA + footer. */
   .h-section {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: clamp(2rem, 1.3rem + 2.8vw, 3.5rem);
-    line-height: 1.08;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: clamp(1.9rem, 1.3rem + 2.2vw, 3rem);
+    line-height: 1.1;
     letter-spacing: -0.02em;
     text-wrap: balance;
   }
   .h-section-sm {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: clamp(1.75rem, 1.2rem + 1.8vw, 2.5rem);
-    line-height: 1.12;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.25rem);
+    line-height: 1.15;
     letter-spacing: -0.015em;
     text-wrap: balance;
   }
   /* Třetí stupeň (2D): beat uvnitř jedné úvahy, ne samostatná kapitola. */
   .h-section-xs {
-    font-family: var(--font-display);
-    font-weight: 600;
-    font-size: clamp(1.5rem, 1.05rem + 1.3vw, 2rem);
-    line-height: 1.15;
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: clamp(1.35rem, 1.1rem + 0.9vw, 1.7rem);
+    line-height: 1.2;
     letter-spacing: -0.012em;
     text-wrap: balance;
   }
@@ -260,21 +266,19 @@ html {
   @media (max-width: 480px) {
     .btn { white-space: normal; }
   }
-  .btn:hover { transform: translateY(-1px); }
-  .btn:active { transform: translateY(0); }
   .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
   .btn-primary {
     background: hsl(var(--primary));
     color: hsl(var(--primary-foreground));
-    border-color: hsl(var(--gold) / 0.6);
-    box-shadow: 0 0 0 1px hsl(var(--gold) / 0.25), 0 12px 30px -16px hsl(var(--charcoal) / 0.6);
+    border-color: hsl(var(--primary));
+    box-shadow: none;
   }
-  .btn-primary:hover:not(:disabled) { filter: brightness(1.12); box-shadow: 0 0 0 1px hsl(var(--gold) / 0.6), 0 16px 34px -14px hsl(var(--charcoal) / 0.6); }
+  .btn-primary:hover:not(:disabled) { filter: brightness(1.12); }
   .btn-primary-inverse {
     background: #F4EBDD;
     color: #1E1A15;
     border-color: #F4EBDD;
-    box-shadow: 0 16px 40px -14px rgba(0, 0, 0, 0.55);
+    box-shadow: none;
   }
   .btn-primary-inverse:hover { background: #FFFFFF; border-color: #FFFFFF; }
   .btn-secondary {
@@ -301,8 +305,10 @@ html {
   }
   /* On cream: deep gold -> gold. Every point of the gradient stays >= 3:1 on the
      light background, so a 36-56px headline is legible for older readers too. */
+  /* 2. 11. 2026: zlaté slovo v nadpisu pryč; třída zůstává kvůli volajícím, kreslí inkoust. */
   .text-gradient-gold {
-    background-image: linear-gradient(135deg, hsl(var(--gold-deep)) 0%, hsl(var(--gold)) 100%);
+    background-image: none;
+    -webkit-text-fill-color: currentColor;
   }
   /* On charcoal: gold -> light gold. The light end is what makes the number glow. */
   .text-gradient-gold-on-dark {
@@ -574,11 +580,13 @@ html {
    [data-enter]   hero / navbar entrance, released when the splash lifts
    .parallax      transform is set from JS on scroll (hero image)
    --------------------------------------------------------------------------- */
+/* 2. 11. 2026 (vizuál): jen prolnutí, žádný posun. Stejný fade-up na každé
+   sekci je nejčastější znak šablony. */
 [data-reveal] {
   opacity: 0;
-  transform: translate3d(0, 14px, 0);
-  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1), transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
-  will-change: opacity, transform;
+  transform: none;
+  transition: opacity 0.45s ease-out;
+  will-change: opacity;
 }
 [data-reveal].is-in {
   opacity: 1;
@@ -587,8 +595,7 @@ html {
 }
 /* Owner-report card: a longer, slightly rotated settle instead of the plain slide. */
 [data-reveal].reveal-card {
-  transform: translate3d(0, 60px, 0) rotate(-1.5deg) scale(0.96);
-  transition-duration: 0.9s, 0.9s;
+  transform: none;
 }
 [data-reveal].reveal-card.is-in {
   transform: none;

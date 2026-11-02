@@ -3,129 +3,121 @@ import Reveal from "@/components/Reveal";
 // vyúčtování ukazovalo vymyšlené byty s reálnými částkami („Ukázka s vymyšlenými
 // byty a hosty“) a dělalo ze sekce nejdelší blok stránky (1 844 px). Portál
 // tu zůstává jako titulek, věta a odkaz; komponenta žije dál pro /portal.
-import { ChevronRight, Wallet, Receipt, BedDouble, FileBarChart } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
 
 /* Ukázka portálu je DEMO REŽIM SKUTEČNÉHO PORTÁLU, ne kopie. Portál umí
    ?demo sám: běží na vymyšlených bytech, nechce přihlášení a je to tatáž
-   aplikace, kterou majitel dostane. Vlastní ukázka na webu tu chvíli byla
-   (public/ukazka-portalu/) a šla pryč 9. 9. 2026: byla to druhá codebase,
-   která by se s portálem rozešla při první změně. Co se změní v portálu,
-   je tím pádem hned i v ukázce. Přihlášení do ostrého portálu je /portal. */
+   aplikace, kterou majitel dostane. Přihlášení do ostrého portálu je /portal. */
 const PORTAL_DEMO_URL = "https://antam-owner-portal.netlify.app/?demo";
 
+/**
+ * VYÚČTOVÁNÍ JAKO DOKUMENT (2. 11. 2026, vizuál C9). Skutečný byt 402 (Praha 1),
+ * průměr 12 uzavřených měsíců do 7/2026 z Hospitable, přepočteno na odměnu
+ * 20 % + DPH. Metoda: payout platforem (už po jejich provizi) minus úklid,
+ * zrušené rezervace vyloučené, EUR × 25,00. 91 324 × 0,20 = 18 265; DPH 21 %
+ * z odměny = 3 835; dohromady 22 100; majiteli 69 224 (na kartě 69 000).
+ * Čte se shora dolů: co byt vydělal, co se odečetlo, co přišlo majiteli.
+ * Žádný řádek není vymyšlený; provize platforem a úklid se do výpisu nepíší
+ * částkou, protože je platforma strhne před výplatou a majitel je nevidí.
+ */
 const OwnerReportSection = () => {
   const { lang } = useLanguage();
-
-  /* Skutečný byt místo vzoru (29. 8. 2026: řádek Rezervace odstraněn na Vuongovo přání): byt 402 (Praha 1), průměr 12 uzavřených měsíců
-     do 7/2026 z Hospitable, přepočteno na odměnu 20 % + DPH (24,2 %). Metoda: payout
-     platforem minus úklid, zrušené rezervace vyloučené, EUR × 25,00;
-     91 324 × 0,242 = 22 100; majiteli 69 224 (na kartě zaokrouhleno 69 000). */
-  // CZ has no side text and no CTA: the card sits centred and the multi-flat line
-  // goes under it. VI keeps its side column (report_text + report_cta).
-  const hasSide = !!(t(lang, "report_text") || t(lang, "report_cta"));
-  const rows = [
-    { icon: BedDouble, key: "report_row_occupancy" as const, value: lang === "cs" ? "96\u00a0%" : "96%" },
-    { icon: FileBarChart, key: "report_row_base" as const, value: "91\u00a0324\u00a0Kč" },
-    { icon: Receipt, key: "report_row_costs" as const, value: "22\u00a0100\u00a0Kč" },
-    { icon: Wallet, key: "report_row_net" as const, value: "69\u00a0224\u00a0Kč", highlight: true },
+  const cs = lang === "cs";
+  const pct = (n: string) => (cs ? `${n} %` : `${n}%`);
+  const rows: { label: string; value: string; kind?: "sum" | "minus" | "total" }[] = [
+    { label: t(lang, "report_row_base"), value: "91 324 Kč", kind: "sum" },
+    { label: cs ? "Odměna Antam Homes, 20 % z příjmu" : "Phí Antam Homes, 20% doanh thu", value: "− 18 265 Kč", kind: "minus" },
+    { label: cs ? "DPH 21 % z odměny" : "VAT 21% trên phí", value: "− 3 835 Kč", kind: "minus" },
+    { label: t(lang, "report_row_net"), value: "69 224 Kč", kind: "total" },
+  ];
+  const meta = [
+    [cs ? "Byt" : "Căn hộ", "2+kk, 52 m², Praha 1"],
+    [cs ? "Období" : "Kỳ", cs ? "průměrný měsíc, 8/2025 až 7/2026" : "tháng trung bình, 8/2025 đến 7/2026"],
+    [t(lang, "report_row_occupancy"), pct("96")],
+    [cs ? "Výplata" : "Thanh toán", cs ? "do 15. dne následujícího měsíce" : "trước ngày 15 tháng sau"],
   ];
 
   return (
-    <section id="vyuctovani" className="section bg-background scroll-mt-20">
+    <section id="vyuctovani" className="section bg-secondary scroll-mt-20">
       <div className="container-wide">
-        <Reveal className="section-head">
-          <p className="eyebrow eyebrow-center">{t(lang, "report_label")}</p>
-          <h2 className="h-section-sm text-foreground">{t(lang, "report_title")}</h2>
-          <p className="lead">{t(lang, "report_desc")}</p>
-        </Reveal>
-
-        {/* AD 2. 9. 2026: portál dostal vlastní hlavičku uvnitř sekce, protože
-            odpovídá na jinou obavu než vyúčtování. Vyúčtování říká „uvidíš, co
-            ti přišlo"; portál říká „byt ti pořád patří". Vymyšlené demo tady
-            bylo předtím a šlo pryč: vedle skutečných čísel v sekci Výsledky
-            působila smyšlená čísla falešně, i když byla označená. */}
-        <Reveal className="mb-4">
-          <p className="eyebrow eyebrow-center">{t(lang, "portal_label")}</p>
-          <h3 className="h-section-xs text-foreground mt-4">{t(lang, "portal_title")}</h3>
-          <p className="mt-4 font-body text-[17px] md:text-lg text-foreground leading-relaxed max-w-[52ch] text-pretty">
-            {t(lang, "portal_desc")}
-          </p>
-        </Reveal>
-
-        <Reveal className="mt-6 mb-12 sm:mb-16">
-          <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
-            <a href={PORTAL_DEMO_URL} target="_blank" rel="noopener noreferrer"
-              className="font-body text-[15px] font-medium text-gold-deep no-underline border-b border-gold/40 pb-0.5">
-              {t(lang, "portal_open")}
-            </a>
-            <a href="/portal" className="font-body text-[13.5px] text-muted-foreground no-underline border-b border-border pb-0.5">
-              {t(lang, "portal_login")}
-            </a>
-          </div>
-          <p className="mt-3 font-body text-[13px] text-muted-foreground text-pretty max-w-[56ch]">
-            {t(lang, "portal_open_note")}
-          </p>
-        </Reveal>
-
-        <div className={hasSide ? "grid md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] gap-8 md:gap-16 items-start" : "max-w-xl space-y-5"}>
-          {/* AD 2. 9. 2026: bez karty. Tohle je doklad, ne widget: stín,
-              zaoblení a ikonka u každého řádku z něj dělaly UI prvek, zatímco
-              má číst jako výpis, který si majitel přepočítá. */}
+        <div className="grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] gap-10 lg:gap-16 items-start">
           <Reveal>
-            <div className="flex items-baseline justify-between gap-4 pb-3.5 border-b border-foreground/25">
-              <span className="font-body text-[11px] uppercase tracking-[0.13em] text-muted-foreground">
-                {t(lang, "report_period")}
-              </span>
-              <Wordmark on="light" size="sm" className="opacity-70" />
-            </div>
+            <h2 className="h-section-sm text-foreground">{t(lang, "report_title")}</h2>
+            <p className="lead mt-5">{t(lang, "report_desc")}</p>
+            <p className="mt-5 font-body text-[15px] text-muted-foreground leading-relaxed text-pretty max-w-[48ch]">
+              {t(lang, "report_multi")}
+            </p>
 
-            <ul className="m-0 p-0 list-none">
-              {rows.map(({ key, value, highlight }) => (
-                <li
-                  key={key}
-                  className={`flex items-baseline justify-between gap-6 py-3.5 ${
-                    highlight ? "border-y border-foreground/25 mt-0.5" : "border-b border-border"
-                  }`}
-                >
-                  <span className={`font-body text-[14.5px] ${highlight ? "font-medium text-foreground" : "text-muted-foreground"}`}>
-                    {t(lang, key)}
-                  </span>
-                  <span
-                    className={`whitespace-nowrap font-display tnum ${
-                      highlight ? "text-[26px] sm:text-[30px] font-semibold text-gold-deep" : "text-[19px] sm:text-[21px] text-foreground/85"
-                    }`}
-                  >
-                    {value}
-                  </span>
-                </li>
-              ))}
-            </ul>
-            <p className="mt-4 font-body text-[12px] text-muted-foreground leading-relaxed text-pretty max-w-[70ch]">
-              {t(lang, "report_note")}
+            <h3 className="mt-10 font-body text-[19px] md:text-[21px] font-medium text-foreground">{t(lang, "portal_title")}</h3>
+            <p className="mt-3 font-body text-[15px] md:text-base text-muted-foreground leading-relaxed max-w-[48ch] text-pretty">
+              {t(lang, "portal_desc")}
+            </p>
+            <div className="mt-4 flex flex-wrap items-baseline gap-x-6 gap-y-2">
+              <a href={PORTAL_DEMO_URL} target="_blank" rel="noopener noreferrer"
+                className="font-body text-[15px] font-medium text-foreground underline underline-offset-4 decoration-foreground/30">
+                {t(lang, "portal_open")}
+              </a>
+              <a href="/portal" className="font-body text-[13.5px] text-muted-foreground underline underline-offset-4 decoration-border">
+                {t(lang, "portal_login")}
+              </a>
+            </div>
+            <p className="mt-2 font-body text-[12.5px] text-muted-foreground text-pretty max-w-[56ch]">
+              {t(lang, "portal_open_note")}
             </p>
           </Reveal>
 
-          <Reveal delay={0.1}>
-            {t(lang, "report_text") && (
-              <p className="font-body text-foreground text-[17px] md:text-lg leading-relaxed mb-5 text-pretty">
-                {t(lang, "report_text")}
+          {/* Dokument: bílý list, hlavička s wordmarkem, metadata, řádky, součet.
+              Záměrně vypadá jako to, co majiteli přijde e-mailem, ne jako widget. */}
+          <Reveal delay={0.08}>
+            <article aria-label={cs ? "Ukázka vyúčtování" : "Mẫu bảng kê"} className="bg-card border border-foreground/15 px-6 py-7 sm:px-10 sm:py-10 lg:px-12 lg:py-12">
+              <header className="flex items-start justify-between gap-6 pb-5 border-b border-foreground/15">
+                <div>
+                  <p className="m-0 font-body text-[15px] font-medium text-foreground">{cs ? "Vyúčtování" : "Bảng kê"}</p>
+                  <p className="m-0 mt-0.5 font-body text-[13px] text-muted-foreground">{cs ? "skutečný byt z naší správy" : "căn hộ thật Antam đang quản lý"}</p>
+                </div>
+                <Wordmark on="light" size="sm" className="opacity-80 shrink-0" />
+              </header>
+
+              <dl className="m-0 mt-5 grid grid-cols-[auto_1fr] gap-x-6 gap-y-1.5 font-body text-[13.5px] sm:text-sm tnum">
+                {meta.map(([k, v]) => (
+                  <div key={k} className="contents">
+                    <dt className="text-muted-foreground">{k}</dt>
+                    <dd className="m-0 text-foreground">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+
+              <ol className="m-0 mt-7 p-0 list-none border-t border-foreground/15">
+                {rows.map((r) => (
+                  <li
+                    key={r.label}
+                    className={`flex items-baseline justify-between gap-6 py-4 sm:py-5 border-b tnum ${
+                      r.kind === "total" ? "border-foreground/40 border-t-2 border-t-foreground/60 mt-1" : "border-foreground/10"
+                    }`}
+                  >
+                    <span className={`font-body text-[14.5px] sm:text-[16px] ${r.kind === "minus" ? "text-muted-foreground pl-4" : "text-foreground"} ${r.kind === "total" ? "font-medium sm:text-[18px]" : ""}`}>
+                      {r.label}
+                    </span>
+                    <span className={`whitespace-nowrap ${
+                      r.kind === "total"
+                        ? "font-display text-[34px] sm:text-[44px] lg:text-[52px] leading-none font-semibold text-foreground"
+                        : r.kind === "minus"
+                          ? "font-body text-[17px] sm:text-[19px] text-foreground/75"
+                          : "font-body text-[20px] sm:text-[24px] font-medium text-foreground"
+                    }`}>
+                      {r.value}
+                    </span>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-4 mb-0 font-body text-[12px] text-muted-foreground leading-relaxed text-pretty">
+                {cs
+                  ? "Příjem je to, co platformy vyplatily po své provizi, bez úklidu, který platí hosté. Průměr 12 měsíců z Hospitable, přepočteno na současnou odměnu. Minulý výsledek není příslib."
+                  : "Doanh thu là số nền tảng đã trả sau phí của họ, không gồm phí dọn do khách trả. Trung bình 12 tháng từ Hospitable, tính theo mức phí hiện nay. Kết quả đã qua không phải cam kết."}
               </p>
-            )}
-            {/* Multi-property signal: one line, no "enterprise" theatre. */}
-            <p className={`font-body text-[15px] text-muted-foreground leading-relaxed text-pretty ${t(lang, "report_cta") ? "mb-8" : ""} ${hasSide ? "" : ""}`}>
-              {t(lang, "report_multi")}
-            </p>
-            {/* Přehled je důkaz transparentnosti, ne konverzní sekce. Prázdný
-                klíč tlačítko skryje; VI si svoje CTA drží. */}
-            {t(lang, "report_cta") && (
-              <a href="#kontakt" className="btn btn-primary">
-                {t(lang, "report_cta")}
-                <ChevronRight className="w-4 h-4" />
-              </a>
-            )}
+            </article>
           </Reveal>
         </div>
       </div>

@@ -33,12 +33,13 @@ const copy = {
   },
 };
 
-const ReviewsBlock = () => {
+/** stacked: pod sebou v úzkém sloupci (sekce Provoz, 2. 11. 2026), jinak tři vedle sebe. */
+const ReviewsBlock = ({ stacked = false }: { stacked?: boolean }) => {
   const { lang } = useLanguage();
   const c = copy[lang];
 
   return (
-    <Reveal delay={0.1} className="mt-12 md:mt-14 pt-10 md:pt-12 border-t border-gold/15">
+    <Reveal delay={0.1} className={stacked ? "mt-10 pt-8 border-t border-white/15" : "mt-12 md:mt-14 pt-10 md:pt-12 border-t border-white/15"}>
       {/* No second eyebrow inside the section (patch 126): one line of proof, then the quotes. */}
       {/* POZADÍ: 2A přebarvila blok na světlé tokeny, protože se tehdy
           renderoval v krémovém #portfolio a vycházel kontrast 1,04:1.
@@ -47,22 +48,22 @@ const ReviewsBlock = () => {
           on-dark sadu; kontrast se měří v ověření, ne odhaduje. */}
       <div className="mb-6 md:mb-8">
         <p
-          className="font-display text-xl md:text-2xl font-semibold text-primary-foreground max-w-[24ch] md:max-w-none"
+          className="font-body text-xl md:text-2xl font-medium text-primary-foreground max-w-[24ch] md:max-w-none"
           style={{ textWrap: "balance" }}
         >
           {c.pre}
-          <span className="text-gradient-gold-on-dark whitespace-nowrap">{c.num}</span>
+          <span className="whitespace-nowrap">{c.num}</span>
           {c.post}
         </p>
       </div>
       {/* Phones: one row you swipe (snap), so three quotes don't cost three screens. */}
-      <div className="flex md:grid md:grid-cols-3 gap-3 md:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-6 px-6 md:mx-0 md:px-0 pb-2 md:pb-0 no-scrollbar">
+      <div className={`flex md:grid ${stacked ? "md:grid-cols-1" : "md:grid-cols-3"} gap-3 md:gap-5 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-6 px-6 md:mx-0 md:px-0 pb-2 md:pb-0 no-scrollbar`}>
         {reviews[lang].map((r) => (
           <blockquote
             key={r.meta}
-            className="snap-start shrink-0 w-[82%] sm:w-[60%] md:w-auto rounded-md bg-primary-foreground/[0.06] border border-gold/25 p-5 md:p-6"
+            className="snap-start shrink-0 w-[82%] sm:w-[60%] md:w-auto bg-primary-foreground/[0.06] border border-white/15 p-5 md:p-6"
           >
-            <Quote className="w-5 h-5 text-gold mb-3" aria-hidden="true" />
+            <Quote className="w-5 h-5 text-white/50 mb-3" aria-hidden="true" />
             <p className="font-body text-sm md:text-base text-primary-foreground/85 leading-relaxed text-pretty">
               {lang === "cs" ? "„" : "“"}{r.text}{lang === "cs" ? "“" : "”"}
             </p>

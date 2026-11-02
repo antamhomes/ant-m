@@ -3,6 +3,7 @@ import { LanguageProvider } from "@/contexts/LanguageContext";
 import SiteLock from "@/components/SiteLock";
 import { SITE_LOCK_ENABLED, isUnlocked } from "@/lib/siteLock";
 import Index from "./pages/Index.tsx";
+import { resolvePath } from "@/lib/pages";
 import NotFound from "./pages/NotFound.tsx";
 
 /** Interní vyhodnocovač. Vlastní chunk, ať se do veřejného balíku nepřidává. */
@@ -14,12 +15,13 @@ const Guide = lazy(() => import("./pages/Guide.tsx"));
 const isGuidePath = (p: string) => p === "/guide" || p.startsWith("/guide/");
 
 /**
- * Two pages (Czech "/" and Vietnamese "/vn") plus a 404, so no router library:
- * the language provider owns the URL. Kept deliberately small: no query client,
- * toasts, tooltips, motion or head library either.
+ * Six public routes (see lib/pages.ts: home, /sprava, /vlastni-provoz, each in
+ * Czech and Vietnamese) plus a 404, so no router library: the language
+ * provider owns the URL. Kept deliberately small: no query client, toasts,
+ * tooltips, motion or head library either.
  */
-const HOME_PATHS = new Set(["/", "/vn", "/vn/", "/index.html"]);
-const ALIASES: Record<string, string> = { "/cz": "/", "/cs": "/", "/vi": "/vn", "/cz/": "/", "/cs/": "/", "/vi/": "/vn" };
+const Sprava = lazy(() => import("./pages/Sprava.tsx"));
+const VlastniProvoz = lazy(() => import("./pages/VlastniProvoz.tsx"));
 
 const App = () => {
   // Závora před spuštěním: při prerenderu (bez window) je vždy zamčeno,
@@ -53,13 +55,23 @@ const App = () => {
     typeof window === "undefined"
       ? ((globalThis as { __ANTAM_SSG_PATH__?: string }).__ANTAM_SSG_PATH__ ?? "/")
       : window.location.pathname;
-  const path = rawPath.toLowerCase();
-  const alias = ALIASES[path];
-  if (alias && typeof window !== "undefined") {
-    window.history.replaceState(null, "", alias + window.location.hash);
+  const resolved = resolvePath(rawPath);
+  // Aliasy (/cz, /cs, /vi, koncové lomítko, /index.html) přepíšeme na kanonickou cestu.
+  if (resolved && typeof window !== "undefined" && window.location.pathname !== resolved.canonical) {
+    window.history.replaceState(null, "", resolved.canonical + window.location.hash);
   }
-  const isHome = Boolean(alias) || HOME_PATHS.has(path);
-  return <LanguageProvider>{isHome ? <Index /> : <NotFound />}</LanguageProvider>;
+  const pageEl = !resolved
+    ? <NotFound />
+    : resolved.page === "sprava"
+      ? <Sprava />
+      : resolved.page === "vlastni-provoz"
+        ? <VlastniProvoz />
+        : <Index />;
+  return (
+    <LanguageProvider>
+      <Suspense fallback={null}>{pageEl}</Suspense>
+    </LanguageProvider>
+  );
 };
 
 export default App;

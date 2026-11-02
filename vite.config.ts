@@ -4,12 +4,10 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 import { mcpPlugin } from "@lovable.dev/mcp-js/stacks/supabase/vite";
 
-const VI_TITLE = "Quản lý cho thuê ngắn hạn & Airbnb tại Praha | Antam Homes";
-const VI_DESC =
-  "Quản lý cho thuê ngắn hạn (Airbnb, Booking) tại Praha: Antam lo khách, dọn dẹp, giá và bảng kê. Căn nào nhận cũng có mức tối thiểu ghi trong hợp đồng.";
 const SITE = "https://www.antamhomes.com";
 
 import type { Plugin } from "vite";
+import { META } from "./src/lib/seoMeta";
 
 /**
  * Po dokončení buildu vyrenderuje aplikaci (entry-ssg.tsx) do statického HTML
@@ -40,18 +38,23 @@ function ssgPrerenderPlugin(): Plugin {
       try {
         const mod = await server.ssrLoadModule("/src/entry-ssg.tsx");
         const safe = (data: unknown) => JSON.stringify(data).replace(/</g, "\\u003c");
-        const targets: Array<["dist/index.html" | "dist/vn/index.html", "/" | "/vn", "cs" | "vi"]> = [
-          ["dist/index.html", "/", "cs"],
-          ["dist/vn/index.html", "/vn", "vi"],
+        // Šest stránek (lib/pages.ts): homepage a dvě podstránky, každá v obou jazycích.
+        const targets: Array<[string, string, "cs" | "vi", "home" | "sprava" | "vlastni-provoz"]> = [
+          ["dist/index.html", "/", "cs", "home"],
+          ["dist/vn/index.html", "/vn", "vi", "home"],
+          ["dist/sprava/index.html", "/sprava", "cs", "sprava"],
+          ["dist/vn/sprava/index.html", "/vn/sprava", "vi", "sprava"],
+          ["dist/vlastni-provoz/index.html", "/vlastni-provoz", "cs", "vlastni-provoz"],
+          ["dist/vn/vlastni-provoz/index.html", "/vn/vlastni-provoz", "vi", "vlastni-provoz"],
         ];
-        for (const [file, route, lang] of targets) {
+        for (const [file, route, lang, page] of targets) {
           const html = await fs.readFile(file, "utf8");
           const app: string = await mod.renderPage(route);
           // Zamčený web: žádný JSON-LD (obsahuje FAQ) a noindex, dokud se závora nevypne.
           const head: string = mod.SITE_LOCK_ENABLED
             ? `<meta name="robots" content="noindex, nofollow">`
-            : `<script id="ld-faq" type="application/ld+json">${safe(mod.buildFaqJsonLd(lang))}</script>` +
-              `<script id="ld-business" type="application/ld+json">${safe(mod.buildBusinessJsonLd(lang))}</script>`;
+            : `<script id="ld-faq" type="application/ld+json">${safe(mod.buildFaqJsonLd(lang, page))}</script>` +
+              `<script id="ld-business" type="application/ld+json">${safe(mod.buildBusinessJsonLd(lang, page))}</script>`;
           const out = html
             .replace('<div id="root"></div>', `<div id="root">${app}</div>`)
             .replace("</head>", `${head}</head>`);
@@ -67,72 +70,59 @@ function ssgPrerenderPlugin(): Plugin {
 }
 
 
-function prerenderVnPlugin(): Plugin {
+/**
+ * Z dist/index.html vyrobí statické HTML ostatních pěti stránek s vlastním
+ * <head> (title, description, canonical, hreflang, og, twitter, lang, font
+ * subset). Obsah do <div id="root"> dodá až antam-ssg plugin po buildu.
+ * Meta texty jsou jedna pravda v src/components/SEO.tsx (META).
+ */
+function prerenderPagesPlugin(): Plugin {
   return {
-    name: "prerender-vn",
+    name: "prerender-pages",
     apply: "build",
     enforce: "post",
     generateBundle(_options, bundle) {
       const indexAsset = bundle["index.html"];
       if (!indexAsset || indexAsset.type !== "asset") return;
-      let html = typeof indexAsset.source === "string"
+      const base = typeof indexAsset.source === "string"
         ? indexAsset.source
         : new TextDecoder().decode(indexAsset.source as Uint8Array);
-
-      // lang
-      html = html.replace(/<html\s+lang="[^"]*"/i, '<html lang="vi"');
-      // <title>
-      html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${VI_TITLE}</title>`);
-      // meta description
-      html = html.replace(
-        /<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i,
-        `<meta name="description" content="${VI_DESC}" />`
-      );
-      // og:title / og:description / og:url / og:locale / og:locale:alternate
-      html = html.replace(
-        /<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/i,
-        `<meta property="og:title" content="${VI_TITLE}" />`
-      );
-      html = html.replace(
-        /<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/i,
-        `<meta property="og:description" content="${VI_DESC}" />`
-      );
-      html = html.replace(
-        /<meta\s+property="og:url"\s+content="[^"]*"\s*\/?>/i,
-        `<meta property="og:url" content="${SITE}/vn" />`
-      );
-      html = html.replace(
-        /<meta\s+property="og:locale"\s+content="[^"]*"\s*\/?>/i,
-        `<meta property="og:locale" content="vi_VN" />`
-      );
-      html = html.replace(
-        /<meta\s+property="og:locale:alternate"\s+content="[^"]*"\s*\/?>/i,
-        `<meta property="og:locale:alternate" content="cs_CZ" />`
-      );
-      html = html.replace(
-        /<link rel="canonical" href="[^"]*" \/>/,
-        `<link rel="canonical" href="${SITE}/vn" />`
-      );
-      // Vietnamese page: preload the vietnamese Playfair subset instead of latin-ext
-      html = html.replace(
-        /playfair-display-latin-ext-500-normal\.woff2/,
-        "playfair-display-vietnamese-500-normal.woff2"
-      );
-      // twitter
-      html = html.replace(
-        /<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/i,
-        `<meta name="twitter:title" content="${VI_TITLE}" />`
-      );
-      html = html.replace(
-        /<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/i,
-        `<meta name="twitter:description" content="${VI_DESC}" />`
-      );
-
-      this.emitFile({
-        type: "asset",
-        fileName: "vn/index.html",
-        source: html,
-      });
+      const PATHS: Record<string, { cs: string; vi: string }> = {
+        home: { cs: "/", vi: "/vn" },
+        sprava: { cs: "/sprava", vi: "/vn/sprava" },
+        "vlastni-provoz": { cs: "/vlastni-provoz", vi: "/vn/vlastni-provoz" },
+      };
+      const esc = (x: string) => x.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+      const pages: Array<[string, "cs" | "vi", string]> = [
+        ["home", "vi", "vn/index.html"],
+        ["sprava", "cs", "sprava/index.html"],
+        ["sprava", "vi", "vn/sprava/index.html"],
+        ["vlastni-provoz", "cs", "vlastni-provoz/index.html"],
+        ["vlastni-provoz", "vi", "vn/vlastni-provoz/index.html"],
+      ];
+      for (const [page, lang, fileName] of pages) {
+        const m = META[page as keyof typeof META][lang];
+        const title = esc(m.title); const desc = esc(m.desc);
+        const self = SITE + PATHS[page][lang];
+        const cs = SITE + PATHS[page].cs; const vi = SITE + PATHS[page].vi;
+        let html = base;
+        html = html.replace(/<html\s+lang="[^"]*"/i, `<html lang="${lang}"`);
+        html = html.replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`);
+        html = html.replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i, `<meta name="description" content="${desc}" />`);
+        html = html.replace(/<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:title" content="${title}" />`);
+        html = html.replace(/<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:description" content="${desc}" />`);
+        html = html.replace(/<meta\s+property="og:url"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:url" content="${self}" />`);
+        html = html.replace(/<meta\s+property="og:locale"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:locale" content="${lang === "vi" ? "vi_VN" : "cs_CZ"}" />`);
+        html = html.replace(/<meta\s+property="og:locale:alternate"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:locale:alternate" content="${lang === "vi" ? "cs_CZ" : "vi_VN"}" />`);
+        html = html.replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${self}" />`);
+        html = html.replace(/<link rel="alternate" hreflang="cs" href="[^"]*" \/>/, `<link rel="alternate" hreflang="cs" href="${cs}" />`);
+        html = html.replace(/<link rel="alternate" hreflang="vi" href="[^"]*" \/>/, `<link rel="alternate" hreflang="vi" href="${vi}" />`);
+        html = html.replace(/<link rel="alternate" hreflang="x-default" href="[^"]*" \/>/, `<link rel="alternate" hreflang="x-default" href="${cs}" />`);
+        html = html.replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:title" content="${title}" />`);
+        html = html.replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:description" content="${desc}" />`);
+        if (lang === "vi") html = html.replace(/playfair-display-latin-ext-500-normal\.woff2/, "playfair-display-vietnamese-500-normal.woff2");
+        this.emitFile({ type: "asset", fileName, source: html });
+      }
     },
   };
 }
@@ -155,7 +145,7 @@ export default defineConfig(({ mode }) => ({
   plugins: [
     react(),
     mode === "development" && componentTagger(),
-    prerenderVnPlugin(),
+    prerenderPagesPlugin(),
     ssgPrerenderPlugin(),
     mcpPlugin(),
   ].filter(Boolean),

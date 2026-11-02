@@ -75,9 +75,10 @@ describe("karta vysledku podle pasma", () => {
     expect(tx).toContain(strip(cs.calc_promise));
     expect(tx).toContain(strip(cs.calc_guarantee_line));
     expect(shareBtn()).toBeTruthy();
-    // barva řádku 2: zlatá
+    // řádek 2 u silného bytu v plné barvě (2. 11. 2026: zlatý akcent pryč, důraz nese kontrast, ne zlato)
     const line2 = [...card().querySelectorAll("p")].find((p) => /ročně/.test(p.textContent ?? ""))!;
-    expect(line2.className).toContain("text-gold");
+    expect(line2.className).toContain("text-primary-foreground");
+    expect(line2.className).not.toContain("text-primary-foreground/80");
   });
 
   it("NADEJNY byt (Praha 9 Ostatni 2+kk): veta viable, jinak jako silny", () => {
@@ -105,7 +106,7 @@ describe("karta vysledku podle pasma", () => {
     // benefit se pořád říká (je pravdivý), jen ne zlatě
     expect(tx).toMatch(/\+\d[\d ]* Kč ročně/);
     const line2 = [...card().querySelectorAll("p")].find((p) => /ročně/.test(p.textContent ?? ""))!;
-    expect(line2.className).not.toContain("text-gold");
+    expect(line2.className).toContain("text-primary-foreground/80");
     expect(tx).toContain(strip(cs.calc_band_weak));
     expect(ctaText()).toContain(strip(cs.calc_cta_weak));
     expect(cta().className).toContain("btn-secondary-inverse");

@@ -10,26 +10,57 @@ import translations from "@/i18n/translations";
 const cs = translations.cs;
 const src = (p: string) => readFileSync(p, "utf8");
 
-describe("poradi sekci", () => {
-  it("Index.tsx montuje sekce presne v poradi spec §1", () => {
+describe("poradi sekci (tri stranky, 2. 11. 2026)", () => {
+  const order = (file: string) =>
+    [...src(file).matchAll(/<Suspense fallback=\{null\}><(\w+)(?: variant="[\w-]+")? \/><\/Suspense>/g)].map((m) => m[1]);
+
+  it("homepage je tridic: slib, dukaz, cislo, dve cesty, srovnani, kdo jsme, formular", () => {
     const index = src("src/pages/Index.tsx");
-    const order = [...index.matchAll(/<Suspense fallback=\{null\}><(\w+) \/><\/Suspense>/g)].map((m) => m[1]);
-    // 29. 10. 2026: ChoiceSection odmontována (dvě cesty nese hero a ceník).
-    expect(index).not.toMatch(/<ChoiceSection/);
-    expect(order).toEqual([
-      "PortfolioSection", "CalculatorSection", "PricingSection", "SystemSection", "ProcessSection", "ContactSection",
-      "ComparisonSection", "ServicesSection", "OwnerReportSection", "AboutSection", "FAQSection", "FinalCtaSection",
-      "Footer", "StickyMobileCTA", "CookieConsent",
+    expect(index).toContain('<PageShell page="home">');
+    expect(index).toContain("<HeroSection />");
+    expect(index).toContain('<PricingSection variant="both" />');
+    expect(order("src/pages/Index.tsx")).toEqual([
+      "PortfolioSection", "CalculatorSection", "PricingSection", "ComparisonSection", "AboutSection", "ContactSection", "FinalCtaSection",
     ]);
-    expect(index).not.toMatch(/import\("@\/components\/GaranceSection"\)|<GaranceSection/);
-    expect(index).not.toMatch(/import\("@\/components\/HorizonSection"\)|<HorizonSection/);
+    for (const s of ["SystemSection", "ProcessSection", "FAQSection", "ServicesSection", "OwnerReportSection", "GaranceSection", "HorizonSection", "ChoiceSection", "OccupancySection"])
+      expect(index, `${s} nepatri na homepage`).not.toContain(s);
   });
 
-  it("mezi kalkulackou a formularem stoji Cenik, Provozni system a Jak zacit", () => {
-    // 2. 11. 2026: SystemSection je důkaz za cenou vlastního provozu, patří hned pod ceník.
-    const index = src("src/pages/Index.tsx");
-    const between = index.slice(index.indexOf("<CalculatorSection />"), index.indexOf("<ContactSection />"));
-    expect([...between.matchAll(/<(\w+Section) \/>/g)].map((m) => m[1])).toEqual(["CalculatorSection", "PricingSection", "SystemSection", "ProcessSection"]);
+  it("/sprava mluvi jen k majiteli, ktery byt provozovat nechce", () => {
+    const page = src("src/pages/Sprava.tsx");
+    expect(page).toContain('<PageShell page="sprava">');
+    expect(page).toContain('<PageHero page="sprava" />');
+    expect(page).toContain('<PricingSection variant="managed" />');
+    expect(page).toContain('<ProcessSection variant="managed" />');
+    expect(page).toContain('<FAQSection variant="managed" />');
+    expect(order("src/pages/Sprava.tsx")).toEqual([
+      "PortfolioSection", "CalculatorSection", "ServicesSection", "OwnerReportSection", "PricingSection", "ProcessSection", "FAQSection", "ContactSection", "FinalCtaSection",
+    ]);
+    expect(page).not.toContain("SystemSection");
+    expect(page).not.toContain("ComparisonSection");
+  });
+
+  it("/vlastni-provoz mluvi jen k cloveku, ktery chce provozovat sam", () => {
+    const page = src("src/pages/VlastniProvoz.tsx");
+    expect(page).toContain('<PageShell page="vlastni-provoz">');
+    expect(page).toContain('<PageHero page="vlastni-provoz" />');
+    expect(page).toContain('<PricingSection variant="own" />');
+    expect(page).toContain('<ProcessSection variant="own" />');
+    expect(page).toContain('<FAQSection variant="own" />');
+    expect(order("src/pages/VlastniProvoz.tsx")).toEqual([
+      "SystemSection", "PricingSection", "ComparisonSection", "ProcessSection", "FAQSection", "ContactSection", "FinalCtaSection",
+    ]);
+    for (const s of ["CalculatorSection", "ServicesSection", "OwnerReportSection"]) expect(page).not.toContain(s);
+  });
+
+  it("kostra stranky nese navigaci, SEO, kalkulacni kontext, paticku a cookies", () => {
+    const shell = src("src/components/PageShell.tsx");
+    for (const s of ["<Navbar />", "<SEO page={page} />", "<CalcProvider>", "<Footer />", "<StickyMobileCTA />", "<CookieConsent />", "<ScrollToHash />"]) expect(shell).toContain(s);
+  });
+
+  it("navigace vede na obe stranky a znaci tu otevrenou", () => {
+    const nav = src("src/components/Navbar.tsx");
+    for (const k of ['"nav_sprava"', '"nav_own"', '"nav_calculator"', '"nav_about"', "aria-current"]) expect(nav).toContain(k);
   });
 });
 

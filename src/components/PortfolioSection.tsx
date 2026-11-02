@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { MapPin, Users, Ruler, Sparkles, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
-import Reveal, { stagger } from "@/components/Reveal";
+import Reveal from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MARKET_OCC, ratioFor } from "@/lib/yield";
 import byt1 from "@/assets/byt-1.jpg.asset.json";
@@ -115,290 +114,110 @@ const copy = {
   },
 };
 
+/** Jedna dlaždice mozaiky: fotka, částka na fotce dole vlevo, pod ní název a
+ *  obsazenost proti trhu jako prostý text. Žádný rámeček, žádný stín. */
+const Tile = ({ item, big, c, lang }: { item: Item; big?: boolean; c: (typeof copy)["cs"]; lang: "cs" | "vi" }) => (
+  <figure className={`m-0 min-w-0 ${big ? "lg:flex lg:flex-col lg:h-full" : ""}`}>
+    <div className={`relative overflow-hidden bg-secondary ${big ? "aspect-[4/3] lg:aspect-auto lg:flex-1 lg:min-h-[420px]" : "aspect-[4/3] lg:aspect-[16/10]"}`}>
+      <img
+        src={item.src}
+        alt={`${item.name}, ${item.loc}`}
+        loading="lazy"
+        decoding="async"
+        className={`w-full h-full object-cover ${item.focus === "top" ? "object-top" : item.focus === "bottom" ? "object-bottom" : "object-center"}`}
+      />
+      {item.stats && (
+        <>
+          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[48%] bg-[linear-gradient(to_top,rgba(14,13,11,0.82)_0%,rgba(14,13,11,0.5)_45%,rgba(14,13,11,0)_100%)]" />
+          <p className={`absolute left-4 bottom-3.5 sm:left-5 sm:bottom-4 m-0 tnum ${big ? "lg:left-7 lg:bottom-6" : ""}`}>
+            <span className={`block font-display font-semibold text-white leading-none tracking-[-0.02em] [text-shadow:0_1px_2px_rgba(0,0,0,0.35)] ${big ? "text-[2.4rem] sm:text-[3rem] lg:text-[3.6rem]" : "text-[1.6rem] sm:text-[1.9rem]"}`}>
+              {fmtCzk(item.stats.owner)}
+              <span className="ml-2 text-[0.42em] font-normal text-white/85">Kč</span>
+            </span>
+            <span className="mt-1.5 block font-body text-[12px] sm:text-[13px] text-white/85 leading-tight">{c.statOwner}</span>
+          </p>
+        </>
+      )}
+    </div>
+    <figcaption className="pt-3 sm:pt-3.5 tnum">
+      <h3 className={`m-0 font-body font-medium text-foreground leading-snug text-balance ${big ? "text-[17px] sm:text-lg" : "text-[15px] sm:text-base"}`}>
+        {item.name}
+      </h3>
+      <p className="m-0 mt-1 font-body text-[13px] sm:text-sm text-muted-foreground leading-relaxed">
+        {item.loc} · {item.m2}&nbsp;m² · {c.guests(item.guests)}
+      </p>
+      {item.stats ? (
+        <p className="m-0 mt-1 font-body text-[13px] sm:text-sm text-foreground/80 leading-relaxed">
+          <b className="font-medium text-foreground">{item.stats.occupancy}{lang === "cs" ? "\u00a0%" : "%"}</b> {c.statOcc}, {c.barMarket(item.loc)}&nbsp;{item.stats.market}{lang === "cs" ? "\u00a0%" : "%"}
+          <span className="text-muted-foreground"> · {item.stats.since ? c.statPeriodSince(item.stats.since) : c.statPeriod12}</span>
+        </p>
+      ) : (
+        <p className="m-0 mt-1 font-body text-[13px] sm:text-sm text-muted-foreground leading-relaxed">
+          {c.newBadge(item.newSince!)}. {c.newNote}
+        </p>
+      )}
+    </figcaption>
+  </figure>
+);
+
 const PortfolioSection = () => {
   const { lang } = useLanguage();
   const c = copy[lang];
-  /* AD 1. 9. 2026: jeden byt nese sekci jako důkaz, ne katalog tří karet.
-     Zbytek portfolia je pod tím řádek čísel a teprve po rozkliknutí mřížka. */
+  /* 2. 11. 2026 (vizuál C10): asymetrická mozaika místo carouselu. Jedna velká
+     dlaždice (nejdelší měřené okno), dvě menší vedle ní; zbytek na rozkliknutí
+     ve třech sloupcích. Bez šipek, bez počítadla. */
   const [showAll, setShowAll] = useState(false);
-  /* Listuje se po jednom bytě dokolečka (2. 9. 2026). Kompozice zůstává
-     „jeden byt = důkaz"; kdo chce, projde si ostatní, ale sekce se nestane
-     galerií, protože pořád vidí jen jeden byt naráz. */
-  const [featIdx, setFeatIdx] = useState(0);
-  const featured = items[featIdx];
-  const step = (d: number) => setFeatIdx((i) => (i + d + items.length) % items.length);
-  const rest = items.filter((i) => i !== featured);
-  const visible = showAll ? rest : [];
+  const [lead, second, third, ...rest] = items;
 
   return (
     <section id="portfolio" className="section bg-background scroll-mt-20">
       <div className="container-wide">
         <Reveal className="section-head">
-          <p className="eyebrow eyebrow-center">{c.eyebrow}</p>
           <h2 className="h-section-sm text-foreground">{c.title}</h2>
           <p className="lead">{c.desc}</p>
         </Reveal>
-      </div>
 
-      {/* Fotka vystupuje z containeru k levému okraji okna, částka stojí vedle ní.
-          Pod 1024 px se to skládá pod sebe, asymetrie se nereprodukuje. */}
-      <Reveal className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-center">
-        <figure key={`f-${featIdx}`} className="feat-swap relative overflow-hidden bg-secondary">
-          <img
-            src={featured.src}
-            alt={`${featured.name}, ${featured.loc}`}
-            loading="lazy"
-            decoding="async"
-            className={`w-full h-full object-cover aspect-[4/3] sm:aspect-[16/10] lg:aspect-[4/3] ${
-              featured.focus === "top" ? "object-top" : featured.focus === "bottom" ? "object-bottom" : "object-center"
-            }`}
-          />
-          {/* AD 2. 9. 2026, jen pod lg: částka stojí NA fotce, dole vlevo.
-              Ve sloupci pod fotkou se z toho stávala běžná realitní karta
-              (foto → cena → název → údaje); nahoře na fotce zůstává byt
-              a jeho výsledek jedním předmětem. Nad lg se nic nemění, tam
-              napětí drží asymetrie foto vlevo / číslo vpravo.
-              Gradient sahá jen do spodní části snímku, není to hero scrim. */}
-          <div
-            aria-hidden="true"
-            className="lg:hidden pointer-events-none absolute inset-x-0 bottom-0 h-[54%] bg-[linear-gradient(to_top,rgba(14,13,11,0.88)_0%,rgba(14,13,11,0.78)_18%,rgba(14,13,11,0.48)_46%,rgba(14,13,11,0.16)_76%,rgba(14,13,11,0)_100%)]"
-          />
-          <div className="lg:hidden absolute left-6 right-6 bottom-7 sm:left-8 sm:right-8 sm:bottom-8 tnum">
-            {featured.stats ? (
-              <p className="font-display font-semibold text-white leading-[0.9] tracking-[-0.028em] text-[clamp(2.75rem,12.5vw,4.25rem)] whitespace-nowrap [text-shadow:0_1px_3px_rgba(0,0,0,0.32)]">
-                {fmtCzk(featured.stats.owner)}
-                <span className="ml-2.5 sm:ml-3 text-[0.32em] font-normal tracking-normal text-white/90">Kč</span>
-              </p>
-            ) : (
-              <p className="font-display font-semibold text-white leading-[1.1] text-[clamp(1.45rem,6vw,2rem)] max-w-[16ch] [text-shadow:0_1px_3px_rgba(0,0,0,0.32)]">
-                {c.newBadge(featured.newSince!)}
-              </p>
-            )}
-            <p className="mt-2 font-body text-[11px] uppercase tracking-[0.14em] text-white/85 leading-snug text-pretty">
-              {featured.stats ? c.featOwner : c.newNote}
-            </p>
+        <Reveal className="grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] gap-x-6 gap-y-8 lg:items-stretch">
+          <Tile item={lead} big c={c} lang={lang} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-x-4 gap-y-8 lg:gap-y-6">
+            <Tile item={second} c={c} lang={lang} />
+            <Tile item={third} c={c} lang={lang} />
           </div>
-        </figure>
-        <div className="flex flex-col px-6 pt-5 sm:pt-6 lg:block lg:px-0 lg:py-0 lg:pl-14 lg:pr-[max(1.5rem,calc((100vw-75rem)/2+1.5rem))]">
-          <div className="flex items-center gap-2 mb-5 max-lg:order-2 max-lg:mt-6 max-lg:mb-0">
-            <button type="button" onClick={() => step(-1)} aria-label={c.prevFlat}
-              className="p-2.5 rounded-sm border border-border text-muted-foreground hover:border-foreground/40 transition-colors">
-              <ChevronLeft className="w-4 h-4" aria-hidden="true" />
-            </button>
-            <button type="button" onClick={() => step(1)} aria-label={c.nextFlat}
-              className="p-2.5 rounded-sm border border-border text-muted-foreground hover:border-foreground/40 transition-colors">
-              <ChevronRight className="w-4 h-4" aria-hidden="true" />
-            </button>
-            <span className="ml-1.5 font-body text-[11.5px] uppercase tracking-[0.12em] text-muted-foreground tnum">
-              {featIdx + 1} / {items.length}
-            </span>
-          </div>
-
-          {/* Animuje se jen obsah. Ovládání zůstává namontované, jinak by při
-              každém kliknutí ztratilo fokus a rychlé klikání by propadalo. */}
-          <div key={`d-${featIdx}`} className="feat-swap max-lg:order-1">
-          {/* Pod lg tenhle blok nekreslíme: částka i její popiska sedí na fotce. */}
-          <div className="hidden lg:block">
-            {featured.stats ? (
-              <p className="tnum font-display font-semibold text-foreground leading-[0.9] tracking-[-0.028em] text-[clamp(3.25rem,6.8vw,6.5rem)] whitespace-nowrap">
-                {fmtCzk(featured.stats.owner)}
-                <span className="ml-[0.5em] text-[0.3em] font-normal tracking-normal text-muted-foreground">Kč</span>
-              </p>
-            ) : (
-              /* Byt bez celé sezóny nemá co do velkého slotu postavit. Místo
-                 vymyšleného čísla tam stojí, od kdy ho spravujeme. */
-              <p className="font-display font-semibold text-foreground leading-[1.05] tracking-[-0.02em] text-[clamp(1.7rem,3vw,2.6rem)] max-w-[16ch]">
-                {c.newBadge(featured.newSince!)}
-              </p>
-            )}
-            <p className="mt-3 font-body text-[11px] sm:text-xs uppercase tracking-[0.14em] text-muted-foreground">
-              {featured.stats ? c.featOwner : c.newNote}
-            </p>
-          </div>
-          <h3 className="mt-0 lg:mt-6 font-display text-xl sm:text-2xl font-semibold text-foreground text-balance">
-            {featured.name}
-          </h3>
-          <ul className="mt-4 space-y-1.5 font-body text-[11px] sm:text-xs uppercase tracking-[0.09em] text-muted-foreground tnum">
-            <li>
-              {featured.loc}&nbsp;· {featured.m2}&nbsp;m²
-              <span className="hidden sm:inline">&nbsp;· {c.guests(featured.guests)}</span>
-            </li>
-            {featured.stats && (
-              <>
-                <li>
-                  <b className="font-medium text-foreground">
-                    {featured.stats.occupancy}{lang === "cs" ? "\u00a0%" : "%"}
-                  </b>{" "}
-                  {c.statOcc} ·{" "}
-                  <span className="sm:hidden">{c.market}</span>
-                  <span className="hidden sm:inline">{c.barMarket(featured.loc)}</span>
-                  &nbsp;{featured.stats.market}
-                  {lang === "cs" ? "\u00a0%" : "%"}
-                </li>
-                <li>{featured.stats.since ? c.statPeriodSince(featured.stats.since) : c.statPeriod12}</li>
-              </>
-            )}
-          </ul>
-          </div>
-        </div>
-      </Reveal>
-
-      <div className="container-wide">
-        {/* AD 2. 9. 2026: rozpětí zbytku portfolia pryč. „Dalších 8 bytů" byl
-            argument o velikosti, ne o výsledku, a stál hned pod jediným bytem,
-            který má sekci nést. Na jeho místě je věta, která čtenáři řekne, co
-            právě viděl a co ho čeká v kalkulačce. Závěr si udělá sám. */}
-        <Reveal className="mt-6 sm:mt-12 pt-5 sm:pt-7 border-t border-border">
-          <p className="font-body text-[14.5px] sm:text-[15px] text-muted-foreground leading-relaxed text-pretty max-w-[58ch]">
-            {c.calcBridge}
-          </p>
         </Reveal>
 
-        <div id="portfolio-vsechny" className={showAll ? "mt-8 sm:mt-10 grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 md:gap-6" : "hidden"}>
-          {visible.map((item, i) => {
-            /* K3 (29. 8. 2026), composition under 1024 px: the strongest result leads as a
-               full-width card (phone: photo above the numbers; tablet: photo left, numbers
-               right), the rest pair up. With 1 + 2 or 1 + 10 cards no card is ever left
-               orphaned in a two-column grid. From lg the three-column grid is unchanged. */
-            const lead = i === 0;
-            return (
-            <Reveal as="figure"
-              key={item.name} delay={stagger(i % 3, 0.08)}
-              className={`group overflow-hidden rounded-md border border-border bg-card shadow-[0_20px_45px_-30px_hsl(var(--charcoal)/0.4)] ${
-                lead ? "col-span-2 lg:col-span-1 sm:grid sm:grid-cols-2 lg:block" : ""
-              }`}
-            >
-              <div className={`relative overflow-hidden bg-secondary ${
-                lead ? "aspect-[4/3] sm:aspect-auto sm:h-full sm:min-h-[300px] lg:aspect-[4/3] lg:h-auto lg:min-h-0" : "aspect-[4/3]"
-              }`}>
-                <img
-                  src={item.src}
-                  alt={`${item.name}, ${item.loc}`}
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                />
-                {/* K2 (29. 8. 2026): the owner's monthly result sits on the photo, lower left,
-                    over a gradient that touches only the bottom half. The top of the photo stays
-                    untouched, the number is the first thing the eye lands on. */}
-                {item.stats && (
-                  <>
-                    <div
-                      aria-hidden="true"
-                      className="pointer-events-none absolute inset-x-0 bottom-0 h-[55%] bg-[linear-gradient(to_top,rgba(14,13,11,0.82)_0%,rgba(14,13,11,0.55)_38%,rgba(14,13,11,0.18)_72%,rgba(14,13,11,0)_100%)]"
-                    />
-                    <p className={`absolute ${lead ? "left-4 bottom-3.5" : "left-2.5 bottom-2"} sm:left-5 sm:bottom-4 pr-2.5 sm:pr-5 tnum`}>
-                      <span className={`block font-display ${lead ? "text-[32px]" : "text-[18px]"} sm:text-[30px] lg:text-[32px] font-semibold text-white leading-none tracking-[-0.01em] [text-shadow:0_1px_2px_rgba(0,0,0,0.35)]`}>
-                        {fmtCzk(item.stats.owner)}&nbsp;Kč
-                      </span>
-                      <span className={`mt-1 sm:mt-1.5 block font-body uppercase ${lead ? "text-[11px] tracking-[0.14em]" : "text-[8px] tracking-[0.1em]"} sm:text-[11px] sm:tracking-[0.14em] text-white/85 leading-tight`}>
-                        {c.statOwner}
-                      </span>
-                    </p>
-                  </>
-                )}
-              </div>
-              <figcaption className={lead ? "px-4 py-4 sm:px-5 sm:py-4 sm:self-center" : "px-2.5 py-2.5 sm:px-5 sm:py-4"}>
-                {/* Below the photo the story continues in one line: the multiple of long-term rent.
-                    Then the flat as context, then occupancy against the locality. */}
-                {/* Násobek nájmu z karty odešel (2C): tenhle argument dělá
-                    kalkulačka, a to osobně, na bytě návštěvníka. Na kartě má
-                    vést důkaz, který jinde nemáme: obsazenost proti trhu. */}
-                <h3 className={`font-display ${lead ? "text-base" : "text-[13px]"} sm:text-base font-semibold text-foreground leading-snug text-balance`}>
-                  {item.name}
-                </h3>
-                {/* Occupancy as plain typography: the flat's number leads, the locality's market
-                    number follows in muted text. No bars, no chart. New flats get a note instead. */}
-                {item.stats && (
-                  <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border tnum">
-                    <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 leading-none">
-                      <span className={`font-display ${lead ? "text-xl" : "text-base"} sm:text-xl font-semibold text-foreground`}>
-                        {item.stats.occupancy}{lang === "cs" ? "\u00a0%" : "%"}
-                      </span>
-                      <span className="font-body text-[9.5px] sm:text-[11px] uppercase tracking-[0.12em] text-muted-foreground">
-                        {c.statOcc}
-                      </span>
-                      <span className="basis-full font-body text-[12.5px] sm:text-[13.5px] font-medium text-foreground/75 tnum mt-1">
-                        {c.barMarket(item.loc)}&nbsp;{item.stats.market}{lang === "cs" ? "\u00a0%" : "%"}
-                      </span>
-                    </p>
-                    <p className="mt-2 font-body text-[10.5px] sm:text-xs text-muted-foreground leading-snug">
-                      {item.stats.since ? c.statPeriodSince(item.stats.since) : c.statPeriod12}
-                    </p>
-                  </div>
-                )}
-                {/* 2D: metadata bytu jdou AŽ ZA výkon. Pořadí na kartě je
-                    výplata majiteli, obsazenost proti trhu, teprve pak lokalita,
-                    kapacita a plocha. */}
-                <p className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 font-body text-xs sm:text-sm text-muted-foreground">
-                  <span className="inline-flex items-center gap-1.5">
-                    <MapPin className="w-3.5 h-3.5 text-gold" />
-                    {item.loc}
-                  </span>
-                  <span className="inline-flex items-center gap-1.5">
-                    <Users className="w-3.5 h-3.5 text-gold" />
-                    {c.guests(item.guests)}
-                  </span>
-                  {item.m2 && (
-                    <span className="inline-flex items-center gap-1.5 tnum">
-                      <Ruler className="w-3.5 h-3.5 text-gold" />
-                      {item.m2}&nbsp;m²
-                    </span>
-                  )}
-                </p>
-                {item.newSince && (
-                  <div className="mt-2.5 sm:mt-3 pt-2.5 sm:pt-3 border-t border-border">
-                    <span className="inline-flex items-center rounded-full bg-gold/10 text-gold-deep font-body text-[9.5px] sm:text-[11px] font-semibold uppercase tracking-[0.08em] px-2 sm:px-2.5 py-0.5 sm:py-1">
-                      {c.newBadge(item.newSince)}
-                    </span>
-                    <p className="mt-1.5 font-body text-[10.5px] sm:text-xs text-muted-foreground leading-snug">
-                      {c.newNote}
-                    </p>
-                  </div>
-                )}
-              </figcaption>
-            </Reveal>
-            );
-          })}
-
+        <div id="portfolio-vsechny" className={showAll ? "mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-4 sm:gap-x-6 gap-y-8" : "hidden"}>
+          {rest.map((item) => (
+            <Tile key={item.name} item={item} c={c} lang={lang} />
+          ))}
           {showAll && (
-          <Reveal delay={0.08} className="contents">
-            <a
-              href="#kontakt"
-              className="flex flex-col items-center justify-center text-center rounded-md border border-dashed border-gold/40 bg-gold/[0.04] px-4 sm:px-6 py-8 sm:py-10 min-h-[220px] transition-colors hover:border-gold/70 hover:bg-gold/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/60"
-            >
-              <Sparkles className="w-6 h-6 text-gold mb-4" />
-              <h3 className="font-display text-xl font-semibold text-foreground mb-2">
-                {c.soonTitle}
-              </h3>
-              <p className="font-body text-sm text-muted-foreground max-w-[26ch] leading-relaxed">
+            <a href="#kontakt" className="flex flex-col justify-end border border-foreground/15 px-5 py-6 min-h-[200px] no-underline">
+              <h3 className="m-0 font-body text-lg font-medium text-foreground">{c.soonTitle}</h3>
+              <p className="m-0 mt-2 font-body text-sm text-muted-foreground leading-relaxed text-pretty max-w-[28ch]">
                 <span className="sm:hidden">{c.soonDescShort}</span>
                 <span className="hidden sm:inline">{c.soonDesc}</span>
               </p>
             </a>
-          </Reveal>
           )}
-
         </div>
 
-        {!showAll && (
-          <div className="mt-6 sm:mt-7 flex">
+        <Reveal className="mt-8 sm:mt-10 pt-5 border-t border-foreground/15 flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3">
+          <p className="m-0 font-body text-[14.5px] sm:text-[15px] text-muted-foreground leading-relaxed text-pretty max-w-[58ch]">
+            {c.calcBridge}
+          </p>
+          {!showAll && (
             <button
               type="button"
               onClick={() => setShowAll(true)}
               aria-expanded={false}
               aria-controls="portfolio-vsechny"
-              className="inline-flex items-center gap-1.5 font-body text-sm text-gold-deep underline underline-offset-4 decoration-gold/40 hover:decoration-gold transition-colors"
+              className="font-body text-sm text-foreground underline underline-offset-4 decoration-foreground/30 hover:decoration-foreground transition-colors"
             >
-              {c.showAll}
-              <ChevronDown className="w-4 h-4" aria-hidden="true" />
+              {c.showAll} ({rest.length})
             </button>
-          </div>
-        )}
+          )}
+        </Reveal>
 
-        {/* How the numbers on the cards are computed: full method, but behind a
-            toggle (patch 126), so the proof block is not followed by a 1 000-character
-            wall. Same pattern as the calculator's "Jak počítáme". */}
+        {/* How the numbers on the cards are computed: full method, behind a toggle. */}
         <Reveal delay={0.05} className="mt-4 sm:mt-5">
           <details className="group max-w-prose">
             <summary className="list-none cursor-pointer font-body text-xs text-muted-foreground underline underline-offset-4 decoration-border [&::-webkit-details-marker]:hidden">
@@ -409,11 +228,6 @@ const PortfolioSection = () => {
             </p>
           </details>
         </Reveal>
-
-        {/* Recenze hostů odsud odešly do sekce Co za vás řešíme (2B):
-            520+ hodnocení není důkaz výsledku, ale důkaz provozu. Tady by
-            navíc konkurovaly kartám, které mají sekci nést samy. */}
-
       </div>
     </section>
   );

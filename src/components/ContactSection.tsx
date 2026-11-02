@@ -13,6 +13,7 @@ const CONTACT_PHONE = {
 import { mirrorInquiryToPortal } from "@/lib/portalLead";
 import { trackEvent } from "@/lib/analytics";
 import { calcEchoLabel, leadSummaryLine, type LeadCalcPayload } from "@/lib/leadBand";
+import { sectionHref } from "@/lib/pages";
 
 const LOCATIONS = [
   "Praha 1", "Praha 2", "Praha 3", "Praha 4", "Praha 5",
@@ -61,7 +62,8 @@ const SelectField = ({
 );
 
 const ContactSection = () => {
-  const { lang } = useLanguage();
+  const { lang, page } = useLanguage();
+  const pageLabel = page === "sprava" ? "Správa" : page === "vlastni-provoz" ? "Vlastní provoz" : "Úvod";
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [sendError, setSendError] = useState(false);
@@ -180,6 +182,8 @@ const ContactSection = () => {
           // the band and the number before the owner's free text.
           message: [
             calcSnapshot ? leadSummaryLine(calcSnapshot) : "",
+            // 2. 11. 2026: ze které stránky poptávka přišla (správa / vlastní provoz / úvod).
+            `Stránka: ${pageLabel}`,
             formData.message,
             formData.units ? `Počet bytů: ${labelOf(unitsOptions, formData.units)}` : "",
             formData.energy ? `Energie: ${formData.energy}` : "",
@@ -199,7 +203,7 @@ const ContactSection = () => {
         status: labelOf(statusOptions, formData.status),
         contact_pref: labelOf(prefOptions, formData.contactPref),
         energy: formData.energy,
-        message: [formData.message, formData.units ? `Počet bytů: ${labelOf(unitsOptions, formData.units)}` : ""]
+        message: [`Stránka: ${pageLabel}`, formData.message, formData.units ? `Počet bytů: ${labelOf(unitsOptions, formData.units)}` : ""]
           .filter(Boolean)
           .join("\n"),
         lang,
@@ -266,9 +270,14 @@ const ContactSection = () => {
       {/* Viz kalkulačka: hlavička zůstává nad formulářem ve stejném sloupci. */}
       <div className="container-prose md:max-w-[calc(46rem+3rem)]">
         <Reveal className="section-head">
-          <p className="eyebrow eyebrow-center">{t(lang, "contact_label")}</p>
-          <h2 className="h-section text-foreground">{t(lang, "contact_fallback_title")}</h2>
-          <p className="lead">{t(lang, "contact_fallback_desc")}</p>
+          {/* 2. 11. 2026: titulek podle stránky. Správa slibuje propočet do 24 hodin,
+              vlastní provoz poctivou odpověď, jestli to dává smysl. Homepage drží původní. */}
+          <h2 className="h-section text-foreground">
+            {t(lang, page === "sprava" ? "contact_title_managed" : page === "vlastni-provoz" ? "contact_title_own" : "contact_fallback_title")}
+          </h2>
+          <p className="lead">
+            {t(lang, page === "sprava" ? "contact_desc_managed" : page === "vlastni-provoz" ? "contact_desc_own" : "contact_fallback_desc")}
+          </p>
         </Reveal>
 
         {/* 2D-final: pruh se čtyřmi ujištěními odsud pryč. Garanci, blokaci
@@ -289,7 +298,7 @@ const ContactSection = () => {
                (24 h, propočet z realizovaných cen, minimum před podpisem).
                Řádek z kalkulačky zůstává vidět, ať majitel ví, co odešel. */
             <div className="py-4 sm:py-6 space-y-4">
-              <p className="font-display text-2xl sm:text-[1.75rem] font-semibold text-foreground leading-snug">
+              <p className="font-body text-2xl sm:text-[1.75rem] font-medium text-foreground leading-snug">
                 {t(lang, "contact_success_title")}
               </p>
               <p className="font-body text-[15px] text-foreground leading-relaxed text-pretty max-w-[60ch]">
@@ -316,7 +325,7 @@ const ContactSection = () => {
                 <p className="font-body text-[13.5px] text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1 pb-1">
                   <span className="text-gold-deep">{t(lang, "contact_from_calc")}</span>
                   <span className="text-foreground">{calcSummary}</span>
-                  <a href="#kalkulacka" className="underline underline-offset-4 decoration-gold/40 text-gold-deep hover:text-primary transition-colors">
+                  <a href={sectionHref("kalkulacka", page, lang)} className="underline underline-offset-4 decoration-gold/40 text-gold-deep hover:text-primary transition-colors">
                     {t(lang, "contact_edit_calc")}
                   </a>
                 </p>

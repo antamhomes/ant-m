@@ -4,21 +4,29 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
 import { t, type TranslationKey } from "@/i18n/translations";
 import { useSplashDone } from "@/hooks/use-splash-done";
+import { pathFor, sectionHref, type PageKey } from "@/lib/pages";
 
-const NAV_LINKS: { href: string; key: TranslationKey }[] = [
-  { href: "#kalkulacka", key: "nav_calculator" },
-  { href: "#portfolio", key: "nav_portfolio" },
-  { href: "#cenik", key: "nav_pricing" },
-  { href: "#jak-zacina", key: "nav_howItWorks" },
-  { href: "#kdo-jsme", key: "nav_about" },
-  { href: "#faq", key: "nav_faq" },
+/**
+ * Navigace od 2. 11. 2026: dvě stránky pro dva lidi (Správa, Vlastní provoz),
+ * kalkulačka a Kdo jsme jako kotvy, Poslat byt jako tlačítko. Odkaz na sekci
+ * z jiné stránky dostane cestu (lib/pages.sectionHref); na vlastní stránce
+ * zůstane kotva. Aktuální stránka je označená aria-current.
+ */
+type NavLink = { key: TranslationKey; page?: PageKey; section?: string };
+const NAV_LINKS: NavLink[] = [
+  { key: "nav_sprava", page: "sprava" },
+  { key: "nav_own", page: "vlastni-provoz" },
+  { key: "nav_calculator", section: "kalkulacka" },
+  { key: "nav_about", section: "kdo-jsme" },
 ];
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { lang, toggleLang } = useLanguage();
+  const { lang, page, toggleLang } = useLanguage();
   const ready = useSplashDone();
+  const hrefOf = (l: NavLink) => (l.page ? pathFor(l.page, lang) : sectionHref(l.section!, page, lang));
+  const isCurrent = (l: NavLink) => Boolean(l.page && l.page === page);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -95,7 +103,7 @@ const Navbar = () => {
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         <a
-          href="#"
+          href={pathFor("home", lang)}
           onClick={() => setMenuOpen(false)}
           className="flex items-center"
           aria-label="Antam Homes"
@@ -107,10 +115,13 @@ const Navbar = () => {
         <div className="hidden lg:flex items-center gap-7">
           {NAV_LINKS.map((l) => (
             <a
-              key={l.href}
-              href={l.href}
+              key={l.key}
+              href={hrefOf(l)}
+              aria-current={isCurrent(l) ? "page" : undefined}
               className={`font-body text-sm transition-colors ${
-                solid ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/75 hover:text-primary-foreground"
+                isCurrent(l)
+                  ? solid ? "text-foreground underline underline-offset-[6px] decoration-gold" : "text-primary-foreground underline underline-offset-[6px] decoration-gold"
+                  : solid ? "text-muted-foreground hover:text-foreground" : "text-primary-foreground/75 hover:text-primary-foreground"
               }`}
             >
               {t(lang, l.key)}
@@ -154,12 +165,13 @@ const Navbar = () => {
             className="menu-in lg:hidden border-t border-border bg-background/98 backdrop-blur-md"
           >
             <div className="max-w-6xl mx-auto px-6 py-4 flex flex-col">
-              {[...NAV_LINKS, { href: "#kontakt", key: "nav_contact" as TranslationKey }].map((l) => (
+              {[...NAV_LINKS, { key: "nav_contact" as TranslationKey, section: "kontakt" }].map((l) => (
                 <a
-                  key={l.href}
-                  href={l.href}
+                  key={l.key}
+                  href={hrefOf(l)}
+                  aria-current={isCurrent(l) ? "page" : undefined}
                   onClick={() => setMenuOpen(false)}
-                  className="font-body text-base text-foreground py-3 border-b border-border/60 last:border-b-0"
+                  className={`font-body text-base py-3 border-b border-border/60 last:border-b-0 ${isCurrent(l) ? "text-gold-deep" : "text-foreground"}`}
                 >
                   {t(lang, l.key)}
                 </a>

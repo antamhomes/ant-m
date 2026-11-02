@@ -2,9 +2,10 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import Wordmark from "@/components/Wordmark";
 import { t } from "@/i18n/translations";
+import { pathFor, sectionHref } from "@/lib/pages";
 
 const Footer = () => {
-  const { lang, goTo } = useLanguage();
+  const { lang, page, goTo } = useLanguage();
 
   return (
     <footer className="bg-gradient-dark border-t border-primary-foreground/10 pt-10 sm:pt-16 px-6 pb-[max(7rem,calc(env(safe-area-inset-bottom)+6rem))] md:pb-[max(2rem,env(safe-area-inset-bottom))]">
@@ -28,17 +29,22 @@ const Footer = () => {
             </p>
             <ul className="space-y-2.5">
               <li>
-                <a href="#jak-zacina" className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
-                  {t(lang, "footer_link_how")}
+                <a href={pathFor("sprava", lang)} className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
+                  {t(lang, "nav_sprava")}
                 </a>
               </li>
               <li>
-                <a href="#portfolio" className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
+                <a href={pathFor("vlastni-provoz", lang)} className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
+                  {t(lang, "nav_own")}
+                </a>
+              </li>
+              <li>
+                <a href={sectionHref("portfolio", page, lang)} className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
                   {t(lang, "footer_link_services")}
                 </a>
               </li>
               <li>
-                <a href="#kontakt" className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
+                <a href={sectionHref("kontakt", page, lang)} className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
                   {t(lang, "footer_link_contact")}
                 </a>
               </li>
@@ -123,8 +129,8 @@ const Footer = () => {
           </div>
           <nav aria-label={lang === "cs" ? "Jazyk" : "Ngôn ngữ"} className="flex md:justify-end gap-4 font-body text-xs">
             <a
-              href="/"
-              onClick={(e) => { e.preventDefault(); goTo("/"); }}
+              href={pathFor(page, "cs")}
+              onClick={(e) => { e.preventDefault(); goTo(pathFor(page, "cs")); }}
               className={lang === "cs" ? "text-gold" : "text-primary-foreground/55 hover:text-gold transition-colors"}
               aria-current={lang === "cs" ? "page" : undefined}
               hrefLang="cs"
@@ -132,8 +138,8 @@ const Footer = () => {
               {t(lang, "footer_lang_cs")}
             </a>
             <a
-              href="/vn"
-              onClick={(e) => { e.preventDefault(); goTo("/vn"); }}
+              href={pathFor(page, "vi")}
+              onClick={(e) => { e.preventDefault(); goTo(pathFor(page, "vi")); }}
               className={lang === "vi" ? "text-gold" : "text-primary-foreground/55 hover:text-gold transition-colors"}
               aria-current={lang === "vi" ? "page" : undefined}
               hrefLang="vi"

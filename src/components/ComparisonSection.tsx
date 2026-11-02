@@ -34,7 +34,6 @@ const ComparisonSection = () => {
       <div className="container-wide">
         <div className="max-w-[56rem]">
         <Reveal className="section-head">
-          <p className="eyebrow eyebrow-center">{t(lang, "cmp_label")}</p>
           <h2 className="h-section-sm text-foreground">{t(lang, "cmp_title")}</h2>
           <p className="lead">{t(lang, "whyBetter_desc")}</p>
         </Reveal>
@@ -67,7 +66,7 @@ const ComparisonSection = () => {
                 delay={stagger(i, 0.05)}
                 className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-[0.8fr_1fr_1fr_1fr] gap-x-6 md:gap-x-8 gap-y-3 md:gap-y-1 py-4 md:py-5 border-t border-border first:border-t-0 md:first:border-t"
               >
-                <dt className="sm:col-span-3 md:col-span-1 font-display text-[17px] md:text-[1.05rem] font-semibold text-foreground mb-1 md:mb-0">
+                <dt className="sm:col-span-3 md:col-span-1 font-body text-[17px] md:text-[1.05rem] font-medium text-foreground mb-1 md:mb-0">
                   {t(lang, r.title)}
                 </dt>
                 <dd className="m-0">
@@ -102,7 +101,7 @@ const ComparisonSection = () => {
         {/* Dobrovolné odmítnutí. Stojí schválně na konci sekce a schválně
             potichu: není to námitka, kterou má web překonat, ale kvalifikace. */}
         <Reveal delay={0.15} className="mt-8 md:mt-10 max-w-prose">
-          <p className="font-display text-[17px] md:text-[1.05rem] font-semibold text-foreground mb-1.5">
+          <p className="font-body text-[17px] md:text-[1.05rem] font-medium text-foreground mb-1.5">
             {t(lang, "faq13_q")}
           </p>
           <p className="font-body text-[14.5px] md:text-[15px] text-muted-foreground leading-relaxed text-pretty">

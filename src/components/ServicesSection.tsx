@@ -83,7 +83,6 @@ const ServicesSection = () => {
     <section id="sluzby" className="section bg-gradient-dark scroll-mt-20">
       <div className="container-wide">
         <Reveal className="section-head">
-          <p className="eyebrow eyebrow-center eyebrow-on-dark">{t(lang, "services_label")}</p>
           <h2 className="h-section-sm text-primary-foreground">{t(lang, "services_title")}</h2>
           <p className="lead lead-on-dark">{t(lang, "services_desc")}</p>
         </Reveal>
@@ -96,39 +95,41 @@ const ServicesSection = () => {
           </Reveal>
         )}
 
-        {/* Hairline mřížka bez rámečků: karty by z šesti důkazů udělaly šest
-            produktů. Zlatý vlas odděluje, nic neohraničuje. */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-10 lg:gap-x-14">
-          {items.map((it, i) => (
-            <Reveal
-              key={it.title}
-              delay={stagger(i, 0.05)}
-              className="py-5 sm:py-6 border-t border-gold/25"
-            >
-              <h3 className="flex items-start gap-2.5 font-display text-[1.15rem] md:text-[1.2rem] font-semibold text-primary-foreground mb-2 leading-snug">
-                <it.Icon aria-hidden="true" strokeWidth={1.5} className="shrink-0 w-[19px] h-[19px] mt-[3px] text-gold-on-dark" />
-                {t(lang, it.title)}
-              </h3>
-              <p className="font-body text-[15px] md:text-[15.5px] text-primary-foreground/70 leading-relaxed text-pretty">
-                {t(lang, it.desc)}
-              </p>
-            </Reveal>
-          ))}
+        {/* 2. 11. 2026 (vizuál, polish): rozbitá symetrie. Vlevo úzký sloupec
+            se šesti položkami pod sebou (jako provozní seznam, ne šest produktů),
+            vpravo plocha vyhrazená pro dokumentární fotku z provozu (úklid,
+            prádlo, check-in). Dokud fotka není, nese místo tiché shrnutí
+            about_p3 a recenze, ať tam není díra ani placeholder. */}
+        <div className="grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-x-16 gap-y-10 items-start">
+          <ol className="m-0 p-0 list-none border-t border-white/15 min-w-0">
+            {items.map((it, i) => (
+              <Reveal as="li" key={it.title} delay={stagger(i, 0.04)} className="grid grid-cols-[2rem_1fr] gap-x-3 py-5 border-b border-white/15">
+                <span className="font-body text-sm text-white/45 tnum pt-[3px]">{i + 1}</span>
+                <div>
+                  <h3 className="m-0 font-body text-[1.1rem] md:text-[1.15rem] font-medium text-primary-foreground leading-snug">
+                    {t(lang, it.title)}
+                  </h3>
+                  <p className="m-0 mt-1.5 font-body text-[15px] text-primary-foreground/70 leading-relaxed text-pretty max-w-[46ch]">
+                    {t(lang, it.desc)}
+                  </p>
+                </div>
+              </Reveal>
+            ))}
+          </ol>
+          <div className="min-w-0">
+            {/* Slot pro fotku: až bude, sem přijde <img> 4:5 full-bleed v tomto sloupci,
+                about_p3 půjde pod ni jako popisek. */}
+            {t(lang, "about_p3") && (
+              <Reveal delay={0.1}>
+                <p className="m-0 font-body text-[1.5rem] md:text-[1.9rem] font-medium text-primary-foreground leading-[1.2] text-pretty max-w-[20ch]">
+                  {t(lang, "about_p3")}
+                </p>
+              </Reveal>
+            )}
+            <ReviewsBlock stacked />
+          </div>
         </div>
 
-        {/* 20. 10. 2026 (zadání V.): about_p3 je teď payoff celé sekce („Tất cả
-            những việc này, Antam lo.“ / „Tohle všechno bereme na sebe.“), proto
-            display řez nad zlatým vlasem jako u položek, ne tělový odstavec. */}
-        {t(lang, "about_p3") && (
-          <Reveal delay={0.18} className="mt-10 md:mt-12 pt-6 border-t border-gold/25">
-            <p className="font-display text-[19px] md:text-[22px] font-medium text-primary-foreground leading-snug text-pretty">
-              {t(lang, "about_p3")}
-            </p>
-          </Reveal>
-        )}
-
-
-        <ReviewsBlock />
       </div>
     </section>
   );

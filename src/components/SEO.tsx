@@ -4,38 +4,34 @@ import { useEffect } from "react";
 
 const SITE = "https://www.antamhomes.com";
 
-type PageKey = "home";
+import { pathFor, type PageKey } from "@/lib/pages";
 
-const META: Record<PageKey, { cs: { title: string; desc: string }; vi: { title: string; desc: string }; pathCs: string; pathVi: string }> = {
-  home: {
-    pathCs: "/",
-    pathVi: "/vn",
-    cs: {
-      title: "Správa krátkodobých pronájmů a Airbnb v Praze | Antam Homes",
-      desc: "Krátkodobý pronájem v Praze: správa za 20 % + DPH s písemným ročním minimem, nebo hotový systém k vlastnímu provozu. Obě cesty spočítáme vedle sebe.",
-    },
-    vi: {
-      title: "Quản lý cho thuê ngắn hạn & Airbnb tại Praha | Antam Homes",
-      desc: "Quản lý cho thuê ngắn hạn (Airbnb, Booking) tại Praha: Antam lo khách, dọn dẹp, giá và bảng kê. Căn nào nhận cũng có mức tối thiểu ghi trong hợp đồng.",
-    },
-  },
+export type { PageKey };
+
+import { META } from "@/lib/seoMeta";
+
+/** Otázky z FAQ dané stránky; homepage FAQ nemá, nese ji podstránka správy. */
+const FAQ_KEYS: Record<PageKey, readonly string[]> = {
+  home: ["faq18", "faq5", "faq9", "faq16", "faq19", "faq13"],
+  sprava: ["faq18", "faq5", "faq9", "faq4", "faq6", "faq16", "faq1", "faq11", "faq12", "faq10", "faq15", "faq3", "faq7", "faq13"],
+  "vlastni-provoz": ["faq20", "faq21", "faq22", "faq19", "faq10", "faq12", "faq14"],
 };
 
 /** FAQPage JSON-LD from the same translations as the on-page accordion. */
-export const buildFaqJsonLd = (lang: "cs" | "vi") => ({
+export const buildFaqJsonLd = (lang: "cs" | "vi", page: PageKey = "home") => ({
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: (["faq18", "faq5", "faq9", "faq4", "faq6", "faq16", "faq1", "faq11", "faq12", "faq10", "faq15", "faq3", "faq7", "faq13"] as const).map((k) => ({
+  mainEntity: FAQ_KEYS[page].map((k) => ({
     "@type": "Question",
-    name: t(lang, `${k}_q`),
-    acceptedAnswer: { "@type": "Answer", text: t(lang, `${k}_a`) },
+    name: t(lang, `${k}_q` as Parameters<typeof t>[1]),
+    acceptedAnswer: { "@type": "Answer", text: t(lang, `${k}_a` as Parameters<typeof t>[1]) },
   })),
 });
 
 /** LocalBusiness JSON-LD; canonical URL follows the language. */
-export const buildBusinessJsonLd = (lang: "cs" | "vi") => {
-  const meta = META.home;
-  const canonical = SITE + (lang === "cs" ? meta.pathCs : meta.pathVi);
+export const buildBusinessJsonLd = (lang: "cs" | "vi", page: PageKey = "home") => {
+  const meta = META[page];
+  const canonical = SITE + pathFor(page, lang);
   const ogImage = `${SITE}/og-image.jpg`;
   return {
     "@context": "https://schema.org",
@@ -70,10 +66,9 @@ export const SEO = ({ page }: { page: PageKey }) => {
 
   const meta = META[page];
   const current = meta[lang];
-  const canonicalPath = lang === "cs" ? meta.pathCs : meta.pathVi;
-  const canonical = SITE + canonicalPath;
-  const csUrl = SITE + meta.pathCs;
-  const viUrl = SITE + meta.pathVi;
+  const canonical = SITE + pathFor(page, lang);
+  const csUrl = SITE + pathFor(page, "cs");
+  const viUrl = SITE + pathFor(page, "vi");
   const locale = lang === "cs" ? "cs_CZ" : "vi_VN";
   const altLocale = lang === "cs" ? "vi_VN" : "cs_CZ";
   const ogImage = `${SITE}/og-image.jpg`;
@@ -82,8 +77,8 @@ export const SEO = ({ page }: { page: PageKey }) => {
   // the on-page FAQ via translations so Google never sees a mismatch. The pure
   // builders are exported: the build-time prerender (vite.config → entry-ssg)
   // injects the same JSON-LD statically for crawlers that don't run JS.
-  const faqJsonLd = buildFaqJsonLd(lang);
-  const businessJsonLd = buildBusinessJsonLd(lang);
+  const faqJsonLd = buildFaqJsonLd(lang, page);
+  const businessJsonLd = buildBusinessJsonLd(lang, page);
 
   // Static <head> in index.html / vn/index.html already carries the right
   // tags for crawlers; this keeps them in sync when the visitor switches
@@ -141,7 +136,7 @@ export const SEO = ({ page }: { page: PageKey }) => {
     setJsonLd("ld-faq", faqJsonLd);
     setJsonLd("ld-business", businessJsonLd);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lang]);
+  }, [lang, page]);
 
   return null;
 };
