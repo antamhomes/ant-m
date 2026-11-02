@@ -101,10 +101,10 @@ const ServicesSection = () => {
             prádlo, check-in). Dokud fotka není, nese místo tiché shrnutí
             about_p3 a recenze, ať tam není díra ani placeholder. */}
         <div className="grid lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] gap-x-16 gap-y-10 items-start">
-          <ol className="m-0 p-0 list-none border-t border-white/15 min-w-0">
+          <ol className="m-0 p-0 list-none border-t border-[#C2A46D]/40 min-w-0">
             {items.map((it, i) => (
-              <Reveal as="li" key={it.title} delay={stagger(i, 0.04)} className="grid grid-cols-[2rem_1fr] gap-x-3 py-5 border-b border-white/15">
-                <span className="font-body text-sm text-white/45 tnum pt-[3px]">{i + 1}</span>
+              <Reveal as="li" key={it.title} delay={stagger(i, 0.04)} className="grid grid-cols-[2rem_1fr] gap-x-3 py-5 border-b border-[#C2A46D]/25">
+                <span className="font-display text-base text-[#C2A46D] tnum pt-[1px]">{i + 1}</span>
                 <div>
                   <h3 className="m-0 font-body text-[1.1rem] md:text-[1.15rem] font-medium text-primary-foreground leading-snug">
                     {t(lang, it.title)}
@@ -121,7 +121,7 @@ const ServicesSection = () => {
                 about_p3 půjde pod ni jako popisek. */}
             {t(lang, "about_p3") && (
               <Reveal delay={0.1}>
-                <p className="m-0 font-body text-[1.5rem] md:text-[1.9rem] font-medium text-primary-foreground leading-[1.2] text-pretty max-w-[20ch]">
+                <p className="m-0 font-display text-[1.75rem] md:text-[2.25rem] font-medium text-primary-foreground leading-[1.2] text-pretty max-w-[18ch]">
                   {t(lang, "about_p3")}
                 </p>
               </Reveal>

@@ -46,7 +46,7 @@ const OwnerReportSection = () => {
       <div className="container-wide">
         <div className="grid lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)] gap-10 lg:gap-16 items-start">
           <Reveal>
-            <h2 className="h-section-sm text-foreground">{t(lang, "report_title")}</h2>
+            <h2 className="h-section-sm h-serif text-foreground">{t(lang, "report_title")}</h2>
             <p className="lead mt-5">{t(lang, "report_desc")}</p>
             <p className="mt-5 font-body text-[15px] text-muted-foreground leading-relaxed text-pretty max-w-[48ch]">
               {t(lang, "report_multi")}
@@ -104,7 +104,7 @@ const OwnerReportSection = () => {
                     </span>
                     <span className={`whitespace-nowrap ${
                       r.kind === "total"
-                        ? "font-display text-[34px] sm:text-[44px] lg:text-[52px] leading-none font-semibold text-foreground"
+                        ? "font-display text-[34px] sm:text-[44px] lg:text-[52px] leading-none font-semibold text-[hsl(var(--gold))]"
                         : r.kind === "minus"
                           ? "font-body text-[17px] sm:text-[19px] text-foreground/75"
                           : "font-body text-[20px] sm:text-[24px] font-medium text-foreground"

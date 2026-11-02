@@ -1408,7 +1408,7 @@ const translations = {
     sprava_hero_cta: "Tính thử thu nhập",
     sprava_hero_other: "Muốn tự vận hành? Tự vận hành",
     own_hero_label: "ANTAM HOMES · HỆ THỐNG VẬN HÀNH",
-    own_hero_title: "Antam dựng hệ thống vận hành trên tài khoản của anh\u00a0chị rồi bàn giao. Một\u00a0lần.",
+    own_hero_title: "Antam dựng hệ thống vận hành rồi bàn giao cho anh\u00a0chị. Một\u00a0lần.",
     own_hero_desc: "Đúng hệ thống Antam đang dùng cho nhà của mình. Sau đó không mất phần trăm doanh thu và anh chị tự vận hành.",
     own_hero_line: "2+kk 180\u00a0000 · 3+kk 270\u00a0000 · 4+kk 360\u00a0000\u00a0Kč chưa VAT · đồ đạc theo giá gốc\u00a0+\u00a020% · 90\u00a0ngày hỗ trợ · Antam lo giá tiếp với 3\u00a0490\u00a0Kč mỗi tháng",
     own_hero_cta: "Trong hệ thống có gì",

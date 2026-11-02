@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import PageShell from "@/components/PageShell";
 import PageHero from "@/components/PageHero";
 
+const OperatorReviewSection = lazy(() => import("@/components/OperatorReviewSection"));
 const SystemSection = lazy(() => import("@/components/SystemSection"));
 const TipsSection = lazy(() => import("@/components/TipsSection"));
 const PricingSection = lazy(() => import("@/components/PricingSection"));
@@ -13,16 +14,17 @@ const FinalCtaSection = lazy(() => import("@/components/FinalCtaSection"));
 
 /**
  * /vlastni-provoz: PROVOZUJI SÁM, pro majitele, který chce systém a marži.
- * Slib → co systém je (pilíře, chyby, předání) → tipy z provozu (ochutnávka) → cena (jen světlý panel,
+ * Slib → měsíční kontrola (proof object: rozhodnutí) → co systém je (pilíře, chyby, předání) → cena → tipy z provozu (jen světlý panel,
  * přestavba jako řádek s kotvou #prestavba) → srovnání nájem / my / vy →
  * jak začít (zaškolení, 90 dní) → otázky → formulář.
  */
 const VlastniProvoz = () => (
   <PageShell page="vlastni-provoz">
     <PageHero page="vlastni-provoz" />
+    <Suspense fallback={null}><OperatorReviewSection /></Suspense>
     <Suspense fallback={null}><SystemSection /></Suspense>
-    <Suspense fallback={null}><TipsSection /></Suspense>
     <Suspense fallback={null}><PricingSection variant="own" /></Suspense>
+    <Suspense fallback={null}><TipsSection /></Suspense>
     <Suspense fallback={null}><ComparisonSection /></Suspense>
     <Suspense fallback={null}><ProcessSection variant="own" /></Suspense>
     <Suspense fallback={null}><FAQSection variant="own" /></Suspense>

@@ -39,7 +39,7 @@ const AboutSection = () => {
       <div className="container-wide">
         <div className="max-w-4xl">
           <Reveal className="section-head">
-            <h2 className="h-section-sm text-foreground">{t(lang, "about_title")}</h2>
+            <h2 className="h-section-sm h-serif text-foreground">{t(lang, "about_title")}</h2>
           </Reveal>
 
           <div className="grid md:grid-cols-[minmax(0,1fr)_300px] gap-7 md:gap-12 items-start">
@@ -49,13 +49,16 @@ const AboutSection = () => {
                 Sloupec zůstal citátu, který je tu jediným místem, kde mluví
                 člověk, ne firma. */}
             <Reveal delay={0.1} className="order-first md:order-last">
+              {/* Brand direction 2. 11. 2026: dopis. Citát v Playfair nese sekci,
+                  dokud není portrét (slot: nad citátem, 4:5). Linka je zlatá,
+                  jediné zlato na krému v téhle sekci. */}
               {t(lang, "about_quote") && (
-                <div className="border-l border-gold/50 pl-6">
-                  <p className="font-display italic text-[19px] md:text-[22px] text-foreground/90 leading-[1.45] text-pretty">
+                <div className="border-t border-[hsl(var(--gold))] pt-5">
+                  <p className="font-display text-[22px] md:text-[26px] text-foreground leading-[1.35] text-pretty">
                     {t(lang, "about_quote")}
                   </p>
                   {t(lang, "about_sign") && (
-                    <p className="mt-4 font-body text-[11px] uppercase tracking-[0.13em] text-muted-foreground leading-relaxed text-balance">
+                    <p className="mt-5 font-body text-[14px] text-muted-foreground leading-relaxed text-balance">
                       {t(lang, "about_sign")}
                     </p>
                   )}

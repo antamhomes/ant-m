@@ -48,7 +48,7 @@ describe("poradi sekci (tri stranky, 2. 11. 2026)", () => {
     expect(page).toContain('<ProcessSection variant="own" />');
     expect(page).toContain('<FAQSection variant="own" />');
     expect(order("src/pages/VlastniProvoz.tsx")).toEqual([
-      "SystemSection", "TipsSection", "PricingSection", "ComparisonSection", "ProcessSection", "FAQSection", "ContactSection", "FinalCtaSection",
+      "OperatorReviewSection", "SystemSection", "PricingSection", "TipsSection", "ComparisonSection", "ProcessSection", "FAQSection", "ContactSection", "FinalCtaSection",
     ]);
     for (const s of ["CalculatorSection", "ServicesSection", "OwnerReportSection"]) expect(page).not.toContain(s);
   });

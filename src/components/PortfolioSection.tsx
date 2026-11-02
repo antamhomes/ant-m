@@ -60,7 +60,7 @@ const items: Item[] = [
   // Dvě identická studia v jednom domě jako jedna karta: průměr na studio
   // (27 318 + 21 035) / 2 = 24 176 Kč, obsazenost (55 + 53) / (57 + 57) = 95 %.
   // Rozdíl mezi nimi je jen rozdělení rezervací mezi dvě stejné jednotky.
-  { src: byt1.url, name: "Secret Garden Studia (2\u00d7)", loc: "Praha 4", m2: 22, guests: 4, each: true, stats: { owner: 24000, occupancy: 95, market: MARKET_OCC.praha4, since: "7/2026" } },
+  { src: byt1.url, name: "Secret Garden Studia (2×)", loc: "Praha 4", m2: 22, guests: 4, each: true, stats: { owner: 24000, occupancy: 95, market: MARKET_OCC.praha4, since: "7/2026" } },
   // Nové od 9/2026 (rozjezd, bez čísel). Fotky zatím přímo z galerie Hospitable
   // (CDN assets.hospitable.com); nahradit lokálními webp v public/portfolio, až budou.
   { src: "https://assets.hospitable.com/property_images/2348510/36u4zL1zpSzt8JoPuELe74fU5bfOYmkyyYP5J2rX.jpg", name: "Secret Garden Apartment", loc: "Praha 4", guests: 6, newSince: "9/2026" },
@@ -186,7 +186,7 @@ const PortfolioSection = () => {
     <section id="portfolio" className="section bg-background scroll-mt-20">
       <div className="container-wide">
         <Reveal className="section-head">
-          <h2 className="h-section-sm text-foreground">{c.title}</h2>
+          <h2 className="h-section-sm h-serif text-foreground">{c.title}</h2>
           <p className="lead">{c.desc}</p>
         </Reveal>
 

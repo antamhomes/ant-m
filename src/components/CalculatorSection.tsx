@@ -254,7 +254,7 @@ const CalculatorSection = () => {
           od popisků polí — uvnitř jedné sekce pak byly tři různé levé hrany. */}
       <div className="container-narrow">
         <Reveal className="section-head">
-          <h2 className="h-section text-foreground">
+          <h2 className="h-section h-serif text-foreground">
             {t(lang, "calc_title1")}
             <span className="text-gradient-gold">{t(lang, "calc_title2")}</span>
           </h2>

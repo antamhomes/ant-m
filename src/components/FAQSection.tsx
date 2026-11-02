@@ -102,10 +102,12 @@ const FAQSection = ({ variant = "managed" }: { variant?: FaqVariant }) => {
               </h3>
               {g.items.map(({ q, a }) => {
                 const idx = flatIndex++;
+                // VI: méně bloků i na desktopu (brand direction 2. 11. 2026), zbytek na kliknutí.
                 const hiddenOnMobile = idx >= MOBILE_VISIBLE && !expanded;
+                const hiddenVi = lang === "vi" && hiddenOnMobile;
                 const isOpen = open === q;
                 return (
-                  <div key={q} className={`border-t border-foreground/15 ${hiddenOnMobile ? "hidden md:block" : ""}`}>
+                  <div key={q} className={`border-t border-foreground/15 ${hiddenVi ? "hidden" : hiddenOnMobile ? "hidden md:block" : ""}`}>
                     <h4 className="m-0">
                       <button
                         type="button"
@@ -141,7 +143,7 @@ const FAQSection = ({ variant = "managed" }: { variant?: FaqVariant }) => {
         </Reveal>
 
         {/* Mobile only: the rest of the questions on demand */}
-        <div className="md:hidden mt-5">
+        <div className={lang === "vi" ? "mt-5" : "md:hidden mt-5"}>
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}

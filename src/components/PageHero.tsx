@@ -38,7 +38,7 @@ const PageHero = ({ page }: { page: "sprava" | "vlastni-provoz" }) => {
         <p {...enter(16, 0.65, 0.6)} className="mt-6 font-body text-base sm:text-lg leading-relaxed max-w-[46ch] text-pretty text-[#E8DED0]">
           {t(lang, c.desc)}
         </p>
-        <p {...enter(12, 0.75, 0.6)} className="mt-5 font-body text-[13.5px] sm:text-sm tracking-wide text-[rgba(232,222,208,0.72)] tnum max-w-[60ch]">
+        <p {...enter(12, 0.75, 0.6)} className="mt-6 font-body text-[15px] sm:text-base lg:text-[17px] leading-relaxed text-[rgba(232,222,208,0.85)] tnum max-w-[40ch]">
           {t(lang, c.line)}
         </p>
         <div {...enter(16, 0.85, 0.6)} className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">

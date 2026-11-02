@@ -113,10 +113,18 @@ html {
   h1 { line-height: 1.15; }
   h2 { line-height: 1.2; }
 
-  /* Vietnamská diakritika potřebuje trochu víc vzduchu */
+  /* Vietnamská diakritika potřebuje trochu víc vzduchu. Brand direction
+     2. 11. 2026: VI není překlad layoutu; text je delší, tak dostane větší
+     řádkování a žádný popisek pod 14 px. */
   :lang(vi) {
-    line-height: 1.7;
+    line-height: 1.75;
   }
+  :lang(vi) p, :lang(vi) li, :lang(vi) dd, :lang(vi) dt { line-height: 1.75; }
+  :lang(vi) .text-\[12px\], :lang(vi) .text-\[12\.5px\], :lang(vi) .text-\[13px\],
+  :lang(vi) .text-\[13\.5px\], :lang(vi) .text-xs, :lang(vi) .text-\[11px\], :lang(vi) .text-\[11\.5px\] {
+    font-size: 14px !important;
+  }
+  :lang(vi) .text-\[14px\], :lang(vi) .text-\[14\.5px\], :lang(vi) .text-\[15px\], :lang(vi) .text-sm { font-size: 15.5px !important; }
   :lang(vi) h1, :lang(vi) h2 {
     line-height: 1.15;
   }
@@ -217,6 +225,14 @@ html {
     line-height: 1.2;
     letter-spacing: -0.012em;
     text-wrap: balance;
+  }
+  /* Brand direction 2. 11. 2026: serif jako událost. .h-serif se přidává k
+     .h-section / .h-section-sm tam, kde stránka mění tempo (Výsledky,
+     Kalkulačka, Vyúčtování, Provozní systém). Default, ne zákon. */
+  .h-serif {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
   }
   .lead {
     font-family: var(--font-body);
