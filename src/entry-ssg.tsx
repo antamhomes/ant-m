@@ -21,7 +21,10 @@ export const renderPage = (path: string): Promise<string> =>
     const chunks: Buffer[] = [];
     const out = new PassThrough();
     out.on("data", (c) => chunks.push(Buffer.from(c)));
-    out.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")));
+    // React 18 writeChunk bug: když se vícebajtový znak (í, ồ, …) nevejde na konec
+    // 2 kB bufferu, zapíše se celý buffer včetně nevyplněných nul (opraveno až v
+    // React 19). V HTML pak byly NUL byty uprostřed slov. Obsah NUL nikdy neobsahuje.
+    out.on("end", () => resolve(Buffer.concat(chunks).toString("utf8").replace(/\0/g, "")));
     out.on("error", reject);
     const { pipe, abort } = renderToPipeableStream(<App />, {
       onAllReady() {

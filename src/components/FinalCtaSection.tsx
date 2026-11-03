@@ -7,9 +7,15 @@ import { trackEvent } from "@/lib/analytics";
 /**
  * Slim closing band after the FAQ: one line, one sentence, one button back to
  * the form. For readers who researched all the way down.
+ *
+ * CZ final audit (3. 11. 2026): na podstránkách /sprava a /vlastni-provoz stojí
+ * pás hned za formulářem a jeho tlačítko vede zpět na kalkulačku, takže se v CZ
+ * renderuje jen na homepage. VI beze změny (pás nese brand line „Chủ nhà an tâm
+ * hơn." a čeká na vlastní rozhodnutí).
  */
 const FinalCtaSection = () => {
-  const { lang } = useLanguage();
+  const { lang, page } = useLanguage();
+  if (lang === "cs" && page !== "home") return null;
 
   return (
     <section className="bg-gradient-dark border-t border-[#C2A46D]/40">

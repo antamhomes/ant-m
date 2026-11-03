@@ -84,7 +84,7 @@ const ServicesSection = () => {
       <div className="container-wide">
         <Reveal className="section-head">
           <h2 className="h-section-sm text-primary-foreground">{t(lang, "services_title")}</h2>
-          <p className="lead lead-on-dark">{t(lang, "services_desc")}</p>
+          {t(lang, "services_desc") && <p className="lead lead-on-dark">{t(lang, "services_desc")}</p>}
         </Reveal>
 
         {INTRO_KEY[lang] && (

@@ -63,8 +63,8 @@ const OperatorReviewSection = () => {
             </h2>
             <p className="lead mt-5">
               {cs
-                ? "Systém nevyrábí sestavy. Vyrábí rozhodnutí. Tohle je skutečná měsíční kontrola jednoho našeho bytu: tři čísla, jeden pohled na týden a tři rozhodnutí, která z toho plynou."
-                : "Hệ thống không phải để ra báo cáo, mà để ra quyết định. Đây là bản kiểm tra tháng thật của một căn Antam đang quản lý: ba con số, cách nhìn theo tuần, và ba việc nên làm tiếp."}
+                ? "Skutečná měsíční kontrola jednoho našeho bytu: tři čísla, pohled na týden a tři rozhodnutí."
+                : "Đây là bản kiểm tra tháng thật của một căn Antam đang quản lý: ba con số, cách nhìn theo tuần, và ba việc nên làm tiếp."}
             </p>
             <p className="mt-5 font-body text-[15px] text-muted-foreground leading-relaxed text-pretty max-w-[46ch]">
               {cs

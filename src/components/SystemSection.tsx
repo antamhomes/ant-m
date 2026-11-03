@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -19,15 +18,11 @@ import { t, type TranslationKey } from "@/i18n/translations";
  * Žádná čísla ani ceny: ty nese ceník nad sekcí.
  */
 const PILLARS = [1, 2, 3, 4, 5, 6] as const;
-const MISTAKES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const;
-const MISTAKES_VISIBLE = 5;
 const HANDOVER = [1, 2, 3, 4, 5, 6, 7] as const;
 
 const SystemSection = () => {
   const { lang } = useLanguage();
   const k = (s: string) => s as TranslationKey;
-  const [allMistakes, setAllMistakes] = useState(false);
-  const mistakes = allMistakes ? MISTAKES : MISTAKES.slice(0, MISTAKES_VISIBLE);
 
   return (
     <section id="system" className="section chapter-edge bg-background scroll-mt-20">
@@ -69,31 +64,10 @@ const SystemSection = () => {
           <p className="mt-4 mb-0 font-body text-[14px] text-muted-foreground">{t(lang, "sys_pillars_note")}</p>
         </Reveal>
 
-        {/* 2. Chyby, které už nemusíte udělat: provozní lekce, dva sloupce. */}
-        <Reveal delay={0.08} className="mt-14 md:mt-20">
-          <h3 className="m-0 font-body text-[26px] md:text-[30px] font-medium text-foreground leading-tight">
-            {t(lang, "sys_mistakes_title")}
-          </h3>
-          <p className="mt-3 mb-0 font-body text-[15px] md:text-[16px] text-muted-foreground leading-relaxed max-w-[60ch] text-pretty">
-            {t(lang, "sys_mistakes_lead")}
-          </p>
-          <ol className="mt-7 mb-0 list-none p-0 border-t border-foreground/15 max-w-[60rem]">
-            {mistakes.map((n) => (
-              <li key={n} className="border-b border-foreground/15 py-4 grid grid-cols-[2.5rem_1fr] gap-x-2 font-body text-[16px] md:text-[17px] text-foreground leading-relaxed text-pretty">
-                <span className="tnum text-[14px] text-muted-foreground pt-[3px]">{String(n).padStart(2, "0")}</span>
-                <span>{t(lang, k(`sys_m${n}`))}</span>
-              </li>
-            ))}
-          </ol>
-          <button
-            type="button"
-            onClick={() => setAllMistakes((v) => !v)}
-            aria-expanded={allMistakes}
-            className="mt-5 font-body text-sm text-foreground underline underline-offset-4 decoration-foreground/30 hover:decoration-foreground transition-colors"
-          >
-            {allMistakes ? (lang === "cs" ? "Zobrazit méně" : "Thu gọn") : (lang === "cs" ? `Dalších ${MISTAKES.length - MISTAKES_VISIBLE}` : `Thêm ${MISTAKES.length - MISTAKES_VISIBLE} điều nữa`)}
-          </button>
-        </Reveal>
+        {/* 2. Blok „Chyby, které už nemusíte udělat" byl v obou jazycích
+            sloučen do sekce „Co se nikde nedočtete" (TipsSection), CZ p13,
+            VI p14, 2. 11. 2026. Klíče sys_m1..10 zůstávají v translations
+            jako zdroj položek 8 až 10. */}
 
       </div>
 
@@ -116,7 +90,7 @@ const SystemSection = () => {
             <p className="mt-3 mb-0 font-body text-[15px] text-primary-foreground/60">{t(lang, "sys_handover_close2")}</p>
           </div>
           <dl className="mt-9 lg:mt-0 m-0 border-t border-[#C2A46D]/40">
-            {HANDOVER.map((n) => (
+            {HANDOVER.filter((n) => t(lang, k(`sys_h${n}_k`))).map((n) => (
               <div key={n} className="grid sm:grid-cols-[auto_1fr] gap-x-6 gap-y-0.5 py-3.5 border-b border-[#C2A46D]/25">
                 <dt className="m-0 font-body text-[14px] text-[#C2A46D] sm:w-[12ch] pt-[2px]">
                   {t(lang, k(`sys_h${n}_k`))}

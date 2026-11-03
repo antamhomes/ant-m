@@ -123,7 +123,7 @@ const copy = {
     statRatio: (r: number) => `gấp ${r.toLocaleString("vi-VN")} lần cho thuê dài hạn`,
     newBadge: (m: string) => `Antam quản lý từ ${m}`,
     newNote: "Mới bắt đầu, hết mùa đầu tiên sẽ có số liệu.",
-    statNote: (d: string) => `Số tiền chủ nhà nhận tính từ đặt phòng thật của từng căn, theo mức phí hiện nay của Antam, 20% + DPH, sau khi trừ phí Airbnb, Booking.com và không tính phí dọn dẹp. Đây là trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Tỷ lệ lấp phòng của khu lấy từ PriceLabs. Tiền thuê dài hạn lấy từ hơn 1\u00a0300 tin đăng trên Sreality theo quận và diện tích, có đối chiếu với Deloitte Rent\u00a0Index. Kết quả đã qua không phải là cam kết cho\u00a0tương\u00a0lai.`,
+    statNote: (d: string) => `Con số chủ nhà nhận mỗi tháng được tính từ các đặt phòng thật của từng căn, theo mức phí hiện nay của Antam, 20% + DPH, sau khi trừ phí Airbnb, Booking.com và không tính phí dọn dẹp. Đây là trung bình 12 tháng gần nhất, căn mới hơn thì tính từ khi Antam nhận, tính đến ${d}. Tỷ lệ lấp phòng của khu lấy từ PriceLabs. Tiền thuê dài hạn lấy từ hơn 1\u00a0300 tin đăng trên Sreality theo quận và diện tích, có đối chiếu với Deloitte Rent\u00a0Index. Kết quả đã qua không phải là cam kết cho\u00a0tương\u00a0lai.`,
   },
 };
 

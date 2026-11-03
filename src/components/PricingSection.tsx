@@ -112,9 +112,11 @@ const PricingSection = ({ variant = "both" }: { variant?: PricingVariant }) => {
       </div>
       <div>
         {rows(US_ROWS, true)}
-        <p className="mt-4 mb-0 font-body text-[13px] leading-relaxed text-white/60 max-w-[52ch]">
-          {t(lang, "pr1_incl_items")}
-        </p>
+        {t(lang, "pr1_incl_items") && (
+          <p className="mt-4 mb-0 font-body text-[13px] leading-relaxed text-white/60 max-w-[52ch]">
+            {t(lang, "pr1_incl_items")}
+          </p>
+        )}
         <a
           href={managedHref}
           onClick={() => trackEvent("cta_click", { location: "pricing", target: single ? "contact" : "page-sprava" })}
