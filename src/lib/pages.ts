@@ -33,8 +33,21 @@ export const normalizePath = (pathname: string): string => {
 
 const ALIASES: Record<string, string> = { "/cz": "/", "/cs": "/", "/vi": "/vn" };
 
+/**
+ * Krátké odkazy na sekci (3. 11. 2026): /kalkulacka a /vn/kalkulacka vedou na
+ * kalkulačku na homepage. Sdílené odkazy (Facebook, vizitky) tak nekončí na 404.
+ */
+const SECTION_LINKS: Record<string, { page: PageKey; lang: Language; hash: string }> = {
+  "/kalkulacka": { page: "home", lang: "cs", hash: "kalkulacka" },
+  "/vn/kalkulacka": { page: "home", lang: "vi", hash: "kalkulacka" },
+};
+
 /** Stránka a jazyk z cesty; null = 404. Aliasy /cz, /cs, /vi vedou na homepage. */
-export const resolvePath = (pathname: string): { page: PageKey; lang: Language; canonical: string } | null => {
+export const resolvePath = (
+  pathname: string,
+): { page: PageKey; lang: Language; canonical: string; hash?: string } | null => {
+  const link = SECTION_LINKS[normalizePath(pathname)];
+  if (link) return { page: link.page, lang: link.lang, canonical: pathFor(link.page, link.lang), hash: link.hash };
   const p = ALIASES[normalizePath(pathname)] ?? normalizePath(pathname);
   for (const page of PAGES)
     for (const lang of ["cs", "vi"] as const)

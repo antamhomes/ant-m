@@ -58,7 +58,7 @@ const App = () => {
   const resolved = resolvePath(rawPath);
   // Aliasy (/cz, /cs, /vi, koncové lomítko, /index.html) přepíšeme na kanonickou cestu.
   if (resolved && typeof window !== "undefined" && window.location.pathname !== resolved.canonical) {
-    window.history.replaceState(null, "", resolved.canonical + window.location.hash);
+    window.history.replaceState(null, "", resolved.canonical + (resolved.hash ? `#${resolved.hash}` : window.location.hash));
   }
   const pageEl = !resolved
     ? <NotFound />
