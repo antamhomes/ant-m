@@ -79,7 +79,7 @@ const HeroSection = () => {
           <div>
             <h1
               {...enter(20, 0.45, 0.8)}
-              className="font-display text-[clamp(2.1rem,3.5vw,3.3rem)] font-medium leading-[1.08] tracking-[-0.018em] text-balance text-[#F7F1E8] max-w-[17ch]"
+              className="font-display text-[clamp(2.1rem,3.5vw,3.3rem)] font-medium leading-[1.08] tracking-[-0.018em] text-balance text-[#F7F1E8] max-w-[min(28ch,90%)]"
             >
               {t(lang, "hero_title1")}
               <br />
