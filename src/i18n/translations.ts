@@ -778,7 +778,7 @@ const translations = {
     hero_subtitle: "Antam Homes · cho thuê ngắn hạn tại Praha",
     hero_title1: "Quản lý và vận hành căn hộ",
     hero_title2: "cho thuê ngắn hạn ở Praha.",
-    hero_desc: "Antam quản lý từ đầu đến cuối. Hoặc dựng hệ thống rồi bàn giao để anh chị tự vận hành.",
+    hero_desc: "Antam quản lý từ đầu đến cuối. Hoặc dựng hệ thống rồi bàn giao để chủ nhà tự vận hành.",
     hero_extra: "Hỏi không ràng buộc · có dự tính trong 24 giờ · 13 căn đang quản lý",
     hero_cta: "Tính thử thu nhập",
     hero_cta2: "",
