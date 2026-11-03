@@ -87,7 +87,7 @@ const SystemSection = () => {
             <p className="mt-5 mb-0 font-body text-[16px] md:text-[17px] text-primary-foreground/75 leading-relaxed text-pretty max-w-[44ch]">
               {t(lang, "sys_handover_lead")}
             </p>
-            <p className="mt-3 mb-0 font-body text-[15px] text-primary-foreground/60">{t(lang, "sys_handover_close2")}</p>
+            <p className="mt-3 mb-0 font-body text-[15px] text-primary-foreground/75">{t(lang, "sys_handover_close2")}</p>
           </div>
           <dl className="mt-9 lg:mt-0 m-0 border-t border-[#C2A46D]/40">
             {HANDOVER.filter((n) => t(lang, k(`sys_h${n}_k`))).map((n) => (

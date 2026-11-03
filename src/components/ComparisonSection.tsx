@@ -41,7 +41,35 @@ const ComparisonSection = () => {
         {/* Ledger: na mobilu dva sloupce pod sebou v jednom řádku, na desktopu
             tři sloupce. Žádné ikony ani odškrtávátka: je to srovnání, ne
             tabulka funkcí. */}
-        <Reveal delay={0.05} className="border-t border-border">
+        {/* Mobil (< 640 px, visual pass 3. 11. 2026): stejný obsah, jiná osa.
+            Tabulka „kritérium × cesta" se na úzkém displeji rozpadla na devět
+            dvojic label/věta; tady jsou tři bloky podle cesty, v každém tři
+            kritéria. Od 640 px výš beze změny. */}
+        <Reveal delay={0.05} className="sm:hidden border-t border-border">
+          {([
+            ["longTerm_label", "long", "text-muted-foreground"],
+            ["shortTerm_label", "short", "text-foreground"],
+            ["selfTerm_label", "self", "text-foreground"],
+          ] as const).map(([label, key, tone]) => (
+            <div key={label} className="py-5 border-b border-border">
+              <p className="m-0 font-body text-[17px] font-medium text-foreground">{t(lang, label)}</p>
+              <dl className="m-0 mt-3 space-y-3">
+                {rows.map((r) => (
+                  <div key={r.title}>
+                    <dt className={`font-body text-[12px] uppercase tracking-[0.12em] mb-1 ${key === "long" ? "text-muted-foreground" : "text-gold-deep"}`}>
+                      {t(lang, r.title)}
+                    </dt>
+                    <dd className={`m-0 font-body text-[14.5px] leading-relaxed text-pretty ${tone}`}>
+                      {t(lang, r[key])}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))}
+        </Reveal>
+
+        <Reveal delay={0.05} className="hidden sm:block border-t border-border">
           <div
             aria-hidden="true"
             className="hidden md:grid md:grid-cols-[0.8fr_1fr_1fr_1fr] gap-x-8 pt-4 pb-3"
@@ -70,7 +98,7 @@ const ComparisonSection = () => {
                   {t(lang, r.title)}
                 </dt>
                 <dd className="m-0">
-                  <span className="md:hidden block font-body text-[11px] uppercase tracking-[0.12em] text-muted-foreground mb-1">
+                  <span className="md:hidden block font-body text-[12px] uppercase tracking-[0.12em] text-muted-foreground mb-1">
                     {t(lang, "longTerm_label")}
                   </span>
                   <span className="font-body text-[14.5px] md:text-[15px] text-muted-foreground leading-relaxed text-pretty">
@@ -78,7 +106,7 @@ const ComparisonSection = () => {
                   </span>
                 </dd>
                 <dd className="m-0">
-                  <span className="md:hidden block font-body text-[11px] uppercase tracking-[0.12em] text-gold-deep mb-1">
+                  <span className="md:hidden block font-body text-[12px] uppercase tracking-[0.12em] text-gold-deep mb-1">
                     {t(lang, "shortTerm_label")}
                   </span>
                   <span className="font-body text-[14.5px] md:text-[15px] text-foreground leading-relaxed text-pretty">
@@ -86,7 +114,7 @@ const ComparisonSection = () => {
                   </span>
                 </dd>
                 <dd className="m-0">
-                  <span className="md:hidden block font-body text-[11px] uppercase tracking-[0.12em] text-gold-deep mb-1">
+                  <span className="md:hidden block font-body text-[12px] uppercase tracking-[0.12em] text-gold-deep mb-1">
                     {t(lang, "selfTerm_label")}
                   </span>
                   <span className="font-body text-[14.5px] md:text-[15px] text-foreground leading-relaxed text-pretty">

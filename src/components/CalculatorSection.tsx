@@ -511,7 +511,7 @@ const CalculatorSection = () => {
                       <p className="font-body text-[13.5px] text-primary-foreground/80 mb-0.5">
                         {t(lang, "calc_net")}
                       </p>
-                      <p className="font-body text-[12px] text-primary-foreground/60 -mt-0.5 mb-1">
+                      <p className="font-body text-[12px] text-primary-foreground/70 -mt-0.5 mb-1">
                         {t(lang, "calc_net_sub")}
                       </p>
                       {/* HEADLINE = dosažitelný vršek UŽ SPOČÍTANÉHO rozpětí (31. 8. 2026),
@@ -607,7 +607,7 @@ const CalculatorSection = () => {
                       {/* Odvozené číslo: jedna věta, neutrálně, bez „čtvrť“ (do 7. 9. 2026
                           text vinil čtvrť i u okresního výsledku). */}
                       {result.r.derived && (
-                        <p className="mt-1.5 font-body text-[12px] text-primary-foreground/60 leading-relaxed text-pretty">
+                        <p className="mt-1.5 font-body text-[12px] text-primary-foreground/70 leading-relaxed text-pretty">
                           {t(lang, "calc_derived_note")}
                         </p>
                       )}
@@ -642,7 +642,7 @@ const CalculatorSection = () => {
                     {/* TEST (rozhodnutí 7. 9. 2026): jedna tichá věta o minimu ve smlouvě,
                         mechanika garance zůstává v Ceníku. Měří se cta_click podle pásma. */}
                     {!weak && (
-                      <p className="font-body text-[12px] text-primary-foreground/55 leading-relaxed text-pretty">
+                      <p className="font-body text-[12px] text-primary-foreground/70 leading-relaxed text-pretty">
                         {t(lang, "calc_guarantee_line")}
                       </p>
                     )}

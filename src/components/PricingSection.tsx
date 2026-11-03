@@ -103,7 +103,7 @@ const PricingSection = ({ variant = "both" }: { variant?: PricingVariant }) => {
           <a
             href={managedHref}
             onClick={() => trackEvent("cta_click", { location: "pricing", target: "contact" })}
-            className="hidden lg:inline-flex btn btn-primary-inverse mt-auto pt-0 self-start !py-[1rem] !px-8 !text-[13.5px] lg:!mt-10"
+            className="!hidden lg:!inline-flex btn btn-primary-inverse mt-auto pt-0 self-start !py-[1rem] !px-8 !text-[13.5px] lg:!mt-10"
           >
             {t(lang, "g_cta")}
             <ChevronRight className="w-4 h-4" />
@@ -113,7 +113,7 @@ const PricingSection = ({ variant = "both" }: { variant?: PricingVariant }) => {
       <div>
         {rows(US_ROWS, true)}
         {t(lang, "pr1_incl_items") && (
-          <p className="mt-4 mb-0 font-body text-[13px] leading-relaxed text-white/60 max-w-[52ch]">
+          <p className="mt-4 mb-0 font-body text-[13px] leading-relaxed text-white/70 max-w-[52ch]">
             {t(lang, "pr1_incl_items")}
           </p>
         )}
@@ -146,7 +146,7 @@ const PricingSection = ({ variant = "both" }: { variant?: PricingVariant }) => {
           <a
             href={ownHref}
             onClick={() => trackEvent("cta_click", { location: "pricing", target: "own" })}
-            className="hidden lg:inline-flex btn btn-secondary mt-auto self-start !py-[1rem] !px-8 !text-[13.5px] lg:!mt-10"
+            className="!hidden lg:!inline-flex btn btn-secondary mt-auto self-start !py-[1rem] !px-8 !text-[13.5px] lg:!mt-10"
           >
             {t(lang, "pr4_cta")}
             <ChevronRight className="w-4 h-4" />

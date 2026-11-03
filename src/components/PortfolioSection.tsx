@@ -129,9 +129,11 @@ const copy = {
 
 /** Jedna dlaždice mozaiky: fotka, částka na fotce dole vlevo, pod ní název a
  *  obsazenost proti trhu jako prostý text. Žádný rámeček, žádný stín. */
-const Tile = ({ item, big, c, lang }: { item: Item; big?: boolean; c: (typeof copy)["cs"]; lang: "cs" | "vi" }) => (
+/* pair: dlaždice 2 a 3 stojí na telefonu vedle sebe (visual pass 3. 11. 2026),
+   takže pod 640 px mají menší částku, víc místa pod ní a vyšší gradient. */
+const Tile = ({ item, big, pair, c, lang }: { item: Item; big?: boolean; pair?: boolean; c: (typeof copy)["cs"]; lang: "cs" | "vi" }) => (
   <figure className={`m-0 min-w-0 ${big ? "lg:flex lg:flex-col lg:h-full" : ""}`}>
-    <div className={`relative overflow-hidden bg-secondary ${big ? "aspect-[4/3] lg:aspect-auto lg:flex-1 lg:min-h-[420px]" : "aspect-[4/3] lg:aspect-[16/10]"}`}>
+    <div className={`relative overflow-hidden bg-secondary ${big ? "aspect-[4/3] lg:aspect-auto lg:flex-1 lg:min-h-[420px]" : pair ? "aspect-square sm:aspect-[4/3] lg:aspect-[16/10]" : "aspect-[4/3] lg:aspect-[16/10]"}`}>
       <img
         src={item.src}
         alt={`${item.name}, ${item.loc}`}
@@ -141,13 +143,13 @@ const Tile = ({ item, big, c, lang }: { item: Item; big?: boolean; c: (typeof co
       />
       {item.stats && (
         <>
-          <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 bottom-0 h-[48%] bg-[linear-gradient(to_top,rgba(14,13,11,0.82)_0%,rgba(14,13,11,0.5)_45%,rgba(14,13,11,0)_100%)]" />
-          <p className={`absolute left-4 bottom-3.5 sm:left-5 sm:bottom-4 m-0 tnum ${big ? "lg:left-7 lg:bottom-6" : ""}`}>
-            <span className={`block font-display font-semibold text-white leading-none tracking-[-0.02em] [text-shadow:0_1px_2px_rgba(0,0,0,0.35)] ${big ? "text-[2.4rem] sm:text-[3rem] lg:text-[3.6rem]" : "text-[1.6rem] sm:text-[1.9rem]"}`}>
+          <div aria-hidden="true" className={`pointer-events-none absolute inset-x-0 bottom-0 ${pair ? "h-[70%] sm:h-[48%]" : "h-[48%]"} bg-[linear-gradient(to_top,rgba(14,13,11,0.82)_0%,rgba(14,13,11,0.5)_45%,rgba(14,13,11,0)_100%)]`} />
+          <p className={`absolute ${pair ? "left-3 right-3 bottom-3" : "left-4"} sm:left-5 sm:right-auto ${pair ? "" : "bottom-3.5"} sm:bottom-4 m-0 tnum ${big ? "lg:left-7 lg:bottom-6" : ""}`}>
+            <span className={`block font-display font-semibold text-white leading-none tracking-[-0.02em] [text-shadow:0_1px_2px_rgba(0,0,0,0.35)] ${big ? "text-[2.4rem] sm:text-[3rem] lg:text-[3.6rem]" : pair ? "text-[1.35rem] sm:text-[1.9rem]" : "text-[1.6rem] sm:text-[1.9rem]"}`}>
               {fmtCzk(item.stats.owner)}
               <span className="ml-2 text-[0.42em] font-normal text-white/85">Kč</span>
             </span>
-            <span className="mt-1.5 block font-body text-[12px] sm:text-[13px] text-white/85 leading-tight">{item.each ? c.statOwnerEach : c.statOwner}</span>
+            <span className={`block font-body text-[13px] text-white/85 ${pair ? "mt-2 leading-snug sm:mt-1.5 sm:leading-tight" : "mt-1.5 leading-tight"}`}>{item.each ? c.statOwnerEach : c.statOwner}</span>
           </p>
         </>
       )}
@@ -192,9 +194,11 @@ const PortfolioSection = () => {
 
         <Reveal className="grid grid-cols-1 lg:grid-cols-[1.35fr_1fr] gap-x-6 gap-y-8 lg:items-stretch">
           <Tile item={lead} big c={c} lang={lang} />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-x-4 gap-y-8 lg:gap-y-6">
-            <Tile item={second} c={c} lang={lang} />
-            <Tile item={third} c={c} lang={lang} />
+          {/* Mobil (visual pass 3. 11. 2026): druhá a třetí dlaždice vedle sebe,
+              stejná dlaždice, jen poloviční šířka; první zůstává dominantní. */}
+          <div className="grid grid-cols-2 lg:grid-cols-1 gap-x-3 sm:gap-x-4 gap-y-8 lg:gap-y-6">
+            <Tile item={second} pair c={c} lang={lang} />
+            <Tile item={third} pair c={c} lang={lang} />
           </div>
         </Reveal>
 

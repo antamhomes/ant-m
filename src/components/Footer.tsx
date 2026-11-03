@@ -17,14 +17,14 @@ const Footer = () => {
             <p>
               <Wordmark on="dark" size="lg" />
             </p>
-            <p className="font-body text-sm text-primary-foreground/55 mt-3 max-w-sm leading-relaxed">
+            <p className="font-body text-sm text-primary-foreground/70 mt-3 max-w-sm leading-relaxed">
               {t(lang, "footer_desc")}
             </p>
           </div>
 
           {/* Nav links */}
           <div className="md:col-span-3">
-            <p className="font-body text-[11px] text-gold-deep tracking-[0.25em] uppercase font-semibold mb-4">
+            <p className="font-body text-[12px] text-[#C2A46D] tracking-[0.22em] uppercase font-semibold mb-4">
               {lang === "cs" ? "Web" : "Trang web"}
             </p>
             <ul className="space-y-2.5">
@@ -53,7 +53,7 @@ const Footer = () => {
 
           {/* Contact */}
           <div className="md:col-span-4">
-            <p className="font-body text-[11px] text-gold-deep tracking-[0.25em] uppercase font-semibold mb-4">
+            <p className="font-body text-[12px] text-[#C2A46D] tracking-[0.22em] uppercase font-semibold mb-4">
               {lang === "cs" ? "Kontakt" : "Liên hệ"}
             </p>
             <ul className="space-y-3">
@@ -72,7 +72,7 @@ const Footer = () => {
               <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
                 <Phone className="w-4 h-4 text-gold mt-0.5 shrink-0" />
                 <div>
-                  <span className="font-body text-primary-foreground/50 text-xs block leading-none mb-0.5">
+                  <span className="font-body text-primary-foreground/65 text-xs block leading-none mb-0.5">
                     Tiếng Việt
                   </span>
                   <a href={`tel:${t(lang, "footer_office_phone").replace(/\s/g, "")}`} className="hover:text-gold transition-colors font-body">
@@ -94,7 +94,7 @@ const Footer = () => {
             href="/gdpr-informacni-memorandum.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-body text-xs text-primary-foreground/55 hover:text-gold transition-colors underline underline-offset-4 decoration-primary-foreground/20 hover:decoration-gold"
+            className="font-body text-xs text-primary-foreground/70 hover:text-gold transition-colors underline underline-offset-4 decoration-primary-foreground/20 hover:decoration-gold"
           >
             {lang === "cs" ? "Informační memorandum (GDPR)" : "Thông tin xử lý dữ liệu (GDPR)"}
           </a>
@@ -102,7 +102,7 @@ const Footer = () => {
             href="/vop-majitele-nemovitosti.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-body text-xs text-primary-foreground/55 hover:text-gold transition-colors underline underline-offset-4 decoration-primary-foreground/20 hover:decoration-gold"
+            className="font-body text-xs text-primary-foreground/70 hover:text-gold transition-colors underline underline-offset-4 decoration-primary-foreground/20 hover:decoration-gold"
           >
             {lang === "cs" ? "Všeobecné obchodní podmínky" : "Điều khoản chung"}
           </a>
@@ -110,7 +110,7 @@ const Footer = () => {
             href="/formular-odstoupeni-od-smlouvy.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-body text-xs text-primary-foreground/55 hover:text-gold transition-colors underline underline-offset-4 decoration-primary-foreground/20 hover:decoration-gold"
+            className="font-body text-xs text-primary-foreground/70 hover:text-gold transition-colors underline underline-offset-4 decoration-primary-foreground/20 hover:decoration-gold"
           >
             {lang === "cs" ? "Formulář pro odstoupení od smlouvy" : "Mẫu đơn rút khỏi hợp đồng"}
           </a>
