@@ -16,7 +16,7 @@ const FinalCtaSection = lazy(() => import("@/components/FinalCtaSection"));
  * /vlastni-provoz: PROVOZUJI SÁM, pro majitele, který chce systém a marži.
  * Slib → měsíční kontrola (proof object: rozhodnutí) → co systém je (pilíře, chyby, předání) → cena → tipy z provozu (jen světlý panel,
  * přestavba jako řádek s kotvou #prestavba) → srovnání nájem / my / vy →
- * jak začít (zaškolení, 90 dní) → otázky → formulář.
+ * jak začít (zaškolení, 60 dní) → otázky → formulář.
  */
 const VlastniProvoz = () => (
   <PageShell page="vlastni-provoz">

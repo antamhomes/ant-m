@@ -4,7 +4,7 @@ import { t, type TranslationKey } from "@/i18n/translations";
 
 /**
  * Kroky podle stránky (2. 11. 2026): správa končí spuštěním a provozem u nás,
- * vlastní provoz zaškolením, předáním a 90 dny. Kroky 1 a 2 jsou společné.
+ * vlastní provoz zaškolením, předáním a 60 dny. Kroky 1 a 2 jsou společné.
  */
 export type ProcessVariant = "managed" | "own";
 const STEPS: Record<ProcessVariant, { title: TranslationKey; desc: TranslationKey }[]> = {

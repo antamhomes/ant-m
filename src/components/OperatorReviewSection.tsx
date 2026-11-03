@@ -68,8 +68,8 @@ const OperatorReviewSection = () => {
             </p>
             <p className="mt-5 font-body text-[15px] text-muted-foreground leading-relaxed text-pretty max-w-[46ch]">
               {cs
-                ? "Prvních 90 dní to děláme s vámi. Pak to děláte sami za 20 minut, nebo nám řízení cen necháte za 3 490 Kč měsíčně."
-                : "90 ngày đầu Antam làm cùng anh chị. Sau đó mỗi tháng anh chị tự làm chừng 20 phút, hoặc để Antam đặt giá với 3 490 Kč mỗi tháng."}
+                ? "Prvních 60 dní to děláme s vámi. Pak to děláte sami za 20 minut, nebo nám řízení cen necháte za 3 490 Kč měsíčně."
+                : "60 ngày đầu Antam làm cùng anh chị. Sau đó mỗi tháng anh chị tự làm chừng 20 phút, hoặc để Antam đặt giá với 3 490 Kč mỗi tháng."}
             </p>
           </Reveal>
 

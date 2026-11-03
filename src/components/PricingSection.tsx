@@ -46,7 +46,7 @@ const US_ROWS: Row[] = [
   { name: "pr1_term_name", value: "pr1_term_value" },
 ];
 
-/** Řádky vlastního provozu: vybavení + 20 %, řízení cen, předání, 90 dní. */
+/** Řádky vlastního provozu: vybavení + 20 %, řízení cen, předání, 60 dní. */
 const SELF_ROWS: Row[] = [
   { name: "pr_time_name", value: "pr4_time_value" },
   { name: "pr1_furnish_name", value: "pr4_furnish_value" },

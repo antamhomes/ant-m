@@ -199,7 +199,7 @@ describe("ceník", () => {
     for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
       expect(strip(dict.pr4_price), `${lang}.pr4_price`).toMatch(/180 000 · 3\+kk 270 000 · 4\+kk 360 000/);
       expect(strip(dict.pr4_note), `${lang}.pr4_note`).toMatch(/3 490/);
-      expect(strip(dict.pr4_note), `${lang}.pr4_note`).toMatch(/90/);
+      expect(strip(dict.pr4_note), `${lang}.pr4_note`).toMatch(/60/);
       expect(strip(dict.pr4_furnish_value), `${lang}.pr4_furnish_value`).toMatch(/20\s?%/);
       expect(strip(dict.pr3_price), `${lang}.pr3_price`).toMatch(/12\s?%/);
       expect(strip(dict.pr3_price), `${lang}.pr3_price`).toMatch(/20\s?%/);

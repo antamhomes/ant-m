@@ -23,11 +23,11 @@ export const META: Record<"home" | "sprava" | "vlastni-provoz", { cs: { title: s
   "vlastni-provoz": {
     cs: {
       title: "Provozní systém Antam: Airbnb byt k vlastnímu provozu | Antam Homes",
-      desc: "Postavíme vám provozní systém krátkodobého pronájmu na vašich účtech a předáme vám ho: 180 000 až 360 000 Kč jednou, pak žádná procenta z výnosu. 90 dní podpory.",
+      desc: "Postavíme vám provozní systém krátkodobého pronájmu na vašich účtech a předáme vám ho: 180 000 až 360 000 Kč jednou, pak žádná procenta z výnosu. 60 dní podpory.",
     },
     vi: {
       title: "Tự vận hành căn hộ cho thuê ngắn hạn: Antam dựng và bàn giao | Antam Homes",
-      desc: "Antam dựng hệ thống vận hành cho thuê ngắn hạn trên tài khoản của anh chị rồi bàn giao: 180 000 đến 360 000 Kč một lần, sau đó không mất phần trăm. 90 ngày hỗ trợ.",
+      desc: "Antam dựng hệ thống vận hành cho thuê ngắn hạn trên tài khoản của anh chị rồi bàn giao: 180 000 đến 360 000 Kč một lần, sau đó không mất phần trăm. 60 ngày hỗ trợ.",
     },
   },
 };
