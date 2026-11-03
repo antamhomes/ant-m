@@ -94,6 +94,8 @@ describe("odměna za správu", () => {
     for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
       for (const [key, value] of Object.entries(dict)) {
         if (typeof value !== "string") continue;
+        // proof2_value (+25 % tržba proti trhu, 3. 11. 2026) není provize.
+        if (key === "proof2_value") continue;
         const v = strip(value);
         // 25 000 Kč (uvedení do provozu) je jiné číslo a zůstává.
         expect(v.replace(/25 000/g, ""), `${lang}.${key}`).not.toMatch(/25\s?%/);

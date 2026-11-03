@@ -653,6 +653,22 @@ const translations = {
     hero_fact1: "Správa za 20\u00a0% + DPH z\u00a0příjmu po poplatcích, nebo vlastní provoz od 180\u00a0000\u00a0Kč jednou.",
     hero_fact2: "13 bytů ve správě, 520+ hodnocení od hostů, čísla z vyúčtování níže.",
     hero_fact3: "Propočet pro váš byt do 24\u00a0hodin, nezávazně.",
+    // Pás čísel pod hero (3. 11. 2026). Obsazenost a tržba změřené v PriceLabs
+    // (12 měsíců do 10/2026, byty 402, 405, 302 proti trhu 1BR Praha 1:
+    // 93,1-95,0 % proti 73,5 %, RevPAR +29 až +47 %). 93 % = průměr 12 bytů
+    // v PriceLabs vážený dny provozu (12 m, nové od spuštění; Klement v PL není).
+    // +25 % je záměrně pod
+    // nejslabším bytem. hero_fact2 se v hero nezobrazuje, čísla nese pás.
+    proof_aria: "Antam v číslech",
+    proof1_value: "93\u00a0%",
+    proof1_label: "obsazenost všech našich apartmánů",
+    proof2_value: "+25\u00a0%",
+    proof2_label: "tržba proti průměrnému 2+kk v\u00a0okolí",
+    proof3_value: "13",
+    proof3_label: "apartmánů v\u00a0provozu",
+    proof4_value: "520+",
+    proof4_label: "hodnocení od hostů",
+    proof_note: "Obsazenost: průměr 12 apartmánů za posledních 12 měsíců, u\u00a0nových od spuštění. Tržba: Praha 1, 12 měsíců. Zdroj: PriceLabs.",
     pricing_more_managed: "Podrobný ceník správy",
     pricing_more_own: "Podrobný ceník: systém, vybavení, přestavba výnosu",
     pr3_price_managed: "za pořizovací ceny + 12 %",
@@ -1371,6 +1387,17 @@ const translations = {
     hero_fact1: "Antam quản lý: phí 20%\u00a0+\u00a0DPH trên doanh thu sau phí. Tự vận hành: hệ thống từ 180\u00a0000\u00a0Kč, trả một lần.",
     hero_fact2: "13 căn đang quản lý, hơn 520 đánh giá của khách. Con số bên dưới lấy từ bảng kê thật.",
     hero_fact3: "Gửi thông tin, trong 24\u00a0giờ có dự tính. Không ràng buộc gì.",
+    // Pás čísel pod hero (3. 11. 2026). VI věty jsou návrh (Claude).
+    proof_aria: "Antam qua những con số",
+    proof1_value: "93%",
+    proof1_label: "tỷ lệ lấp đầy của tất cả căn hộ Antam",
+    proof2_value: "+25%",
+    proof2_label: "doanh thu so với căn 2+kk trung bình xung quanh",
+    proof3_value: "13",
+    proof3_label: "căn hộ đang vận hành",
+    proof4_value: "520+",
+    proof4_label: "đánh giá từ khách",
+    proof_note: "Tỷ lệ lấp đầy: trung bình 12 căn trong 12 tháng gần nhất, căn mới tính từ ngày bắt đầu đón khách. Doanh thu: Praha 1, 12 tháng. Nguồn: PriceLabs.",
     pricing_more_managed: "Bảng phí chi tiết",
     pricing_more_own: "Bảng phí chi tiết",
     pr3_price_managed: "theo giá gốc + 12%",

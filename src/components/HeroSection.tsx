@@ -119,7 +119,8 @@ const HeroSection = () => {
                 zodpoví co, pro koho, kolik a proč věřit. Čísla ze stejných
                 zdrojů jako karty a Kdo jsme. */}
             <ul {...enter(10, 1.0, 0.6)} className="mt-8 m-0 p-0 list-none space-y-1.5 font-body text-[13.5px] sm:text-sm leading-relaxed text-[rgba(232,222,208,0.78)] tnum max-w-[46ch]">
-              {(["hero_fact1", "hero_fact2", "hero_fact3"] as const).map((k) => (
+              {/* 3. 11. 2026: hero_fact2 (13 bytů, 520+) vypadl, ta čísla nese pás pod hero (ProofStrip). */}
+              {(["hero_fact1", "hero_fact3"] as const).map((k) => (
                 <li key={k} className="text-sm pl-4 relative before:content-[''] before:absolute before:left-0 before:top-[0.78em] before:w-1.5 before:h-px before:bg-[rgba(232,222,208,0.5)]">
                   {t(lang, k)}
                 </li>
