@@ -33,7 +33,7 @@ export const buildBusinessJsonLd = (lang: "cs" | "vi", page: PageKey = "home") =
   const meta = META[page];
   const canonical = SITE + pathFor(page, lang);
   // 3. 11. 2026: náhled pro sdílení podle jazyka (CZ a VI text v obrázku).
-  const ogImage = `${SITE}/${lang === "vi" ? "og-image-vn.jpg" : "og-image.jpg"}`;
+  const ogImage = `${SITE}/${lang === "vi" ? "og-image-vn.jpg" : "og-image.jpg"}?v=3`;
   return {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -73,7 +73,7 @@ export const SEO = ({ page }: { page: PageKey }) => {
   const locale = lang === "cs" ? "cs_CZ" : "vi_VN";
   const altLocale = lang === "cs" ? "vi_VN" : "cs_CZ";
   // 3. 11. 2026: náhled pro sdílení podle jazyka (CZ a VI text v obrázku).
-  const ogImage = `${SITE}/${lang === "vi" ? "og-image-vn.jpg" : "og-image.jpg"}`;
+  const ogImage = `${SITE}/${lang === "vi" ? "og-image-vn.jpg" : "og-image.jpg"}?v=3`;
 
   // Structured data: FAQ rich results + local business card. Kept in sync with
   // the on-page FAQ via translations so Google never sees a mismatch. The pure
