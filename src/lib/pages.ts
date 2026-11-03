@@ -52,7 +52,6 @@ const SECTION_HOME: Record<string, PageKey[]> = {
   cenik: ["home", "sprava", "vlastni-provoz"],
   system: ["vlastni-provoz"],
   "jak-zacina": ["sprava", "vlastni-provoz"],
-  "kdo-jsme": ["home"],
   faq: ["sprava", "vlastni-provoz"],
   srovnani: ["home", "vlastni-provoz"],
   garance: ["sprava"],

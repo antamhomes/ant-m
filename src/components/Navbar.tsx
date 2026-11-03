@@ -8,7 +8,7 @@ import { pathFor, sectionHref, type PageKey } from "@/lib/pages";
 
 /**
  * Navigace od 2. 11. 2026: dvě stránky pro dva lidi (Správa, Vlastní provoz),
- * kalkulačka a Kdo jsme jako kotvy, Poslat byt jako tlačítko. Odkaz na sekci
+ * kalkulačka jako kotva (Kdo jsme pryč 3. 11. 2026), Poslat byt jako tlačítko. Odkaz na sekci
  * z jiné stránky dostane cestu (lib/pages.sectionHref); na vlastní stránce
  * zůstane kotva. Aktuální stránka je označená aria-current.
  */
@@ -17,7 +17,6 @@ const NAV_LINKS: NavLink[] = [
   { key: "nav_sprava", page: "sprava" },
   { key: "nav_own", page: "vlastni-provoz" },
   { key: "nav_calculator", section: "kalkulacka" },
-  { key: "nav_about", section: "kdo-jsme" },
 ];
 
 const Navbar = () => {

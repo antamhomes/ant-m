@@ -14,13 +14,13 @@ describe("poradi sekci (tri stranky, 2. 11. 2026)", () => {
   const order = (file: string) =>
     [...src(file).matchAll(/<Suspense fallback=\{null\}><(\w+)(?: variant="[\w-]+")? \/><\/Suspense>/g)].map((m) => m[1]);
 
-  it("homepage je tridic: slib, dukaz, cislo, dve cesty, srovnani, kdo jsme, formular", () => {
+  it("homepage je tridic: slib, dukaz, cislo, dve cesty, srovnani, formular", () => {
     const index = src("src/pages/Index.tsx");
     expect(index).toContain('<PageShell page="home">');
     expect(index).toContain("<HeroSection />");
     expect(index).toContain('<PricingSection variant="both" />');
     expect(order("src/pages/Index.tsx")).toEqual([
-      "PortfolioSection", "CalculatorSection", "PricingSection", "ComparisonSection", "AboutSection", "ContactSection", "FinalCtaSection",
+      "PortfolioSection", "CalculatorSection", "PricingSection", "ComparisonSection", "ContactSection", "FinalCtaSection",
     ]);
     for (const s of ["SystemSection", "ProcessSection", "FAQSection", "ServicesSection", "OwnerReportSection", "GaranceSection", "HorizonSection", "ChoiceSection", "OccupancySection"])
       expect(index, `${s} nepatri na homepage`).not.toContain(s);
@@ -60,7 +60,7 @@ describe("poradi sekci (tri stranky, 2. 11. 2026)", () => {
 
   it("navigace vede na obe stranky a znaci tu otevrenou", () => {
     const nav = src("src/components/Navbar.tsx");
-    for (const k of ['"nav_sprava"', '"nav_own"', '"nav_calculator"', '"nav_about"', "aria-current"]) expect(nav).toContain(k);
+    for (const k of ['"nav_sprava"', '"nav_own"', '"nav_calculator"', "aria-current"]) expect(nav).toContain(k);
   });
 });
 
