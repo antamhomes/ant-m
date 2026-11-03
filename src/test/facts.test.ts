@@ -966,10 +966,13 @@ describe("model výnosu", () => {
     // váhy vzorku. Asymetrie je záměrná veřejná opatrnost, ne statistika.
     expect(operatorFactor("praha1", "public"), "naměřeno 1,032 na 3 bytech × 12 měsíců, bere se celé").toBe(1.032);
     expect(operatorFactor("praha2", "public"), "bez vlastního bytu -> výchozí 1,10 jako každý neměřený okres").toBe(1.1);
-    expect(operatorFactor("praha3", "public"), "1,21 na 2 bytech (54 dní) -> váha 0,5 -> 1,155").toBe(1.155);
+    expect(operatorFactor("praha3", "public"), "1,34 na 2 bytech (12 bytoměsíců, přeměřeno 4. 11. 2026) -> váha 0,5 -> 1,22").toBe(1.22);
     expect(operatorFactor("praha5", "public"), "1,08 je POD výchozí, bere se celé i když snižuje").toBe(1.08);
+    // 4. 11. 2026: okresy bez měření mimo Prahu 1–3 mají CÍLOVÝ faktor 1,25
+    // (rozhodnutí majitele, ne měření; web to říká v calc_method_window).
     for (const loc of ["praha4", "praha6", "praha7", "praha8", "praha9", "praha10"] as const)
-      expect(operatorFactor(loc, "public"), `${loc} bez měření zůstává na výchozí`).toBe(1.1);
+      expect(operatorFactor(loc, "public"), `${loc} bez měření: cílový výkon`).toBe(1.25);
+    expect(operatorFactor("praha2", "public"), "Praha 2 bez měření zůstává na výchozí").toBe(1.1);
     // Praha 8 se NESRÁŽÍ za vysoký násobek: uvnitř okresu je Karlín.
     expect(OPERATOR_EVIDENCE.praha8, "Praha 8 nemá vlastní měření a nesmí ho dostat od oka").toBeUndefined();
     expect(publicFactorFrom(1.21, 0.5)).toBe(1.155);
@@ -980,7 +983,7 @@ describe("model výnosu", () => {
     // Bez měření se neúčtuje žádný operátorský příplatek.
     expect(operatorFactor("praha1", "internal"), "naměřeno 1,032 při plné váze").toBe(1.032);
     expect(operatorFactor("praha5", "internal"), "naměřeno 1,08 při plné váze").toBe(1.08);
-    expect(operatorFactor("praha3", "internal"), "1,21 při váze 0,5 -> 1,105, tedy pod veřejnými 1,155").toBe(1.105);
+    expect(operatorFactor("praha3", "internal"), "1,34 při váze 0,5 -> 1,17, tedy pod veřejnými 1,22").toBe(1.17);
     for (const loc of ["praha2", "praha4", "praha6", "praha7", "praha8", "praha9", "praha10"] as const)
       expect(operatorFactor(loc, "internal"), `${loc} bez měření: underwriting bez příplatku`).toBe(1);
     // Podklad pod garancí nesmí být nikde optimističtější než veřejný odhad.
@@ -1135,11 +1138,11 @@ describe("model výnosu", () => {
       { label: "P1 2+kk 52 m², Staré Město", loc: "praha1", size: "2kk", m2: 52, ctvrt: "stare_mesto",
         base: "1BR", next: "2BR", w: 0.8, usedCtvrt: "stare_mesto", factor: 1.032, derived: false },
       { label: "P3 2+kk 55 m²", loc: "praha3", size: "2kk", m2: 55,
-        base: "1BR", next: "2BR", w: 1, usedCtvrt: null, factor: 1.155, derived: false },
+        base: "1BR", next: "2BR", w: 1, usedCtvrt: null, factor: 1.22, derived: false },
       { label: "P5 2+kk 40 m² (1BR produkt)", loc: "praha5", size: "2kk", m2: 40,
         base: "1BR", next: "2BR", w: 0, usedCtvrt: null, factor: 1.08, derived: false },
       { label: "P9 4+kk 105 m² (3BR dopočítané z 1BR)", loc: "praha9", size: "4kk", m2: 105,
-        base: "3BR", next: null, w: 0, usedCtvrt: null, factor: 1.1, derived: true },
+        base: "3BR", next: null, w: 0, usedCtvrt: null, factor: 1.25, derived: true },
     ];
     for (const c of cases) {
       const r = ownerMonthly(c.loc, c.size, { m2: c.m2, ctvrt: c.ctvrt });

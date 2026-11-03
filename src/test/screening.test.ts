@@ -6,7 +6,7 @@
 import { describe, it, expect } from "vitest";
 import {
   OPERATOR_EVIDENCE, OPERATOR_FACTOR_INTERNAL, OPERATOR_FACTOR_PUBLIC,
-  OPERATOR_FACTOR_DEFAULT, OPERATOR_FACTOR_DEFAULT_PUBLIC,
+  OPERATOR_FACTOR_DEFAULT, OPERATOR_FACTOR_DEFAULT_PUBLIC, OPERATOR_TARGET_PUBLIC,
   internalFactorFrom, publicFactorFrom, operatorFactor,
   isMeasured, ctvrtiOf, typicalArea, bandFor,
   type LocationKey, type SizeKey,
@@ -55,7 +55,7 @@ describe("I1 · interní operátorský faktor", () => {
     for (const d of DISTRICTS) {
       if (OPERATOR_EVIDENCE[d]) continue;
       expect(operatorFactor(d, "internal"), `${d} bez měření`).toBe(1.0);
-      expect(operatorFactor(d, "public"), `${d} veřejně`).toBe(1.1);
+      expect(operatorFactor(d, "public"), `${d} veřejně`).toBe(OPERATOR_TARGET_PUBLIC[d] ?? 1.1);
     }
   });
 

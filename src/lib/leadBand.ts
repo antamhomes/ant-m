@@ -84,6 +84,8 @@ export type LeadCalcPayload = {
   ltr_month: number | null;
   ltr_ctvrt_factor: number;
   derived: boolean;
+  /** Majitel v kalkulačce zapnul „Jsem plátce DPH“: owner_low/high jsou s 20 % místo 24,2 %. */
+  vat_payer?: boolean;
   result_band: LeadBand;
   ratio: number | null;
   annual_delta: number | null;

@@ -72,13 +72,14 @@ describe("classifyBand na skutečném modelu", () => {
     // Od 29. 10. 2026 (20 % + DPH místo 30 %) zůstává majiteli víc, Praha 4
     // 2+kk Běžný se tím přehoupl těsně nad 1,3× do viable; Větší zůstává weak.
     expect(bandOf("praha4", undefined, "2kk", "m").band).toBe("viable");
-    expect(bandOf("praha4", undefined, "2kk", "l").band).toBe("weak");
+    // 4. 11. 2026: cílový faktor 1,25 (Praha 4, 6–10 bez měření) posunul
+    // i Větší nad 1,3× do viable. Celoročně weak už v Praze nevychází nic.
+    expect(bandOf("praha4", undefined, "2kk", "l").band).toBe("viable");
   });
 
-  it("1kk Větší v Praze 6 je viable jen díky výjimce (bez ní by byl weak)", () => {
+  it("1kk Větší v Praze 6 je viable (od 4. 11. 2026 i bez výjimky, cílový faktor 1,25)", () => {
     const r = bandOf("praha6", undefined, "1kk", "l");
-    expect(r.ratio!).toBeLessThan(BAND_RULE.viableMin);
-    expect(r.annualDelta!).toBeLessThan(BAND_RULE.viableDeltaYearMin);
+    expect(r.ratio!).toBeGreaterThanOrEqual(BAND_RULE.viableMin);
     expect(r.band).toBe("viable");
   });
 });

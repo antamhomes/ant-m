@@ -31,11 +31,11 @@ const cta = () => card().querySelector("a[href='#kontakt']") as HTMLAnchorElemen
 const ctaText = () => strip(cta().textContent ?? "");
 const shareBtn = () => [...card().querySelectorAll("button")].find((b) => /WhatsApp|Zalo|Zkopírov/.test(b.textContent ?? ""));
 
-const bandFor = (loc: "praha1" | "praha4" | "praha9", ctvrt: string | undefined, size: "2kk", bucket?: "s" | "m" | "l") => {
+const bandFor = (loc: "praha1" | "praha4" | "praha9", ctvrt: string | undefined, size: "2kk", bucket?: "s" | "m" | "l", season: "year" | "winter" = "year") => {
   // 29. 10. 2026: od odměny 20 % + DPH zůstává majiteli víc, takže Praha 4
   // 2+kk Běžný už není weak; slabý příklad je stejný byt v pásmu Větší.
   const m2 = (bucket ? bucketsFor(size).find((b) => b.id === bucket)! : bucketFor(size, typicalArea(loc, size))).representativeM2!;
-  const r = ownerMonthly(loc, size, { season: "year", m2, ctvrt });
+  const r = ownerMonthly(loc, size, { season, m2, ctvrt });
   const ltr = rentFor(loc, size, m2, "mix", ctvrt);
   if (!r.supported) throw new Error("fixture musi byt podporovana");
   return { r, ltr, band: classifyBand({ supported: true, oversized: false, ownerHigh: r.high, ltrMonth: ltr, size, bucket: bucketFor(size, m2).id }) };
@@ -81,11 +81,13 @@ describe("karta vysledku podle pasma", () => {
     expect(line2.className).not.toContain("text-primary-foreground/80");
   });
 
-  it("NADEJNY byt (Praha 9 Ostatni 2+kk): veta viable, jinak jako silny", () => {
-    const f = bandFor("praha9", undefined, "2kk");
+  // 4. 11. 2026: cílový faktor 1,25 v okresech bez měření posunul Prahu 9 do
+  // strong; nadějný příklad je teď Praha 4 Ostatní 2+kk běžný (1,50×).
+  it("NADEJNY byt (Praha 4 Ostatni 2+kk): veta viable, jinak jako silny", () => {
+    const f = bandFor("praha4", undefined, "2kk");
     expect(f.band.band).toBe("viable");
     setup();
-    pick("praha9");
+    pick("praha4");
     const tx = text();
     expect(tx).toContain(strip(cs.calc_band_viable));
     expect(tx).not.toContain(strip(cs.calc_band_strong));
@@ -94,19 +96,22 @@ describe("karta vysledku podle pasma", () => {
     expect(shareBtn()).toBeTruthy();
   });
 
-  it("SLABY byt (Praha 4 Ostatni 2+kk Vetsi): stejne cislo, neutralni radek 2, vedlejsi CTA, bez slibu a bez sdileni", () => {
-    const f = bandFor("praha4", undefined, "2kk", "l");
+  // 4. 11. 2026: s cílovým faktorem 1,25 už žádný byt za celý rok nevychází
+  // weak; slabý příklad je Praha 4 2+kk Větší v zimní sezóně (~0,99×).
+  it("SLABY byt (Praha 4 Ostatni 2+kk Vetsi, zima): stejne cislo, neutralni radek 2, vedlejsi CTA, bez slibu a bez sdileni", () => {
+    const f = bandFor("praha4", undefined, "2kk", "l", "winter");
     expect(f.band.band).toBe("weak");
     setup();
     pick("praha4");
     fireEvent.click(screen.getByRole("button", { name: /Větší/ }));
+    fireEvent.click(screen.getByText(strip(cs.calc_season_toggle)));
+    fireEvent.click(screen.getByText(strip(cs.calc_season_winter)));
     const tx = text();
     // číslo se NEMĚNÍ podle pásma
     expect(tx).toContain(`~${strip((Math.round(f.r.high / 1000) * 1000).toLocaleString("cs-CZ"))} Kč`);
-    // benefit se pořád říká (je pravdivý), jen ne zlatě
-    expect(tx).toMatch(/\+\d[\d ]* Kč ročně/);
-    const line2 = [...card().querySelectorAll("p")].find((p) => /ročně/.test(p.textContent ?? ""))!;
-    expect(line2.className).toContain("text-primary-foreground/80");
+    // v zimě tu dlouhodobý nájem vychází podobně: poctivá věta místo zlatého +Kč
+    expect(tx).toContain(strip(cs.calc_ltr_higher));
+    expect(tx).not.toMatch(/\+\d[\d ]* Kč ročně/);
     expect(tx).toContain(strip(cs.calc_band_weak));
     expect(ctaText()).toContain(strip(cs.calc_cta_weak));
     expect(cta().className).toContain("btn-secondary-inverse");

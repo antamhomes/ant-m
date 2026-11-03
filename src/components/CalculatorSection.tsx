@@ -43,6 +43,10 @@ const CalculatorSection = () => {
   // aby s ním počítal i pětiletý graf v sekci Horizont.
   const { location, setLocation, ctvrt, setCtvrt, needsCtvrt, size, pickSize, bucket, pickBucket, m2, oversized, season, setSeason, fromShare } = useCalc();
   const [shared, setShared] = useState(false);
+  // Plátce DPH (3. 11. 2026): nese 20 % místo 24,2 %. Mění jen zobrazené číslo
+  // pro majitele; pásmo poptávky se dál počítá z výchozí varianty, aby se
+  // přepnutím neměnilo skórování ani CTA.
+  const [vatPayer, setVatPayer] = useState(false);
 
   useEffect(() => {
     if (fromShare) document.getElementById("kalkulacka")?.scrollIntoView({ block: "start" });
@@ -77,8 +81,9 @@ const CalculatorSection = () => {
   const result = useMemo(() => {
     // Bez lokality se NIC nepočítá: žádné výchozí okresní číslo, které by
     // návštěvníka ukotvilo dřív, než řekne, kde byt je.
-    if (location === null) return { r: null, ltr: 0, ratio: 0, ctvrtLabel: null, rentCtvrtFactor: 1 };
-    const r = ownerMonthly(location, size, { season, m2, ctvrt });
+    if (location === null) return { r: null, rBase: null, ltr: 0, ratio: 0, ctvrtLabel: null, rentCtvrtFactor: 1 };
+    const r = ownerMonthly(location, size, { season, m2, ctvrt, vatPayer });
+    const rBase = vatPayer ? ownerMonthly(location, size, { season, m2, ctvrt }) : r;
     // Nájem bere TÉŽ čtvrť jako STR strana. Bez toho by se lokální čitatel
     // dělil okresním jmenovatelem a násobek by se u silných čtvrtí nafoukl.
     const ltr = location === "jinde" ? 0 : rentFor(location as LocationKey, size, m2, "mix", ctvrt);
@@ -91,8 +96,8 @@ const CalculatorSection = () => {
     const ctvrtLabel = used ? ctvrtiOf(location).find((c) => c.id === used)?.label ?? null : null;
     // Jaký čtvrťový faktor nájmu se opravdu použil (1 = žádný). Do stopy i do leadu.
     const rentCtvrtFactor = location === "jinde" ? 1 : ctvrtRentFactor(location, ctvrt);
-    return { r, ltr, ratio, ctvrtLabel, rentCtvrtFactor };
-  }, [location, ctvrt, size, m2, season]);
+    return { r, rBase, ltr, ratio, ctvrtLabel, rentCtvrtFactor };
+  }, [location, ctvrt, size, m2, season, vatPayer]);
 
   // Pětiletka se v kartě výsledku ZÁMĚRNĚ neukazuje (31. 8. 2026). Roční rozdíl
   // je hrubý rozdíl zobrazených měsíčních příjmů, kdežto pětiletý scénář je po
@@ -141,7 +146,7 @@ const CalculatorSection = () => {
   // která karta stejně ukazuje. Číslo na kartě nemění a návštěvník ho nevidí.
   const band = classifyBand({
     supported: !!result.r?.supported, oversized,
-    ownerHigh: result.r?.supported ? result.r.high : null,
+    ownerHigh: result.rBase?.supported ? result.rBase.high : null,
     ltrMonth: result.ltr || null,
     size, bucket,
   });
@@ -172,6 +177,7 @@ const CalculatorSection = () => {
     ltr_month: result.ltr || null,
     ltr_ctvrt_factor: result.rentCtvrtFactor,
     derived: !!result.r?.supported && result.r.derived,
+    vat_payer: vatPayer,
     result_band: band.band,
     ratio: band.ratio,
     annual_delta: band.annualDelta,
@@ -426,6 +432,27 @@ const CalculatorSection = () => {
               </div>
             </details>
 
+            {/* PLÁTCE DPH (3. 11. 2026): jediný přepínač, který mění srážku. Investor
+                plátce DPH si DPH z odměny odečte, takže nese 20 %, ne 24,2 %. */}
+            <button
+              type="button"
+              role="switch"
+              aria-checked={vatPayer}
+              onClick={() => { markStart(); trackEvent("calc_vat_toggle", { on: !vatPayer }); setVatPayer(!vatPayer); }}
+              className="flex items-start gap-3 text-left font-body"
+            >
+              <span
+                aria-hidden="true"
+                className={`mt-0.5 relative inline-flex h-5 w-9 shrink-0 rounded-full border transition-colors ${vatPayer ? "bg-primary border-primary" : "bg-card border-border"}`}
+              >
+                <span className={`absolute top-1/2 -translate-y-1/2 h-3.5 w-3.5 rounded-full transition-all ${vatPayer ? "left-[18px] bg-primary-foreground" : "left-[2px] bg-muted-foreground/60"}`} />
+              </span>
+              <span className="leading-tight">
+                <span className="block text-sm font-semibold text-foreground">{t(lang, "calc_vat_toggle")}</span>
+                <span className="block mt-0.5 text-[12.5px] text-muted-foreground text-pretty">{t(lang, "calc_vat_toggle_sub")}</span>
+              </span>
+            </button>
+
           </Reveal>
 
           {/* POŘADÍ NA MOBILU. 2A dávala kartu s číslem PŘED vstupy; od patche 3
@@ -512,7 +539,7 @@ const CalculatorSection = () => {
                         {t(lang, "calc_net")}
                       </p>
                       <p className="font-body text-[12px] text-primary-foreground/70 -mt-0.5 mb-1">
-                        {t(lang, "calc_net_sub")}
+                        {t(lang, vatPayer ? "calc_net_sub_vat" : "calc_net_sub")}
                       </p>
                       {/* HEADLINE = dosažitelný vršek UŽ SPOČÍTANÉHO rozpětí (31. 8. 2026),
                           označený jako POTENCIÁL. Od 1. 9. 2026 je to JEDINÉ veřejné číslo:

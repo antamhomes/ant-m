@@ -63,7 +63,7 @@ describe("golden fixtures", () => {
   expect(vinohrady.operatorMeasured).toBe(false);
 
   const zizkov = g("praha3", "praha3/zizkov", "2kk", 55);
-  expect(zizkov.operatorFactorUsed).toBe(1.105);
+  expect(zizkov.operatorFactorUsed).toBe(1.17); // přeměřeno 4. 11. 2026 (1,34 při váze 0,5)
 
   const p4 = g("praha4", null, "2kk", 50);
   expect(p4.verdict).toBe("not_worth");

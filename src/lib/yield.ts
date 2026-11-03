@@ -263,7 +263,12 @@ export const OPERATOR_EVIDENCE: Partial<Record<LocationKey, { measured: number; 
   // měsíců 2025_08..2026_07, tržba za ubytování PO SLEVÁCH proti avg_revenue
   // okresu z data/pricelabs-2026-08/praha1.json.
   praha1: { measured: 1.032, weight: 1.00, sample: "3 byty × 12 měsíců (402 1,126 · 405 1,028 · 302 0,942)" },
-  praha3: { measured: 1.21, weight: 0.50, sample: "2 byty (Modern AC 1,31 / 139 dní · Garden APT 1,21 / 54 dní)" },
+  // PŘEMĚŘENO 4. 11. 2026: okno 2025_10..2026_09 proti avg_revenue 2BR polygonu
+  // „Praha 3 official boundary" (PriceLabs market_research 3. 11. 2026), vlastní
+  // tržba za ubytování z PriceLabs bookings reportu, u Booking.com VČETNĚ 12% DPH
+  // (Booking ho vede zvlášť, tržní ceny z Airbnb ho v sobě mají; bez toho by
+  // vlastní strana vycházela o 4–8 % níž). 12 bytoměsíců, váha zůstává 0,50.
+  praha3: { measured: 1.34, weight: 0.50, sample: "2 byty, 12 bytoměsíců 3–9/2026 (Modern AC 1,46 · free movies 1,17)" },
   praha5: { measured: 1.08, weight: 1.00, sample: "1 byt (Mozart, 113 dní)" },
 };
 
@@ -305,7 +310,20 @@ export const publicFactorFrom = (measured: number, weight: number): number =>
     ? measured
     : Math.round((OPERATOR_FACTOR_DEFAULT_PUBLIC + weight * (measured - OPERATOR_FACTOR_DEFAULT_PUBLIC)) * 1000) / 1000;
 
+/**
+ * CÍLOVÝ VÝKON (rozhodnutí majitele 4. 11. 2026): v okresech, kde Antam zatím
+ * NEMÁ ani jeden změřený byt, veřejná kalkulačka počítá s 1,25 místo výchozích
+ * 1,10. NENÍ to měření: portfolio po korekci DPH vychází průměrně ~1,06, Praha 1
+ * 0,99, Praha 3 1,34, Praha 5 1,08. Web to proto u metodiky říká nahlas
+ * (calc_method_window). Praha 1, 2 a 3 se vědomě nechávají mimo, Praha 5 má
+ * vlastní měření. Interní podklad pod garancí na tohle NESAHÁ (dál 1,00 bez měření).
+ */
+export const OPERATOR_TARGET_PUBLIC: Partial<Record<LocationKey, number>> = {
+  praha4: 1.25, praha6: 1.25, praha7: 1.25, praha8: 1.25, praha9: 1.25, praha10: 1.25,
+};
+
 export const OPERATOR_FACTOR_PUBLIC: Partial<Record<LocationKey, number>> = {
+  ...OPERATOR_TARGET_PUBLIC,
   // Praha 2 tu měla ruční 0,95. Zrušeno 2. 9. 2026: bez měření platí výchozí
   // 1,10 jako pro každý jiný neměřený okres (viz operatorFactor níž).
   ...Object.fromEntries(
@@ -1283,10 +1301,12 @@ export type OwnerMonthly = {
     config: { band: Band; evidence: string } | null };
 } | { supported: false; band: Band; guests: number };
 
-const split = (gross: number, occupancy: number): Split => {
+const split = (gross: number, occupancy: number, fee: number = MGMT_FEE_GROSS): Split => {
   const platformFee = Math.round(PLATFORM_FEE * gross);
   const netRevenue = gross - platformFee;
-  const mgmt = Math.round(netRevenue * MGMT_FEE_GROSS); // odměna včetně DPH: veřejná kalkulačka počítá pro majitele, který DPH neodečte
+  // Výchozí je odměna včetně DPH (24,2 %): veřejná kalkulačka počítá pro majitele,
+  // který DPH neodečte. Plátce DPH (přepínač, 3. 11. 2026) nese jen 20 %.
+  const mgmt = Math.round(netRevenue * fee);
   return { occupancy, gross, platformFee, netRevenue, mgmt, net: netRevenue - mgmt };
 };
 
@@ -1311,8 +1331,11 @@ const split = (gross: number, occupancy: number): Split => {
 export function ownerMonthly(
   location: string,
   size: SizeKey,
-  { season = "year" as SeasonKey, m2, ctvrt = null, scope = "public" as "public" | "internal", config }: {
+  { season = "year" as SeasonKey, m2, ctvrt = null, scope = "public" as "public" | "internal", config, vatPayer = false }: {
     season?: SeasonKey; m2?: number; ctvrt?: string | null;
+    /** Majitel je plátce DPH: DPH z odměny si odečte, nese tedy MGMT_FEE (20 %)
+     *  místo MGMT_FEE_GROSS (24,2 %). Na tržby, provizi ani faktor nesahá. */
+    vatPayer?: boolean;
     scope?: "public" | "internal";
     /** jen pro scope "internal": pásmo zjištěné na prohlídce, nahradí odhad z m² */
     config?: ObservedConfig;
@@ -1362,11 +1385,12 @@ export function ownerMonthly(
     highGross = mid * (1 + SPREAD.minWidth / 2);
   }
   const k = operatorFactor(location, scope);
-  const market = split(Math.round(lowGross * k * AVAILABILITY), marketOcc);
-  const antam = split(Math.round(highGross * k * AVAILABILITY), marketOcc);
+  const fee = vatPayer ? MGMT_FEE : MGMT_FEE_GROSS;
+  const market = split(Math.round(lowGross * k * AVAILABILITY), marketOcc, fee);
+  const antam = split(Math.round(highGross * k * AVAILABILITY), marketOcc, fee);
   // Kotva = highGross bez faktoru: stejné překlopení pásma (plná váha w),
   // žádný prezentační spodek. Potenciál s Antam je pak PŘESNĚ kotva × faktor.
-  const marketAnchor = split(Math.round(highGross * AVAILABILITY), marketOcc);
+  const marketAnchor = split(Math.round(highGross * AVAILABILITY), marketOcc, fee);
   return {
     supported: true, band, adr, derived, guests, market, antam, marketAnchor,
     low: market.net, high: antam.net, mid: Math.round((market.net + antam.net) / 2),
