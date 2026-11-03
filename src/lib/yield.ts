@@ -329,6 +329,11 @@ export const OPERATOR_FACTOR_PUBLIC: Partial<Record<LocationKey, number>> = {
   ...Object.fromEntries(
     Object.entries(OPERATOR_EVIDENCE).map(([loc, e]) => [loc, publicFactorFrom(e.measured, e.weight)]),
   ),
+  // Rozhodnutí 4. 11. 2026: Praha 3 veřejně 1,28 = naměřených 1,34 s vahou
+  // 0,75, aby změřený okres nestál pod cílovými 1,25 okresů bez měření. Plných
+  // 1,34 neprošlo backtestem: vršek by byl o 23 % nad publikovanou kartou
+  // Moderního apartmánu se zahradou (pojistka v testu je 20 %). Interně 1,17.
+  praha3: 1.28,
 };
 /**
  * Interní faktor: TÁŽ mechanika jako veřejná, ale kotvená na 1,00 místo 1,10.

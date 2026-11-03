@@ -27,3 +27,5 @@ Avg_revenue 1BR P5: 49527 38288 70303 24580 26180 37914 51733 55774 44993 49287 
 Okresy bez měření mimo Prahu 1–3 (P4, P6–P10) dostávají veřejný CÍLOVÝ faktor
 1,25 (`OPERATOR_TARGET_PUBLIC`). Není podložený měřením (portfolio ~1,06);
 web to říká v calc_method_window. Interní underwriting zůstává 1,00.
+Praha 3 veřejně 1,28 (naměřených 1,34 s vahou 0,75), aby nestála pod 1,25;
+plných 1,34 by porušilo backtest karet (vršek +23 % nad kartou Zahrada, limit 20 %).

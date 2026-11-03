@@ -966,7 +966,7 @@ describe("model výnosu", () => {
     // váhy vzorku. Asymetrie je záměrná veřejná opatrnost, ne statistika.
     expect(operatorFactor("praha1", "public"), "naměřeno 1,032 na 3 bytech × 12 měsíců, bere se celé").toBe(1.032);
     expect(operatorFactor("praha2", "public"), "bez vlastního bytu -> výchozí 1,10 jako každý neměřený okres").toBe(1.1);
-    expect(operatorFactor("praha3", "public"), "1,34 na 2 bytech (12 bytoměsíců, přeměřeno 4. 11. 2026) -> váha 0,5 -> 1,22").toBe(1.22);
+    expect(operatorFactor("praha3", "public"), "1,34 na 2 bytech (12 bytoměsíců, přeměřeno 4. 11. 2026), veřejně s vahou 0,75 (rozhodnutí 4. 11.)").toBe(1.28);
     expect(operatorFactor("praha5", "public"), "1,08 je POD výchozí, bere se celé i když snižuje").toBe(1.08);
     // 4. 11. 2026: okresy bez měření mimo Prahu 1–3 mají CÍLOVÝ faktor 1,25
     // (rozhodnutí majitele, ne měření; web to říká v calc_method_window).
@@ -983,7 +983,7 @@ describe("model výnosu", () => {
     // Bez měření se neúčtuje žádný operátorský příplatek.
     expect(operatorFactor("praha1", "internal"), "naměřeno 1,032 při plné váze").toBe(1.032);
     expect(operatorFactor("praha5", "internal"), "naměřeno 1,08 při plné váze").toBe(1.08);
-    expect(operatorFactor("praha3", "internal"), "1,34 při váze 0,5 -> 1,17, tedy pod veřejnými 1,22").toBe(1.17);
+    expect(operatorFactor("praha3", "internal"), "1,34 při váze 0,5 -> 1,17, tedy pod veřejnými 1,28").toBe(1.17);
     for (const loc of ["praha2", "praha4", "praha6", "praha7", "praha8", "praha9", "praha10"] as const)
       expect(operatorFactor(loc, "internal"), `${loc} bez měření: underwriting bez příplatku`).toBe(1);
     // Podklad pod garancí nesmí být nikde optimističtější než veřejný odhad.
@@ -1138,7 +1138,7 @@ describe("model výnosu", () => {
       { label: "P1 2+kk 52 m², Staré Město", loc: "praha1", size: "2kk", m2: 52, ctvrt: "stare_mesto",
         base: "1BR", next: "2BR", w: 0.8, usedCtvrt: "stare_mesto", factor: 1.032, derived: false },
       { label: "P3 2+kk 55 m²", loc: "praha3", size: "2kk", m2: 55,
-        base: "1BR", next: "2BR", w: 1, usedCtvrt: null, factor: 1.22, derived: false },
+        base: "1BR", next: "2BR", w: 1, usedCtvrt: null, factor: 1.28, derived: false },
       { label: "P5 2+kk 40 m² (1BR produkt)", loc: "praha5", size: "2kk", m2: 40,
         base: "1BR", next: "2BR", w: 0, usedCtvrt: null, factor: 1.08, derived: false },
       { label: "P9 4+kk 105 m² (3BR dopočítané z 1BR)", loc: "praha9", size: "4kk", m2: 105,
