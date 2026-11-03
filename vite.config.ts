@@ -120,6 +120,8 @@ function prerenderPagesPlugin(): Plugin {
         html = html.replace(/<link rel="alternate" hreflang="x-default" href="[^"]*" \/>/, `<link rel="alternate" hreflang="x-default" href="${cs}" />`);
         html = html.replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:title" content="${title}" />`);
         html = html.replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:description" content="${desc}" />`);
+        // Náhled pro sdílení podle jazyka (3. 11. 2026).
+        if (lang === "vi") html = html.replace(/og-image\.jpg/g, "og-image-vn.jpg");
         if (lang === "vi") html = html.replace(/playfair-display-latin-ext-500-normal\.woff2/, "playfair-display-vietnamese-500-normal.woff2");
         this.emitFile({ type: "asset", fileName, source: html });
       }
