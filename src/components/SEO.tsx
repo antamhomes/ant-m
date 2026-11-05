@@ -12,7 +12,7 @@ import { META } from "@/lib/seoMeta";
 
 /** Otázky z FAQ dané stránky; homepage FAQ nemá, nese ji podstránka správy. */
 const FAQ_KEYS: Record<PageKey, readonly string[]> = {
-  home: ["faq18", "faq5", "faq9", "faq16", "faq19", "faq13"],
+  home: ["lz_faq1", "lz_faq2", "lz_faq3", "lz_faq4", "lz_faq5", "lz_faq6", "lz_faq7", "lz_faq8"],
   sprava: ["faq18", "faq5", "faq9", "faq4", "faq6", "faq16", "faq1", "faq11", "faq12", "faq10", "faq15", "faq3", "faq7", "faq13"],
   "vlastni-provoz": ["faq20", "faq21", "faq22", "faq19", "faq10", "faq12", "faq14"],
 };
@@ -47,15 +47,15 @@ export const buildBusinessJsonLd = (lang: "cs" | "vi", page: PageKey = "home") =
     description: meta[lang].desc,
     email: t(lang, "footer_email"),
     telephone: t(lang, "footer_phone"),
-    priceRange: "20 % + DPH z příjmu po poplatcích, nebo systém jednorázově od 180 000 Kč",
+    priceRange: "Nájem ve výši splátky hypotéky na 3 roky; provozní systém jednorázově za 270 000 Kč",
     areaServed: { "@type": "City", name: "Praha" },
     address: { "@type": "PostalAddress", streetAddress: "Příčná 1892/4", addressLocality: "Praha 1", postalCode: "110 00", addressCountry: "CZ" },
-    knowsLanguage: ["cs", "vi"],
+    knowsLanguage: ["cs"],
     makesOffer: {
       "@type": "Offer",
       itemOffered: {
         "@type": "Service",
-        name: lang === "cs" ? "Správa krátkodobých pronájmů (Airbnb, Booking.com)" : "Quản lý cho thuê ngắn hạn (Airbnb, Booking.com)",
+        name: "Nájem investičního bytu na 3 roky ve výši splátky hypotéky",
         areaServed: "Praha",
       },
     },
@@ -69,9 +69,7 @@ export const SEO = ({ page }: { page: PageKey }) => {
   const current = meta[lang];
   const canonical = SITE + pathFor(page, lang);
   const csUrl = SITE + pathFor(page, "cs");
-  const viUrl = SITE + pathFor(page, "vi");
-  const locale = lang === "cs" ? "cs_CZ" : "vi_VN";
-  const altLocale = lang === "cs" ? "vi_VN" : "cs_CZ";
+  const locale = "cs_CZ";
   // 3. 11. 2026: náhled pro sdílení podle jazyka (CZ a VI text v obrázku).
   const ogImage = `${SITE}/${lang === "vi" ? "og-image-vn.jpg" : "og-image.jpg"}?v=3`;
 
@@ -86,7 +84,7 @@ export const SEO = ({ page }: { page: PageKey }) => {
   // tags for crawlers; this keeps them in sync when the visitor switches
   // language client-side, and injects the structured data. No head library.
   useEffect(() => {
-    document.documentElement.lang = lang === "cs" ? "cs" : "vi";
+    document.documentElement.lang = "cs";
     document.title = current.title;
     const setMeta = (attr: "name" | "property", key: string, content: string) => {
       let el = document.head.querySelector<HTMLMetaElement>(`meta[${attr}="${key}"]`);
@@ -121,7 +119,6 @@ export const SEO = ({ page }: { page: PageKey }) => {
     setMeta("name", "description", current.desc);
     setLink("canonical", canonical);
     setLink("alternate", csUrl, "cs");
-    setLink("alternate", viUrl, "vi");
     setLink("alternate", csUrl, "x-default");
     setMeta("property", "og:type", "website");
     setMeta("property", "og:site_name", "Antam Homes");
@@ -129,7 +126,6 @@ export const SEO = ({ page }: { page: PageKey }) => {
     setMeta("property", "og:description", current.desc);
     setMeta("property", "og:url", canonical);
     setMeta("property", "og:locale", locale);
-    setMeta("property", "og:locale:alternate", altLocale);
     setMeta("property", "og:image", ogImage);
     setMeta("name", "twitter:card", "summary_large_image");
     setMeta("name", "twitter:title", current.title);

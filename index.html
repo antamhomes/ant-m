@@ -3,16 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0C221E" />
+    <meta name="theme-color" content="#0E1A2B" />
     <link rel="icon" href="/favicon.png" sizes="32x32" type="image/png" />
     <link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <title>Správa krátkodobých pronájmů a Airbnb v Praze | Antam Homes</title>
-    <meta name="description" content="Správa krátkodobého pronájmu v Praze: hosté, úklid, ceny i vyúčtování. Ke každému přijatému bytu písemné roční minimum. Odměna 20 % + DPH z příjmu po poplatcích, nebo Provozní systém Antam k vlastnímu provozu." />
+    <title>Splácíme hypotéky investorům: nájem bytu na 3 roky | Antam</title>
+    <meta name="description" content="Pronajmeme si váš byt v Praze na 3 roky a platíme nájem ve výši vaší splátky hypotéky. Každý měsíc, i když je byt prázdný. Byt posoudíme před koupí, do 24 hodin." />
     <meta name="author" content="Antam Homes" />
     <link rel="canonical" href="https://www.antamhomes.com/" />
     <link rel="alternate" hreflang="cs" href="https://www.antamhomes.com/" />
-    <link rel="alternate" hreflang="vi" href="https://www.antamhomes.com/vn" />
     <link rel="alternate" hreflang="x-default" href="https://www.antamhomes.com/" />
 
     <!-- Self-hosted fonts (same origin, no third-party round trip). Only the
@@ -23,9 +22,6 @@
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/playfair-display-latin-ext-500-normal.woff2" />
     <link rel="preload" as="font" type="font/woff2" crossorigin href="/fonts/playfair-display-latin-700-normal.woff2" />
     <!-- Hero image is the LCP element and lifts the splash: start fetching before any JS runs. -->
-    <link rel="preload" as="image" href="/hero/bedroom-1280.webp"
-      imagesrcset="/hero/bedroom-768.webp 768w, /hero/bedroom-1280.webp 1280w, /hero/bedroom-1920.webp 1920w"
-      imagesizes="100vw" fetchpriority="high" />
     <style>
       @font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/dm-sans-latin-400-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
       @font-face{font-family:'DM Sans';font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/dm-sans-latin-ext-400-normal.woff2) format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
@@ -51,16 +47,15 @@
     <meta property="og:site_name" content="Antam Homes" />
     <meta property="og:url" content="https://www.antamhomes.com/" />
     <meta property="og:locale" content="cs_CZ" />
-    <meta property="og:locale:alternate" content="vi_VN" />
-    <meta property="og:title" content="Správa krátkodobých pronájmů a Airbnb v Praze | Antam Homes" />
-    <meta property="og:description" content="Správa krátkodobého pronájmu v Praze: hosté, úklid, ceny i vyúčtování. Ke každému přijatému bytu písemné roční minimum. Odměna 20 % + DPH z příjmu po poplatcích, nebo Provozní systém Antam k vlastnímu provozu." />
+    <meta property="og:title" content="Splácíme hypotéky investorům: nájem bytu na 3 roky | Antam" />
+    <meta property="og:description" content="Pronajmeme si váš byt v Praze na 3 roky a platíme nájem ve výši vaší splátky hypotéky. Každý měsíc, i když je byt prázdný. Byt posoudíme před koupí, do 24 hodin." />
     <meta property="og:image" content="https://www.antamhomes.com/og-image.jpg?v=3" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Správa krátkodobých pronájmů a Airbnb v Praze | Antam Homes" />
-    <meta name="twitter:description" content="Správa krátkodobého pronájmu v Praze: hosté, úklid, ceny i vyúčtování. Ke každému přijatému bytu písemné roční minimum. Odměna 20 % + DPH z příjmu po poplatcích, nebo Provozní systém Antam k vlastnímu provozu." />
+    <meta name="twitter:title" content="Splácíme hypotéky investorům: nájem bytu na 3 roky | Antam" />
+    <meta name="twitter:description" content="Pronajmeme si váš byt v Praze na 3 roky a platíme nájem ve výši vaší splátky hypotéky. Každý měsíc, i když je byt prázdný. Byt posoudíme před koupí, do 24 hodin." />
     <meta name="twitter:image" content="https://www.antamhomes.com/og-image.jpg?v=3" />
 
     <!-- Brand splash: shown instantly (before any JS), dismissed by src/main.tsx once the hero has painted. -->
@@ -72,7 +67,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background: #0c221e;
+        background: #0E1A2B;
         opacity: 1;
         transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1);
       }
@@ -94,7 +89,7 @@
         transform: translateY(-6px) scale(1.03);
       }
       #brand-splash .wordmark-svg {
-        width: clamp(230px, 44vw, 400px);
+        width: clamp(150px, 26vw, 240px);
         height: auto;
         display: block;
       }
@@ -123,17 +118,12 @@
   <body>
     <div id="brand-splash" aria-hidden="true">
       <div class="wordmark">
-<svg class="wordmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -36.02 452.26 38.06" role="img" aria-label="Antam Homes">
+<svg class="wordmark-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 -36.02 208.5 38.06" role="img" aria-label="Antam">
         <path transform="translate(0.00,0) scale(0.04800,-0.04800)" d="M368 710 611 84Q625 48 642.5 34.5Q660 21 674 20V0Q644 2 603.5 2.5Q563 3 522 3Q476 3 435.0 2.5Q394 2 370 0V20Q421 22 434.5 37.5Q448 53 428 104L368 268H150L124 199Q102 144 97.5 109.0Q93 74 102.5 55.0Q112 36 133.5 28.5Q155 21 185 20V0Q152 2 122.0 2.5Q92 3 61 3Q39 3 19.5 2.5Q0 2 -15 0V20Q6 24 28.0 47.0Q50 70 71 125L299 710Q315 709 333.5 709.0Q352 709 368 710ZM361 288 262 558 158 288Z" fill="#C2A46D"/>
         <path transform="translate(40.66,0) scale(0.04800,-0.04800)" d="M693 708V688Q661 684 645.0 671.5Q629 659 623.5 632.0Q618 605 618 556V-2Q606 -1 593.5 -1.0Q581 -1 567 -2L133 548V164Q133 109 139.0 79.5Q145 50 165.5 37.5Q186 25 230 20V0Q211 2 180.0 2.5Q149 3 122 3Q99 3 75.0 2.5Q51 2 35 0V20Q67 25 83.0 37.0Q99 49 104.5 76.5Q110 104 110 152V602Q110 639 104.5 656.5Q99 674 82.5 680.5Q66 687 35 688V708Q51 707 75.0 706.0Q99 705 122 705Q146 705 168.0 706.0Q190 707 208 708L595 231V544Q595 599 589.0 628.5Q583 658 562.5 671.0Q542 684 498 688V708Q517 707 548.0 706.0Q579 705 606 705Q630 705 653.5 706.0Q677 707 693 708Z" fill="#C2A46D"/>
         <path transform="translate(83.95,0) scale(0.04800,-0.04800)" d="M642 708Q638 657 636.5 610.0Q635 563 635 538Q635 516 636.0 496.0Q637 476 638 462H615Q599 546 574.5 595.0Q550 644 516.0 664.5Q482 685 436 685H413V114Q413 74 421.5 54.0Q430 34 453.0 27.5Q476 21 520 20V0Q489 1 437.5 2.0Q386 3 330 3Q275 3 226.0 2.0Q177 1 147 0V20Q192 21 215.0 27.5Q238 34 246.0 54.0Q254 74 254 114V685H232Q186 685 152.0 664.5Q118 644 94.0 595.5Q70 547 52 462H29Q31 476 31.5 496.0Q32 516 32 538Q32 563 30.5 610.0Q29 657 25 708Q71 707 125.5 706.0Q180 705 235 705H434Q488 705 543.0 706.0Q598 707 642 708Z" fill="#C2A46D"/>
         <path transform="translate(124.66,0) scale(0.04800,-0.04800)" d="M368 710 611 84Q625 48 642.5 34.5Q660 21 674 20V0Q644 2 603.5 2.5Q563 3 522 3Q476 3 435.0 2.5Q394 2 370 0V20Q421 22 434.5 37.5Q448 53 428 104L368 268H150L124 199Q102 144 97.5 109.0Q93 74 102.5 55.0Q112 36 133.5 28.5Q155 21 185 20V0Q152 2 122.0 2.5Q92 3 61 3Q39 3 19.5 2.5Q0 2 -15 0V20Q6 24 28.0 47.0Q50 70 71 125L299 710Q315 709 333.5 709.0Q352 709 368 710ZM361 288 262 558 158 288Z" fill="#C2A46D"/>
         <path transform="translate(165.31,0) scale(0.04800,-0.04800)" d="M894 708V688Q862 687 846.0 680.5Q830 674 824.5 656.5Q819 639 819 602V106Q819 70 824.5 52.0Q830 34 846.0 28.0Q862 22 894 20V0Q866 2 823.5 2.5Q781 3 737 3Q689 3 647.0 2.5Q605 2 579 0V20Q613 22 630.5 28.0Q648 34 654.0 52.0Q660 70 660 106V629L419 -1H403L133 643V164Q133 109 139.0 79.5Q145 50 165.5 37.5Q186 25 230 20V0Q211 2 180.0 2.5Q149 3 122 3Q99 3 75.0 2.5Q51 2 35 0V20Q67 25 83.0 37.0Q99 49 104.5 76.5Q110 104 110 152V602Q110 639 104.5 656.5Q99 674 82.5 680.5Q66 687 35 688V708Q51 707 75.0 706.0Q99 705 122 705Q165 705 206.5 706.0Q248 707 280 708L482 221L666 705H737Q781 705 823.5 706.0Q866 707 894 708Z" fill="#C2A46D"/>
-        <path transform="translate(238.27,0) scale(0.04800,-0.04800)" d="M458 0V20Q490 22 506.0 28.0Q522 34 527.5 52.0Q533 70 533 106V346H268V106Q268 70 273.5 52.0Q279 34 295.0 28.0Q311 22 343 20V0Q316 2 275.0 2.5Q234 3 192 3Q143 3 101.5 2.5Q60 2 34 0V20Q66 22 82.0 28.0Q98 34 103.5 52.0Q109 70 109 106V602Q109 639 103.5 656.5Q98 674 81.5 680.5Q65 687 34 688V708Q60 707 101.5 706.0Q143 705 192 705Q234 705 275.0 706.0Q316 707 343 708V688Q311 687 294.5 680.5Q278 674 273.0 656.5Q268 639 268 602V366H533V602Q533 639 527.5 656.5Q522 674 505.5 680.5Q489 687 458 688V708Q485 707 528.5 706.0Q572 705 615 705Q661 705 701.5 706.0Q742 707 767 708V688Q735 687 718.5 680.5Q702 674 697.0 656.5Q692 639 692 602V106Q692 70 697.5 52.0Q703 34 719.0 28.0Q735 22 767 20V0Q742 2 701.5 2.5Q661 3 615 3Q572 3 528.5 2.5Q485 2 458 0Z" fill="#C2A46D"/>
-        <path transform="translate(285.31,0) scale(0.04800,-0.04800)" d="M397 722Q503 722 582.5 679.0Q662 636 706.0 555.5Q750 475 750 360Q750 248 705.0 164.0Q660 80 579.5 33.0Q499 -14 396 -14Q290 -14 210.5 29.0Q131 72 87.0 153.0Q43 234 43 348Q43 460 88.5 544.0Q134 628 213.5 675.0Q293 722 397 722ZM393 704Q337 704 295.5 659.0Q254 614 231.5 535.0Q209 456 209 352Q209 246 234.5 167.5Q260 89 303.5 46.5Q347 4 400 4Q456 4 497.5 49.0Q539 94 561.5 173.5Q584 253 584 356Q584 463 558.5 541.0Q533 619 489.5 661.5Q446 704 393 704Z" fill="#C2A46D"/>
-        <path transform="translate(332.02,0) scale(0.04800,-0.04800)" d="M894 708V688Q862 687 846.0 680.5Q830 674 824.5 656.5Q819 639 819 602V106Q819 70 824.5 52.0Q830 34 846.0 28.0Q862 22 894 20V0Q866 2 823.5 2.5Q781 3 737 3Q689 3 647.0 2.5Q605 2 579 0V20Q613 22 630.5 28.0Q648 34 654.0 52.0Q660 70 660 106V629L419 -1H403L133 643V164Q133 109 139.0 79.5Q145 50 165.5 37.5Q186 25 230 20V0Q211 2 180.0 2.5Q149 3 122 3Q99 3 75.0 2.5Q51 2 35 0V20Q67 25 83.0 37.0Q99 49 104.5 76.5Q110 104 110 152V602Q110 639 104.5 656.5Q99 674 82.5 680.5Q66 687 35 688V708Q51 707 75.0 706.0Q99 705 122 705Q165 705 206.5 706.0Q248 707 280 708L482 221L666 705H737Q781 705 823.5 706.0Q866 707 894 708Z" fill="#C2A46D"/>
-        <path transform="translate(385.15,0) scale(0.04800,-0.04800)" d="M569 708Q565 664 563.5 623.0Q562 582 562 560Q562 540 563.0 522.0Q564 504 565 492H542Q532 565 511.0 607.5Q490 650 456.5 667.5Q423 685 378 685H337Q308 685 293.0 680.0Q278 675 273.0 660.0Q268 645 268 614V366H300Q330 366 351.0 378.5Q372 391 385.5 411.5Q399 432 407.0 455.0Q415 478 419 498H442Q438 441 438.5 411.0Q439 381 439.0 356.0Q439 331 440.0 301.0Q441 271 445 214H422Q417 249 403.5 279.0Q390 309 365.0 327.5Q340 346 300 346H268V94Q268 63 273.0 48.0Q278 33 293.0 28.0Q308 23 337 23H386Q431 23 465.5 42.5Q500 62 524.5 109.0Q549 156 562 236H585Q582 204 582 152Q582 129 583.0 87.0Q584 45 589 0Q538 2 474.0 2.5Q410 3 360 3H296Q257 3 212.0 2.5Q167 2 121.0 1.5Q75 1 34 0V20Q66 22 82.0 28.0Q98 34 103.5 52.0Q109 70 109 106V602Q109 639 103.5 656.5Q98 674 81.5 680.5Q65 687 34 688V708Q75 707 121.0 706.5Q167 706 212.0 705.5Q257 705 296 705H360Q406 705 464.5 705.5Q523 706 569 708Z" fill="#C2A46D"/>
-        <path transform="translate(424.22,0) scale(0.04800,-0.04800)" d="M284 721Q343 721 375.0 708.5Q407 696 430 682Q442 675 449.5 671.5Q457 668 464 668Q474 668 478.5 679.0Q483 690 486 712H509Q508 693 506.5 666.5Q505 640 504.5 597.0Q504 554 504 484H481Q477 536 457.0 585.0Q437 634 400.5 665.5Q364 697 311 697Q263 697 232.0 670.0Q201 643 201 595Q201 555 221.0 526.5Q241 498 279.5 471.0Q318 444 373 406Q421 375 459.0 344.0Q497 313 520.0 274.0Q543 235 543 181Q543 115 508.5 72.0Q474 29 418.0 7.5Q362 -14 295 -14Q233 -14 196.0 -2.0Q159 10 134 23Q112 37 100 37Q90 37 85.5 26.0Q81 15 78 -7H55Q57 17 57.5 49.0Q58 81 58.5 132.5Q59 184 59 263H82Q86 197 104.5 139.5Q123 82 161.5 47.0Q200 12 264 12Q299 12 326.5 24.5Q354 37 371.0 62.0Q388 87 388 124Q388 166 368.5 197.0Q349 228 315.5 255.0Q282 282 238 310Q191 341 150.0 372.0Q109 403 84.5 443.0Q60 483 60 538Q60 601 91.5 641.5Q123 682 174.5 701.5Q226 721 284 721Z" fill="#C2A46D"/>
         </svg>
         <i class="rule"></i>
       </div>

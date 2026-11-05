@@ -14,30 +14,31 @@ describe("poradi sekci (tri stranky, 2. 11. 2026)", () => {
   const order = (file: string) =>
     [...src(file).matchAll(/<Suspense fallback=\{null\}><(\w+)(?: variant="[\w-]+")? \/><\/Suspense>/g)].map((m) => m[1]);
 
-  it("homepage je tridic: slib, dukaz, cislo, dve cesty, srovnani, formular", () => {
+  it("homepage je nabidka najmu (5. 11. 2026): slib a priklad, matematika, smycka, nabidka, co kdyby, z ceho platime, cislo, byty, otazky, formular", () => {
     const index = src("src/pages/Index.tsx");
     expect(index).toContain('<PageShell page="home">');
-    expect(index).toContain("<HeroSection />");
-    expect(index).toContain('<PricingSection variant="both" />');
-    expect(order("src/pages/Index.tsx")).toEqual([
-      "PortfolioSection", "CalculatorSection", "PricingSection", "ComparisonSection", "ContactSection", "FinalCtaSection",
-    ]);
-    for (const s of ["SystemSection", "ProcessSection", "FAQSection", "ServicesSection", "OwnerReportSection", "GaranceSection", "HorizonSection", "ChoiceSection", "OccupancySection"])
+    for (const s of ["<LeaseHero />", "<LeaseProblem />", "<LeaseFlow />", "<LeaseOffer />", "<LeaseGuarantee />", "<LeaseWhy />", "<LeaseWhich />", "<LeaseFaq />"]) expect(index).toContain(s);
+    expect(order("src/pages/Index.tsx")).toEqual(["LeaseCalc", "ContactSection"]);
+    // sprava za 20 % a stare sekce na homepage nepatri
+    for (const s of ["HeroSection", "PricingSection", "CalculatorSection", "ComparisonSection", "PortfolioSection", "ProofStrip", "FinalCtaSection", "HorizonSection"])
       expect(index, `${s} nepatri na homepage`).not.toContain(s);
+    const i = (name: string) => index.indexOf(name);
+    expect(i("<LeaseHero />")).toBeLessThan(i("<LeaseProblem />"));
+    expect(i("<LeaseProblem />")).toBeLessThan(i("<LeaseFlow />"));
+    expect(i("<LeaseFlow />")).toBeLessThan(i("<LeaseOffer />"));
+    expect(i("<LeaseOffer />")).toBeLessThan(i("<LeaseGuarantee />"));
+    expect(i("<LeaseGuarantee />")).toBeLessThan(i("<LeaseWhy />"));
+    expect(i("<LeaseWhy />")).toBeLessThan(i("<LeaseCalc />"));
+    expect(i("<LeaseCalc />")).toBeLessThan(i("<LeaseWhich />"));
+    expect(i("<LeaseWhich />")).toBeLessThan(i("<LeaseFaq />"));
+    expect(i("<LeaseFaq />")).toBeLessThan(i("<ContactSection />"));
   });
 
-  it("/sprava mluvi jen k majiteli, ktery byt provozovat nechce", () => {
-    const page = src("src/pages/Sprava.tsx");
-    expect(page).toContain('<PageShell page="sprava">');
-    expect(page).toContain('<PageHero page="sprava" />');
-    expect(page).toContain('<PricingSection variant="managed" />');
-    expect(page).toContain('<ProcessSection variant="managed" />');
-    expect(page).toContain('<FAQSection variant="managed" />');
-    expect(order("src/pages/Sprava.tsx")).toEqual([
-      "PortfolioSection", "CalculatorSection", "ServicesSection", "OwnerReportSection", "PricingSection", "ProcessSection", "FAQSection", "ContactSection", "FinalCtaSection",
-    ]);
-    expect(page).not.toContain("SystemSection");
-    expect(page).not.toContain("ComparisonSection");
+  it("/sprava uz neexistuje: vede na homepage, stejne jako /vn", async () => {
+    const { resolvePath } = await import("@/lib/pages");
+    for (const p of ["/sprava", "/vn", "/vn/sprava", "/najem"]) expect(resolvePath(p)?.canonical, p).toBe("/");
+    expect(resolvePath("/vn/vlastni-provoz")?.canonical).toBe("/vlastni-provoz");
+    expect(src("src/App.tsx")).not.toContain("Sprava.tsx");
   });
 
   it("/vlastni-provoz mluvi jen k cloveku, ktery chce provozovat sam", () => {
@@ -58,9 +59,10 @@ describe("poradi sekci (tri stranky, 2. 11. 2026)", () => {
     for (const s of ["<Navbar />", "<SEO page={page} />", "<CalcProvider>", "<Footer />", "<StickyMobileCTA />", "<CookieConsent />", "<ScrollToHash />"]) expect(shell).toContain(s);
   });
 
-  it("navigace vede na obe stranky a znaci tu otevrenou", () => {
+  it("navigace vede na sekce nabidky, bez prepinace jazyka a bez Spravy", () => {
     const nav = src("src/components/Navbar.tsx");
-    for (const k of ['"nav_sprava"', '"nav_own"', '"nav_calculator"', "aria-current"]) expect(nav).toContain(k);
+    for (const k of ['"nav_jak"', '"nav_nabidka"', '"nav_splatka"', '"nav_otazky"', "aria-current"]) expect(nav).toContain(k);
+    for (const k of ['"nav_sprava"', "LangSwitch", "toggleLang"]) expect(nav, k).not.toContain(k);
   });
 });
 
@@ -107,13 +109,13 @@ describe("jedna slovni zasoba pro jednu akci", () => {
   it("chrome rika Poslat byt, karta a formular mluvi o vypoctu, hero o potencialu", () => {
     expect(cs.nav_freeConsultation).toBe("Poslat byt");
     expect(cs.mobile_cta).toBe("Poslat byt");
-    expect(cs.g_cta).toBe("Poslat byt k výpočtu");
-    expect(cs.process_cta).toBe(cs.g_cta);
-    expect(cs.contact_submit).toBe("Poslat byt k výpočtu");
+    expect(cs.g_cta).toBe("Spočítat výnos bytu");
+    expect(cs.contact_submit).toBe("Poslat byt k posouzení");
     expect(cs.calc_cta).toBe("Chci výpočet pro svůj byt");
     expect(cs.calc_cta_weak).toBe("Poslat byt k posouzení");
     expect(cs.calc_cta_unsupported).toBe("Poslat byt k výpočtu");
-    expect(cs.hero_cta).toBe("Zjistit potenciál bytu");
+    expect(cs.lz_hero_cta).toBe("Chci posoudit byt");
+    expect(cs.lz_calc_cta).toBe("Poslat tento byt k posouzení");
     // staré popisky se nikde nevrací
     const files = ["src/components/Navbar.tsx", "src/components/StickyMobileCTA.tsx", "src/components/FinalCtaSection.tsx", "src/components/PricingSection.tsx", "src/components/CalculatorSection.tsx", "src/components/ContactSection.tsx"];
     for (const f of files) expect(src(f)).not.toMatch(/Napsat nám|Poslat nám byt|Chci přesnější propočet/);

@@ -10,56 +10,57 @@ html {
 
 @layer base {
   :root {
-    /* Bright off-white #FBFAF7 */
-    --background: 40 25% 98%;
-    /* Deep ink #14201C */
-    --foreground: 160 18% 10%;
+    /* 5. 11. 2026 (nová nabídka, paleta A): papír #F6F3EE, inkoustová modř
+       #0E1A2B, mosaz #A8864B. Zelená pryč: web prodává nájem investorům, ne
+       hotelový servis. Názvy proměnných (charcoal, gold) zůstaly kvůli
+       desítkám odkazů v komponentách; hodnoty jsou nové. */
+    --background: 37 31% 95%;
+    --foreground: 215 51% 11%;
 
     /* Pure white card */
     --card: 0 0% 100%;
-    --card-foreground: 160 18% 10%;
+    --card-foreground: 215 51% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 160 18% 10%;
+    --popover-foreground: 215 51% 11%;
 
-    /* Dark green #12352F — kept as accent / dark sections */
-    --primary: 168 49% 14%;
+    /* Inkoustová modř #0E1A2B: text, tlačítka, tmavé sekce */
+    --primary: 215 51% 11%;
     --primary-foreground: 0 0% 100%;
 
     /* Very light neutral surface #F2EFEA */
-    --secondary: 36 18% 92.5%;
-    --secondary-foreground: 168 49% 14%;
+    --secondary: 37 29% 91%;
+    --secondary-foreground: 215 51% 11%;
 
-    --muted: 36 14% 96%;
-    /* Darkened for stronger contrast on cream background (WCAG AA) */
-    --muted-foreground: 160 14% 24%;
+    --muted: 37 25% 93%;
+    --muted-foreground: 215 15% 34%;
 
-    /* Gold accent #B8893E — slightly deeper for premium feel on light bg */
-    --accent: 36 50% 48%;
+    /* Mosaz #A8864B: jen linky, popisky a jedno číslo na obrazovku */
+    --accent: 38 38% 48%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 60% 45%;
     --destructive-foreground: 0 0% 100%;
 
     /* Hairline borders */
-    --border: 36 14% 88%;
-    --input: 36 14% 88%;
-    --ring: 36 50% 48%;
+    --border: 215 14% 87%;
+    --input: 215 14% 87%;
+    --ring: 38 38% 48%;
 
     /* 2. 11. 2026 (vizuál): jeden rádius, skoro žádný. Hloubka z linek a ploch, ne ze stínů. */
     --radius: 0.125rem;
 
-    --gold: 36 50% 48%;
+    --gold: 38 38% 48%;
     /* Deeper gold used for small uppercase labels — accessible on cream */
     /* 2. 11. 2026: odkazy a popisky inkoustem, zlato zůstává wordmarku a jednomu tlačítku. */
-    --gold-deep: 168 30% 18%;
-    --gold-light: 36 55% 72%;
+    --gold-deep: 215 51% 11%;
+    --gold-light: 38 45% 72%;
     --warm-cream: 0 0% 100%;
-    --warm-sand: 36 18% 94%;
-    /* Deep green #0B241F */
-    --charcoal: 168 49% 9%;
-    /* Dark green #173D36 */
-    --charcoal-light: 168 41% 16%;
+    --warm-sand: 37 29% 91%;
+    /* Inkoust #0E1A2B */
+    --charcoal: 215 51% 11%;
+    /* Inkoust světlejší #1A2A42 */
+    --charcoal-light: 215 43% 18%;
 
     /* Premium shadow tokens — long, soft, slightly tinted */
     --shadow-soft: none;
