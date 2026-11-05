@@ -4,7 +4,7 @@ import { t } from "@/i18n/translations";
 import { trackEvent } from "@/lib/analytics";
 import Reveal from "@/components/Reveal";
 import TermSheet from "@/components/lease/TermSheet";
-import { czk, quoteLease, RATE_DEFAULT } from "@/lib/lease";
+import { czk, quoteLease, RATE_DEFAULT, RATE_SOURCE } from "@/lib/lease";
 import { ctvrtiOf, type LocationKey, type SizeKey } from "@/lib/yield";
 
 /**
@@ -121,7 +121,7 @@ const LeaseCalc = () => {
                   className="w-24 px-3 py-2 bg-card border border-border rounded-sm font-body text-sm text-foreground tnum focus:outline-none focus:border-gold" />
                 <span className="font-body text-sm text-muted-foreground">% p. a.</span>
               </div>
-              <p className="mt-1.5 font-body text-[12px] text-muted-foreground">{t(lang, "lz_calc_rate_help")}</p>
+              <p className="mt-1.5 font-body text-[12px] text-muted-foreground">{t(lang, "lz_calc_rate_help").replace("{source}", RATE_SOURCE)}</p>
             </div>
           </div>
         </Reveal>

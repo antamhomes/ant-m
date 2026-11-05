@@ -962,7 +962,7 @@ import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.26.2";
 var LTV = 0.7;
 var TERM_YEARS = 30;
 var LEASE_MONTHS = 36;
-var RATE_DEFAULT = 0.0491;
+var RATE_DEFAULT = 0.051;
 var RENT_DAYS_BEFORE = 5;
 var DEFAULT_EXIT_DAYS = 30;
 var REGULATION_NOTICE_MONTHS = 2;
@@ -1015,6 +1015,8 @@ var faq = [
   { question: "Co kdy\u017E host n\u011Bco rozbije?", answer: "Antam oprav\xED na vlastn\xED n\xE1klady. Byt je po ka\u017Ed\xE9m hostovi uklizen\xFD a ka\u017Ed\xFD t\xFDden kontrolovan\xFD." },
   { question: "Mus\xED to v\u011Bd\u011Bt SVJ?", answer: "Ano, Antam to ozn\xE1m\xED. SVJ kr\xE1tkodob\xE9 ubytov\xE1n\xED ve stanov\xE1ch zak\xE1zat nem\u016F\u017Ee, m\u016F\u017Ee ale upravit pravidla domu." },
   { question: "Vyd\u011Bl\xE1 na tom Antam?", answer: "Ano. Byt vyd\u011Bl\xE1 v\xEDc, ne\u017E je n\xE1jem investora, a rozd\xEDl je mar\u017Ee Antam. Je to cena za to, \u017Ee spl\xE1tka chod\xED ka\u017Ed\xFD m\u011Bs\xEDc a investor ned\u011Bl\xE1 nic." },
+  { question: "Co kdy\u017E investorovi skon\u010D\xED fixace?", answer: "N\xE1jem je pevn\xE1 \u010D\xE1stka: spl\xE1tka v den podpisu. Kdy\u017E po fixaci spl\xE1tka stoupne, rozd\xEDl dopl\xE1c\xED investor; kdy\u017E klesne, rozd\xEDl je jeho. Antam doporu\u010Duje fixaci na 3 roky a d\xE9le." },
+  { question: "Jak se n\xE1jem dan\xED?", answer: "Jako p\u0159\xEDjem z n\xE1jmu podle \xA7 9. \xDAroky z hypot\xE9ky, odpisy bytu a fond oprav jsou n\xE1klad, da\u0148 b\xFDv\xE1 v prvn\xEDch letech bl\xEDzko nuly. Investor si to ov\u011B\u0159\xED s \xFA\u010Detn\xEDm." },
   { question: "Kter\xE9 byty Antam bere?", answer: "Praha 1, 2, 3, Karl\xEDn, Sm\xEDchov. 1+kk a\u017E 3+kk. Ne ka\u017Ed\xFD byt pokryje cel\xFD; \u0159ekne to p\u0159ed koup\xED." }
 ];
 var get_services_default = defineTool3({

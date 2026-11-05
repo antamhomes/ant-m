@@ -1,6 +1,6 @@
 import { useLanguage } from "@/contexts/LanguageContext";
 import { t } from "@/i18n/translations";
-import { czk, LEASE_MONTHS, type LeaseQuote } from "@/lib/lease";
+import { czk, LEASE_MONTHS, RATE_DEFAULT, RATE_SOURCE, type LeaseQuote } from "@/lib/lease";
 
 /**
  * NABÍDKOVÝ LIST (5. 11. 2026): jediný vizuální prvek nové nabídky. Bílý
@@ -22,8 +22,9 @@ const TermSheet = ({ quote, label, flat, className = "" }: Props) => {
   const rent = quote.rent ?? quote.payment;
   const rest = quote.rent === null ? null : quote.shortfall;
   return (
+    <div className={className}>
     <aside
-      className={`relative bg-card border border-border shadow-[0_40px_80px_-50px_hsl(var(--charcoal)/0.35)] ${className}`}
+      className="relative bg-card border border-border shadow-[0_40px_80px_-50px_hsl(var(--charcoal)/0.35)]"
       aria-label={label}
     >
       <div className="px-6 sm:px-8 pt-6 pb-4 flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 sm:gap-4 border-b border-border">
@@ -34,7 +35,8 @@ const TermSheet = ({ quote, label, flat, className = "" }: Props) => {
         {[
           [t(lang, "lz_sheet_price"), czk(quote.price)],
           [t(lang, "lz_sheet_own"), czk(quote.own)],
-          [`${t(lang, "lz_sheet_loan")}, ${pct(quote.rate)}`, czk(quote.loan)],
+          [t(lang, "lz_sheet_furniture"), t(lang, "lz_sheet_furniture_v")],
+          [`${t(lang, "lz_sheet_loan")}, ${pct(quote.rate)}${quote.rate === RATE_DEFAULT ? "*" : ""}`, czk(quote.loan)],
           [t(lang, "lz_sheet_payment"), czk(quote.payment)],
         ].map(([k, v]) => (
           <div key={k} className="flex items-baseline justify-between gap-6 py-3 border-b border-border">
@@ -64,6 +66,11 @@ const TermSheet = ({ quote, label, flat, className = "" }: Props) => {
       </div>
       <span className="sr-only">{`${LEASE_MONTHS} měsíců`}</span>
     </aside>
+    <p className="mt-4 font-body text-[12px] leading-relaxed text-muted-foreground max-w-[60ch] tnum">
+      {t(lang, "lz_sheet_caption")}
+      {quote.rate === RATE_DEFAULT ? ` *Sazba: ${RATE_SOURCE}.` : ""}
+    </p>
+    </div>
   );
 };
 

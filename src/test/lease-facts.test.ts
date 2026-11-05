@@ -30,12 +30,14 @@ describe("nájem na 3 roky: parametry", () => {
   });
 
   it("anuita sedí na ruční výpočet a příklad v hero je z téže funkce", () => {
-    // 6 580 000 Kč, 4,91 %, 360 splátek
+    // 6 580 000 Kč, 5,1 % (ČBA Hypomonitor 9/2026), 360 splátek
+    expect(RATE_DEFAULT).toBe(0.051);
+    expect(Math.round(annuity(6_580_000, 0.051, 30))).toBe(35726);
     expect(Math.round(annuity(6_580_000, 0.0491, 30))).toBe(34962);
     const q = quoteLease(HERO_EXAMPLE.price, HERO_EXAMPLE.loc, HERO_EXAMPLE.size, { ctvrt: HERO_EXAMPLE.ctvrt });
     expect(q.own).toBe(2_820_000);
     expect(q.loan).toBe(6_580_000);
-    expect(q.payment).toBe(34962);
+    expect(q.payment).toBe(35726);
     expect(q.covered, "příklad v hero musí být byt, který pokryjeme celý").toBe("full");
     expect(q.rent).toBe(q.payment);
     expect(q.shortfall).toBe(0);
@@ -63,15 +65,19 @@ describe("nájem na 3 roky: parametry", () => {
 describe("nájem na 3 roky: kopie", () => {
   it("klíčová čísla jsou v textu stejná jako v modelu", () => {
     const all = lz.map(([, v]) => strip(v)).join("\n");
-    expect(all).toMatch(/70 % ceny/);
+    expect(all).toMatch(/70 %/);
     expect(all).toMatch(/30 let/);
     expect(all).toMatch(/36 měsíců/);
     expect(all).toMatch(/5 dní před/);
     expect(all).toMatch(/30 dn[íů]/);
     expect(all).toMatch(/dvouměsíční/);
     expect(all).toMatch(/\+ 20 %/);
+    expect(all).toMatch(/kupujete vy/);
+    expect(all).not.toMatch(/100 000 Kč na pokoj/);
+    expect(all).toMatch(/v hotovosti/);
+    expect(all).toMatch(/kratší splatnost doplácíte vy/);
     expect(all).toMatch(/24 hodin/);
-    expect(strip(cs.lz_hero_line)).toBe("Hypotéka 70 % ceny, 30 let · odpověď do 24 hodin");
+    expect(strip(cs.lz_hero_line)).toBe("Provoz děláme sami. Bez nájemníka, bez správce, bez vaší práce.");
     expect(strip(cs.lz_sheet_sign)).toBe("Antam Homes s.r.o.");
   });
 

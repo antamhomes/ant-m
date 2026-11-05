@@ -21,6 +21,8 @@ const faq = [
   { question: "Co když host něco rozbije?", answer: "Antam opraví na vlastní náklady. Byt je po každém hostovi uklizený a každý týden kontrolovaný." },
   { question: "Musí to vědět SVJ?", answer: "Ano, Antam to oznámí. SVJ krátkodobé ubytování ve stanovách zakázat nemůže, může ale upravit pravidla domu." },
   { question: "Vydělá na tom Antam?", answer: "Ano. Byt vydělá víc, než je nájem investora, a rozdíl je marže Antam. Je to cena za to, že splátka chodí každý měsíc a investor nedělá nic." },
+  { question: "Co když investorovi skončí fixace?", answer: "Nájem je pevná částka: splátka v den podpisu. Když po fixaci splátka stoupne, rozdíl doplácí investor; když klesne, rozdíl je jeho. Antam doporučuje fixaci na 3 roky a déle." },
+  { question: "Jak se nájem daní?", answer: "Jako příjem z nájmu podle § 9. Úroky z hypotéky, odpisy bytu a fond oprav jsou náklad, daň bývá v prvních letech blízko nuly. Investor si to ověří s účetním." },
   { question: "Které byty Antam bere?", answer: "Praha 1, 2, 3, Karlín, Smíchov. 1+kk až 3+kk. Ne každý byt pokryje celý; řekne to před koupí." },
 ];
 

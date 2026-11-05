@@ -234,7 +234,7 @@ export const LeaseFaq = () => {
         <Reveal><Head label="lz_faq_label" title="lz_faq_title" /></Reveal>
         <Reveal delay={0.1}>
           <dl className="m-0">
-            {([1, 2, 3, 4, 5, 6, 7, 8] as const).map((n) => (
+            {([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const).map((n) => (
               <div key={n} className="py-6 border-t border-border last:border-b grid gap-2 md:grid-cols-[minmax(0,18rem)_1fr] md:gap-10">
                 <dt className="font-display text-[1.15rem] leading-snug text-foreground">{t(lang, `lz_faq${n}_q` as TranslationKey)}</dt>
                 <dd className="font-body text-[14.5px] leading-relaxed text-muted-foreground text-pretty max-w-[60ch]">{t(lang, `lz_faq${n}_a` as TranslationKey)}</dd>

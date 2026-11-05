@@ -15,8 +15,13 @@ import { ENERGY, ownerMonthly, typicalArea, type LocationKey, type SizeKey } fro
 export const LTV = 0.7;
 export const TERM_YEARS = 30;
 export const LEASE_MONTHS = 36;
-/** Orientační sazba investiční hypotéky, podzim 2026. Investor si ji na webu přepíše. */
-export const RATE_DEFAULT = 0.0491;
+/**
+ * Výchozí sazba = průměr nových hypoték podle ČBA Hypomonitoru za poslední
+ * zveřejněný měsíc (vychází v půlce dalšího měsíce). Není to nabídka úvěru;
+ * investor si ji v kalkulačce přepíše. Při změně měnit OBĚ konstanty.
+ */
+export const RATE_DEFAULT = 0.051;
+export const RATE_SOURCE = "průměr nových hypoték, ČBA Hypomonitor, září 2026";
 export const RENT_DAYS_BEFORE = 5;
 export const DEFAULT_EXIT_DAYS = 30;
 export const REGULATION_NOTICE_MONTHS = 2;
@@ -47,7 +52,7 @@ export const LEASE_COVER_RATIO = 0.6;   // z čistého provozního výnosu nejv�
 export type LeaseQuote = {
   price: number;
   rate: number;
-  own: number;        // vlastní zdroje 30 %
+  own: number;        // vlastní zdroje 30 %. Vybavení je navíc, v hotovosti, za pořizovací ceny + 20 %; částku neodhadujeme (rozhodnutí V., 5. 11. 2026)
   loan: number;       // hypotéka 70 %
   payment: number;    // měsíční splátka
   cap: number | null; // kolik nájmu byt unese (null = lokalitu/dispozici neumíme posoudit)
