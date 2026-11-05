@@ -1,0 +1,145 @@
+import Reveal, { stagger } from "@/components/Reveal";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { t } from "@/i18n/translations";
+
+/**
+ * SROVNÁNÍ S DLOUHODOBÝM NÁJMEM (obnoveno 2B).
+ *
+ * Kopie pro tuhle sekci (comp1–comp4, longTerm_label, shortTerm_label,
+ * whyBetter_desc) v repu celou dobu byla, ale nerenderovala se nikde. Sekce
+ * stojí mezi kalkulačkou a ceníkem, protože po vlastním čísle nepřijde jako
+ * první otázka „kolik si berete", ale námitka „nájem je jednodušší".
+ *
+ * Pořadí uvnitř je schválně: nejdřív se přizná silná stránka nájmu
+ * (whyBetter_desc), teprve pak jde srovnání. Sekce se zavírá poctivým
+ * odmítnutím (faq13): pro koho krátkodobý pronájem nedává smysl. Ta věta se
+ * do 2B nikde nezobrazovala.
+ */
+// Patch 2 (7. 9. 2026): tři řádky místo čtyř. „Přehled plateb“ (comp4) byl
+// nejslabší argument a sekce stojí nově ZA formulářem jako ujištění, ne jako
+// krok před ním. Klíče comp4_* v překladech zůstávají.
+// 29. 10. 2026: třetí sloupec „Provozuji sám" (dodatek 2): stejný systém,
+// jiný provozovatel. Řádky zůstávají tři.
+const rows = [
+  { title: "comp2_title", long: "comp2_long", short: "comp2_short", self: "comp2_self" },
+  { title: "comp3_title", long: "comp3_long", short: "comp3_short", self: "comp3_self" },
+  { title: "comp1_title", long: "comp1_long", short: "comp1_short", self: "comp1_self" },
+] as const;
+
+const ComparisonSection = () => {
+  const { lang } = useLanguage();
+
+  return (
+    <section id="srovnani" className="section chapter-edge bg-background scroll-mt-20">
+      <div className="container-wide">
+        <div className="max-w-[56rem]">
+        <Reveal className="section-head">
+          <h2 className="h-section-sm text-foreground">{t(lang, "cmp_title")}</h2>
+          <p className="lead">{t(lang, "whyBetter_desc")}</p>
+        </Reveal>
+
+        {/* Ledger: na mobilu dva sloupce pod sebou v jednom řádku, na desktopu
+            tři sloupce. Žádné ikony ani odškrtávátka: je to srovnání, ne
+            tabulka funkcí. */}
+        {/* Mobil (< 640 px, visual pass 3. 11. 2026): stejný obsah, jiná osa.
+            Tabulka „kritérium × cesta" se na úzkém displeji rozpadla na devět
+            dvojic label/věta; tady jsou tři bloky podle cesty, v každém tři
+            kritéria. Od 640 px výš beze změny. */}
+        <Reveal delay={0.05} className="sm:hidden border-t border-border">
+          {([
+            ["longTerm_label", "long", "text-muted-foreground"],
+            ["shortTerm_label", "short", "text-foreground"],
+            ["selfTerm_label", "self", "text-foreground"],
+          ] as const).map(([label, key, tone]) => (
+            <div key={label} className="py-5 border-b border-border">
+              <p className="m-0 font-body text-[17px] font-medium text-foreground">{t(lang, label)}</p>
+              <dl className="m-0 mt-3 space-y-3">
+                {rows.map((r) => (
+                  <div key={r.title}>
+                    <dt className={`font-body text-[12px] uppercase tracking-[0.12em] mb-1 ${key === "long" ? "text-muted-foreground" : "text-gold-deep"}`}>
+                      {t(lang, r.title)}
+                    </dt>
+                    <dd className={`m-0 font-body text-[14.5px] leading-relaxed text-pretty ${tone}`}>
+                      {t(lang, r[key])}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          ))}
+        </Reveal>
+
+        <Reveal delay={0.05} className="hidden sm:block border-t border-border">
+          <div
+            aria-hidden="true"
+            className="hidden md:grid md:grid-cols-[0.8fr_1fr_1fr_1fr] gap-x-8 pt-4 pb-3"
+          >
+            <span />
+            <span className="font-body text-xs uppercase tracking-[0.14em] text-muted-foreground">
+              {t(lang, "longTerm_label")}
+            </span>
+            <span className="font-body text-xs uppercase tracking-[0.14em] text-gold-deep">
+              {t(lang, "shortTerm_label")}
+            </span>
+            <span className="font-body text-xs uppercase tracking-[0.14em] text-gold-deep">
+              {t(lang, "selfTerm_label")}
+            </span>
+          </div>
+
+          <dl className="m-0">
+            {rows.map((r, i) => (
+              <Reveal
+                as="div"
+                key={r.title}
+                delay={stagger(i, 0.05)}
+                className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-[0.8fr_1fr_1fr_1fr] gap-x-6 md:gap-x-8 gap-y-3 md:gap-y-1 py-4 md:py-5 border-t border-border first:border-t-0 md:first:border-t"
+              >
+                <dt className="sm:col-span-3 md:col-span-1 font-body text-[17px] md:text-[1.05rem] font-medium text-foreground mb-1 md:mb-0">
+                  {t(lang, r.title)}
+                </dt>
+                <dd className="m-0">
+                  <span className="md:hidden block font-body text-[12px] uppercase tracking-[0.12em] text-muted-foreground mb-1">
+                    {t(lang, "longTerm_label")}
+                  </span>
+                  <span className="font-body text-[14.5px] md:text-[15px] text-muted-foreground leading-relaxed text-pretty">
+                    {t(lang, r.long)}
+                  </span>
+                </dd>
+                <dd className="m-0">
+                  <span className="md:hidden block font-body text-[12px] uppercase tracking-[0.12em] text-gold-deep mb-1">
+                    {t(lang, "shortTerm_label")}
+                  </span>
+                  <span className="font-body text-[14.5px] md:text-[15px] text-foreground leading-relaxed text-pretty">
+                    {t(lang, r.short)}
+                  </span>
+                </dd>
+                <dd className="m-0">
+                  <span className="md:hidden block font-body text-[12px] uppercase tracking-[0.12em] text-gold-deep mb-1">
+                    {t(lang, "selfTerm_label")}
+                  </span>
+                  <span className="font-body text-[14.5px] md:text-[15px] text-foreground leading-relaxed text-pretty">
+                    {t(lang, r.self)}
+                  </span>
+                </dd>
+              </Reveal>
+            ))}
+          </dl>
+        </Reveal>
+
+        {/* Dobrovolné odmítnutí. Stojí schválně na konci sekce a schválně
+            potichu: není to námitka, kterou má web překonat, ale kvalifikace. */}
+        <Reveal delay={0.15} className="mt-8 md:mt-10 max-w-prose">
+          <p className="font-body text-[17px] md:text-[1.05rem] font-medium text-foreground mb-1.5">
+            {t(lang, "faq13_q")}
+          </p>
+          <p className="font-body text-[14.5px] md:text-[15px] text-muted-foreground leading-relaxed text-pretty">
+            {t(lang, "faq13_a")}
+          </p>
+        </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default ComparisonSection;

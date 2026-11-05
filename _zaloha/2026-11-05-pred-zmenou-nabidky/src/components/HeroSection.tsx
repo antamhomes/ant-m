@@ -1,0 +1,169 @@
+import { useEffect, useRef } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { t } from "@/i18n/translations";
+import { trackEvent } from "@/lib/analytics";
+import { useSplashDone } from "@/hooks/use-splash-done";
+
+/** Entrance timing per element (seconds); the CSS in index.css does the animating once `.is-ready` is set. */
+const enter = (y: number, delay: number, duration = 0.7) =>
+  ({
+    "data-enter": "",
+    style: { "--enter-y": `${y}px`, "--enter-delay": `${delay}s`, "--enter-dur": `${duration}s` } as React.CSSProperties,
+  }) as const;
+
+/**
+ * AD 2. 9. 2026: dělený hero místo fotky přes celou plochu s textem na ní.
+ * Fotka bytu je důkaz, ne pozadí; přes tmavý závoj, který jí musel dělat
+ * čitelné podloží, z ní zbyla nálada. Text má teď vlastní tmavě zelenou
+ * plochu (stejná firemní barva jako sekce Co za vás řešíme) a fotka běží
+ * vedle ní v plné kvalitě. Pod textem stojí tři čísla ze stejného zdroje
+ * jako sekce Kdo jsme, takže se nemůžou rozejít.
+ *
+ * 2. 9. 2026, mobil a tablet: rozdělení se pod lg nereprodukuje vůbec.
+ * Fotka nad textem dělala dva bloky za sebou a první obrazovka patřila cizí
+ * ložnici dřív, než návštěvník věděl, kdo Antam je. Pod lg proto fotka kryje
+ * celý hero a text stojí na ní — ale ne pod plošným závojem. Přechod jde
+ * z lehkého nádechu nahoře do plné firemní zelené dole (--charcoal je zelená,
+ * ne černá), takže horní část zůstane fotografií a spodní je opravdová
+ * barevná plocha. Žádný šedý mezistav, ve kterém není ani snímek, ani plocha.
+ * Desktop (od lg) se nemění: zelená 50 % / fotka 50 % vedle sebe.
+ */
+const HeroSection = () => {
+  const { lang } = useLanguage();
+  // Empty copy keys switch off hero elements per language. Od 9. 9. 2026 jedou
+  // obě jazykové verze stejný krátký hero: jedna věta, jedno tlačítko rovnou do
+  // kalkulačky, pod ním proof line. VI mělo do té doby dvě tlačítka a primární
+  // mířilo na formulář; parita je teď záměr, ne shoda náhod.
+  const secondCta = t(lang, "hero_cta2");
+  const primaryHref = secondCta ? "#kontakt" : "#kalkulacka";
+  const ref = useRef<HTMLElement>(null);
+  const mediaRef = useRef<HTMLImageElement>(null);
+  const ready = useSplashDone();
+
+  // Very subtle parallax on the photo: posouvá se sám snímek uvnitř pevného
+  // rámu, ne rám. Rám drží fotku i závoj ve stejné geometrii; kdyby se hýbal
+  // rám, vyjede zpod závoje pruh nezastřené fotky (na mobilu přesně přes
+  // nadpis). Snímek je o 12 % vyšší než rám, jede se nahoru max. o 10 % jeho
+  // výšky, takže se hrana nikdy neodkryje. Jeden pasivní listener + rAF.
+  useEffect(() => {
+    const section = ref.current;
+    const media = mediaRef.current;
+    if (!section || !media) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const h = section.offsetHeight || 1;
+      const p = Math.min(1, Math.max(0, window.scrollY / h));
+      media.style.transform = `translate3d(0, -${(p * 10).toFixed(2)}%, 0)`;
+    };
+    const onScroll = () => {
+      if (!raf) raf = window.requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (raf) window.cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return (
+    <section
+      ref={ref}
+      className={`relative overflow-hidden bg-gradient-dark ${ready ? "is-ready" : ""}`}
+    >
+      <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1.02fr)] lg:min-h-[min(88vh,780px)]">
+        {/* Text na vlastní ploše: žádný závoj přes fotku, žádný radiální gradient. */}
+        <div className="order-2 lg:order-1 relative z-10 flex flex-col justify-between px-6 sm:px-10 lg:pl-[max(1.5rem,calc((100vw-75rem)/2+1.5rem))] lg:pr-14 pt-[clamp(11rem,34vh,19rem)] sm:pt-[clamp(13rem,36vh,24rem)] pb-14 lg:pt-32 lg:pb-16">
+          <div>
+            <h1
+              {...enter(20, 0.45, 0.8)}
+              className="font-display text-[clamp(2.1rem,3.5vw,3.3rem)] font-medium leading-[1.08] tracking-[-0.018em] text-balance text-[#F7F1E8] max-w-[min(28ch,90%)]"
+            >
+              {t(lang, "hero_title1")}
+              <br />
+              {t(lang, "hero_title2")}
+            </h1>
+
+            <p
+              {...enter(16, 0.65, 0.6)}
+              className="mt-6 font-body text-base sm:text-lg leading-relaxed max-w-[42ch] text-pretty text-[#E8DED0]"
+            >
+              {t(lang, "hero_desc")}
+            </p>
+
+            <div {...enter(16, 0.8, 0.6)} className="mt-9 flex flex-wrap items-center gap-x-7 gap-y-4">
+              <a
+                href={primaryHref}
+                onClick={() =>
+                  trackEvent("cta_click", { location: "hero", target: secondCta ? "contact" : "calculator" })
+                }
+                className="btn btn-primary-inverse px-8 py-4"
+              >
+                {t(lang, "hero_cta")}
+              </a>
+              {secondCta && (
+                <a
+                  href="#kalkulacka"
+                  onClick={() => trackEvent("cta_click", { location: "hero", target: "calculator" })}
+                  className="btn btn-secondary-inverse px-8 py-4"
+                >
+                  {secondCta}
+                  <span className="text-gold" aria-hidden="true">→</span>
+                </a>
+              )}
+            </div>
+
+            {/* 2. 11. 2026 (vizuál): místo řádku statistik tři věty, které
+                zodpoví co, pro koho, kolik a proč věřit. Čísla ze stejných
+                zdrojů jako karty a Kdo jsme. */}
+            <ul {...enter(10, 1.0, 0.6)} className="mt-8 m-0 p-0 list-none space-y-1.5 font-body text-[13.5px] sm:text-sm leading-relaxed text-[rgba(232,222,208,0.78)] tnum max-w-[46ch]">
+              {/* 3. 11. 2026: hero_fact2 (13 bytů, 520+) vypadl, ta čísla nese pás pod hero (ProofStrip). */}
+              {(["hero_fact1", "hero_fact3"] as const).map((k) => (
+                <li key={k} className="text-sm pl-4 relative before:content-[''] before:absolute before:left-0 before:top-[0.78em] before:w-1.5 before:h-px before:bg-[rgba(232,222,208,0.5)]">
+                  {t(lang, k)}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* Fotka bez závoje. Měkký přechod jen na levé hraně, ať se švem
+            neřeže tmavá plocha od obrázku. */}
+        <div className="order-1 lg:order-2 max-lg:absolute max-lg:inset-0 max-lg:bg-[hsl(var(--charcoal))] lg:relative overflow-hidden lg:h-auto">
+          <div className="absolute inset-x-0 top-0 h-[52vh] min-h-[300px] max-h-[560px] lg:inset-0 lg:h-auto lg:max-h-none overflow-hidden">
+            <div className="absolute inset-0 hero-zoom">
+              <img
+                src="/hero/bedroom-1280.webp"
+                srcSet="/hero/bedroom-768.webp 768w, /hero/bedroom-1280.webp 1280w, /hero/bedroom-1920.webp 1920w"
+                sizes="(min-width: 1024px) 52vw, 100vw"
+                alt=""
+                aria-hidden="true"
+                fetchPriority="high"
+                decoding="async"
+                onLoad={() => window.dispatchEvent(new Event("antam:hero-ready"))}
+                ref={mediaRef}
+                className="w-full h-[112%] object-cover max-lg:object-[50%_42%] will-change-transform"
+                width={1920}
+                height={1530}
+              />
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-[52vh] min-h-[300px] max-h-[560px] lg:inset-0 lg:h-auto lg:max-h-none bg-[linear-gradient(180deg,hsl(var(--charcoal)/0.28)_0%,hsl(var(--charcoal)/0.33)_24%,hsl(var(--charcoal)/0.58)_46%,hsl(var(--charcoal)/0.82)_60%,hsl(var(--charcoal)/0.94)_72%,hsl(var(--charcoal)/0.995)_88%,hsl(var(--charcoal))_100%)] lg:bg-[linear-gradient(90deg,hsl(var(--charcoal))_0%,hsl(var(--charcoal)/0.35)_9%,transparent_26%)]"
+          />
+          {/* Navigace teď leží nad fotkou, ne nad tmavou plochou: bez tohohle
+              se odkazy vpravo ztratí ve světlé části snímku. */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-[linear-gradient(180deg,hsl(var(--charcoal)/0.55)_0%,hsl(var(--charcoal)/0.26)_55%,transparent_100%)]"
+          />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default HeroSection;
