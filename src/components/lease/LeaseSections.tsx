@@ -28,22 +28,34 @@ const Grid = ({ children, className = "" }: { children: React.ReactNode; classNa
   <div className={`max-w-6xl mx-auto px-6 grid gap-10 lg:gap-16 lg:grid-cols-[17rem_1fr] ${className}`}>{children}</div>
 );
 
-/* 01 · Dnešní matematika */
+/* Nájemník, nebo Antam (5. 11. 2026 večer): majitel porovnává nás s dalším
+   nájemníkem, ne s bankou. Šest řádků, žádný verdikt navíc. */
 export const LeaseProblem = () => {
   const { lang } = useLanguage();
+  const rows = [1, 2, 3, 4, 5, 6] as const;
   return (
     <section className="bg-background border-t border-border py-20 sm:py-24">
       <Grid>
         <Reveal><Head label="lz_problem_label" title="lz_problem_title" /></Reveal>
         <Reveal delay={0.1}>
-          <ol className="m-0 p-0 list-none max-w-[52ch]">
-            {(["lz_problem_1", "lz_problem_2", "lz_problem_3"] as const).map((k, i) => (
-              <li key={k} className="grid grid-cols-[2.2rem_1fr] gap-4 py-5 border-t border-border first:border-t-0 lg:first:border-t">
-                <span className="font-body text-[11px] tracking-[0.18em] text-gold tnum pt-1">0{i + 1}</span>
-                <p className="font-body text-[16px] sm:text-[17px] leading-relaxed text-foreground text-pretty">{t(lang, k)}</p>
-              </li>
-            ))}
-          </ol>
+          <table className="w-full border-collapse font-body text-[14.5px]">
+            <thead>
+              <tr className="text-[11px] tracking-[0.16em] uppercase text-muted-foreground">
+                <th className="text-left font-normal pb-4 w-[30%]"></th>
+                <th className="text-left font-normal pb-4 pr-4">{t(lang, "lz_cmp_h_ltr")}</th>
+                <th className="text-left font-normal pb-4 text-gold">{t(lang, "lz_cmp_h_antam")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((n) => (
+                <tr key={n} className="border-t border-border align-top">
+                  <td className="py-4 pr-4 text-foreground">{t(lang, `lz_cmp_${n}` as TranslationKey)}</td>
+                  <td className="py-4 pr-4 text-muted-foreground">{t(lang, `lz_cmp_${n}_ltr` as TranslationKey)}</td>
+                  <td className="py-4 text-foreground font-medium">{t(lang, `lz_cmp_${n}_antam` as TranslationKey)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </Reveal>
       </Grid>
     </section>
@@ -54,11 +66,10 @@ export const LeaseProblem = () => {
    nájem do banky → další byt, a šipka zpět na začátek. Na desktopu kruh
    v SVG, na mobilu svislý seznam se stejnou smyčkou slovy. */
 const STEPS = [
-  ["Pošlete byt", "Posoudíme ho do 24 hodin."],
-  ["Doneste hypotéku", "30 % vlastních, 70 % banka."],
-  ["Podpis", "Nájem na 36 měsíců, byt vybavíme."],
-  ["Nájem na účet", "Každý měsíc, 5 dní před splátkou."],
-  ["Další byt", "Příjem od firmy, banka půjčí dál."],
+  ["Pošlete byt", "Adresa, dispozice, vaše splátka."],
+  ["Nabídka do 24 hodin", "Konkrétní číslo, nezávazně."],
+  ["Prohlídka a podpis", "Smlouva na 36 měsíců, byt vybavíme."],
+  ["Nájem každý měsíc", "5 dní před vaší splátkou, i prázdný."],
 ] as const;
 
 export const LeaseFlow = () => {
@@ -77,13 +88,13 @@ export const LeaseFlow = () => {
             {t(lang, "nav_jak")}
           </h2>
           <p className="mt-5 font-body text-[15px] leading-relaxed text-muted-foreground max-w-[30ch] text-pretty">
-            Nájem od firmy je pro banku příjem. S ním jdete na další byt a kruh se zavře.
+            Číslo dostanete dřív, než cokoli podepíšete.
           </p>
         </Reveal>
         <Reveal delay={0.1}>
           {/* Desktop: kruh */}
           <div className="hidden md:block">
-            <svg viewBox="0 0 940 600" className="w-full max-w-[760px] mx-auto" role="img" aria-label="Smyčka: pošlete byt, doneste hypotéku, podpis, nájem na účet, další byt">
+            <svg viewBox="0 0 940 600" className="w-full max-w-[760px] mx-auto" role="img" aria-label="Postup: pošlete byt, nabídka do 24 hodin, prohlídka a podpis, nájem každý měsíc">
               <defs>
                 <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                   <path d="M0 0L10 5L0 10z" fill="hsl(var(--gold))" />
@@ -136,10 +147,6 @@ export const LeaseFlow = () => {
                 </div>
               </li>
             ))}
-            <li className="grid grid-cols-[2.2rem_1fr] gap-4 py-5 border-t border-gold/60">
-              <span className="font-body text-gold" aria-hidden="true">↺</span>
-              <p className="font-body text-[14px] text-foreground">Znovu od začátku.</p>
-            </li>
           </ol>
         </Reveal>
       </Grid>
@@ -234,7 +241,7 @@ export const LeaseFaq = () => {
         <Reveal><Head label="lz_faq_label" title="lz_faq_title" /></Reveal>
         <Reveal delay={0.1}>
           <dl className="m-0">
-            {([1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const).map((n) => (
+            {([2, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11] as const).map((n) => (
               <div key={n} className="py-6 border-t border-border last:border-b grid gap-2 md:grid-cols-[minmax(0,18rem)_1fr] md:gap-10">
                 <dt className="font-display text-[1.15rem] leading-snug text-foreground">{t(lang, `lz_faq${n}_q` as TranslationKey)}</dt>
                 <dd className="font-body text-[14.5px] leading-relaxed text-muted-foreground text-pretty max-w-[60ch]">{t(lang, `lz_faq${n}_a` as TranslationKey)}</dd>

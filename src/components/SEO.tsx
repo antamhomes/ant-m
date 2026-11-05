@@ -12,7 +12,7 @@ import { META } from "@/lib/seoMeta";
 
 /** Otázky z FAQ dané stránky; homepage FAQ nemá, nese ji podstránka správy. */
 const FAQ_KEYS: Record<PageKey, readonly string[]> = {
-  home: ["lz_faq1", "lz_faq2", "lz_faq3", "lz_faq4", "lz_faq5", "lz_faq6", "lz_faq7", "lz_faq8", "lz_faq9", "lz_faq10"],
+  home: ["lz_faq1", "lz_faq2", "lz_faq3", "lz_faq4", "lz_faq5", "lz_faq6", "lz_faq7", "lz_faq8", "lz_faq9", "lz_faq10", "lz_faq11"],
   sprava: ["faq18", "faq5", "faq9", "faq4", "faq6", "faq16", "faq1", "faq11", "faq12", "faq10", "faq15", "faq3", "faq7", "faq13"],
   "vlastni-provoz": ["faq20", "faq21", "faq22", "faq19", "faq10", "faq12", "faq14"],
 };

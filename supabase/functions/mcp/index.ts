@@ -973,39 +973,53 @@ var annuity = (principal, rate, years) => {
   return principal * r / (1 - Math.pow(1 + r, -n));
 };
 var LEASE_OPS = 2e3;
+var LABOUR = 6e3;
+var BAD_YEAR = 0.9;
 var LEASE_COVER_RATIO = 0.6;
+var WINTER_RATIO = 0.9;
+var leaseCap = (loc, size, opts = {}) => {
+  const m2 = opts.m2 ?? typicalArea(loc, size);
+  const hc = opts.haircut ?? 1;
+  const year = ownerMonthly(loc, size, { season: "year", m2, ctvrt: opts.ctvrt ?? null, scope: "internal" });
+  const winter = ownerMonthly(loc, size, { season: "winter", m2, ctvrt: opts.ctvrt ?? null, scope: "internal" });
+  if (!year.supported || !winter.supported) return null;
+  const marketRevenue = year.marketAnchor.netRevenue;
+  const conservativeRevenue = marketRevenue * hc * BAD_YEAR;
+  const winterRevenue = winter.marketAnchor.netRevenue * hc;
+  const opex = ENERGY[size] + LEASE_OPS + LABOUR;
+  const noi = Math.max(0, conservativeRevenue - opex);
+  const winterNoi = Math.max(0, winterRevenue - opex);
+  const capYear = noi * LEASE_COVER_RATIO;
+  const capWinter = winterNoi * WINTER_RATIO;
+  const maxRent = Math.round(Math.min(capYear, capWinter) / 100) * 100;
+  const rate = opts.rate ?? RATE_DEFAULT;
+  const perCrown = annuity(1, rate, TERM_YEARS) * LTV;
+  const maxPrice = Math.floor(maxRent / perCrown / 1e5) * 1e5;
+  return { marketRevenue, conservativeRevenue, winterRevenue, opex, noi, winterNoi, capYear, capWinter, maxRent, maxPrice };
+};
 var quoteLease = (price, loc, size, opts = {}) => {
   const rate = opts.rate ?? RATE_DEFAULT;
   const own = Math.round(price * (1 - LTV));
   const loan = Math.round(price * LTV);
   const payment = Math.round(annuity(loan, rate, TERM_YEARS));
-  let cap = null;
-  let noi = null;
-  if (loc) {
-    const m2 = opts.m2 ?? typicalArea(loc, size);
-    const r = ownerMonthly(loc, size, { season: "year", m2, ctvrt: opts.ctvrt ?? null, scope: "internal" });
-    if (r.supported) {
-      noi = Math.max(0, r.marketAnchor.netRevenue - ENERGY[size] - LEASE_OPS);
-      cap = Math.round(noi * LEASE_COVER_RATIO / 100) * 100;
-    }
-  }
-  if (cap === null) return { price, rate, own, loan, payment, cap, rent: null, covered: "review", shortfall: 0, noi };
-  const rent = Math.min(payment, cap);
+  const c = loc ? leaseCap(loc, size, { ctvrt: opts.ctvrt ?? null, m2: opts.m2, rate }) : null;
+  if (!c) return { price, rate, own, loan, payment, cap: null, maxPrice: null, rent: null, covered: "review", shortfall: 0, noi: null };
+  const rent = Math.min(payment, c.maxRent);
   const covered = rent >= payment ? "full" : "partial";
-  return { price, rate, own, loan, payment, cap, rent, covered, shortfall: payment - rent, noi };
+  return { price, rate, own, loan, payment, cap: c.maxRent, maxPrice: c.maxPrice, rent, covered, shortfall: payment - rent, noi: c.noi };
 };
 
 // src/lib/mcp/tools/get-services.ts
 var services = [
-  { title: "N\xE1jem na 3 roky ve v\xFD\u0161i spl\xE1tky", description: "Antam si byt pronajme na 36 m\u011Bs\xEDc\u016F a plat\xED n\xE1jem ve v\xFD\u0161i spl\xE1tky standardn\xED investi\u010Dn\xED hypot\xE9ky (70 % ceny, 30 let). Ka\u017Ed\xFD m\u011Bs\xEDc, i kdy\u017E je byt pr\xE1zdn\xFD. N\xE1jem je splatn\xFD 5 dn\xED p\u0159ed spl\xE1tkou hypot\xE9ky." },
-  { title: "Posouzen\xED bytu p\u0159ed koup\xED", description: "Investor po\u0161le odkaz na inzer\xE1t, do 24 hodin v\xED, jestli Antam spl\xE1tku pokryje celou, z\u010D\xE1sti, nebo byt posoud\xED individu\xE1ln\u011B. Zdarma, nez\xE1vazn\u011B." },
+  { title: "N\xE1jem na 3 roky za pevnou \u010D\xE1stku", description: "Antam si byt od majitele pronajme na 36 m\u011Bs\xEDc\u016F za pevn\xFD n\xE1jem, placen\xFD ka\u017Ed\xFD m\u011Bs\xEDc i v pr\xE1zdn\xFDch m\u011Bs\xEDc\xEDch, splatn\xFD 5 dn\xED p\u0159ed spl\xE1tkou hypot\xE9ky. N\xE1jem se po\u010D\xEDt\xE1 z toho, co byt vyd\u011Bl\xE1, ne ze spl\xE1tky: u vhodn\xFDch byt\u016F je vy\u0161\u0161\xED ne\u017E b\u011B\u017En\xFD n\xE1jem a pokryje celou spl\xE1tku, u ostatn\xEDch ji pokryje z\u010D\xE1sti. Ka\u017Ed\xFD byt se posuzuje zvl\xE1\u0161\u0165." },
+  { title: "Nab\xEDdka do 24 hodin", description: "Majitel po\u0161le adresu, dispozici a svou spl\xE1tku; do 24 hodin dostane konkr\xE9tn\xED \u010D\xEDslo, zdarma a nez\xE1vazn\u011B. Kdo byt teprve kupuje, dozv\xED se, do jak\xE9 ceny ho Antam pokryje cel\xFD." },
   { title: "Vybaven\xED", description: "V\xFDb\u011Br, n\xE1kup, doprava a mont\xE1\u017E p\u0159es Antam za po\u0159izovac\xED ceny plus 20 %. Vybaven\xED kupuje investor a z\u016Fst\xE1v\xE1 jeho." },
   { title: "Provoz", description: "Byt Antam pronaj\xEDm\xE1 kr\xE1tkodob\u011B, nebo st\u0159edn\u011Bdob\u011B firm\xE1m. Energie, internet, slu\u017Eby k u\u017E\xEDv\xE1n\xED, \xFAklid, drobn\xE9 opravy a cel\xFD provoz plat\xED Antam. Investor plat\xED fond oprav, da\u0148 z nemovitosti a poji\u0161t\u011Bn\xED domu a vybaven\xED." },
   { title: "Provozn\xED syst\xE9m Antam (vlastn\xED provoz)", description: "Pro majitele, kte\u0159\xED cht\u011Bj\xED byt provozovat sami: Antam postav\xED provozn\xED syst\xE9m na jejich \xFA\u010Dtech a p\u0159ed\xE1 ho. 270 000 K\u010D bez DPH jednou, jak\xE1koli dispozice; \u0159\xEDzen\xED cen prvn\xEDch 60 dn\xED v cen\u011B, pak 3 490 K\u010D m\u011Bs\xED\u010Dn\u011B." }
 ];
 var faq = [
-  { question: "Uzn\xE1 mi banka n\xE1jem od Antam jako p\u0159\xEDjem?", answer: "N\xE1jemn\xED smlouva s firmou na 3 roky a platby na \xFA\u010Dtu investora jsou stabiln\xED p\u0159\xEDjem. Kolik z n\u011Bj kter\xE1 banka zapo\u010D\xEDt\xE1, je na n\xED; v\u011Bt\u0161inou \u010D\xE1st, ne cel\xFD. Po prvn\xEDm roce je n\xE1jem i v da\u0148ov\xE9m p\u0159izn\xE1n\xED." },
-  { question: "Pro\u010D zrovna 70 % a 30 let?", answer: "Je to standardn\xED investi\u010Dn\xED hypot\xE9ka: 70 % je strop \u010CNB pro byty na pron\xE1jem od dubna 2026 a 30 let b\u011B\u017En\xE1 splatnost. Krat\u0161\xED splatnost nebo vy\u0161\u0161\xED spl\xE1tku nad standardn\xED spl\xE1tku dopl\xE1c\xED investor." },
+  { question: "Uzn\xE1 mi banka n\xE1jem od Antam jako p\u0159\xEDjem?", answer: "Ano, jako ka\u017Ed\xFD dolo\u017Een\xFD n\xE1jem; banky obvykle zapo\u010D\xEDtaj\xED kolem 70 % a cht\u011Bj\xED v\xFDpisy nebo da\u0148ov\xE9 p\u0159izn\xE1n\xED. Na v\xFD\u0161i \xFAv\u011Bru na dal\u0161\xED byt to samo o sob\u011B z\xE1sadn\xED vliv nem\xE1." },
+  { question: "\u0158\xEDd\xED Antam n\xE1jem spl\xE1tkou majitele?", answer: "Ne. N\xE1jem se po\u010D\xEDt\xE1 z toho, co byt vyd\u011Bl\xE1. U vhodn\xFDch byt\u016F pokryje celou spl\xE1tku, u ostatn\xEDch z\u010D\xE1sti. \u010C\xEDslo dostane majitel p\u0159edem." },
   { question: "Kdo plat\xED fond oprav a poji\u0161t\u011Bn\xED?", answer: "Investor: fond oprav, da\u0148 z nemovitosti, poji\u0161t\u011Bn\xED domu a vybaven\xED. Antam: energie, internet, slu\u017Eby k u\u017E\xEDv\xE1n\xED bytu, \xFAklid, drobn\xE9 opravy a cel\xFD provoz. Rozpis je sou\u010D\xE1st\xED smlouvy." },
   { question: "Komu pat\u0159\xED vybaven\xED?", answer: "Investorovi. Kupuje ho p\u0159es Antam za po\u0159izovac\xED ceny plus 20 % za v\xFDb\u011Br, n\xE1kup, dopravu a mont\xE1\u017E. Po skon\u010Den\xED n\xE1jmu z\u016Fst\xE1v\xE1 v byt\u011B." },
   { question: "Co se stane po t\u0159ech letech?", answer: "Investor dostane byt zp\u011Bt vybaven\xFD a v provozu. M\u016F\u017Ee ho prodat, pronajmout dlouhodob\u011B, nebo s Antam podepsat dal\u0161\xED 3 roky." },
@@ -1017,7 +1031,7 @@ var faq = [
   { question: "Vyd\u011Bl\xE1 na tom Antam?", answer: "Ano. Byt vyd\u011Bl\xE1 v\xEDc, ne\u017E je n\xE1jem investora, a rozd\xEDl je mar\u017Ee Antam. Je to cena za to, \u017Ee spl\xE1tka chod\xED ka\u017Ed\xFD m\u011Bs\xEDc a investor ned\u011Bl\xE1 nic." },
   { question: "Co kdy\u017E investorovi skon\u010D\xED fixace?", answer: "N\xE1jem je pevn\xE1 \u010D\xE1stka: spl\xE1tka v den podpisu. Kdy\u017E po fixaci spl\xE1tka stoupne, rozd\xEDl dopl\xE1c\xED investor; kdy\u017E klesne, rozd\xEDl je jeho. Antam doporu\u010Duje fixaci na 3 roky a d\xE9le." },
   { question: "Jak se n\xE1jem dan\xED?", answer: "Jako p\u0159\xEDjem z n\xE1jmu podle \xA7 9. \xDAroky z hypot\xE9ky, odpisy bytu a fond oprav jsou n\xE1klad, da\u0148 b\xFDv\xE1 v prvn\xEDch letech bl\xEDzko nuly. Investor si to ov\u011B\u0159\xED s \xFA\u010Detn\xEDm." },
-  { question: "Kter\xE9 byty Antam bere?", answer: "Praha 1, 2, 3, Karl\xEDn, Sm\xEDchov. 1+kk a\u017E 3+kk. Ne ka\u017Ed\xFD byt pokryje cel\xFD; \u0159ekne to p\u0159ed koup\xED." }
+  { question: "Kter\xE9 byty Antam bere?", answer: "Ka\u017Ed\xFD byt se posuzuje zvl\xE1\u0161\u0165: rozhoduje poloha, dispozice, po\u010Det l\u016F\u017Eek a stav, ne jen m\u011Bstsk\xE1 \u010D\xE1st. Ne ka\u017Ed\xFD byt pokryje celou spl\xE1tku; Antam to \u0159ekne rovnou, s \u010D\xEDslem." }
 ];
 var get_services_default = defineTool3({
   name: "get_services_and_faq",
@@ -1046,14 +1060,16 @@ A: ${f.answer}`)
         termMonths: LEASE_MONTHS,
         loanToValue: LTV,
         mortgageTermYears: TERM_YEARS,
-        rentEquals: "standard mortgage payment (70 % LTV, 30 years)",
+        rentBasis: "what the apartment earns (market data), not the owner's payment",
         rentDaysBeforeMortgage: RENT_DAYS_BEFORE,
         paidInEmptyMonths: true,
         defaultExitDays: DEFAULT_EXIT_DAYS,
         regulationNoticeMonths: REGULATION_NOTICE_MONTHS,
         furnitureProcurementFee: 0.2,
-        districts: ["Praha 1", "Praha 2", "Praha 3", "Karl\xEDn", "Sm\xEDchov"],
-        layouts: ["1kk", "2kk", "3kk"]
+        assessedIndividually: true,
+        layouts: ["1kk", "2kk", "3kk", "4kk"],
+        publicRange: "90\u2013100 % of the internal cap, exact figure after viewing",
+        quoteValidityDays: 60
       },
       selfOperatedSystemCzk: { anyLayout: 27e4, furnishedOrEmptySame: true, revenueManagementMonthly: 3490, revenueManagementIncludedDays: 60, procurementFee: 0.2, procurementFeeAboveCzk: 5e5, procurementRateAbove: 0.12 }
     }

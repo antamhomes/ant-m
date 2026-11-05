@@ -40,7 +40,7 @@ describe("brána /nastroj", () => {
   it("bez session ukáže přihlášení, ne nástroj", async () => {
     render(<Nastroj />);
     await waitFor(() => expect(rtl.getByText(/Přihlas se stejným účtem/i)).toBeTruthy());
-    expect(rtl.queryByText(/Vyhodnotit/i)).toBeNull();
+    expect(rtl.queryByText(/Posoudit nájem|Vyhodnotit/i)).toBeNull();
   });
 
   it("session bez oprávnění nástroj nevykreslí", async () => {
@@ -48,14 +48,14 @@ describe("brána /nastroj", () => {
     isAdmin.value = false;
     render(<Nastroj />);
     await waitFor(() => expect(rtl.getByText(/nemá oprávnění/i)).toBeTruthy());
-    expect(rtl.queryByText(/Vyhodnotit/i)).toBeNull();
+    expect(rtl.queryByText(/Posoudit nájem|Vyhodnotit/i)).toBeNull();
   });
 
   it("admin nástroj dostane", async () => {
     session.current = { user: { email: "tranvietvuong00@gmail.com" } };
     isAdmin.value = true;
     render(<Nastroj />);
-    await waitFor(() => expect(rtl.getByText(/Vyhodnotit/i)).toBeTruthy());
+    await waitFor(() => expect(rtl.getByText(/Posoudit nájem/i)).toBeTruthy());
   });
 
   it("stránka se označí jako noindex", async () => {

@@ -35,19 +35,58 @@ export const annuity = (principal: number, rate: number, years: number): number 
 };
 
 /**
- * UNDERWRITING (5. 11. 2026): kolik nájmu byt unese.
+ * UNDERWRITING (5. 11. 2026, zpřísněno týž den): kolik nájmu byt unese.
+ * JEDNA funkce pro web, MCP i interní nástroj, aby web nikdy neslíbil víc,
+ * než nástroj podepíše.
+ *
  * Základ je roční průměr čistého výnosu TRHU pro danou dispozici a čtvrť
  * (marketAnchor.netRevenue: po provizi platforem, bez úklidu, který platí
- * host), tedy BEZ operátorského faktoru. Z toho jdou energie a provoz, a
- * z toho, co zbyde, pokryjeme nejvýš LEASE_COVER_RATIO. Zbytek je marže,
- * rezerva na zimu a na opravy.
- *
- * Proč trh a ne naše výsledky: nájem je pevný závazek na 36 měsíců. Kdyby se
- * počítal z našeho faktoru, jeden slabší byt by nás stál rozdíl každý měsíc.
- * Lepší výsledek je náš zisk, ne důvod slíbit víc.
+ * host), BEZ operátorského faktoru. Z toho:
+ *  - konzervativní tržba = trh × srážky z prohlídky × BAD_YEAR (rezerva na
+ *    špatný rok; na webu bez srážek, ty zná jen interní nástroj);
+ *  - provozní náklady = energie + provoz + práce;
+ *  - strop roční = LEASE_COVER_RATIO × konzervativní NOI;
+ *  - strop zimní = WINTER_RATIO × zimní NOI (listopad až březen bez prosince);
+ *  - nájem = min obou stropů, na stovky.
+ * Proč trh a ne naše výsledky: nájem je pevný závazek na 36 měsíců. Lepší
+ * výsledek je náš zisk, ne důvod slíbit víc.
  */
 export const LEASE_OPS = 2000;          // internet, služby SVJ k užívání, drobné opravy, měsíčně
-export const LEASE_COVER_RATIO = 0.6;   // z čistého provozního výnosu nejvýš 60 % jde na nájem
+export const LABOUR = 6000;             // koordinace úklidu, hosté, čas; interní odhad na byt a měsíc
+export const BAD_YEAR = 0.9;            // rezerva na špatný rok
+export const LEASE_COVER_RATIO = 0.6;   // z konzervativního NOI nejvýš 60 % na nájem
+export const WINTER_RATIO = 0.9;        // nájem nejvýš 90 % průměrného zimního NOI
+
+export type LeaseCap = {
+  marketRevenue: number; conservativeRevenue: number; winterRevenue: number;
+  opex: number; noi: number; winterNoi: number; capYear: number; capWinter: number; maxRent: number;
+  /** nejvyšší cena bytu, při které standardní splátka ještě nepřesáhne maxRent */
+  maxPrice: number;
+};
+
+/** Strop nájmu pro byt; haircut = součin srážek z prohlídky (web: 1). null = bez spolehlivých dat. */
+export const leaseCap = (
+  loc: LocationKey, size: SizeKey, opts: { ctvrt?: string | null; m2?: number; haircut?: number; rate?: number } = {},
+): LeaseCap | null => {
+  const m2 = opts.m2 ?? typicalArea(loc, size);
+  const hc = opts.haircut ?? 1;
+  const year = ownerMonthly(loc, size, { season: "year", m2, ctvrt: opts.ctvrt ?? null, scope: "internal" });
+  const winter = ownerMonthly(loc, size, { season: "winter", m2, ctvrt: opts.ctvrt ?? null, scope: "internal" });
+  if (!year.supported || !winter.supported) return null;
+  const marketRevenue = year.marketAnchor.netRevenue;
+  const conservativeRevenue = marketRevenue * hc * BAD_YEAR;
+  const winterRevenue = winter.marketAnchor.netRevenue * hc;
+  const opex = ENERGY[size] + LEASE_OPS + LABOUR;
+  const noi = Math.max(0, conservativeRevenue - opex);
+  const winterNoi = Math.max(0, winterRevenue - opex);
+  const capYear = noi * LEASE_COVER_RATIO;
+  const capWinter = winterNoi * WINTER_RATIO;
+  const maxRent = Math.round(Math.min(capYear, capWinter) / 100) * 100;
+  const rate = opts.rate ?? RATE_DEFAULT;
+  const perCrown = annuity(1, rate, TERM_YEARS) * LTV; // splátka na 1 Kč ceny
+  const maxPrice = Math.floor(maxRent / perCrown / 100_000) * 100_000;
+  return { marketRevenue, conservativeRevenue, winterRevenue, opex, noi, winterNoi, capYear, capWinter, maxRent, maxPrice };
+};
 
 export type LeaseQuote = {
   price: number;
@@ -56,10 +95,11 @@ export type LeaseQuote = {
   loan: number;       // hypotéka 70 %
   payment: number;    // měsíční splátka
   cap: number | null; // kolik nájmu byt unese (null = lokalitu/dispozici neumíme posoudit)
+  maxPrice: number | null; // do jaké ceny bytu pokryjeme celou splátku
   rent: number | null;      // nájem, který nabídneme: min(payment, cap)
   covered: "full" | "partial" | "review";
-  shortfall: number;  // kolik by investor dopláce (payment - rent)
-  noi: number | null; // čistý provozní výnos trhu po energiích a provozu, pro interní kontrolu
+  shortfall: number;  // kolik by investor doplácel (payment - rent)
+  noi: number | null; // konzervativní NOI, pro interní kontrolu
 };
 
 export const quoteLease = (
@@ -72,24 +112,25 @@ export const quoteLease = (
   const own = Math.round(price * (1 - LTV));
   const loan = Math.round(price * LTV);
   const payment = Math.round(annuity(loan, rate, TERM_YEARS));
-
-  let cap: number | null = null;
-  let noi: number | null = null;
-  if (loc) {
-    const m2 = opts.m2 ?? typicalArea(loc, size);
-    const r = ownerMonthly(loc, size, { season: "year", m2, ctvrt: opts.ctvrt ?? null, scope: "internal" });
-    if (r.supported) {
-      noi = Math.max(0, r.marketAnchor.netRevenue - ENERGY[size] - LEASE_OPS);
-      cap = Math.round((noi * LEASE_COVER_RATIO) / 100) * 100;
-    }
-  }
-
-  if (cap === null) return { price, rate, own, loan, payment, cap, rent: null, covered: "review", shortfall: 0, noi };
-  const rent = Math.min(payment, cap);
+  const c = loc ? leaseCap(loc, size, { ctvrt: opts.ctvrt ?? null, m2: opts.m2, rate }) : null;
+  if (!c) return { price, rate, own, loan, payment, cap: null, maxPrice: null, rent: null, covered: "review", shortfall: 0, noi: null };
+  const rent = Math.min(payment, c.maxRent);
   const covered = rent >= payment ? "full" : "partial";
-  return { price, rate, own, loan, payment, cap, rent, covered, shortfall: payment - rent, noi };
+  return { price, rate, own, loan, payment, cap: c.maxRent, maxPrice: c.maxPrice, rent, covered, shortfall: payment - rent, noi: c.noi };
 };
 
 /** Formát částky bez desetin, s pevnými mezerami: 34 962 Kč. */
 export const czk = (n: number): string =>
   `${Math.round(n).toLocaleString("cs-CZ").replace(/\s/g, " ")} Kč`;
+
+/**
+ * VEŘEJNÉ ROZPĚTÍ (5. 11. 2026 večer). Web nikdy neukazuje strop jako jedno
+ * číslo: majitel by se na něj ukotvil. Ukazuje rozpětí 90 až 100 % stropu,
+ * zaokrouhlené dolů na 500 Kč. Přesné číslo přijde po prohlídce a může vyjít
+ * i níž (srážky z prohlídky). Interní nástroj pracuje se stropem přímo.
+ */
+export const PUBLIC_RANGE_LOW = 0.9;
+export const indicativeRange = (cap: number) => ({
+  low: Math.floor((cap * PUBLIC_RANGE_LOW) / 500) * 500,
+  high: Math.floor(cap / 500) * 500,
+});

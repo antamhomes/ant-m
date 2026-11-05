@@ -472,7 +472,7 @@ const ContactSection = () => {
               {page === "home" && (
                 <div>
                   <label htmlFor="c-link" className={labelCls}>
-                    {"Odkaz na inzerát"}{" "}
+                    {"Odkaz na inzerát, pokud byt inzerujete"}{" "}
                     <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
                   </label>
                   <input

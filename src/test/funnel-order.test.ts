@@ -114,8 +114,8 @@ describe("jedna slovni zasoba pro jednu akci", () => {
     expect(cs.calc_cta).toBe("Chci výpočet pro svůj byt");
     expect(cs.calc_cta_weak).toBe("Poslat byt k posouzení");
     expect(cs.calc_cta_unsupported).toBe("Poslat byt k výpočtu");
-    expect(cs.lz_hero_cta).toBe("Chci posoudit byt");
-    expect(cs.lz_calc_cta).toBe("Poslat tento byt k posouzení");
+    expect(cs.lz_hero_cta).toBe("Chci nabídku pro svůj byt");
+    expect(cs.lz_calc_cta).toBe("Chci přesnou nabídku");
     // staré popisky se nikde nevrací
     const files = ["src/components/Navbar.tsx", "src/components/StickyMobileCTA.tsx", "src/components/FinalCtaSection.tsx", "src/components/PricingSection.tsx", "src/components/CalculatorSection.tsx", "src/components/ContactSection.tsx"];
     for (const f of files) expect(src(f)).not.toMatch(/Napsat nám|Poslat nám byt|Chci přesnější propočet/);

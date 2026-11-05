@@ -10,8 +10,9 @@ import {
   annuity, quoteLease, czk, LTV, TERM_YEARS, LEASE_MONTHS, RATE_DEFAULT, RENT_DAYS_BEFORE,
   DEFAULT_EXIT_DAYS, REGULATION_NOTICE_MONTHS, LEASE_COVER_RATIO,
 } from "@/lib/lease";
-import { HERO_EXAMPLE } from "@/components/lease/LeaseHero";
+import { HERO_OWNER, heroCap } from "@/components/lease/LeaseHero";
 import { META } from "@/lib/seoMeta";
+import { rentFor } from "@/lib/yield";
 
 const cs = translations.cs as Record<string, string>;
 const strip = (s: string) => s.replace(/ /g, " ");
@@ -29,18 +30,20 @@ describe("nájem na 3 roky: parametry", () => {
     expect(LEASE_COVER_RATIO).toBe(0.6);
   });
 
-  it("anuita sedí na ruční výpočet a příklad v hero je z téže funkce", () => {
+  it("anuita sedí na ruční výpočet a příklad v hero je z téže funkce", async () => {
     // 6 580 000 Kč, 5,1 % (ČBA Hypomonitor 9/2026), 360 splátek
     expect(RATE_DEFAULT).toBe(0.051);
     expect(Math.round(annuity(6_580_000, 0.051, 30))).toBe(35726);
     expect(Math.round(annuity(6_580_000, 0.0491, 30))).toBe(34962);
-    const q = quoteLease(HERO_EXAMPLE.price, HERO_EXAMPLE.loc, HERO_EXAMPLE.size, { ctvrt: HERO_EXAMPLE.ctvrt });
-    expect(q.own).toBe(2_820_000);
-    expect(q.loan).toBe(6_580_000);
-    expect(q.payment).toBe(35726);
-    expect(q.covered, "příklad v hero musí být byt, který pokryjeme celý").toBe("full");
-    expect(q.rent).toBe(q.payment);
-    expect(q.shortfall).toBe(0);
+    // Hero (5. 11. 2026 večer) = stávající majitel: nabídka pod stropem, nad
+    // splátkou i nad běžným nájmem; jinak by příklad sliboval víc, než nástroj podepíše.
+    const cap = heroCap()!;
+    expect(HERO_OWNER.offer).toBeLessThanOrEqual(cap.maxRent);
+    expect(HERO_OWNER.offer).toBeGreaterThanOrEqual(HERO_OWNER.payment);
+    expect(HERO_OWNER.offer).toBeGreaterThan(rentFor(HERO_OWNER.loc, HERO_OWNER.size, HERO_OWNER.m2, "furnished", HERO_OWNER.ctvrt));
+    const { indicativeRange } = await import("@/lib/lease");
+    const r = indicativeRange(40_500);
+    expect(r).toEqual({ low: 36_000, high: 40_500 });
   });
 
   it("strop nájmu jde z trhu (interní faktor), ne z našich výsledků, a drží se 60 % čistého výnosu", () => {
@@ -75,7 +78,8 @@ describe("nájem na 3 roky: kopie", () => {
     expect(all).toMatch(/kupujete vy/);
     expect(all).not.toMatch(/100 000 Kč na pokoj/);
     expect(all).toMatch(/v hotovosti/);
-    expect(all).toMatch(/kratší splatnost doplácíte vy/);
+    expect(all).not.toMatch(/kupovat další|další hypotéku/);
+    expect(all).toMatch(/U vhodných bytů/);
     expect(all).toMatch(/24 hodin/);
     expect(strip(cs.lz_hero_line)).toBe("Provoz děláme sami. Bez nájemníka, bez správce, bez vaší práce.");
     expect(strip(cs.lz_sheet_sign)).toBe("Antam Homes s.r.o.");
@@ -86,7 +90,7 @@ describe("nájem na 3 roky: kopie", () => {
       expect(v, `${k} má pomlčku`).not.toContain("—");
       expect(v, `${k} mluví o správě za procenta`).not.toMatch(/20 % \+ DPH|24,2 %|odměn/);
     }
-    for (const k of ["lz_hero_title", "lz_hero_desc", "lz_offer_1", "lz_offer_2", "lz_offer_3", "lz_offer_4", "lz_offer_5", "lz_offer_6", "lz_offer_7", "lz_problem_1", "lz_problem_2", "lz_problem_3"])
+    for (const k of ["lz_hero_title", "lz_hero_desc", "lz_offer_1", "lz_offer_2", "lz_offer_3", "lz_offer_4", "lz_offer_5", "lz_offer_6", "lz_offer_7", "lz_cmp_1_antam", "lz_cmp_2_antam", "lz_cmp_3_antam"])
       expect(cs[k], `${k} nemá říkat Airbnb`).not.toMatch(/Airbnb|Booking/);
     // kde se to říká: jednou, v Z čeho platíme
     expect(strip(cs.lz_why_p)).toMatch(/krátkodobě/);
@@ -119,9 +123,10 @@ describe("nájem na 3 roky: jedna pravda napříč webem, MCP a meta", () => {
 
   it("kalkulačka a hero sdílejí nabídkový list a lib/lease; stará kalkulačka výnosu na homepage není", () => {
     const calc = src("src/components/lease/LeaseCalc.tsx");
-    expect(calc).toContain("quoteLease(");
-    expect(calc).toContain("<TermSheet");
-    expect(src("src/components/lease/LeaseHero.tsx")).toContain("<TermSheet");
+    expect(calc).toContain("leaseCap(");
+    expect(calc).toContain("indicativeRange(");
+    expect(calc).toContain("<OfferSheet");
+    expect(src("src/components/lease/LeaseHero.tsx")).toContain("<OfferSheet");
     expect(src("src/pages/Index.tsx")).not.toContain("CalculatorSection");
   });
 
@@ -140,5 +145,51 @@ describe("nájem na 3 roky: jedna pravda napříč webem, MCP a meta", () => {
   it("wordmark je Antam; právní název zůstává v patičce", () => {
     expect(src("src/components/Wordmark.tsx")).toMatch(/>\s*Antam\s*<\/span>/);
     expect(strip(cs.footer_legal)).toContain("IČO 21904022");
+  });
+});
+
+describe("underwriting = web: jedna funkce, web neslíbí víc než nástroj", () => {
+  it("strop z leaseCap je min(60 % NOI, 90 % zimního NOI) a kalkulačka ho jen opisuje", async () => {
+    const { leaseCap, LEASE_COVER_RATIO, WINTER_RATIO } = await import("@/lib/lease");
+    const { underwrite } = await import("@/lib/underwrite");
+    const c = leaseCap("praha1", "2kk", { ctvrt: "stare_mesto" })!;
+    expect(c.maxRent).toBe(Math.round(Math.min(c.noi * LEASE_COVER_RATIO, c.winterNoi * WINTER_RATIO) / 100) * 100);
+    const q = quoteLease(9_400_000, "praha1", "2kk", { ctvrt: "stare_mesto" });
+    expect(q.cap).toBe(c.maxRent);
+    const u = underwrite({ loc: "praha1", size: "2kk", ctvrt: "stare_mesto", price: 9_400_000, requestedRent: q.payment, haircuts: [] });
+    expect(u.maxRent).toBe(c.maxRent);
+    expect(u.verdict).toBe("accept");
+    // Nové Město 2+kk za 9,4 M: web i nástroj shodně říkají „ne celé“
+    const q2 = quoteLease(9_400_000, "praha1", "2kk", { ctvrt: "nove_mesto" });
+    const u2 = underwrite({ loc: "praha1", size: "2kk", ctvrt: "nove_mesto", price: 9_400_000, requestedRent: q2.payment, haircuts: [] });
+    expect(q2.covered).toBe("partial");
+    expect(u2.verdict).toBe("reject");
+    expect(q2.cap).toBe(u2.maxRent);
+    // srážky z prohlídky strop jen snižují
+    const u3 = underwrite({ loc: "praha1", size: "2kk", ctvrt: "stare_mesto", price: 9_400_000, requestedRent: null, haircuts: ["ground", "noise"] });
+    expect(u3.maxRent).toBeLessThan(u.maxRent);
+    // max cena: standardní splátka při ní nepřesáhne strop
+    const q4 = quoteLease(c.maxPrice, "praha1", "2kk", { ctvrt: "stare_mesto" });
+    expect(q4.payment).toBeLessThanOrEqual(c.maxRent);
+  });
+});
+
+describe("nabídka stávajícímu majiteli: prodejní vrstva, do stropu nesahá", () => {
+  it("porovnává strop s běžným nájmem a skutečnou splátkou; skutečná splátka přebíjí dopočet", async () => {
+    const { ownerOffer } = await import("@/lib/ownerOffer");
+    const base = { antamRent: 40_500, loc: "praha1" as const, size: "2kk" as const, m2: 60, ctvrt: "stare_mesto" };
+    const a = ownerOffer({ ...base, balance: 5_000_000, ratePct: 4.5, remainingYears: 20 });
+    expect(a.paymentSource).toBe("computed");
+    expect(a.payment).toBe(Math.round(annuity(5_000_000, 0.045, 20)));
+    const b = ownerOffer({ ...base, balance: 5_000_000, ratePct: 4.5, remainingYears: 20, actualPayment: 35_800 });
+    expect(b.paymentSource).toBe("actual");
+    expect(b.payment).toBe(35_800);
+    expect(b.coveragePct).toBe(Math.round((40_500 / 35_800) * 100));
+    expect(b.annualDiff).toBe(b.diff * 12);
+    expect(b.ltr).toBeGreaterThan(0);
+    // hypotéka 52k: jen 78 %, nabídka se nehýbe
+    const c = ownerOffer({ ...base, actualPayment: 52_000 });
+    expect(c.antamRent).toBe(40_500);
+    expect(c.coveragePct).toBe(78);
   });
 });

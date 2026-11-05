@@ -5,7 +5,7 @@ export const META: Record<"home" | "sprava" | "vlastni-provoz", { cs: { title: s
   home: {
     cs: {
       title: "Splácíme hypotéky investorům: nájem bytu na 3 roky | Antam",
-      desc: "Pronajmeme si váš byt v Praze na 3 roky a platíme nájem ve výši vaší splátky hypotéky. Každý měsíc, i když je byt prázdný. Byt posoudíme před koupí, do 24 hodin.",
+      desc: "Pronajmeme si váš byt v Praze na 3 roky za pevný nájem, placený i v prázdných měsících. U vhodných bytů víc než běžný nájem a celá splátka hypotéky. Nabídka do 24 hodin.",
     },
     vi: {
       title: "Quản lý căn hộ cho thuê ngắn hạn tại Praha | Antam Homes",

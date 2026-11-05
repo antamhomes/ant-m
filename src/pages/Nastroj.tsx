@@ -13,6 +13,9 @@ import { screen, defaultArea, WORTH_MIN, REVIEW_MIN, type ScreeningResult } from
 import type { SeasonKey } from "@/lib/yield";
 import { ctvrtiOf, type LocationKey, type SizeKey } from "@/lib/yield";
 import { admin, checkAdmin, saveEvaluation, setAction, toRow } from "@/lib/adminClient";
+import { underwrite, HAIRCUTS, type UnderwriteResult } from "@/lib/underwrite";
+import { RATE_DEFAULT, RATE_SOURCE } from "@/lib/lease";
+import { ownerOffer } from "@/lib/ownerOffer";
 
 const DISTRICTS: LocationKey[] = ["praha1","praha2","praha3","praha4","praha5","praha6","praha7","praha8","praha9","praha10"];
 const SIZES: SizeKey[] = ["1kk","2kk","3kk","4kk"];
@@ -141,7 +144,7 @@ const Result = ({ r, saving, savedId, onAction }: {
   );
 };
 
-const Tool = () => {
+const Tool = ({ embedded = false }: { embedded?: boolean }) => {
   const [address, setAddress] = useState("");
   const [district, setDistrict] = useState<LocationKey>("praha1");
   const [ctvrt, setCtvrt] = useState<string | null>(null);
@@ -173,12 +176,14 @@ const Tool = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto px-5 py-8 pb-24">
+    <div className={embedded ? "" : "max-w-md mx-auto px-5 py-8 pb-24"}>
+      {!embedded && (
       <header className="flex items-baseline justify-between mb-6">
         <h1 className="text-base font-semibold">Antam · nástroj</h1>
         <button className="text-[11.5px] text-neutral-400 underline"
           onClick={() => admin().auth.signOut().then(() => window.location.reload())}>odhlásit</button>
       </header>
+      )}
 
       <Field label="Adresa (jen text, do výpočtu nevstupuje)">
         <input className={inputCls} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Vinohradská 123" />
@@ -261,6 +266,182 @@ const Tool = () => {
   );
 };
 
+/**
+ * NÁJEM 36 · UNDERWRITING (5. 11. 2026). Druhý režim nástroje: kolik nájmu
+ * byt unese a jestli přijmeme číslo, které investor chce. Stejná funkce jako
+ * veřejná kalkulačka (lib/lease.leaseCap) plus srážky z prohlídky. Verdikt
+ * se nedá přepsat rukou; to je jeho smysl.
+ */
+const UW_VERDICT = {
+  accept: { dot: "#1F7A45", bg: "#E8F4EC", label: "PŘIJMOUT" },
+  negotiate: { dot: "#9A6B12", bg: "#FBF1DC", label: "VYJEDNÁVAT" },
+  review: { dot: "#9A6B12", bg: "#FBF1DC", label: "K POSOUZENÍ" },
+  reject: { dot: "#96352E", bg: "#F8E9E7", label: "ODMÍTNOUT" },
+} as const;
+const UwResult = ({ r }: { r: UnderwriteResult }) => {
+  const v = UW_VERDICT[r.verdict];
+  const n = (x: number | null) => (x === null ? "—" : kc(Math.round(x)));
+  const rows: [string, string][] = [
+    ["Tržba trhu, po provizi", n(r.marketRevenue)],
+    ["Tržba s faktorem Antam (jen informace)", n(r.antamRevenue)],
+    ["Konzervativní tržba (srážky × 0,9)", n(r.conservativeRevenue)],
+    ["Zimní tržba", n(r.winterRevenue)],
+    ["Náklady (energie, provoz, práce)", n(r.opex)],
+    ["Konzervativní NOI", n(r.noi)],
+    ["Zimní NOI", n(r.winterNoi)],
+    ["Příspěvek při požadovaném nájmu: trh", n(r.baseContribution)],
+    ["Příspěvek: s faktorem Antam", n(r.antamContribution)],
+    ["Příspěvek: špatný rok", n(r.bearContribution)],
+    ["Zimní krytí (zimní NOI / nájem)", r.winterCoverage === null ? "—" : `${r.winterCoverage.toFixed(2).replace(".", ",")}×`],
+    ["Strop roční (60 % NOI)", n(r.capYear)],
+    ["Strop zimní (90 % zimního NOI)", n(r.capWinter)],
+    ["Standardní splátka (70 %, 30 let)", n(r.standardPayment)],
+    ["Max cena bytu pro plné krytí", n(r.maxPrice)],
+    ["Marže při stropu: trh / s faktorem / špatný rok", `${n(r.marginBase)} / ${n(r.marginAntam)} / ${n(r.marginBear)}`],
+  ];
+  return (
+    <div className="mt-6">
+      <div className="rounded-lg px-4 py-4" style={{ background: v.bg }}>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="inline-block w-2.5 h-2.5 rounded-full" style={{ background: v.dot }} />
+          <span className="text-sm font-semibold tracking-[0.06em]">{v.label}</span>
+        </div>
+        <p className="text-2xl font-semibold tabular-nums">MAX NÁJEM {kc(r.maxRent)}</p>
+        {r.requestedRent !== null && <p className="text-sm text-neutral-700 tabular-nums">Investor chce {kc(r.requestedRent)}</p>}
+        <ul className="mt-2 space-y-1">
+          {r.reasons.map((x) => <li key={x} className="text-[13px] text-neutral-700">{x}</li>)}
+        </ul>
+      </div>
+      {r.supported && (
+        <dl className="mt-4 text-[13px] divide-y divide-neutral-200">
+          {rows.map(([k, val]) => (
+            <div key={k} className="flex justify-between gap-4 py-1.5">
+              <dt className="text-neutral-500">{k}</dt><dd className="tabular-nums text-right font-medium">{val}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+    </div>
+  );
+};
+
+const Underwrite = () => {
+  const [address, setAddress] = useState("");
+  const [district, setDistrict] = useState<LocationKey>("praha1");
+  const [ctvrt, setCtvrt] = useState<string | null>(null);
+  const [size, setSize] = useState<SizeKey>("2kk");
+  const [m2, setM2] = useState<string>(String(defaultArea("praha1", "2kk")));
+  const [price, setPrice] = useState("9400000");
+  const [rate, setRate] = useState((RATE_DEFAULT * 100).toFixed(2).replace(".", ","));
+  const [requested, setRequested] = useState("");
+  const [hc, setHc] = useState<string[]>([]);
+  const [result, setResult] = useState<UnderwriteResult | null>(null);
+  const ctvrti = useMemo(() => ctvrtiOf(district), [district]);
+  useEffect(() => { setCtvrt(null); setM2(String(defaultArea(district, size))); }, [district, size]);
+  const toggle = (id: string) => setHc((h) => (h.includes(id) ? h.filter((x) => x !== id) : [...h, id]));
+  const run = () => {
+    const rv = parseFloat(rate.replace(",", "."));
+    setResult(underwrite({
+      loc: district, size, ctvrt, m2: Number(m2) || undefined, price: Number(price) || 0,
+      rate: Number.isFinite(rv) && rv > 0 ? rv / 100 : undefined,
+      requestedRent: requested ? Number(requested) : null, haircuts: hc,
+    }));
+  };
+  return (
+    <div>
+      <Field label="Adresa (jen text)">
+        <input className={inputCls} value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Dlouhá 12" />
+      </Field>
+      <Field label="Praha">
+        <div className="flex flex-wrap gap-1.5">
+          {DISTRICTS.map((d) => <button key={d} type="button" className={chip(district === d)} onClick={() => setDistrict(d)}>{d.replace("praha", "")}</button>)}
+        </div>
+      </Field>
+      <Field label="Čtvrť">
+        <div className="flex flex-wrap gap-1.5">
+          <button type="button" className={chip(ctvrt === null)} onClick={() => setCtvrt(null)}>Ostatní</button>
+          {ctvrti.map((c) => <button key={c.id} type="button" className={chip(ctvrt === c.id)} onClick={() => setCtvrt(c.id)}>{c.label}</button>)}
+        </div>
+      </Field>
+      <Field label="Dispozice">
+        <div className="flex gap-1.5">
+          {SIZES.map((s) => <button key={s} type="button" className={chip(size === s)} onClick={() => setSize(s)}>{SIZE_LABEL[s]}</button>)}
+        </div>
+      </Field>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Plocha m²"><input className={inputCls} inputMode="numeric" value={m2} onChange={(e) => setM2(e.target.value.replace(/[^\d]/g, ""))} /></Field>
+        <Field label="Cena bytu Kč"><input className={inputCls} inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value.replace(/[^\d]/g, ""))} /></Field>
+        <Field label="Sazba % p. a."><input className={inputCls} inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)} /></Field>
+        <Field label="Investor chce nájem Kč"><input className={inputCls} inputMode="numeric" value={requested} onChange={(e) => setRequested(e.target.value.replace(/[^\d]/g, ""))} placeholder="jeho splátka" /></Field>
+      </div>
+      <Field label="Prohlídka: co srazí tržbu">
+        <div className="flex flex-col gap-1.5">
+          {HAIRCUTS.map((h) => (
+            <button key={h.id} type="button" className={`${chip(hc.includes(h.id))} text-left`} onClick={() => toggle(h.id)}>
+              {h.label} <span className="text-[11px] opacity-70">× {h.factor.toFixed(2).replace(".", ",")}</span>
+            </button>
+          ))}
+        </div>
+      </Field>
+      <button onClick={run} className="w-full rounded bg-[#BC9252] text-[#12352E] py-3.5 text-sm font-semibold uppercase tracking-[0.08em]">Posoudit nájem</button>
+      {result && <UwResult r={result} />}
+      {result && result.supported && <OwnerPanel loc={district} size={size} m2={Number(m2) || defaultArea(district, size)} ctvrt={ctvrt} maxRent={result.maxRent} />}
+      <p className="mt-8 text-[11px] text-neutral-400 leading-relaxed">
+        Strop = min(60 % konzervativního NOI, 90 % zimního NOI). Trh, ne naše výsledky; faktor Antam je jen upside.
+        Sazba výchozí: {RATE_SOURCE}. Verdikt se nepřepisuje rukou.
+      </p>
+    </div>
+  );
+};
+
+/**
+ * STÁVAJÍCÍ MAJITEL (5. 11. 2026): prodejní obrazovka nad výsledkem
+ * underwritingu. Nájem Antam = strop (nebo nižší dohodnuté číslo), proti
+ * tomu běžný nájem a jeho skutečná splátka. Do stropu nic z toho nevstupuje.
+ */
+const OwnerPanel = ({ loc, size, m2, ctvrt, maxRent }: { loc: LocationKey; size: SizeKey; m2: number; ctvrt: string | null; maxRent: number }) => {
+  const [rent, setRent] = useState(String(maxRent));
+  const [balance, setBalance] = useState(""); const [rate, setRate] = useState(""); const [years, setYears] = useState("");
+  const [actual, setActual] = useState(""); const [pprice, setPprice] = useState(""); const [pyear, setPyear] = useState("");
+  useEffect(() => { setRent(String(maxRent)); }, [maxRent]);
+  const antamRent = Math.min(Number(rent) || 0, maxRent);
+  const o = ownerOffer({
+    antamRent, loc, size, m2, ctvrt,
+    balance: Number(balance) || null, ratePct: parseFloat(rate.replace(",", ".")) || null, remainingYears: Number(years) || null,
+    actualPayment: Number(actual) || null, purchasePrice: Number(pprice) || null, purchaseYear: Number(pyear) || null,
+  });
+  const sign = (n: number) => (n >= 0 ? "+" : "−") + kc(Math.abs(n));
+  return (
+    <div className="mt-8 border-t border-neutral-200 pt-6">
+      <h2 className="text-sm font-semibold mb-1">Stávající majitel: co mu říct</h2>
+      <p className="text-[12px] text-neutral-500 mb-4">Nájem Antam nejvýš {kc(maxRent)} (strop). Hypotéka strop nemění, jen se s ním porovnává. Skutečná splátka přebíjí dopočet.</p>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Nájem Antam (≤ strop)"><input className={inputCls} inputMode="numeric" value={rent} onChange={(e) => setRent(e.target.value.replace(/[^\d]/g, ""))} /></Field>
+        <Field label="Skutečná splátka Kč"><input className={inputCls} inputMode="numeric" value={actual} onChange={(e) => setActual(e.target.value.replace(/[^\d]/g, ""))} placeholder="když ji zná" /></Field>
+        <Field label="Zůstatek hypotéky Kč"><input className={inputCls} inputMode="numeric" value={balance} onChange={(e) => setBalance(e.target.value.replace(/[^\d]/g, ""))} /></Field>
+        <Field label="Sazba % p. a."><input className={inputCls} inputMode="decimal" value={rate} onChange={(e) => setRate(e.target.value)} /></Field>
+        <Field label="Zbývá let"><input className={inputCls} inputMode="numeric" value={years} onChange={(e) => setYears(e.target.value.replace(/[^\d]/g, ""))} /></Field>
+        <Field label="Koupeno za / rok (jen info)"><div className="flex gap-2"><input className={inputCls} inputMode="numeric" value={pprice} onChange={(e) => setPprice(e.target.value.replace(/[^\d]/g, ""))} placeholder="Kč" /><input className={`${inputCls} w-24`} inputMode="numeric" value={pyear} onChange={(e) => setPyear(e.target.value.replace(/[^\d]/g, ""))} placeholder="rok" /></div></Field>
+      </div>
+      <dl className="mt-3 text-[14px] divide-y divide-neutral-200 rounded-lg bg-white border border-neutral-200 px-4">
+        {([
+          ["Antam nabídka", kc(o.antamRent)],
+          ["Běžný nájem (zařízený, model)", kc(o.ltr)],
+          ["Rozdíl / měsíc", `${sign(o.diff)} (${o.diffPct >= 0 ? "+" : ""}${o.diffPct.toLocaleString("cs-CZ")} %)`],
+          ["Ročně proti běžnému nájmu", sign(o.annualDiff)],
+          ["Splátka hypotéky", o.payment === null ? "—" : `${kc(o.payment)}${o.paymentSource === "computed" ? " (dopočet)" : ""}`],
+          ["Krytí splátky", o.coveragePct === null ? "—" : `${o.coveragePct} %`],
+          ["Měsíčně po splátce", o.monthlyAfterMortgage === null ? "—" : sign(o.monthlyAfterMortgage)],
+        ] as [string, string][]).map(([k, v]) => (
+          <div key={k} className="flex justify-between gap-4 py-2"><dt className="text-neutral-500">{k}</dt><dd className="tabular-nums text-right font-medium">{v}</dd></div>
+        ))}
+      </dl>
+      {o.diff < 0 && <p className="mt-2 text-[12.5px] text-[#96352E]">Pod běžným nájmem: majiteli se vyplatí nájemník. Neprodávat přes hypotéku.</p>}
+      {o.coveragePct !== null && o.coveragePct < 100 && o.diff >= 0 && <p className="mt-2 text-[12.5px] text-neutral-600">Nad běžným nájmem, ale splátku nekryje celou. Prodávat jako „víc než nájemník, garantovaně", ne jako „splácíme hypotéku".</p>}
+    </div>
+  );
+};
+
 const Nastroj = () => {
   const [state, setState] = useState<"loading" | "anon" | "denied" | "ok">("loading");
   const gate = async () => {
@@ -286,6 +467,24 @@ const Nastroj = () => {
         onClick={() => admin().auth.signOut().then(() => window.location.reload())}>odhlásit</button>
     </div>
   );
-  return <Tool />;
+  return <Shell />;
+};
+
+/** Dva režimy: Screening (správa, původní) a Nájem 36 (underwriting). */
+const Shell = () => {
+  const [mode, setMode] = useState<"screen" | "lease">("lease");
+  return (
+    <div className="max-w-md mx-auto px-5 py-8 pb-24">
+      <header className="flex items-baseline justify-between mb-4">
+        <h1 className="text-base font-semibold">Antam · nástroj</h1>
+        <button className="text-[11.5px] text-neutral-400 underline" onClick={() => admin().auth.signOut().then(() => window.location.reload())}>odhlásit</button>
+      </header>
+      <div className="flex gap-1.5 mb-6">
+        <button type="button" className={chip(mode === "lease")} onClick={() => setMode("lease")}>Nájem 36</button>
+        <button type="button" className={chip(mode === "screen")} onClick={() => setMode("screen")}>Screening správy</button>
+      </div>
+      {mode === "lease" ? <Underwrite /> : <Tool embedded />}
+    </div>
+  );
 };
 export default Nastroj;
