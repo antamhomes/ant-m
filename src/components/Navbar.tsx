@@ -13,19 +13,16 @@ import { pathFor, sectionHref, type PageKey } from "@/lib/pages";
  * zůstane kotva. Aktuální stránka je označená aria-current.
  */
 type NavLink = { key: TranslationKey; page?: PageKey; section?: string };
-/** 5. 11. 2026: nabídka nájmu je homepage; Správa z navigace pryč. Vlastní
- *  provoz zůstává jako stránka pro jiného člověka, odkaz jen v patičce. */
 const NAV_LINKS: NavLink[] = [
-  { key: "nav_jak", section: "jak" },
-  { key: "nav_nabidka", section: "nabidka" },
-  { key: "nav_splatka", section: "splatka" },
-  { key: "nav_otazky", section: "faq" },
+  { key: "nav_sprava", page: "sprava" },
+  { key: "nav_own", page: "vlastni-provoz" },
+  { key: "nav_calculator", section: "kalkulacka" },
 ];
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const { lang, page } = useLanguage();
+  const { lang, page, toggleLang } = useLanguage();
   const ready = useSplashDone();
   const hrefOf = (l: NavLink) => (l.page ? pathFor(l.page, lang) : sectionHref(l.section!, page, lang));
   const isCurrent = (l: NavLink) => Boolean(l.page && l.page === page);
@@ -36,8 +33,9 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Update <html lang> attribute
   useEffect(() => {
-    document.documentElement.lang = "cs";
+    document.documentElement.lang = lang === "cs" ? "cs" : "vi";
   }, [lang]);
 
   // Close the mobile menu on Escape and lock body scroll while it is open
@@ -53,9 +51,43 @@ const Navbar = () => {
     };
   }, [menuOpen]);
 
-  // 5. 11. 2026: hero je na papíru, ne na tmavé fotce, takže navigace jede
-  // inkoustem od první obrazovky. Tmavý start zůstává jen stránkám s fotkou.
-  const solid = scrolled || menuOpen || page === "home";
+  const solid = scrolled || menuOpen;
+
+  const LangSwitch = () => (
+    <div
+      className={`inline-flex items-center rounded-full border ${
+        solid ? "border-border bg-card/60" : "border-primary-foreground/20 bg-transparent"
+      } overflow-hidden`}
+    >
+      <button
+        onClick={() => lang !== "cs" && toggleLang()}
+        className={`px-2.5 py-1 text-[11px] font-body font-semibold tracking-wider uppercase transition-colors ${
+          lang === "cs"
+            ? solid ? "bg-gold/15 text-gold-deep" : "bg-gold/15 text-gold"
+            : solid
+              ? "text-muted-foreground hover:text-foreground"
+              : "text-primary-foreground/60 hover:text-primary-foreground"
+        }`}
+        aria-pressed={lang === "cs"}
+      >
+        CZ
+      </button>
+      <span className={`w-px h-4 ${solid ? "bg-border" : "bg-primary-foreground/20"}`} />
+      <button
+        onClick={() => lang !== "vi" && toggleLang()}
+        className={`px-2.5 py-1 text-[11px] font-body font-semibold tracking-wider uppercase transition-colors ${
+          lang === "vi"
+            ? solid ? "bg-gold/15 text-gold-deep" : "bg-gold/15 text-gold"
+            : solid
+              ? "text-muted-foreground hover:text-foreground"
+              : "text-primary-foreground/60 hover:text-primary-foreground"
+        }`}
+        aria-pressed={lang === "vi"}
+      >
+        VI
+      </button>
+    </div>
+  );
 
   return (
     <nav
@@ -66,14 +98,14 @@ const Navbar = () => {
           ? "bg-background/95 backdrop-blur-md border-b border-border shadow-sm py-3"
           : "bg-transparent py-5"
       }`}
-      aria-label="Hlavní navigace"
+      aria-label={lang === "cs" ? "Hlavní navigace" : "Điều hướng chính"}
     >
       <div className="max-w-6xl mx-auto px-6 flex items-center justify-between">
         <a
           href={pathFor("home", lang)}
           onClick={() => setMenuOpen(false)}
           className="flex items-center"
-          aria-label="Antam"
+          aria-label="Antam Homes"
         >
           <Wordmark on={solid ? "light" : "dark"} size="md" />
         </a>
@@ -95,6 +127,8 @@ const Navbar = () => {
             </a>
           ))}
 
+          <LangSwitch />
+
           <a
             href="#kontakt"
             className={`btn px-5 py-2.5 text-xs ${solid ? "btn-primary" : "btn-primary-inverse"}`}
@@ -105,6 +139,7 @@ const Navbar = () => {
 
         {/* Mobile */}
         <div className="flex lg:hidden items-center gap-2">
+          <LangSwitch />
           <button
             type="button"
             onClick={() => setMenuOpen((o) => !o)}

@@ -17,8 +17,8 @@ const LanguageContext = createContext<LanguageContextType>({
   goTo: () => {},
 });
 
-/** 5. 11. 2026: jen čeština. Funkce zůstává kvůli volajícím. */
-export const langFromPath = (_pathname: string): Language => "cs";
+export const langFromPath = (pathname: string): Language =>
+  pathname.toLowerCase().startsWith("/vn") ? "vi" : "cs";
 
 /**
  * Language AND page are derived from the URL (`/` = Czech, `/vn` = Vietnamese;
@@ -56,7 +56,8 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
       lang,
       page,
       goTo,
-      toggleLang: () => goTo(pathFor(page)),
+      // Přepnutí jazyka drží stránku: /sprava ↔ /vn/sprava.
+      toggleLang: () => goTo(pathFor(page, lang === "cs" ? "vi" : "cs")),
     }),
     [lang, page, goTo]
   );

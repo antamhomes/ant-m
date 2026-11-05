@@ -5,7 +5,7 @@ import { t } from "@/i18n/translations";
 import { pathFor, sectionHref } from "@/lib/pages";
 
 const Footer = () => {
-  const { lang, page } = useLanguage();
+  const { lang, page, goTo } = useLanguage();
 
   return (
     <footer className="bg-gradient-dark border-t border-primary-foreground/10 pt-10 sm:pt-16 px-6 pb-[max(7rem,calc(env(safe-area-inset-bottom)+6rem))] md:pb-[max(2rem,env(safe-area-inset-bottom))]">
@@ -25,22 +25,22 @@ const Footer = () => {
           {/* Nav links */}
           <div className="md:col-span-3">
             <p className="font-body text-[12px] text-[#C2A46D] tracking-[0.22em] uppercase font-semibold mb-4">
-              Web
+              {lang === "cs" ? "Web" : "Trang web"}
             </p>
             <ul className="space-y-2.5">
               <li>
-                <a href={sectionHref("nabidka", page, lang)} className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
-                  {t(lang, "nav_nabidka")}
-                </a>
-              </li>
-              <li>
-                <a href={sectionHref("splatka", page, lang)} className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
-                  {t(lang, "nav_splatka")}
+                <a href={pathFor("sprava", lang)} className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
+                  {t(lang, "nav_sprava")}
                 </a>
               </li>
               <li>
                 <a href={pathFor("vlastni-provoz", lang)} className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
-                  {t(lang, "lz_footer_own")}
+                  {t(lang, "nav_own")}
+                </a>
+              </li>
+              <li>
+                <a href={sectionHref("kalkulacka", page, lang)} className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
+                  {t(lang, "footer_link_services")}
                 </a>
               </li>
               <li>
@@ -54,7 +54,7 @@ const Footer = () => {
           {/* Contact */}
           <div className="md:col-span-4">
             <p className="font-body text-[12px] text-[#C2A46D] tracking-[0.22em] uppercase font-semibold mb-4">
-              Kontakt
+              {lang === "cs" ? "Kontakt" : "Liên hệ"}
             </p>
             <ul className="space-y-3">
               <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
@@ -68,6 +68,17 @@ const Footer = () => {
                 <a href={`tel:${t(lang, "footer_phone").replace(/\s/g, "")}`} className="hover:text-gold transition-colors font-body">
                   {t(lang, "footer_phone")}
                 </a>
+              </li>
+              <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
+                <Phone className="w-4 h-4 text-gold mt-0.5 shrink-0" />
+                <div>
+                  <span className="font-body text-primary-foreground/65 text-xs block leading-none mb-0.5">
+                    Tiếng Việt
+                  </span>
+                  <a href={`tel:${t(lang, "footer_office_phone").replace(/\s/g, "")}`} className="hover:text-gold transition-colors font-body">
+                    {t(lang, "footer_office_phone")}
+                  </a>
+                </div>
               </li>
               <li className="flex items-start gap-3 text-sm text-primary-foreground/75">
                 <MapPin className="w-4 h-4 text-gold mt-0.5 shrink-0" />
@@ -85,7 +96,7 @@ const Footer = () => {
             rel="noopener noreferrer"
             className="font-body text-xs text-primary-foreground/70 hover:text-gold transition-colors underline underline-offset-4 decoration-primary-foreground/20 hover:decoration-gold"
           >
-            Informační memorandum (GDPR)
+            {lang === "cs" ? "Informační memorandum (GDPR)" : "Thông tin xử lý dữ liệu (GDPR)"}
           </a>
           <a
             href="/vop-majitele-nemovitosti.pdf"
@@ -93,7 +104,7 @@ const Footer = () => {
             rel="noopener noreferrer"
             className="font-body text-xs text-primary-foreground/70 hover:text-gold transition-colors underline underline-offset-4 decoration-primary-foreground/20 hover:decoration-gold"
           >
-            Všeobecné obchodní podmínky
+            {lang === "cs" ? "Všeobecné obchodní podmínky" : "Điều khoản chung"}
           </a>
           <a
             href="/formular-odstoupeni-od-smlouvy.pdf"
@@ -101,11 +112,11 @@ const Footer = () => {
             rel="noopener noreferrer"
             className="font-body text-xs text-primary-foreground/70 hover:text-gold transition-colors underline underline-offset-4 decoration-primary-foreground/20 hover:decoration-gold"
           >
-            Formulář pro odstoupení od smlouvy
+            {lang === "cs" ? "Formulář pro odstoupení od smlouvy" : "Mẫu đơn rút khỏi hợp đồng"}
           </a>
         </div>
 
-        {/* Operator identification (required for a business website) */}
+        {/* Operator identification (required for a business website) + language links */}
         <div className="mt-6 md:mt-8 pt-5 md:pt-6 border-t border-primary-foreground/10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
           <div>
             <p className="font-body text-[11px] leading-relaxed text-primary-foreground/45 max-w-2xl">
@@ -116,6 +127,26 @@ const Footer = () => {
               {t(lang, "footer_updated") ? ` · ${t(lang, "footer_updated")}` : ""}
             </p>
           </div>
+          <nav aria-label={lang === "cs" ? "Jazyk" : "Ngôn ngữ"} className="flex md:justify-end gap-4 font-body text-xs">
+            <a
+              href={pathFor(page, "cs")}
+              onClick={(e) => { e.preventDefault(); goTo(pathFor(page, "cs")); }}
+              className={lang === "cs" ? "text-gold" : "text-primary-foreground/55 hover:text-gold transition-colors"}
+              aria-current={lang === "cs" ? "page" : undefined}
+              hrefLang="cs"
+            >
+              {t(lang, "footer_lang_cs")}
+            </a>
+            <a
+              href={pathFor(page, "vi")}
+              onClick={(e) => { e.preventDefault(); goTo(pathFor(page, "vi")); }}
+              className={lang === "vi" ? "text-gold" : "text-primary-foreground/55 hover:text-gold transition-colors"}
+              aria-current={lang === "vi" ? "page" : undefined}
+              hrefLang="vi"
+            >
+              {t(lang, "footer_lang_vi")}
+            </a>
+          </nav>
         </div>
 
       </div>

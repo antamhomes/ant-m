@@ -45,7 +45,7 @@ describe("okno dat kalkulacky", () => {
     // k opisování. (report_note popisuje skutečný byt z Hospitable, jiná
     // provenience, jiná konstanta: STATS_ASOF v PortfolioSection.)
     const { default: translations } = await import("@/i18n/translations");
-    for (const lang of ["cs"] as const) {
+    for (const lang of ["cs", "vi"] as const) {
       for (const [k, v] of Object.entries(translations[lang])) {
         if (!k.startsWith("calc_") || typeof v !== "string") continue;
         expect(v, `${k} (${lang}) opisuje okno dat místo konstanty`).not.toMatch(/\d+\/20\d\d/);

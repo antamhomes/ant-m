@@ -23,7 +23,7 @@ import { pathFor, sectionHref } from "@/lib/pages";
  *  - "managed" /sprava: jen tmavý panel přes celou šířku, tlačítko do formuláře,
  *                       v rozbalovači jen položky správy;
  *  - "own"     /vlastni-provoz: jen světlý panel, most na #system, přestavba.
- * Garance je řádek správy (pr6 nese kotvu #garance, "pr6"). Krytí škod (pr7) z karty odešlo 5. 11. 2026.
+ * Garance a krytí škod jsou řádky správy (pr6 nese kotvu #garance, "pr6", "pr7").
  */
 export type PricingVariant = "both" | "managed" | "own";
 
@@ -36,13 +36,13 @@ const MORE_ROWS: Record<PricingVariant, readonly TranslationKey[]> = {
 
 type Row = { name: TranslationKey; value: TranslationKey; id?: string };
 
-/** Řádky správy: váš čas, příprava, vybavení, garance (kotva #garance), závazek.
- *  Krytí škod (pr7) z karty odešlo 5. 11. 2026 na přání majitele; pravidla dál ve FAQ (faq11). */
+/** Řádky správy: váš čas, příprava, vybavení, garance (kotva #garance), krytí škod, závazek. */
 const US_ROWS: Row[] = [
   { name: "pr_time_name", value: "pr1_time_value" },
   { name: "pr1_setup_name", value: "pr1_setup_price" },
   { name: "pr1_furnish_name", value: "pr1_furnish_value" },
   { name: "pr6_name", value: "pr6_price", id: "garance" },
+  { name: "pr7_name", value: "pr7_price" },
   { name: "pr1_term_name", value: "pr1_term_value" },
 ];
 

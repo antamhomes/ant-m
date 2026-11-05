@@ -1,31 +1,37 @@
 import { lazy, Suspense } from "react";
 import PageShell from "@/components/PageShell";
-import LeaseHero from "@/components/lease/LeaseHero";
-import { LeaseProblem, LeaseFlow, LeaseOffer, LeaseGuarantee, LeaseWhy, LeaseWhich, LeaseFaq } from "@/components/lease/LeaseSections";
+import HeroSection from "@/components/HeroSection";
+import ProofStrip from "@/components/ProofStrip";
 
-const LeaseCalc = lazy(() => import("@/components/lease/LeaseCalc"));
+// Below-the-fold sections are code-split so the first paint ships less JS.
+const PortfolioSection = lazy(() => import("@/components/PortfolioSection"));
+const CalculatorSection = lazy(() => import("@/components/CalculatorSection"));
+const PricingSection = lazy(() => import("@/components/PricingSection"));
+const ComparisonSection = lazy(() => import("@/components/ComparisonSection"));
 const ContactSection = lazy(() => import("@/components/ContactSection"));
+const FinalCtaSection = lazy(() => import("@/components/FinalCtaSection"));
 
 /**
- * HOMEPAGE = NABÍDKA NÁJMU (5. 11. 2026). Správa za 20 % je z webu pryč;
- * Antam si byt od investora pronajme na 3 roky a platí nájem ve výši jeho
- * splátky. Pořadí podle toho, na co se investor ptá: slib a příklad → proč
- * mu to dnes nejde → smyčka → co dostane → co kdyby → z čeho to platíme →
- * jeho číslo → které byty → otázky → poslat byt. Vlastní provoz (270 000 Kč)
- * zůstává na /vlastni-provoz s odkazem v patičce.
+ * HOMEPAGE = TŘÍDIČ (2. 11. 2026, tři stránky). Jedna otázka: kdo bude byt
+ * provozovat. Slib → důkaz → moje číslo → dvě cesty s cenou (tlačítka vedou
+ * na /sprava a /vlastni-provoz) → srovnání s nájmem → formulář.
+ * 3. 11. 2026: sekce Kdo jsme z homepage pryč (bez fotky zakladatele zněla
+ * slabě). AboutSection.tsx zůstává v repu pro návrat, až bude fotka.
+ * Co patří jen jednomu z těch dvou lidí (provozní systém, garance v plném
+ * znění, vyúčtování, služby, postup, FAQ), bydlí na jeho stránce.
+ * Do 2. 11. tu stálo všechno a stránka mluvila ke dvěma lidem najednou.
  */
 const Index = () => (
   <PageShell page="home">
-    <LeaseHero />
-    <LeaseProblem />
-    <LeaseFlow />
-    <LeaseOffer />
-    <LeaseGuarantee />
-    <LeaseWhy />
-    <Suspense fallback={null}><LeaseCalc /></Suspense>
-    <LeaseWhich />
-    <LeaseFaq />
+    <HeroSection />
+    {/* Pás čísel (3. 11. 2026). TodayStrip zůstává vypnutý, dokud nejede z reálných dat. */}
+    <ProofStrip />
+    <Suspense fallback={null}><PortfolioSection /></Suspense>
+    <Suspense fallback={null}><CalculatorSection /></Suspense>
+    <Suspense fallback={null}><PricingSection variant="both" /></Suspense>
+    <Suspense fallback={null}><ComparisonSection /></Suspense>
     <Suspense fallback={null}><ContactSection /></Suspense>
+    <Suspense fallback={null}><FinalCtaSection /></Suspense>
   </PageShell>
 );
 

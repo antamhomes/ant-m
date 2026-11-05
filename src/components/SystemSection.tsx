@@ -5,7 +5,7 @@ import { t, type TranslationKey } from "@/i18n/translations";
 
 /**
  * PROVOZNÍ SYSTÉM ANTAM (2. 11. 2026, Offer v2, patch 2). Stojí hned pod
- * ceníkem a je důkazem za cenou 270 tisíc: majitel nekupuje inzerát,
+ * ceníkem a je důkazem za cenou 180/270/360 tisíc: majitel nekupuje inzerát,
  * kupuje provozní systém. Tři vrstvy, od nejlehčí po nejtěžší:
  *
  *  1. šest pilířů: název + jedna věta o výsledku; podrobné dodávky jsou

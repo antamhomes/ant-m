@@ -19,7 +19,7 @@ const enter = (y: number, delay: number, duration = 0.7) =>
 type Copy = { label: TranslationKey; title: TranslationKey; desc: TranslationKey; line: TranslationKey; cta: TranslationKey; ctaHref: string; other: TranslationKey; otherPage: PageKey };
 const COPY: Record<"sprava" | "vlastni-provoz", Copy> = {
   sprava: { label: "sprava_hero_label", title: "sprava_hero_title", desc: "sprava_hero_desc", line: "sprava_hero_line", cta: "sprava_hero_cta", ctaHref: "#kalkulacka", other: "sprava_hero_other", otherPage: "vlastni-provoz" },
-  "vlastni-provoz": { label: "own_hero_label", title: "own_hero_title", desc: "own_hero_desc", line: "own_hero_line", cta: "own_hero_cta", ctaHref: "#system", other: "own_hero_other", otherPage: "home" },
+  "vlastni-provoz": { label: "own_hero_label", title: "own_hero_title", desc: "own_hero_desc", line: "own_hero_line", cta: "own_hero_cta", ctaHref: "#system", other: "own_hero_other", otherPage: "sprava" },
 };
 
 const PageHero = ({ page }: { page: "sprava" | "vlastni-provoz" }) => {

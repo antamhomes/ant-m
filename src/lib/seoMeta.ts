@@ -1,11 +1,9 @@
 /** Meta per page and language; the cesty are in lib/pages.ts. Plain TS: vite.config.ts imports it at build time. */
 export const META: Record<"home" | "sprava" | "vlastni-provoz", { cs: { title: string; desc: string }; vi: { title: string; desc: string } }> = {
-  // 5. 11. 2026: homepage je nabídka nájmu investorům. VI texty zůstávají jen
-  // jako typová výplň (vietnamská verze zrušena), nikde se nevykreslují.
   home: {
     cs: {
-      title: "Splácíme hypotéky investorům: nájem bytu na 3 roky | Antam",
-      desc: "Pronajmeme si váš byt v Praze na 3 roky za pevný nájem, placený i v prázdných měsících. U vhodných bytů víc než běžný nájem a celá splátka hypotéky. Nabídka do 24 hodin.",
+      title: "Správa krátkodobých pronájmů a Airbnb v Praze | Antam Homes",
+      desc: "Krátkodobý pronájem v Praze: správa za 20 % + DPH s písemným ročním minimem, nebo hotový systém k vlastnímu provozu. Obě cesty spočítáme vedle sebe.",
     },
     vi: {
       title: "Quản lý căn hộ cho thuê ngắn hạn tại Praha | Antam Homes",
@@ -25,11 +23,11 @@ export const META: Record<"home" | "sprava" | "vlastni-provoz", { cs: { title: s
   "vlastni-provoz": {
     cs: {
       title: "Provozní systém Antam: Airbnb byt k vlastnímu provozu | Antam Homes",
-      desc: "Postavíme vám provozní systém krátkodobého pronájmu na vašich účtech a předáme vám ho: 270 000 Kč jednou, pak žádná procenta z výnosu. 60 dní podpory.",
+      desc: "Postavíme vám provozní systém krátkodobého pronájmu na vašich účtech a předáme vám ho: 180 000 až 360 000 Kč jednou, pak žádná procenta z výnosu. 60 dní podpory.",
     },
     vi: {
       title: "Tự vận hành căn hộ cho thuê ngắn hạn: Antam dựng và bàn giao | Antam Homes",
-      desc: "Antam dựng hệ thống vận hành cho thuê ngắn hạn trên tài khoản của anh chị rồi bàn giao: 270 000 Kč một lần, sau đó không mất phần trăm. 60 ngày hỗ trợ.",
+      desc: "Antam dựng hệ thống vận hành cho thuê ngắn hạn trên tài khoản của anh chị rồi bàn giao: 180 000 đến 360 000 Kč một lần, sau đó không mất phần trăm. 60 ngày hỗ trợ.",
     },
   },
 };

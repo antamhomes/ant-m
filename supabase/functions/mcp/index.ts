@@ -110,35 +110,16 @@ var OPERATOR_EVIDENCE = {
   // měsíců 2025_08..2026_07, tržba za ubytování PO SLEVÁCH proti avg_revenue
   // okresu z data/pricelabs-2026-08/praha1.json.
   praha1: { measured: 1.032, weight: 1, sample: "3 byty \xD7 12 m\u011Bs\xEDc\u016F (402 1,126 \xB7 405 1,028 \xB7 302 0,942)" },
-  // PŘEMĚŘENO 4. 11. 2026: okno 2025_10..2026_09 proti avg_revenue 2BR polygonu
-  // „Praha 3 official boundary" (PriceLabs market_research 3. 11. 2026), vlastní
-  // tržba za ubytování z PriceLabs bookings reportu, u Booking.com VČETNĚ 12% DPH
-  // (Booking ho vede zvlášť, tržní ceny z Airbnb ho v sobě mají; bez toho by
-  // vlastní strana vycházela o 4–8 % níž). 12 bytoměsíců, váha zůstává 0,50.
-  praha3: { measured: 1.34, weight: 0.5, sample: "2 byty, 12 bytom\u011Bs\xEDc\u016F 3\u20139/2026 (Modern AC 1,46 \xB7 free movies 1,17)" },
+  praha3: { measured: 1.21, weight: 0.5, sample: "2 byty (Modern AC 1,31 / 139 dn\xED \xB7 Garden APT 1,21 / 54 dn\xED)" },
   praha5: { measured: 1.08, weight: 1, sample: "1 byt (Mozart, 113 dn\xED)" }
 };
 var publicFactorFrom = (measured, weight) => measured <= OPERATOR_FACTOR_DEFAULT_PUBLIC ? measured : Math.round((OPERATOR_FACTOR_DEFAULT_PUBLIC + weight * (measured - OPERATOR_FACTOR_DEFAULT_PUBLIC)) * 1e3) / 1e3;
-var OPERATOR_TARGET_PUBLIC = {
-  praha4: 1.25,
-  praha6: 1.25,
-  praha7: 1.25,
-  praha8: 1.25,
-  praha9: 1.25,
-  praha10: 1.25
-};
 var OPERATOR_FACTOR_PUBLIC = {
-  ...OPERATOR_TARGET_PUBLIC,
   // Praha 2 tu měla ruční 0,95. Zrušeno 2. 9. 2026: bez měření platí výchozí
   // 1,10 jako pro každý jiný neměřený okres (viz operatorFactor níž).
   ...Object.fromEntries(
     Object.entries(OPERATOR_EVIDENCE).map(([loc, e]) => [loc, publicFactorFrom(e.measured, e.weight)])
-  ),
-  // Rozhodnutí 4. 11. 2026: Praha 3 veřejně 1,28 = naměřených 1,34 s vahou
-  // 0,75, aby změřený okres nestál pod cílovými 1,25 okresů bez měření. Plných
-  // 1,34 neprošlo backtestem: vršek by byl o 23 % nad publikovanou kartou
-  // Moderního apartmánu se zahradou (pojistka v testu je 20 %). Interně 1,17.
-  praha3: 1.28
+  )
 };
 var internalFactorFrom = (measured, weight) => measured <= OPERATOR_FACTOR_DEFAULT ? measured : Math.round((OPERATOR_FACTOR_DEFAULT + weight * (measured - OPERATOR_FACTOR_DEFAULT)) * 1e3) / 1e3;
 var OPERATOR_FACTOR_INTERNAL = Object.fromEntries(
@@ -574,7 +555,6 @@ var MARKET_CTVRT = {
     }
   }
 };
-var ctvrtiOf = (loc) => Object.entries(MARKET_CTVRT).filter(([, v]) => v.parents.includes(loc)).map(([id, v]) => ({ id, label: v.label }));
 var ctvrtWeight = (n) => n >= 100 ? 1 : n >= 50 ? 0.75 : n >= 25 ? 0.5 : 0;
 var localDerived = (loc, band, ctvrt) => {
   const target = BAND_ORDER.indexOf(band);
@@ -705,12 +685,10 @@ var ratioFor = (loc, m2, ownerMonthlyCzk) => {
   if (!key) return null;
   return Math.round(ownerMonthlyCzk / rentFor(key, "2kk", m2) * 10) / 10;
 };
-var ENERGY = {
-  "1kk": 2500,
-  "2kk": 3500,
-  "3kk": 4500,
-  "4kk": 5500
-};
+var ROOMS = { "1kk": 1, "2kk": 2, "3kk": 3, "4kk": 4 };
+var DAMAGE_COVER_PER_ROOM = 5e3;
+var DAMAGE_COVER_MAX = 25e3;
+var annualDamageCover = (rooms) => Math.min(Math.max(0, Math.round(rooms)) * DAMAGE_COVER_PER_ROOM, DAMAGE_COVER_MAX);
 var OCCUPANCY_BY_FLAT = [
   { name: "Elegant Museum View\xA0Apartment", loc: "Praha 1", kat: "Nov\xE9 M\u011Bsto", m2: 52, bedrooms: 2, occupancy: 94, market: MARKET_OCC.praha1, days: 318 },
   { name: "Modern Museum View\xA0Apartment", loc: "Praha 1", kat: "Nov\xE9 M\u011Bsto", m2: 52, bedrooms: 2, occupancy: 94, market: MARKET_OCC.praha1, days: 318 },
@@ -734,13 +712,13 @@ var MGMT_VAT = 0.21;
 var MGMT_FEE_GROSS = Math.round(MGMT_FEE * (1 + MGMT_VAT) * 1e3) / 1e3;
 var PLATFORM_FEE = 0.17;
 var DAYS = 30.44;
-var split = (gross, occupancy, fee = MGMT_FEE_GROSS) => {
+var split = (gross, occupancy) => {
   const platformFee = Math.round(PLATFORM_FEE * gross);
   const netRevenue = gross - platformFee;
-  const mgmt = Math.round(netRevenue * fee);
+  const mgmt = Math.round(netRevenue * MGMT_FEE_GROSS);
   return { occupancy, gross, platformFee, netRevenue, mgmt, net: netRevenue - mgmt };
 };
-function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope = "public", config, vatPayer = false } = {}) {
+function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope = "public", config } = {}) {
   const guests = guestsFor(size);
   const area = m2 ?? typicalArea(location, size);
   if (!isMeasured(location)) return { supported: false, band: bandForSize(size, area), guests };
@@ -773,10 +751,9 @@ function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope
     highGross = mid * (1 + SPREAD.minWidth / 2);
   }
   const k = operatorFactor(location, scope);
-  const fee = vatPayer ? MGMT_FEE : MGMT_FEE_GROSS;
-  const market = split(Math.round(lowGross * k * AVAILABILITY), marketOcc, fee);
-  const antam = split(Math.round(highGross * k * AVAILABILITY), marketOcc, fee);
-  const marketAnchor = split(Math.round(highGross * AVAILABILITY), marketOcc, fee);
+  const market = split(Math.round(lowGross * k * AVAILABILITY), marketOcc);
+  const antam = split(Math.round(highGross * k * AVAILABILITY), marketOcc);
+  const marketAnchor = split(Math.round(highGross * AVAILABILITY), marketOcc);
   return {
     supported: true,
     band,
@@ -818,7 +795,7 @@ var czk = (n) => n.toLocaleString("cs-CZ");
 var estimate_yield_default = defineTool({
   name: "estimate_rental_yield",
   title: "Estimate short-term rental yield",
-  description: "Market data tool: estimate the monthly net short-term rental income of an apartment in a Prague district (what an owner would net under a 20 % management fee), and compare it to long-term rent. Antam's actual offer to investors is the 3-year lease (see quote_lease); this tool shows the market revenue the lease is paid from. Same model as the former website calculator: realized market prices of the whole district per bedroom band (PriceLabs STR index, 12 closed months). The public model maps LAYOUT + FLOOR AREA to a market band, blending between two bands over an area range; the result is a range whose low end is the district market average and whose high end is that same market times the measured Antam operator factor. Guest capacity is not an input, never multiplies revenue, and is deliberately NOT reported: how many beds fit depends on room proportions rather than total floor area, so do not state or estimate a guest count for the owner. Districts or bands with too small a market sample (and Praha 10 for now) get an individual assessment within 24 hours instead of a number.",
+  description: "Estimate the monthly net income an apartment owner in Prague could earn with Antam Homes short-term rental management, and compare it to long-term rent. Same model and same code as the calculator on the website: realized market prices of the whole district per bedroom band (PriceLabs STR index, 12 closed months). The public model maps LAYOUT + FLOOR AREA to a market band, blending between two bands over an area range; the result is a range whose low end is the district market average and whose high end is that same market times the measured Antam operator factor. Guest capacity is not an input, never multiplies revenue, and is deliberately NOT reported: how many beds fit depends on room proportions rather than total floor area, so do not state or estimate a guest count for the owner. Districts or bands with too small a market sample (and Praha 10 for now) get an individual assessment within 24 hours instead of a number.",
   inputSchema: {
     location: z.enum(["praha1", "praha2", "praha3", "praha4", "praha5", "praha6", "praha7", "praha8", "praha9", "praha10"]).describe("Prague district of the apartment."),
     size: z.enum(["1kk", "2kk", "3kk", "4kk"]).describe("Apartment layout in Czech notation (1kk = one room with kitchenette, 3kk = two separate bedrooms plus a living room). This is the PHYSICAL layout, not a bedroom count on Airbnb and not a guest capacity: those are three different things. Layout plus floor area picks the commercial market band. 1kk = 1BR. 2kk blends 1BR to 2BR between 40 and 55 m2 (measured on Antam's own flats: 40 m2 sleeping four earns as 1BR, 52 m2 sleeping eight earns as 2BR). 3kk blends 2BR to 3BR between 65 and 95 m2 (HEURISTIC consistency correction of 31 Aug 2026, not measured: no 3kk flat has trading history yet). 4kk is capped at 3BR because no 4BR market band exists yet, so large 4kk flats are understated. Long-term rent uses the district-typical floor area of the layout (Sreality medians) unless floorAreaM2 is given."),
@@ -897,7 +874,7 @@ var estimate_yield_default = defineTool({
       managementFeeVat: 0.21,
       managementFeeEffectiveForNonVatOwner: 0.242,
       longTermRentBenchmark: longTermRent,
-      note: "Nightly rate = realized market price of the whole district for this bedroom band (PriceLabs STR index, official district boundary, 12 closed months). marketAverage is the pure market anchor with no operator factor; withAntamHomes applies the measured Antam operator factor. Owner figures deduct the platform commission and a 20 % + 21 % VAT management fee (24.2 %), the structure Antam used before 5 Nov 2026; Antam now offers investors a 3-year lease instead (quote_lease). Utilities are not included. Long-term rent = median of fresh Sreality listings by district and floor area. If floorAreaM2 was not supplied, floorAreaAssumed is true."
+      note: "Nightly rate = realized market price of the whole district for this bedroom band (PriceLabs STR index, official district boundary, 12 closed months to 7/2026). marketAverage is the pure market anchor: the same flat configuration and the same deductions with NO operator factor, so it is directly checkable against PriceLabs market data. withAntamHomes applies the measured Antam operator factor (revenue ratio against the market mean, from reconciling eleven managed flats against PriceLabs) to that same anchor. It is a measured revenue ratio, not an occupancy uplift: Antam's flats run 92-96 % occupancy at 63-77 % of market ADR, so the effect shows up in revenue, not in an assumed occupancy number. The Antam Homes management fee is 20 % of net revenue (what the platform pays out, after deducting the cleaning fee) plus 21 % Czech VAT; for an owner who cannot reclaim VAT that is 24.2 %, which is what these owner figures deduct. Owners who prefer to operate the flat themselves can instead buy the complete setup once (79,000 CZK for a furnished flat; 180,000 / 270,000 / 360,000 CZK for an empty 2+kk / 3+kk / 4+kk incl. design and procurement, furniture at cost + 12 %) and optionally keep Antam Homes' pricing management for 3,490 CZK per month; no percentage of revenue applies on that path. Every apartment Antam Homes accepts for management comes with a written yearly income guarantee (at least the long-term rent plus utilities); eligibility is checked free of charge before signing, and this estimate is not that guarantee. Guests pay the cleaning fee separately; it is retained by Antam Homes. Utilities (electricity, water) are paid by the owner and are not included. Long-term rent = median of 1 300+ fresh Sreality listings (8/2026) by district and actual floor area, cross-checked against Deloitte Rent Index Q2/2026. If floorAreaM2 was not supplied, floorAreaAssumed is true and the district-typical area was used for both the band blend and the rent, which makes the estimate noticeably less precise for atypically small or large flats."
     };
     return {
       content: [
@@ -957,86 +934,36 @@ var list_portfolio_default = defineTool2({
 
 // src/lib/mcp/tools/get-services.ts
 import { defineTool as defineTool3 } from "npm:@lovable.dev/mcp-js@0.26.2";
-
-// src/lib/lease.ts
-var LTV = 0.7;
-var TERM_YEARS = 30;
-var LEASE_MONTHS = 36;
-var RATE_DEFAULT = 0.051;
-var RENT_DAYS_BEFORE = 5;
-var DEFAULT_EXIT_DAYS = 30;
-var REGULATION_NOTICE_MONTHS = 2;
-var annuity = (principal, rate, years) => {
-  const r = rate / 12;
-  const n = years * 12;
-  if (r <= 0) return principal / n;
-  return principal * r / (1 - Math.pow(1 + r, -n));
-};
-var LEASE_OPS = 2e3;
-var LABOUR = 6e3;
-var BAD_YEAR = 0.9;
-var LEASE_COVER_RATIO = 0.6;
-var WINTER_RATIO = 0.9;
-var leaseCap = (loc, size, opts = {}) => {
-  const m2 = opts.m2 ?? typicalArea(loc, size);
-  const hc = opts.haircut ?? 1;
-  const year = ownerMonthly(loc, size, { season: "year", m2, ctvrt: opts.ctvrt ?? null, scope: "internal" });
-  const winter = ownerMonthly(loc, size, { season: "winter", m2, ctvrt: opts.ctvrt ?? null, scope: "internal" });
-  if (!year.supported || !winter.supported) return null;
-  const marketRevenue = year.marketAnchor.netRevenue;
-  const conservativeRevenue = marketRevenue * hc * BAD_YEAR;
-  const winterRevenue = winter.marketAnchor.netRevenue * hc;
-  const opex = ENERGY[size] + LEASE_OPS + LABOUR;
-  const noi = Math.max(0, conservativeRevenue - opex);
-  const winterNoi = Math.max(0, winterRevenue - opex);
-  const capYear = noi * LEASE_COVER_RATIO;
-  const capWinter = winterNoi * WINTER_RATIO;
-  const maxRent = Math.round(Math.min(capYear, capWinter) / 100) * 100;
-  const rate = opts.rate ?? RATE_DEFAULT;
-  const perCrown = annuity(1, rate, TERM_YEARS) * LTV;
-  const maxPrice = Math.floor(maxRent / perCrown / 1e5) * 1e5;
-  return { marketRevenue, conservativeRevenue, winterRevenue, opex, noi, winterNoi, capYear, capWinter, maxRent, maxPrice };
-};
-var quoteLease = (price, loc, size, opts = {}) => {
-  const rate = opts.rate ?? RATE_DEFAULT;
-  const own = Math.round(price * (1 - LTV));
-  const loan = Math.round(price * LTV);
-  const payment = Math.round(annuity(loan, rate, TERM_YEARS));
-  const c = loc ? leaseCap(loc, size, { ctvrt: opts.ctvrt ?? null, m2: opts.m2, rate }) : null;
-  if (!c) return { price, rate, own, loan, payment, cap: null, maxPrice: null, rent: null, covered: "review", shortfall: 0, noi: null };
-  const rent = Math.min(payment, c.maxRent);
-  const covered = rent >= payment ? "full" : "partial";
-  return { price, rate, own, loan, payment, cap: c.maxRent, maxPrice: c.maxPrice, rent, covered, shortfall: payment - rent, noi: c.noi };
-};
-
-// src/lib/mcp/tools/get-services.ts
 var services = [
-  { title: "N\xE1jem na 3 roky za pevnou \u010D\xE1stku", description: "Antam si byt od majitele pronajme na 36 m\u011Bs\xEDc\u016F za pevn\xFD n\xE1jem, placen\xFD ka\u017Ed\xFD m\u011Bs\xEDc i v pr\xE1zdn\xFDch m\u011Bs\xEDc\xEDch, splatn\xFD 5 dn\xED p\u0159ed spl\xE1tkou hypot\xE9ky. N\xE1jem se po\u010D\xEDt\xE1 z toho, co byt vyd\u011Bl\xE1, ne ze spl\xE1tky: u vhodn\xFDch byt\u016F je vy\u0161\u0161\xED ne\u017E b\u011B\u017En\xFD n\xE1jem a pokryje celou spl\xE1tku, u ostatn\xEDch ji pokryje z\u010D\xE1sti. Ka\u017Ed\xFD byt se posuzuje zvl\xE1\u0161\u0165." },
-  { title: "Nab\xEDdka do 24 hodin", description: "Majitel po\u0161le adresu, dispozici a svou spl\xE1tku; do 24 hodin dostane konkr\xE9tn\xED \u010D\xEDslo, zdarma a nez\xE1vazn\u011B. Kdo byt teprve kupuje, dozv\xED se, do jak\xE9 ceny ho Antam pokryje cel\xFD." },
-  { title: "Vybaven\xED", description: "V\xFDb\u011Br, n\xE1kup, doprava a mont\xE1\u017E p\u0159es Antam za po\u0159izovac\xED ceny plus 20 %. Vybaven\xED kupuje investor a z\u016Fst\xE1v\xE1 jeho." },
-  { title: "Provoz", description: "Byt Antam pronaj\xEDm\xE1 kr\xE1tkodob\u011B, nebo st\u0159edn\u011Bdob\u011B firm\xE1m. Energie, internet, slu\u017Eby k u\u017E\xEDv\xE1n\xED, \xFAklid, drobn\xE9 opravy a cel\xFD provoz plat\xED Antam. Investor plat\xED fond oprav, da\u0148 z nemovitosti a poji\u0161t\u011Bn\xED domu a vybaven\xED." },
-  { title: "Provozn\xED syst\xE9m Antam (vlastn\xED provoz)", description: "Pro majitele, kte\u0159\xED cht\u011Bj\xED byt provozovat sami: Antam postav\xED provozn\xED syst\xE9m na jejich \xFA\u010Dtech a p\u0159ed\xE1 ho. 270 000 K\u010D bez DPH jednou, jak\xE1koli dispozice; \u0159\xEDzen\xED cen prvn\xEDch 60 dn\xED v cen\u011B, pak 3 490 K\u010D m\u011Bs\xED\u010Dn\u011B." }
+  { title: "P\u0159\xEDprava bytu a interi\xE9r", description: "Porad\xEDme, co host\xE9 v dan\xE9 lokalit\u011B hledaj\xED: uspo\u0159\xE1d\xE1n\xED, vybaven\xED, drobnosti, kter\xE9 rozhoduj\xED o hodnocen\xED. Bez zbyte\u010Dn\xFDch investic." },
+  { title: "Fotky a prezentace", description: "Profesion\xE1ln\xED fotky, popis a nastaven\xED nab\xEDdky tak, aby byt vynikl mezi stovkami dal\u0161\xEDch." },
+  { title: "Cenotvorba", description: "Cenu lad\xEDme denn\u011B podle sez\xF3ny, popt\xE1vky, obsazenosti a okol\xED, ne jedna cena na cel\xFD rok." },
+  { title: "Host\xE9 a komunikace", description: "Odpov\u011Bdi do minut, informace k p\u0159\xEDjezdu, podpora b\u011Bhem pobytu a rychl\xE9 \u0159e\u0161en\xED situac\xED." },
+  { title: "\xDAklid, kontrola a \xFAdr\u017Eba", description: "Po ka\u017Ed\xE9m pobytu \xFAklid a kontrola stavu, drobn\xE9 opravy hned, \u0159emesln\xEDci, kdy\u017E je pot\u0159eba." },
+  { title: "M\u011Bs\xED\u010Dn\xED p\u0159ehled", description: "Jasn\xFD p\u0159ehled rezervac\xED, v\xFDnos\u016F, n\xE1klad\u016F a toho, co se v byt\u011B \u0159e\u0161ilo, na jednu stranu." }
 ];
 var faq = [
-  { question: "Uzn\xE1 mi banka n\xE1jem od Antam jako p\u0159\xEDjem?", answer: "Ano, jako ka\u017Ed\xFD dolo\u017Een\xFD n\xE1jem; banky obvykle zapo\u010D\xEDtaj\xED kolem 70 % a cht\u011Bj\xED v\xFDpisy nebo da\u0148ov\xE9 p\u0159izn\xE1n\xED. Na v\xFD\u0161i \xFAv\u011Bru na dal\u0161\xED byt to samo o sob\u011B z\xE1sadn\xED vliv nem\xE1." },
-  { question: "\u0158\xEDd\xED Antam n\xE1jem spl\xE1tkou majitele?", answer: "Ne. N\xE1jem se po\u010D\xEDt\xE1 z toho, co byt vyd\u011Bl\xE1. U vhodn\xFDch byt\u016F pokryje celou spl\xE1tku, u ostatn\xEDch z\u010D\xE1sti. \u010C\xEDslo dostane majitel p\u0159edem." },
-  { question: "Kdo plat\xED fond oprav a poji\u0161t\u011Bn\xED?", answer: "Investor: fond oprav, da\u0148 z nemovitosti, poji\u0161t\u011Bn\xED domu a vybaven\xED. Antam: energie, internet, slu\u017Eby k u\u017E\xEDv\xE1n\xED bytu, \xFAklid, drobn\xE9 opravy a cel\xFD provoz. Rozpis je sou\u010D\xE1st\xED smlouvy." },
-  { question: "Komu pat\u0159\xED vybaven\xED?", answer: "Investorovi. Kupuje ho p\u0159es Antam za po\u0159izovac\xED ceny plus 20 % za v\xFDb\u011Br, n\xE1kup, dopravu a mont\xE1\u017E. Po skon\u010Den\xED n\xE1jmu z\u016Fst\xE1v\xE1 v byt\u011B." },
-  { question: "Co se stane po t\u0159ech letech?", answer: "Investor dostane byt zp\u011Bt vybaven\xFD a v provozu. M\u016F\u017Ee ho prodat, pronajmout dlouhodob\u011B, nebo s Antam podepsat dal\u0161\xED 3 roky." },
-  { question: "Co je to za smlouvu?", answer: "N\xE1jem prostoru k podnik\xE1n\xED se souhlasem majitele s kr\xE1tkodob\xFDm ubytov\xE1n\xEDm. Ne n\xE1jem bytu k bydlen\xED. Vzor dostane investor p\u0159ed podpisem." },
-  { question: "Co kdy\u017E Antam nezaplat\xED?", answer: "N\xE1jem chod\xED 5 dn\xED p\u0159ed spl\xE1tkou hypot\xE9ky. Kdy\u017E nep\u0159ijde 30 dn\xED, smlouva kon\u010D\xED a investor dost\xE1v\xE1 byt zp\u011Bt vybaven\xFD." },
-  { question: "Co kdy\u017E se zm\u011Bn\xED z\xE1kon?", answer: "Kdy\u017E st\xE1t, obec nebo \xFA\u0159ad kr\xE1tkodob\xE9 ubytov\xE1n\xED v byt\u011B znemo\u017En\xED, m\xE1 Antam dvoum\u011Bs\xED\u010Dn\xED v\xFDpov\u011B\u010F. Do t\xE9 doby plat\xED. Byt vrac\xED vybaven\xFD." },
-  { question: "Co kdy\u017E host n\u011Bco rozbije?", answer: "Antam oprav\xED na vlastn\xED n\xE1klady. Byt je po ka\u017Ed\xE9m hostovi uklizen\xFD a ka\u017Ed\xFD t\xFDden kontrolovan\xFD." },
-  { question: "Mus\xED to v\u011Bd\u011Bt SVJ?", answer: "Ano, Antam to ozn\xE1m\xED. SVJ kr\xE1tkodob\xE9 ubytov\xE1n\xED ve stanov\xE1ch zak\xE1zat nem\u016F\u017Ee, m\u016F\u017Ee ale upravit pravidla domu." },
-  { question: "Vyd\u011Bl\xE1 na tom Antam?", answer: "Ano. Byt vyd\u011Bl\xE1 v\xEDc, ne\u017E je n\xE1jem investora, a rozd\xEDl je mar\u017Ee Antam. Je to cena za to, \u017Ee spl\xE1tka chod\xED ka\u017Ed\xFD m\u011Bs\xEDc a investor ned\u011Bl\xE1 nic." },
-  { question: "Co kdy\u017E investorovi skon\u010D\xED fixace?", answer: "N\xE1jem je pevn\xE1 \u010D\xE1stka: spl\xE1tka v den podpisu. Kdy\u017E po fixaci spl\xE1tka stoupne, rozd\xEDl dopl\xE1c\xED investor; kdy\u017E klesne, rozd\xEDl je jeho. Antam doporu\u010Duje fixaci na 3 roky a d\xE9le." },
-  { question: "Jak se n\xE1jem dan\xED?", answer: "Jako p\u0159\xEDjem z n\xE1jmu podle \xA7 9. \xDAroky z hypot\xE9ky, odpisy bytu a fond oprav jsou n\xE1klad, da\u0148 b\xFDv\xE1 v prvn\xEDch letech bl\xEDzko nuly. Investor si to ov\u011B\u0159\xED s \xFA\u010Detn\xEDm." },
-  { question: "Kter\xE9 byty Antam bere?", answer: "Ka\u017Ed\xFD byt se posuzuje zvl\xE1\u0161\u0165: rozhoduje poloha, dispozice, po\u010Det l\u016F\u017Eek a stav, ne jen m\u011Bstsk\xE1 \u010D\xE1st. Ne ka\u017Ed\xFD byt pokryje celou spl\xE1tku; Antam to \u0159ekne rovnou, s \u010D\xEDslem." }
+  { question: "Mus\xED b\xFDt byt u\u017E p\u0159ipraven\xFD?", answer: "Ne. Um\xEDme se pod\xEDvat i na byt p\u0159ed spu\u0161t\u011Bn\xEDm a \u0159\xEDct, co d\xE1v\xE1 smysl p\u0159ipravit." },
+  { question: "Kolik je pot\u0159eba investovat do p\u0159\xEDpravy nemovitosti?", answer: "P\u0159\xEDprava bytu ke spr\xE1v\u011B stoj\xED 39 000 K\u010D bez DPH, za\u0159\xEDzen\xFD i pr\xE1zdn\xFD byt: focen\xED, inzer\xE1ty, cen\xEDk, syst\xE9m, p\u0159\xEDstupy, \xFAklid a pr\xE1dlo, administrativn\xED spu\u0161t\u011Bn\xED. Chyb\u011Bj\xEDc\xED vybaven\xED (u pr\xE1zdn\xE9ho bytu i n\xE1vrh interi\xE9ru a mont\xE1\u017E) se kupuje za po\u0159izovac\xED ceny s doklady plus 12 % za zaji\u0161t\u011Bn\xED; po\u010D\xEDtejte orienta\u010Dn\u011B 100 000 K\u010D na pokoj, vybaven\xED z\u016Fst\xE1v\xE1 majitele. Kdo chce byt provozovat s\xE1m, koup\xED Provozn\xED syst\xE9m Antam jednou: 180 000 / 270 000 / 360 000 K\u010D bez DPH pro 2+kk / 3+kk / 4+kk, za\u0159\xEDzen\xFD i pr\xE1zdn\xFD byt; vybaven\xED za po\u0159izovac\xED ceny plus 20 % do 500 000 K\u010D a 12 % nad to; d\xE1l \u017E\xE1dn\xE1 procenta z v\xFDnosu, \u0159\xEDzen\xED cen prvn\xEDch 60 dn\xED v cen\u011B a pak 3 490 K\u010D m\u011Bs\xED\u010Dn\u011B." },
+  { question: "M\u016F\u017Eu byt n\u011Bkdy vyu\u017E\xEDt pro sebe?", answer: "Term\xEDny pro sebe nebo rodinu si blokujete sami, nejm\xE9n\u011B 30 dn\xED p\u0159edem. U nejvyt\xED\u017Een\u011Bj\u0161\xEDch sv\xE1tk\u016F, jako jsou V\xE1noce, Silvestr a Velikonoce, se na term\xEDnu nejd\u0159\xEDv domluv\xEDme. U\u017E potvrzen\xE9 rezervace host\u016F z\u016Fst\xE1vaj\xED nedot\u010Den\xE9. Prvn\xEDch 14 noc\xED v roce je bez odm\u011Bny Antam Homes, majitel plat\xED jen \xFAklid; garantovan\xE1 ro\u010Dn\xED \u010D\xE1stka se za blokovan\xE9 noci pom\u011Brn\u011B sni\u017Euje, v\u010Detn\u011B t\u011Bchto 14." },
+  { question: "Jak budu v\u011Bd\u011Bt, co byt vyd\u011Bl\xE1v\xE1?", answer: "Ka\u017Ed\xFD m\u011Bs\xEDc zp\u011Btn\u011B p\u0159ehled na jednu stranu: obsazen\xE9 noci, v\xFDnos z jednotliv\xFDch platforem, provize platforem, odm\u011Bna 20 % + DPH a co se v byt\u011B \u0159e\u0161ilo, spolu s fakturou na odm\u011Bnu. Vy\xFA\u010Dtov\xE1n\xED i v\xFDplata prob\u011Bhnou do 15. dne n\xE1sleduj\xEDc\xEDho m\u011Bs\xEDce." },
+  { question: "Kolik spr\xE1va stoj\xED?", answer: "Spr\xE1va: na\u0161e odm\u011Bna je 20 % z p\u0159\xEDjmu po poplatc\xEDch plus DPH 21 %: z toho, co p\u0159ijde od Airbnb a Booking.com po ode\u010Dten\xED \xFAklidov\xE9ho poplatku. Majitel, kter\xFD DPH neode\u010Dte, tedy plat\xED 24,2 %. Bez fixn\xEDch ani m\u011Bs\xED\u010Dn\xEDch poplatk\u016F; v odm\u011Bn\u011B je garance minim\xE1ln\xEDho v\xFDnosu, internet, hygienick\xE9 pot\u0159eby pro hosty a \u010Distic\xED prost\u0159edky. Drobn\xE9 opravy do 5 000 K\u010D vy\u0159\xEDd\xEDme sami a strhneme z v\xFDnosu; v\u011Bt\u0161\xED nejd\u0159\xEDv nahl\xE1s\xEDme majiteli. Vlastn\xED provoz: Provozn\xED syst\xE9m Antam koup\xEDte jednou (180 000 a\u017E 360 000 K\u010D podle dispozice), \u0159\xEDzen\xED cen prvn\xEDch 60 dn\xED v cen\u011B a pak 3 490 K\u010D m\u011Bs\xED\u010Dn\u011B, \u017E\xE1dn\xE1 procenta z v\xFDnosu." },
+  { question: "Co je garance minim\xE1ln\xEDho v\xFDnosu?", answer: "Ke ka\u017Ed\xE9mu bytu, kter\xFD Antam Homes vezme do spr\xE1vy, dostane majitel p\xEDsemn\xE9 ro\u010Dn\xED minimum: n\xE1jem, kter\xFD by byt vyd\u011Blal dlouhodob\u011B, plus energie. Kdy\u017E v\xFDnos za 12 m\u011Bs\xEDc\u016F z\u016Fstane pod minimem, rozd\xEDl se vyrovn\xE1 z odm\u011Bny Antam Homes podle podm\xEDnek smlouvy. Zp\u016Fsobilost bytu se ov\u011B\u0159uje zdarma p\u0159edem a byt, kter\xFD garanci neunese, Antam Homes do spr\xE1vy nevezme." },
+  { question: "Kdo plat\xED \xFAklid a energie?", answer: "Host plat\xED vedle ceny za ubytov\xE1n\xED i \xFAklidov\xFD poplatek; ten pokr\xFDv\xE1 \xFAklid a pr\xE1dlo a z\u016Fst\xE1v\xE1 cel\xFD Antam Homes, tak\u017Ee se z v\xFDnosu majitele na \xFAklid nic nestrh\xE1v\xE1 (ve vy\xFA\u010Dtov\xE1n\xED je samostatnou polo\u017Ekou). V\xFDnos, ze kter\xE9ho se po\u010D\xEDt\xE1 odm\u011Bna 20 % + DPH, je to, co p\u0159ijde od platformy, po ode\u010Dten\xED \xFAklidov\xE9ho poplatku. Energie (elekt\u0159ina, voda) hrad\xED majitel." },
+  { question: "Kdo plat\xED DPH z provize platformy?", answer: "Antam Homes, ze sv\xE9 odm\u011Bny. Airbnb a Booking.com fakturuj\xED provizi ze zahrani\u010D\xED a \u010Desk\xE1 DPH z n\xED se odv\xE1d\xED u n\xE1s; do v\xFDnosu majitele nevstupuje a z jeho pod\xEDlu se nestrh\xE1v\xE1." },
+  { question: "Jak dlouho spolupr\xE1ce trv\xE1 a jak ji ukon\u010D\xEDm?", answer: "Smlouva se uzav\xEDr\xE1 na 12 m\u011Bs\xEDc\u016F. Po nich pokra\u010Duje na dobu neur\u010Ditou a lze ji kdykoli ukon\u010Dit s v\xFDpov\u011Bdn\xED lh\u016Ftou 4 m\u011Bs\xEDce. Potvrzen\xE9 rezervace se b\u011Bhem v\xFDpov\u011Bdn\xED lh\u016Fty v\u017Edy dokon\u010D\xED." },
+  { question: "Je \u010D\xE1stka v kalkula\u010Dce p\u0159ed, nebo po provizi?", answer: "Po. V\u0161e ozna\u010Den\xE9 jako v\xFDnos pro majitele je u\u017E po ode\u010Dten\xED provize platformy i odm\u011Bny 20 % v\u010Detn\u011B DPH. Energie hrad\xED majitel zvl\xE1\u0161\u0165." },
+  { question: "Jak\xE9 povinnosti kr\xE1tkodob\xFD pron\xE1jem p\u0159in\xE1\u0161\xED a kdo je \u0159e\u0161\xED?", answer: "Evidence host\u016F, hl\xE1\u0161en\xED zahrani\u010Dn\xEDch host\u016F cizineck\xE9 policii, m\xEDstn\xED poplatek z pobytu a registrace v eTurista, provozn\xED povinnosti kolem host\u016F \u0159e\u0161\xED Antam Homes. Zdan\u011Bn\xED p\u0159\xEDjmu z pron\xE1jmu z\u016Fst\xE1v\xE1 na majiteli; podklady dostane." },
+  { question: "Co kdy\u017E host n\u011Bco poni\u010D\xED?", answer: "Byt se kontroluje po ka\u017Ed\xE9m pobytu. \u0160koda se zdokumentuje a nejd\u0159\xEDv vym\xE1h\xE1 po hostovi a p\u0159es platformu (Airbnb AirCover, \u0159e\u0161en\xED \u0161kod Booking.com). Co se tam nepoda\u0159\xED z\xEDskat, hrad\xED Antam Homes do ro\u010Dn\xEDho limitu podle velikosti bytu: 5 000 K\u010D u 1+kk, 10 000 K\u010D u 2+kk, 15 000 K\u010D u 3+kk, 20 000 K\u010D u 4+kk a 25 000 K\u010D u v\u011Bt\u0161\xEDch. Majitel se dozv\xED hned, v\u010Detn\u011B fotek. Kryt\xED se t\xFDk\xE1 \u0161kod zp\u016Fsoben\xFDch hostem; opot\u0159eben\xED, poruchy z v\u011Bku a z\xE1vady v dom\u011B jsou opravy a \xFAdr\u017Eba a z\u016Fst\xE1vaj\xED na majiteli (drobn\xE9 do 5 000 K\u010D se \u0159e\u0161\xED hned a strh\xE1vaj\xED z v\xFDnosu, v\u011Bt\u0161\xED po jeho souhlasu)." },
+  { question: "Co na to soused\xE9 a SVJ?", answer: "Host\xE9 dost\xE1vaj\xED pravidla domu p\u0159edem, byt m\xE1 danou kapacitu (\u017E\xE1dn\xE9 party) a soused\xE9 maj\xED kontakt. Pokud stanovy SVJ kr\xE1tkodob\xE9 ubytov\xE1n\xED v\xFDslovn\u011B zakazuj\xED, Antam Homes to majiteli \u0159ekne p\u0159ed podpisem." },
+  { question: "Pro\u010D to ned\u011Blat s\xE1m p\u0159es Airbnb?", answer: "M\u016F\u017Eete, n\u011Bkte\u0159\xED majitel\xE9 to zvl\xE1daj\xED. Je to ale pr\xE1ce na ka\u017Ed\xFD den: odpov\xEDdat host\u016Fm do minut, hl\xEDdat ceny podle popt\xE1vky, \u0159e\u0161it \xFAklid a kl\xED\u010De a dr\u017Eet krok s t\xEDm, co Airbnb a Booking m\u011Bn\xED (algoritmy, pravidla, poplatky, povinnosti). Antam Homes to d\u011Bl\xE1 denn\u011B pro v\xEDc byt\u016F najednou." },
+  { question: "Pracujete i s jin\xFDmi platformami nebo firmami?", answer: "Byty se inzeruj\xED tam, kde je v Praze re\xE1ln\xE1 popt\xE1vka: p\u0159edev\u0161\xEDm Airbnb a Booking.com, kter\xE9 Antam Homes zn\xE1 do detailu (algoritmy, pravidla, zm\u011Bny). Dal\u0161\xED platformy se p\u0159id\xE1vaj\xED jen tam, kde bytu p\u0159inesou rezervace nav\xEDc. Provoz nejde p\u0159es prost\u0159edn\xEDky: hosty, ceny, \xFAklid i kontrolu bytu \u0159e\u0161\xED vlastn\xED t\xFDm, extern\xED jsou jen \u0159emesln\xEDci." },
+  { question: "Pro koho kr\xE1tkodob\xFD pron\xE1jem ned\xE1v\xE1 smysl?", answer: "Kdy\u017E SVJ ubytov\xE1n\xED zakazuje nebo to soused\xE9 necht\u011Bj\xED; kdy\u017E majitel pot\u0159ebuje ka\u017Ed\xFD m\u011Bs\xEDc stejnou \u010D\xE1stku; kdy\u017E chce byt v\u011Bt\u0161inu roku pou\u017E\xEDvat s\xE1m; kdy\u017E je byt ve stavu, do kter\xE9ho nechce nic d\xE1t. Lokalita mimo centrum ani star\u0161\xED d\u016Fm probl\xE9m nejsou." }
 ];
 var get_services_default = defineTool3({
   name: "get_services_and_faq",
   title: "Get services and FAQ",
-  description: "Get Antam's offer to Prague property investors (3-year lease paying the investor's mortgage payment), the self-operation alternative, and the FAQ from the website.",
+  description: "Get what Antam Homes does for apartment owners (full short-term rental management) plus the frequently asked questions and answers from the website.",
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: () => ({
@@ -1056,22 +983,26 @@ A: ${f.answer}`)
     structuredContent: {
       services,
       faq,
-      lease: {
-        termMonths: LEASE_MONTHS,
-        loanToValue: LTV,
-        mortgageTermYears: TERM_YEARS,
-        rentBasis: "what the apartment earns (market data), not the owner's payment",
-        rentDaysBeforeMortgage: RENT_DAYS_BEFORE,
-        paidInEmptyMonths: true,
-        defaultExitDays: DEFAULT_EXIT_DAYS,
-        regulationNoticeMonths: REGULATION_NOTICE_MONTHS,
-        furnitureProcurementFee: 0.2,
-        assessedIndividually: true,
-        layouts: ["1kk", "2kk", "3kk", "4kk"],
-        publicRange: "90\u2013100 % of the internal cap, exact figure after viewing",
-        quoteValidityDays: 60
+      managementCommissionRate: 0.2,
+      managementFeeVat: 0.21,
+      managementSetupCzk: 39e3,
+      procurementFee: { managed: 0.12, selfOperated: 0.2, selfOperatedAboveCzk: 5e5, selfOperatedRateAbove: 0.12 },
+      selfOperatedSystemCzk: { "2kk": 18e4, "3kk": 27e4, "4kk": 36e4, furnishedOrEmptySame: true, revenueManagementMonthly: 3490, revenueManagementIncludedDays: 60 },
+      commissionBase: "net revenue = what the platform pays out for accommodation, without the cleaning fee, after deducting the Airbnb/Booking.com commission. The Czech VAT on that commission is paid by Antam Homes out of its own fee and is not deducted from the owner's share.",
+      ownerContract: {
+        initialTermMonths: 12,
+        thenIndefinite: true,
+        noticePeriodMonths: 4
       },
-      selfOperatedSystemCzk: { anyLayout: 27e4, furnishedOrEmptySame: true, revenueManagementMonthly: 3490, revenueManagementIncludedDays: 60, procurementFee: 0.2, procurementFeeAboveCzk: 5e5, procurementRateAbove: 0.12 }
+      guestDamageCover: {
+        description: "Qualifying smaller guest-caused damage is first claimed from the guest and through the platform. What is not recovered there is covered by Antam Homes up to a yearly per-apartment limit. Wear and tear, age-related failures and building faults are repairs and stay with the owner.",
+        yearlyLimitPerRoomCzk: DAMAGE_COVER_PER_ROOM,
+        yearlyLimitMaxCzk: DAMAGE_COVER_MAX,
+        yearlyLimitByLayoutCzk: {
+          ...Object.fromEntries(Object.entries(ROOMS).map(([k, rooms]) => [k, annualDamageCover(rooms)])),
+          "5kk+": DAMAGE_COVER_MAX
+        }
+      }
     }
   })
 });
@@ -1117,66 +1048,13 @@ Oblast: ${info.serviceArea}`
   }
 });
 
-// src/lib/mcp/tools/quote-lease.ts
-import { defineTool as defineTool5 } from "npm:@lovable.dev/mcp-js@0.26.2";
-import { z as z2 } from "npm:zod";
-var locations2 = {
-  praha1: "Praha 1",
-  praha2: "Praha 2",
-  praha3: "Praha 3",
-  praha5: "Praha 5",
-  praha7: "Praha 7",
-  praha8: "Praha 8"
-};
-var czk2 = (n) => n.toLocaleString("cs-CZ");
-var quote_lease_default = defineTool5({
-  name: "quote_lease",
-  title: "Quote the Antam 3-year lease (mortgage coverage)",
-  description: "Antam's offer to property investors in Prague: Antam rents the investor's apartment for 36 months and pays a monthly rent equal to the investor's mortgage payment, every month, even when the apartment is empty. This tool computes the standard mortgage payment for a purchase price (70 % loan-to-value, 30-year term, indicative rate) and whether Antam would cover it in full, in part, or needs an individual review. The coverage cap comes from realized market revenue of comparable apartments in the district and quarter (PriceLabs STR index, 12 closed months), minus utilities and operations, times a 60 % coverage ratio. It is NOT a loan offer; the bank confirms the rate and payment.",
-  inputSchema: {
-    priceCzk: z2.number().int().min(2e6).max(4e7).describe("Purchase price of the apartment in CZK."),
-    location: z2.enum(["praha1", "praha2", "praha3", "praha5", "praha7", "praha8"]).describe("Prague district. Antam covers Praha 1, 2, 3, Karl\xEDn (Praha 8) and Sm\xEDchov (Praha 5); other districts are reviewed individually."),
-    size: z2.enum(["1kk", "2kk", "3kk"]).describe("Layout in Czech notation (1kk studio, 2kk one bedroom, 3kk two bedrooms)."),
-    quarter: z2.string().optional().describe("Optional quarter id inside the district, e.g. 'nove_mesto', 'stare_mesto', 'vinohrady', 'zizkov', 'smichov', 'karlin', 'holesovice'. Without it the district average is used."),
-    ratePct: z2.number().min(0.5).max(15).optional().describe(`Mortgage interest rate in % p.a. Defaults to the indicative ${(RATE_DEFAULT * 100).toFixed(2)} %.`)
-  },
-  annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
-  handler: ({ priceCzk, location, size, quarter, ratePct }) => {
-    const loc = location;
-    const valid = ctvrtiOf(loc).some((c) => c.id === quarter);
-    const q = quoteLease(priceCzk, loc, size, { ctvrt: valid ? quarter : null, rate: ratePct ? ratePct / 100 : void 0 });
-    const verdict = q.covered === "full" ? "Antam covers the full payment." : q.covered === "partial" ? `Antam covers up to ${czk2(q.cap ?? 0)} CZK/month; the investor tops up the rest.` : "Individual review needed.";
-    return {
-      content: [{
-        type: "text",
-        text: `${locations2[location]}${valid ? ` \xB7 ${quarter}` : ""}, ${size}, price ${czk2(priceCzk)} CZK: own funds 30 % = ${czk2(q.own)} CZK, loan 70 % = ${czk2(q.loan)} CZK over ${TERM_YEARS} years at ${(q.rate * 100).toFixed(2)} % -> payment ${czk2(q.payment)} CZK/month. Antam rent ${q.rent === null ? "to be assessed" : `${czk2(q.rent)} CZK/month`} for ${LEASE_MONTHS} months, paid ${RENT_DAYS_BEFORE} days before the mortgage date, also in empty months. ${verdict}`
-      }],
-      structuredContent: {
-        offer: {
-          termMonths: LEASE_MONTHS,
-          loanToValue: LTV,
-          mortgageTermYears: TERM_YEARS,
-          rentDaysBeforeMortgage: RENT_DAYS_BEFORE,
-          defaultExitDays: DEFAULT_EXIT_DAYS,
-          regulationNoticeMonths: REGULATION_NOTICE_MONTHS,
-          furniture: "bought by the investor through Antam at cost + 20 %, stays the investor's",
-          investorPays: ["repair fund (fond oprav)", "property tax", "building and contents insurance"],
-          antamPays: ["utilities", "internet", "building services for use", "cleaning", "minor repairs", "operations"]
-        },
-        quote: { priceCzk: q.price, ownCzk: q.own, loanCzk: q.loan, ratePct: Math.round(q.rate * 1e4) / 100, paymentCzk: q.payment, capCzk: q.cap, rentCzk: q.rent, covered: q.covered, shortfallCzk: q.shortfall },
-        note: "Indicative. The cap is derived from district market data, not from Antam's own results. Not a loan offer."
-      }
-    };
-  }
-});
-
 // src/lib/mcp/index.ts
 var mcp_default = defineMcp({
   name: "antamhome",
   title: "Antamhome",
   version: "0.1.0",
-  instructions: "Tools for Antam (Antam Homes s.r.o.), Prague. Antam rents investors' apartments for 3 years and pays a monthly rent equal to the investor's mortgage payment, even in empty months; it operates the apartments as short- and mid-term rentals. Use `quote_lease` for the payment and the rent Antam would pay for a given price, district and layout, `get_services_and_faq` for the offer and FAQ, `list_portfolio` for the apartments Antam operates today, `estimate_rental_yield` for market revenue data by district, and `get_contact_info` for contact details. All data is public marketing information.",
-  tools: [quote_lease_default, get_services_default, list_portfolio_default, estimate_yield_default, get_contact_default]
+  instructions: "Tools for Antam Homes, a short-term rental (Airbnb/Booking) management company for apartment owners in Prague. Use `estimate_rental_yield` to estimate an owner's monthly net income for a given Prague district and apartment size, `list_portfolio` for the apartments under management, `get_services_and_faq` for what the company does, and `get_contact_info` for contact details. All data is public marketing information.",
+  tools: [estimate_yield_default, list_portfolio_default, get_services_default, get_contact_default]
 });
 
 // lovable-mcp-supabase-entry.ts

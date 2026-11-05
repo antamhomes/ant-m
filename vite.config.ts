@@ -38,10 +38,14 @@ function ssgPrerenderPlugin(): Plugin {
       try {
         const mod = await server.ssrLoadModule("/src/entry-ssg.tsx");
         const safe = (data: unknown) => JSON.stringify(data).replace(/</g, "\\u003c");
-        // Dvě stránky (lib/pages.ts, 5. 11. 2026): homepage (nájem) a vlastní provoz. Jen česky.
+        // Šest stránek (lib/pages.ts): homepage a dvě podstránky, každá v obou jazycích.
         const targets: Array<[string, string, "cs" | "vi", "home" | "sprava" | "vlastni-provoz"]> = [
           ["dist/index.html", "/", "cs", "home"],
+          ["dist/vn/index.html", "/vn", "vi", "home"],
+          ["dist/sprava/index.html", "/sprava", "cs", "sprava"],
+          ["dist/vn/sprava/index.html", "/vn/sprava", "vi", "sprava"],
           ["dist/vlastni-provoz/index.html", "/vlastni-provoz", "cs", "vlastni-provoz"],
+          ["dist/vn/vlastni-provoz/index.html", "/vn/vlastni-provoz", "vi", "vlastni-provoz"],
         ];
         for (const [file, route, lang, page] of targets) {
           const html = await fs.readFile(file, "utf8");
@@ -90,7 +94,11 @@ function prerenderPagesPlugin(): Plugin {
       };
       const esc = (x: string) => x.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
       const pages: Array<[string, "cs" | "vi", string]> = [
+        ["home", "vi", "vn/index.html"],
+        ["sprava", "cs", "sprava/index.html"],
+        ["sprava", "vi", "vn/sprava/index.html"],
         ["vlastni-provoz", "cs", "vlastni-provoz/index.html"],
+        ["vlastni-provoz", "vi", "vn/vlastni-provoz/index.html"],
       ];
       for (const [page, lang, fileName] of pages) {
         const m = META[page as keyof typeof META][lang];
@@ -108,7 +116,7 @@ function prerenderPagesPlugin(): Plugin {
         html = html.replace(/<meta\s+property="og:locale:alternate"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:locale:alternate" content="${lang === "vi" ? "cs_CZ" : "vi_VN"}" />`);
         html = html.replace(/<link rel="canonical" href="[^"]*" \/>/, `<link rel="canonical" href="${self}" />`);
         html = html.replace(/<link rel="alternate" hreflang="cs" href="[^"]*" \/>/, `<link rel="alternate" hreflang="cs" href="${cs}" />`);
-        html = html.replace(/<link rel="alternate" hreflang="vi" href="[^"]*" \/>\n?/, "");
+        html = html.replace(/<link rel="alternate" hreflang="vi" href="[^"]*" \/>/, `<link rel="alternate" hreflang="vi" href="${vi}" />`);
         html = html.replace(/<link rel="alternate" hreflang="x-default" href="[^"]*" \/>/, `<link rel="alternate" hreflang="x-default" href="${cs}" />`);
         html = html.replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:title" content="${title}" />`);
         html = html.replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:description" content="${desc}" />`);

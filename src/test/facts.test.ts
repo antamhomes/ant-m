@@ -1,17 +1,13 @@
 /**
  * FAKTA — pojistka proti tichému rozjetí čísel.
  *
- * 5. 11. 2026: nabídka správy za 20 % + DPH, garance, krytí škod a vietnamská
- * verze odešly z webu (nová nabídka: nájem na 3 roky, viz lease-facts.test.ts).
- * Tady zůstává jen model trhu (lib/yield), karty portfolia a nájem podle plochy.
- *
  * Každé číslo, které majitel na webu uvidí, musí souhlasit se smlouvou, s VOP,
  * s prezentací a s portálem. Historicky se to rozešlo: web účtoval 28 %, zatímco
  * smlouva i VOP na stejné doméně říkaly 25 %. Tenhle test takovou změnu zastaví
  * dřív, než se dostane k majiteli.
  *
  * Když test spadne, NEopravuj ho, aby prošel. Buď je změna omyl a patří zpět,
- * nebo je záměrná a pak se mění na VŠECH místech naráz: translations.ts,
+ * nebo je záměrná a pak se mění na VŠECH místech naráz: translations.ts (cs+vi),
  * src/lib/yield.ts, src/lib/mcp/tools/*, VOP (make_legal.py), smlouva, prezentace
  * a portál. Teprve potom se přepíše hodnota tady.
  */
@@ -51,7 +47,404 @@ const B = (id: string, minM2: number | null, maxM2: number | null, representativ
   ({ id, labelKey: `calc_size_${id}`, minM2, maxM2, representativeM2, supported: representativeM2 !== null });
 
 const cs = translations.cs as Record<string, string>;
+const vi = translations.vi as Record<string, string>;
 const strip = (s: string) => s.replace(/ /g, " ");
+
+describe("odměna za správu", () => {
+  it("je 20 % + DPH v modelu (29. 10. 2026)", () => {
+    // 28. 8. 2026: 28 % → 30 % konečných. 29. 10. 2026 (dodatek 3, rozhodnutí
+    // majitele): 20 % + DPH, tedy pro majitele neplátce 24,2 % z příjmu po
+    // poplatcích. Sazba žije jen tady a v MCP; karty portfolia jsou přepočítané
+    // stejným poměrem (1 − 0,242) / 0,70.
+    expect(MGMT_FEE).toBe(0.20);
+    expect(MGMT_VAT).toBe(0.21);
+    expect(MGMT_FEE_GROSS).toBeCloseTo(0.242, 6);
+  });
+
+  it("je 20 % + DPH všude v české i vietnamské kopii", () => {
+    expect(strip(cs.pr1_price)).toMatch(/20 % .*\+ DPH/);
+    expect(strip(vi.pr1_price)).toMatch(/20% .*\+ DPH/); // vietnamština píše procenta bez mezery; DPH i ve VI (rozhodnutí V. 2. 11. 2026)
+    for (const key of ["calc_net_sub", "calc_excluded_note", "faq5_a", "faq9_a", "report_row_costs"]) {
+      expect(strip(cs[key]), `cs.${key}`).toMatch(/20\s?%/);
+      expect(strip(cs[key]), `cs.${key} říká + DPH`).toMatch(/DPH/);
+      expect(strip(vi[key]), `vi.${key}`).toMatch(/20\s?%/);
+      expect(strip(vi[key]), `vi.${key} říká + DPH`).toMatch(/DPH/);
+    }
+    // Od 29. 10. 2026 nesou pricing_split1/2 dvě cesty (správa × vlastní
+    // provoz), ne dělení 70/30. Sazba zůstává jen v první větě.
+    expect(strip(cs.pricing_split1), "cs.pricing_split1").toMatch(/20\s?% \+ DPH/);
+    expect(strip(cs.pricing_split2), "cs.pricing_split2").toMatch(/bez procent/);
+    expect(strip(vi.pricing_split1), "vi.pricing_split1").toMatch(/20% \+ DPH/);
+    expect(strip(vi.pricing_split2), "vi.pricing_split2").toMatch(/không phần trăm/);
+  });
+
+  it("nikde nezůstalo staré 30 % ani dělení 70/30", () => {
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        const v = strip(value);
+        // 30 000 Kč, 30 dní a 30 nocí jsou jiná čísla a zůstávají.
+        expect(v.replace(/30 000|30 dní|30 ngày|30 nocí/g, ""), `${lang}.${key}`).not.toMatch(/30\s?%/);
+        expect(v, `${lang}.${key}`).not.toMatch(/70\s?\/\s?30/);
+      }
+    }
+  });
+
+  it("nikde nezůstalo staré 25 % a 28 % ani dělení 75/25 a 72/28", () => {
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        // proof2_value (+25 % tržba proti trhu, 3. 11. 2026) není provize.
+        if (key === "proof2_value") continue;
+        const v = strip(value);
+        // 25 000 Kč (uvedení do provozu) je jiné číslo a zůstává.
+        expect(v.replace(/25 000/g, ""), `${lang}.${key}`).not.toMatch(/25\s?%/);
+        expect(v, `${lang}.${key}`).not.toMatch(/28\s?%/);
+        expect(v, `${lang}.${key}`).not.toMatch(/75\s?\/\s?25/);
+        expect(v, `${lang}.${key}`).not.toMatch(/72\s?\/\s?28/);
+      }
+    }
+  });
+
+  it("dělí příjem po poplatcích: majiteli zbytek po 20 % + DPH, neplátci počítáme 24,2 %", () => {
+    expect(strip(cs.calc_split_aria)).toMatch(/20 % \+ DPH/);
+    expect(strip(vi.calc_split_aria)).toMatch(/20% \+ DPH/);
+    expect(strip(cs.calc_method_note)).toMatch(/24,2 %/);
+    expect(strip(vi.calc_method_note)).toMatch(/24,2%/);
+  });
+
+  it("DPH z provize platformy nezatěžuje majitele: v modelu ani v kopii", () => {
+    // Antam ji hradí ze své odměny. Kdyby se vrátila do
+    // výpočtu, majitel by platil dvakrát: nižším podílem i vyšší sazbou.
+    expect(strip(cs.calc_method_note)).toMatch(/ze své odměny|neodečítá|nevstupuje/);
+    // Věta „DPH z provize odvádíme my ze své odměny" žije od patche 126
+    // v poznámce kalkulačky (pr1_note nese příklad toku peněz). Fakt trvá,
+    // jen bydlí jinde; test hlídá fakt, ne místo.
+    expect(strip(cs.calc_method_note)).toMatch(/DPH z provize/);
+  });
+
+  it("provize v modelu odpovídá měřenému pásmu 17–21 %", () => {
+    // Změřeno 27. 8. 2026 na 7 bytech; jedna sazba to nevystihne, 0,17 je střed.
+    expect(PLATFORM_FEE).toBeGreaterThanOrEqual(0.15);
+    expect(PLATFORM_FEE).toBeLessThanOrEqual(0.21);
+  });
+
+  it("je bez DPH a nikde se netváří jako konečná (29. 10. 2026)", () => {
+    // Od 29. 10. 2026 je odměna 20 % + DPH (plátce DPH). Slovo „konečná" a
+    // „včetně DPH" by popisovaly starou sazbu; nesmí se vrátit do kopie.
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const)
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(strip(value), `${lang}.${key}`).not.toMatch(/20 % včetně DPH|konečná odměna|20% đã gồm (VAT|DPH)/i);
+      }
+    expect(strip(cs.pr1_note)).toMatch(/20 % \+ DPH/);
+  });
+});
+
+describe("ceník", () => {
+  it("vzorový výpočet z ceníku odešel a nevrací se (počítá kalkulačka)", () => {
+    // PŘEPSÁNO 20. 10. 2026 (zadání V., ceník v2): sekce nese jen tři fakta —
+    // odměna jen z výnosu, příprava jednorázově (od 29. 10. 2026 dvě cesty). Vzorový
+    // tok peněz (90 000 − 9 000, 56 700) odešel celý; počítání má kalkulačka.
+    // Test dřív hlídal aritmetiku vzoru, teď hlídá, že se vzor nevrátí.
+    // pr1_note se nikde nerenderuje a schválně se tu nehlídá: větu o konečné
+    // odměně z něj čte test „je konečná“ výš.
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const k of [
+        "pr1_flow1", "pr1_flow1_v", "pr1_flow2", "pr1_flow2_v",
+        "pr1_flow3", "pr1_flow3_v", "pr1_flow4", "pr1_flow4_v",
+        "pr1_flow5", "pr1_flow5_v", "pr1_flow_note", "pr1_example_label",
+        "pr1_result_label", "pr1_result_v", "pr1_result_sub", "pr1_setup_line",
+      ] as const)
+        expect(strip(dict[k]), `${lang}.${k} zůstává prázdné`).toBe("");
+    }
+    const pricing = readFileSync("src/components/PricingSection.tsx", "utf8");
+    expect(pricing, "komponenta vzorové klíče už nečte").not.toMatch(/pr1_flow|pr1_result|pr1_example/);
+  });
+
+  it("stará doporučovací mechanika (15 000 zpět, 1 % z výnosu) zmizela", () => {
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      expect(strip(dict.pr8_note), `${lang}.pr8_note`).not.toMatch(/15 000/);
+      expect(strip(dict.pr8_price), `${lang}.pr8_price`).not.toMatch(/15 000/);
+      expect(strip(dict.pr8_note), `${lang}.pr8_note`).not.toMatch(/(^|[^\d])1 ?% /);
+    }
+    // Podoba z repa (V.): doporučený a převzatý majitel = 25 000 Kč na správu.
+    expect(strip(cs.pr8_note)).toMatch(/převezmeme do správy/);
+    expect(strip(cs.pr8_note)).toMatch(/25 000 Kč/);
+    expect(strip(vi.pr8_note)).toMatch(/25 000 Kč/);
+  });
+
+  it("příprava ke správě: 39 000 Kč za náklady, zařízený i prázdný byt; vybavení za pořizovací ceny + 12 % (2. 11. 2026, Offer v2)", () => {
+    expect(LAUNCH_FEE).toBe(39000);
+    expect(PROCUREMENT_FEE).toBe(0.12);
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      expect(strip(dict.pr1_setup_price), `${lang}.pr1_setup_price`).toMatch(/39 000 Kč/);
+      expect(strip(dict.pr2_price), `${lang}.pr2_price`).toMatch(/39 000 Kč/);
+      expect(strip(dict.faq16_a), `${lang}.faq16_a`).toMatch(/39 000/);
+      expect(strip(dict.faq16_a), `${lang}.faq16_a`).toMatch(/12\s?%/);
+      expect(strip(dict.pr1_furnish_value), `${lang}.pr1_furnish_value`).toMatch(/12\s?%/);
+      // pevné sazby za prázdný byt (120/150/190 tisíc) a stará příprava 49 000 jsou pryč
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(strip(value), `${lang}.${key}`).not.toMatch(/49 000 Kč|120 000 Kč|190 000 Kč|150 000 Kč/);
+      }
+    }
+  });
+
+  it("vlastní provoz: systém 180/270/360 tisíc zařízený i prázdný, přestavba 29 000, vybavení + 20 % do 500 000 (2. 11. 2026, Offer v2)", () => {
+    expect(TURNKEY_BY_SIZE).toEqual({ "2kk": 180000, "3kk": 270000, "4kk": 360000 });
+    expect(REBUILD_FEE).toBe(29000);
+    expect(PROCUREMENT_FEE_SELF).toBe(0.20);
+    expect(PROCUREMENT_SELF_CAP).toBe(500000);
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      expect(strip(dict.pr4_price), `${lang}.pr4_price`).toMatch(/180 000 · 3\+kk 270 000 · 4\+kk 360 000/);
+      expect(strip(dict.pr4_note), `${lang}.pr4_note`).toMatch(/3 490/);
+      expect(strip(dict.pr4_note), `${lang}.pr4_note`).toMatch(/60/);
+      expect(strip(dict.pr4_furnish_value), `${lang}.pr4_furnish_value`).toMatch(/20\s?%/);
+      expect(strip(dict.pr3_price), `${lang}.pr3_price`).toMatch(/12\s?%/);
+      expect(strip(dict.pr3_price), `${lang}.pr3_price`).toMatch(/20\s?%/);
+      expect(strip(dict.path_note), `${lang}.path_note`).toMatch(/20\s?%/);
+      expect(strip(dict.path_note), `${lang}.path_note`).toMatch(/500 000/);
+      expect(strip(dict.pr9_price), `${lang}.pr9_price`).toMatch(/29 000/);
+      expect(strip(dict.faq19_a), `${lang}.faq19_a`).toMatch(/39 000/);
+      // zařízený byt za 79 000 (Launch) z veřejného ceníku odešel: systém stojí stejně
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(strip(value), `${lang}.${key}`).not.toMatch(/79 000/);
+      }
+    }
+    // stará mechanika „řízení projektu 20 % nad 30 000 Kč" je pryč
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const)
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(strip(value), `${lang}.${key}`).not.toMatch(/nad 30 000 Kč|trên 30 000 Kč/);
+      }
+  });
+
+  // QA-03 (1. 9. 2026): roční strop 20 000 Kč na drobné opravy VOP neobsahují.
+  // Článek IV.2 zná jen limit 5 000 Kč na jeden případ ("Drobné opravy a údržbu
+  // do 5 000 Kč zajistí Správce bez předchozího souhlasu Vlastníka; opravy nad
+  // 5 000 Kč Správce předem oznámí"). Test proto hlídá obojí: že pravidlo na
+  // případ na webu je, a že roční strop, který smlouva nekryje, nikde není.
+  it("drobné opravy: 5 000 Kč na případ, žádný roční strop navíc", () => {
+    expect(strip(cs.faq5_a)).toMatch(/5 000 Kč/);
+    expect(strip(vi.faq5_a)).toMatch(/5 000 Kč/);
+    expect(strip(cs.faq5_a)).toMatch(/po vašem souhlasu/);
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(strip(value), `${lang}.${key}`).not.toMatch(/nejvýše 20 000 Kč za rok|cả năm không quá 20 000 Kč/);
+      }
+    }
+  });
+
+  // QA-02 (1. 9. 2026): VOP čl. VI.1 zná jen výpovědní lhůtu 4 měsíce, žádné
+  // okamžité odstoupení při nedosažení minima. Dokud to nepotvrdí konkrétní
+  // Smlouva o správě, nesmí se to objevit ani ve FAQ, ani v sekci Garance.
+  it("neslibuje okamžitý odchod, který VOP nekryjí", () => {
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(strip(value), `${lang}.${key}`).not.toMatch(/okamžitě odejít|okamžité odstoupení|rời ngay lập tức/);
+      }
+    }
+  });
+
+  // QA-01 (1. 9. 2026): viditelný lead ceníku nesmí působit, že jednorázové
+  // uvedení do provozu neexistuje. Od 20. 10. 2026 (ceník v2) fakt nese vlastní
+  // vždy viditelný řádek pr1_setup_* nad rozbalovacím ceníkem, ne pricing_desc.
+  it("viditelný lead ceníku přiznává jednorázové uvedení do provozu", () => {
+    expect(strip(cs.pr1_setup_price)).toMatch(/39 000 Kč/);
+    expect(strip(vi.pr1_setup_price)).toMatch(/39 000 Kč/);
+    expect(strip(cs.pricing_desc)).not.toMatch(/[Žž]ádné fixní/);
+    const pricing = readFileSync("src/components/PricingSection.tsx", "utf8");
+    expect(
+      pricing.indexOf('"pr1_setup_name"'),
+      "řádek s poplatkem je vidět bez rozbalení <details>",
+    ).toBeLessThan(pricing.indexOf("<details"));
+  });
+
+  it("netvrdí, že vstupní poplatky neexistují", () => {
+    for (const dict of [cs, vi]) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(strip(value).toLowerCase(), key).not.toMatch(/žádné vstupní poplatky|không có phí vào/);
+      }
+    }
+  });
+});
+
+describe("garance výnosu", () => {
+  it("je na webu popsaná v obou jazycích", () => {
+    expect(cs.g_desc).toBeTruthy();
+    expect(vi.g_desc).toBeTruthy();
+    // Definice minima (nájem + energie) se z českého leadu garance přesunula
+    // níž. Od 22. 10. 2026 nese mechaniku pr6_note (minimum do smlouvy, rozdíl
+    // z odměny) a definici nese FAQ. Test hlídá fakt, ne místo, kde stojí.
+    for (const key of ["faq18_a"] as const) {
+      expect(strip(cs[key]), `cs.${key}`).toMatch(/nájem/);
+      expect(strip(cs[key]), `cs.${key}`).toMatch(/energie/);
+    }
+    expect(strip(vi.g_desc)).toMatch(/tiền thuê dài hạn/);
+    expect(strip(vi.g_desc)).toMatch(/điện nước/);
+  });
+
+  it("české hero neukazuje čísla bez kontextu", () => {
+    // Copy pass 28. 8. 2026: proof patří do Portfolia, kde je u čísla konkrétní
+    // byt, lokalita a násobek nájmu. V heru je headline, jedna věta, jedno
+    // tlačítko a pod ním řádek o nezávaznosti. Částky v tisících sem nepatří.
+    for (const key of ["hero_desc", "hero_extra"] as const) {
+      expect(strip(cs[key]), `cs.${key}`).not.toMatch(/\d{2} \d{3}/);
+    }
+    expect(strip(cs.hero_desc).split(" ").length).toBeLessThanOrEqual(18);
+  });
+
+  it("vietnamské hero teaser drží a sedí s kartami portfolia (58/64 tis.)", () => {
+    // 2. 11. 2026: přeměřeno za 11/2025 až 10/2026, městský poplatek z Booking.com
+    // vyloučen z příjmu majitele: 402 = 64 000, 405 = 58 000.
+    // Při odměně 30 % vycházelo 405 na 57 000 a 402 na 64 000. Od 29. 10. 2026
+    // (20 % + DPH) stejné rezervace dají 62 000 a 69 000 (× 0,758 / 0,70,
+    // zaokrouhleno na tisíce). Kdyby se karty znovu přepočítaly, posune se i teaser.
+    // vi.hero_extra čísla od 10/2026 nenese (jen „13 căn"), hlídáme karty a MCP.
+    const cards = readFileSync("src/components/PortfolioSection.tsx", "utf8");
+    expect(cards).toMatch(/owner: 58000/);
+    expect(cards).toMatch(/owner: 64000/);
+    const mcp = readFileSync("src/lib/mcp/tools/list-portfolio.ts", "utf8");
+    expect(mcp).toMatch(/ownerMonthlyCzk: 58000/);
+    expect(mcp).toMatch(/ownerMonthlyCzk: 64000/);
+  });
+
+  it("karty portfolia a MCP hlásí stejné částky", () => {
+    // Čísla žijí na dvou místech: v kartách a v list_portfolio pro MCP. Když se
+    // jedno přepočítá a druhé ne, chatbot začne tvrdit něco jiného než web.
+    const nums = (src: string, re: RegExp) =>
+      [...src.matchAll(re)].map((m) => Number(m[1])).sort((a, b) => a - b);
+    const cards = nums(readFileSync("src/components/PortfolioSection.tsx", "utf8"), /owner: (\d+)/g);
+    const mcp = nums(readFileSync("src/lib/mcp/tools/list-portfolio.ts", "utf8"), /ownerMonthlyCzk: (\d+)/g);
+    expect(cards.length).toBeGreaterThan(0);
+    expect(mcp).toEqual(cards);
+  });
+
+  it("garance je v Ceníku jako benefit: mechaniku nese pr6_note, kroky 01–03 odešly", () => {
+    // Patch 2 (7. 9. 2026, spec §1/§6): samostatná sekce Garance odešla do
+    // Ceníku. Ilustrační 28 000 / 31 500 se už nekreslí. PŘEPSÁNO 22. 10. 2026
+    // (zadání V., finální pass ceníku): tok 01 → 02 → 03 zaváděl do sekce druhý
+    // vizuální systém a na mobilu stál výšku. Mechaniku teď nesou dvě věty
+    // v pr6_note (minimum do smlouvy, rozdíl z naší odměny) a vedle garance
+    // stojí krytí škod (pr7) jako druhý benefit. Kroky g_step* a titulek
+    // g_title* se vyprázdnily po vzoru g_num* a test hlídá, že se nevrátí.
+    for (const d of [cs, vi]) {
+      for (const k of [
+        "g_num1_value", "g_num2_value", "g_num3_value", "g_num_note",
+        "g_title1", "g_title2", "g_step1_title", "g_step1",
+        "g_step2_title", "g_step2", "g_step3_title", "g_step3",
+      ] as const)
+        expect(strip(d[k]), `${k} zůstává prázdné`).toBe("");
+      // pravidlo minima = nájem + energie zůstává řečené v Ceníku a ve FAQ
+      for (const k of ["pr6_note", "faq18_a"] as const) expect(strip(d[k]).length).toBeGreaterThan(20);
+    }
+    // pr6_note od 22. 10. 2026 nese mechaniku: minimum ve smlouvě, rozdíl z odměny.
+    expect(strip(cs.pr6_note)).toMatch(/smlouv/);
+    expect(strip(cs.pr6_note)).toMatch(/odměny/);
+    expect(strip(cs.faq18_a)).toMatch(/plus energie/);
+    const index = readFileSync("src/pages/Index.tsx", "utf8");
+    expect(index, "Garance už není samostatná sekce").not.toMatch(/import\("@\/components\/GaranceSection"\)|<GaranceSection/);
+    const pricing = readFileSync("src/components/PricingSection.tsx", "utf8");
+    for (const k of ['"pr6"', '"pr7"', "g_cta"]) expect(pricing).toContain(k);
+    expect(pricing, "kroky garance se do Ceníku nevrací").not.toMatch(/g_step|G_STEPS/);
+    expect(pricing, "kotva #garance vede na benefit v Ceníku").toContain('"garance"');
+  });
+
+  // PŘEPSÁNO 2C (1. 9. 2026). Do té doby test vyžadoval JEDEN identický popisek
+  // na heru, kalkulačce, garanci, postupu i sticky liště. To bylo vědomé
+  // rozhodnutí a teď se vědomě obrací: osm tlačítek se stejným textem vedlo na
+  // TŘI různé cíle (#kalkulacka, #kontakt, odeslání formuláře), takže popisek
+  // přestal nést informaci. Nově se hlídá CHOVÁNÍ a fáze trychtýře, ne shoda
+  // řetězců: před číslem se mluví o potenciálu, po něm o posouzení bytu,
+  // v chromu je krátká neutrální akce.
+  it("CTA se liší podle fáze trychtýře, ne jedním popiskem pro všechno", () => {
+    // Hero je JEDINÉ místo před číslem: vede do kalkulačky, ne na formulář.
+    expect(cs.hero_cta).not.toBe(cs.calc_cta);
+    expect(cs.hero_cta).not.toBe(cs.contact_submit);
+    // Chrome (navbar + sticky) je krátká neutrální akce a je konzistentní.
+    expect(cs.nav_freeConsultation).toBe(cs.mobile_cta);
+    expect(cs.nav_freeConsultation).not.toBe(cs.hero_cta);
+    // Po čísle jedna slovní zásoba: garance i postup vedou na stejný krok.
+    expect(cs.g_cta).toBe(cs.process_cta);
+    // Odeslání formuláře nesmí mít stejný text jako lišta, která z formuláře vede pryč.
+    expect(cs.contact_submit).not.toBe(cs.mobile_cta);
+    // Závěr stránky se neptá znovu na otázku, kterou zodpověděla kalkulačka.
+    expect(cs.final_title).not.toBe(cs.calc_title1 + cs.calc_title2);
+    // Žádný popisek nesmí zůstat prázdný.
+    for (const k of ["hero_cta", "calc_cta", "g_cta", "process_cta", "contact_submit", "mobile_cta", "nav_freeConsultation"] as const)
+      expect(String(cs[k]).trim().length, `cs.${k}`).toBeGreaterThan(0);
+    // Vietnamština má vlastní odstupňování už od 2A; drží se jen to, že se
+    // hero a formulář neshodují.
+    expect(vi.hero_cta).not.toBe(vi.contact_submit);
+  });
+
+  it("hero má v obou jazycích jediné tlačítko a vede na kalkulačku", () => {
+    // HeroSection čte prázdné hero_cta2 jako „jedno CTA" a přepne cíl na
+    // #kalkulacka. Do 9. 9. 2026 měla vietnamština dvě tlačítka (primární na
+    // formulář, sekundární na kalkulačku). Sjednoceno na jedno v obou jazycích:
+    // dvě různé stavby hera ve dvou jazycích byla nesrovnalost, ne odstupňování.
+    expect(cs.hero_cta2).toBe("");
+    expect(vi.hero_cta2).toBe("");
+  });
+
+  it("nikde neslibuje garanci z kalkulačky", () => {
+    // Kalkulačka je odhad. Garance vzniká až písemným ujednáním pro konkrétní byt.
+    expect(strip(cs.calc_disclaimer)).toMatch(/[Gg]arance výnosu vzniká až/);
+    expect(strip(vi.calc_disclaimer)).toMatch(/[Cc]am kết doanh thu chỉ có khi/);
+    // Disclaimer NESMÍ popisovat model, který web nepočítá. Zrušeno 31. 8. 2026:
+    // starý mechanismus „obsazenost trhu +15 %, strop 85 %" (nahrazen naměřeným
+    // operátorským faktorem) a staré mapování „pásmo = počet ložnic dispozice"
+    // (pásmo se bere z dispozice A plochy). Ani jedno se nesmí vrátit, ani do
+    // nápovědy u posuvníku. Zároveň se ven nepouštějí interní kalibrační detaily
+    // (počet kalibračních bytů, naše obsazenost, naše ADR proti trhu). Okno dat
+    // („12 měsíců do 7/2026“) je od patche 2 (7. 9. 2026) naopak VEŘEJNÉ: karta
+    // i metodika ho čtou z lib/dataWindow, nikdy z překladů (data-window.test).
+    // Sweep přes VŠECHNY texty obou jazyků, ne jen přes disclaimer: zrušená
+    // formulace se naposledy schovala v klíči calc_basis, který nic
+    // nerenderovalo, ale pořád se dostával do bundlu.
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const [key, raw] of Object.entries(dict)) {
+        if (typeof raw !== "string") continue;
+        const text = strip(raw);
+        expect(text, `${lang}.${key}: zrušený occupancy uplift`).not.toMatch(/zvednut|nejvýš 85|cộng 15|tối đa 85/i);
+        expect(text, `${lang}.${key}: naše obsazenost ven nepatří`).not.toMatch(/85 až 97|85 đến 97/);
+        expect(text, `${lang}.${key}: staré mapování pásma na ložnice`).not.toMatch(/určuje počet ložnic|lấy theo số phòng ngủ/i);
+        // Rozpětí NENÍ příběh o obsazenosti: oba konce jedou na tržní obsazenosti
+        // (yield.ts dává split() u obou variant tentýž marketOcc). Liší se vahou
+        // překlopení do vyššího pásma a operátorským faktorem.
+        expect(text, `${lang}.${key}: rozpětí se nesmí vysvětlovat obsazeností`)
+          .not.toMatch(/naši obsazenost|naše obsazenost|podle obsazenosti|kín phòng của Antam|tùy mức kín phòng/i);
+        expect(text, `${lang}.${key}: kapacita není veřejné tvrzení`).not.toMatch(/počet hostů|kolik hostů|mấy khách|số khách/i);
+        // Nástroje smí zaznít jinde (svc_systems: „jedeme na Hospitable a PriceLabs"),
+        // ale v copy KALKULAČKY se model nevysvětluje přes interní kalibraci.
+        if (key.startsWith("calc_"))
+          expect(text, `${lang}.${key}: interní kalibrace ven nepatří`).not.toMatch(/PriceLabs|jedenácti|mười một|Deloitte/i);
+      }
+      // co v disclaimeru naopak zůstat MUSÍ
+      const d = strip(dict.calc_disclaimer);
+      expect(d, `${lang}: rámec „orientační, ne nabídka"`).toMatch(/orientační|tham khảo/i);
+      expect(d, `${lang}: provize platforem`).toMatch(/17/);
+    }
+  });
+
+  it("blokace: 14 nocí zdarma, dál poměrná úprava", () => {
+    expect(strip(cs.faq3_a)).toMatch(/14 nocí/);
+    expect(strip(vi.faq3_a)).toMatch(/14 đêm/);
+  });
+});
+
+describe("výplata a vyúčtování", () => {
+  it("slibuje 15. den, jak stanoví čl. 9.3 smlouvy", () => {
+    expect(strip(cs.assure4)).toMatch(/15/);
+    expect(strip(cs.faq4_a)).toMatch(/15\. dne/);
+    expect(strip(vi.faq4_a)).toMatch(/ngày 15/);
+  });
+});
 
 describe("model výnosu", () => {
   it("drží tržní data čtvrtí z PriceLabs (30. 8. 2026) a sedí na uložený dataset", () => {
@@ -167,7 +560,7 @@ describe("model výnosu", () => {
     }
     // Atypicky velký byt nesmí dostat hlášku o chybějících datech LOKALITY.
     expect(calc, "vlastní panel pro atypickou velikost").toContain("calc_oversized_title");
-    for (const d of [cs]) {
+    for (const d of [cs, vi]) {
       expect(strip(d.calc_oversized_title).length).toBeGreaterThan(10);
       expect(strip(d.calc_oversized_text).length).toBeGreaterThan(30);
       expect(strip(d.calc_oversized_title), "nemluví o lokalitě").not.toMatch(/lokalit|khu này/i);
@@ -221,9 +614,11 @@ describe("model výnosu", () => {
 
     for (const k of ["calc_size_s", "calc_size_m", "calc_size_l", "calc_size_xl", "calc_size_upto", "calc_size_over"]) {
       expect(strip(cs[k]).length).toBeGreaterThan(0);
+      expect(strip(vi[k]).length).toBeGreaterThan(0);
     }
     // Značka poskytovatele dat nepatří do headline výsledku (31. 8. 2026); zdroj
     // zůstává v metodice pod výsledkem.
+    expect(calc, "PriceLabs pryč z veřejného řádku s cenou za noc").not.toContain("PriceLabs");
     // Čtvrť mění číslo, takže se musí ve shrnutí výsledku objevit.
     expect(calc, "čtvrť se echuje ve shrnutí").toContain("result.ctvrtLabel");
     // Násobek proti nájmu smí být "× více" jen tam, kde po zaokrouhlení VÍC než 1×.
@@ -248,12 +643,12 @@ describe("model výnosu", () => {
     // nenahradilo jinou formou nejistoty ani nezmizelo zpod povrchu.
     expect(calc, "veřejné rozpětí se nerenderuje").not.toContain("calc_range_label");
     expect(calc, "ani jeho druhý konec").not.toContain("calc_range_to");
-    for (const d of [cs]) {
+    for (const d of [cs, vi]) {
       expect(d.calc_range_label, "mrtvý klíč pryč z překladů").toBeUndefined();
       expect(d.calc_range_to, "mrtvý klíč pryč z překladů").toBeUndefined();
     }
     // Žádná náhradní vizualizace nejistoty (rozhodnutí 1. 9. 2026).
-    for (const d of [cs]) {
+    for (const d of [cs, vi]) {
       for (const [k, v] of Object.entries(d)) {
         if (!k.startsWith("calc_")) continue;
         expect(v, `${k}: žádné „od X" / „až X" jako náhrada rozpětí`)
@@ -266,15 +661,15 @@ describe("model výnosu", () => {
     expect(readFileSync("src/lib/horizon.ts", "utf8"), "graf dál čte oba konce")
       .toContain("const netMarket = year.low;");
     expect(readFileSync("src/lib/mcp/tools/estimate-yield.ts", "utf8"), "MCP dál vrací oba konce")
-      .toMatch(/czk\(r\.(low|marketAnchor\.net)\)[\s\S]*czk\(r\.high\)/);
+      .toMatch(/czk\(r\.low\)[\s\S]*czk\(r\.high\)/);
     expect(calc, "násobek jde z čísla v headline").toContain("r.high / ltr");
-    for (const d of [cs]) expect(strip(d.calc_net)).toMatch(/[Pp]otenciál|[Tt]iềm năng/);
+    for (const d of [cs, vi]) expect(strip(d.calc_net)).toMatch(/[Pp]otenciál|[Tt]iềm năng/);
     expect(calc, "a jinak poctivá věta").toContain("calc_ltr_higher");
-    for (const d of [cs]) expect(strip(d.calc_ltr_higher).length).toBeGreaterThan(10);
+    for (const d of [cs, vi]) expect(strip(d.calc_ltr_higher).length).toBeGreaterThan(10);
     // Benefit v Kč/rok vedle násobku, jen když je rozdíl kladný.
     expect(calc, "Kč za rok pod headline").toContain("(result.r.high - result.ltr) * 12");
     expect(calc).toContain("calc_vs_ltr_year");
-    for (const d of [cs]) expect(strip(d.calc_vs_ltr_year).length).toBeGreaterThan(10);
+    for (const d of [cs, vi]) expect(strip(d.calc_vs_ltr_year).length).toBeGreaterThan(10);
     expect(calc, "a bere se z trace, ne ze stavu").toContain("r.supported ? r.trace.ctvrt : null");
     // Formát odkazu se NEMĚNÍ (okres-čtvrť-dispozice-Xm-sezóna), mění se jen
     // to, které m² se u „ještě většího" bytu posílá: spodní hranice kbelíku
@@ -285,7 +680,7 @@ describe("model výnosu", () => {
       .toContain("const shareM2 = oversized ? (bucketsFor(size).find((b) => b.id === bucket)?.minM2 ?? m2) : m2;");
     // A opačně: čtení odkazu nesmí brát zděděné klíče Object.prototype jako čtvrť.
     const ctx = readFileSync("src/contexts/CalcContext.tsx", "utf8");
-    expect(ctx, "čtvrť z odkazu přes hasOwn, ne `in`").toMatch(/Object\.hasOwn\(MARKET_CTVRT, p\)|Object\.prototype\.hasOwnProperty\.call\(MARKET_CTVRT, p\)/);
+    expect(ctx, "čtvrť z odkazu přes hasOwn, ne `in`").toContain("Object.hasOwn(MARKET_CTVRT, p)");
     expect(ctx, "`in` by chytlo i constructor/toString").not.toContain("p in MARKET_CTVRT");
     // Bez komentářů: varovná poznámka v CalcContext ten vzorec cituje schválně.
     const ctxCode = ctx.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
@@ -304,6 +699,7 @@ describe("model výnosu", () => {
     }
     for (const k of ["calc_guests_1", "calc_guests_2"]) {
       expect(cs[k], `${k} má být z překladů pryč`).toBeUndefined();
+      expect(vi[k], `${k} má být z překladů pryč`).toBeUndefined();
     }
     // MCP počítá s TOUŽ plochou jako web: m² rozhoduje o pásmu, ne jen o nájmu.
     const mcp = readFileSync("src/lib/mcp/tools/estimate-yield.ts", "utf8");
@@ -318,6 +714,7 @@ describe("model výnosu", () => {
     expect(bundle, "ani v vygenerovaném bundlu").not.toContain("assumedGuests");
     for (const k of ["calc_derived_note", "calc_terms_note", "calc_rent_src"]) {
       expect(strip(cs[k]).length).toBeGreaterThan(0);
+      expect(strip(vi[k]).length).toBeGreaterThan(0);
     }
   });
 
@@ -887,7 +1284,7 @@ describe("model výnosu", () => {
     // Žádná makro předpověď: dnešní podmínky drží po celých pět let, a web to říká.
     expect(RENT_GROWTH, "nehádáme růst nájmů").toBe(0);
     expect(STR_GROWTH, "ani růst krátkodobého pronájmu").toBe(0);
-    for (const d of [cs]) {
+    for (const d of [cs, vi]) {
       expect(strip(d.hz_growth), "text nesmí slibovat 5 % proti 3 %").not.toMatch(/5\s*%|3\s*%/);
       expect(strip(d.hz_growth)).toMatch(/neodhadujeme|không đoán/i);
       expect(strip(d.hz_stat_gap), "pětiletka je po nákladech, ať je to vidět").toMatch(/po nákladech|đã trừ chi phí/i);
@@ -947,13 +1344,14 @@ describe("model výnosu", () => {
         expect(pub.netHigh).toBe(r.antam.net);
       }
     // Popisek hlavní křivky nesmí říkat „střed", když kreslí potenciál.
-    for (const d of [cs]) {
+    for (const d of [cs, vi]) {
       expect(strip(d.hz_legend_str), "legenda grafu tvrdí střed").not.toMatch(/střed|mức giữa/i);
       expect(strip(d.hz_legend_str)).toMatch(/potenciál|tiềm năng/i);
     }
     // graf počítá jen plně vybavený byt: bez přepínače vybavení, start = uvedení do provozu
     expect(hz).not.toContain("setFurn");
     expect(strip(cs.hz_furnish_note)).toContain("39 000");
+    expect(strip(vi.hz_furnish_note)).toContain("39 000");
   });
 
   it("byt 302 zůstává nepublikovaný, dokud tržní model dává víc než jeho měření", () => {
@@ -974,6 +1372,139 @@ describe("model výnosu", () => {
       for (const size of ["1kk", "2kk", "3kk", "4kk"] as const) {
         expect(rentFor(key, size), `${key}.${size}`).toBeGreaterThan(0);
         expect(ENERGY[size]).toBeGreaterThan(0);
+      }
+    }
+  });
+});
+
+describe("délka smlouvy a výpověď", () => {
+  it("12 měsíců závazku, pak doba neurčitá, výpověď 4 měsíce", () => {
+    expect(strip(cs.faq7_a)).toMatch(/12 měsíců/);
+    expect(strip(cs.faq7_a)).toMatch(/dobu neurčitou/);
+    expect(strip(cs.faq7_a)).toMatch(/4 měsíce/);
+    expect(strip(vi.faq7_a)).toMatch(/12 tháng/);
+    expect(strip(vi.faq7_a)).toMatch(/4 tháng/);
+  });
+
+  it("nikde nezůstala stará šestiměsíční lhůta", () => {
+    expect(strip(cs.faq7_a)).not.toMatch(/6 měsíc/);
+    expect(strip(vi.faq7_a)).not.toMatch(/6 tháng/);
+  });
+
+  it("neprodává otevřený kalendář jako délku smlouvy", () => {
+    // Kalendář otevíráme zhruba 8 měsíců dopředu. Je to provozní politika,
+    // ne délka závazku, a na webu se tím výpovědní lhůta nezdůvodňuje.
+    expect(strip(cs.faq7_a)).not.toMatch(/kalendář/i);
+    expect(strip(vi.faq7_a)).not.toMatch(/lịch nhà/i);
+  });
+});
+
+describe("krytí drobných škod od hostů", () => {
+  it("je v odměně, stejně jako garance", () => {
+    expect(cs.pr7_price).toBe(cs.pr6_price);
+    expect(vi.pr7_price).toBe(vi.pr6_price);
+  });
+
+  it("limit je 5 000 Kč na pokoj ročně, nejvýše 25 000 Kč", () => {
+    expect(DAMAGE_COVER_PER_ROOM).toBe(5000);
+    expect(DAMAGE_COVER_MAX).toBe(25000);
+    expect(annualDamageCover(1)).toBe(5000);
+    expect(annualDamageCover(2)).toBe(10000);
+    expect(annualDamageCover(3)).toBe(15000);
+    expect(annualDamageCover(4)).toBe(20000);
+    expect(annualDamageCover(5)).toBe(25000);
+    expect(annualDamageCover(6)).toBe(25000);
+    expect(annualDamageCover(12)).toBe(25000);
+    expect(annualDamageCover(0)).toBe(0);
+  });
+
+  it("dispozice v kalkulačce se mapují na počet pokojů", () => {
+    // Kalkulačka bere počet pokojů z ROOMS, žádný další vstup nepřibyl.
+    expect(ROOMS).toEqual({ "1kk": 1, "2kk": 2, "3kk": 3, "4kk": 4 });
+    expect(annualDamageCover(ROOMS["2kk"])).toBe(10000);
+    expect(annualDamageCover(ROOMS["4kk"])).toBe(20000);
+  });
+
+  it("strop 25 000 Kč je v kopii i ve vietnamštině", () => {
+    const max = `${DAMAGE_COVER_MAX / 1000} 000 Kč`;
+    // 2C: g_pair2_text (box krytí škod v garanci) se z hlavní hierarchie
+    // odstranil; strop teď nese ceník a FAQ. Fakt se hlídá dál, jen jinde.
+    for (const key of ["faq11_a", "pr7_note"] as const) {
+      expect(strip(cs[key]), `cs.${key}`).toContain(max);
+      expect(strip(vi[key]), `vi.${key}`).toContain(max);
+    }
+  });
+
+  it("žebříček ve FAQ sedí s pravidlem pro každou dispozici", () => {
+    for (const size of ["1kk", "2kk", "3kk", "4kk"] as const) {
+      const amount = `${annualDamageCover(ROOMS[size]) / 1000} 000 Kč`;
+      expect(strip(cs.faq11_a), `cs ${size}`).toContain(amount);
+      expect(strip(vi.faq11_a), `vi ${size}`).toContain(amount);
+    }
+    expect(strip(cs.faq11_a)).toContain(`${DAMAGE_COVER_MAX / 1000} 000 Kč`);
+    expect(strip(vi.faq11_a)).toContain(`${DAMAGE_COVER_MAX / 1000} 000 Kč`);
+  });
+
+  it("částku počítá jedno místo: lib/yield, ne komponenta ani MCP", () => {
+    // Z panelu kalkulačky krytí zmizelo (patch 142, „jen to důležité"); pravidlo
+    // žije v lib/yield a v kopii ho nese garance, ceník a FAQ (testy výš).
+    const calc = readFileSync("src/components/CalculatorSection.tsx", "utf8");
+    expect(calc).not.toContain("annualDamageCover");
+    expect(calc).not.toContain("25000");
+    expect(calc).not.toContain("5000");
+    const mcp = readFileSync("src/lib/mcp/tools/get-services.ts", "utf8");
+    expect(mcp).toContain("DAMAGE_COVER_MAX");
+    expect(mcp).not.toContain("25000");
+  });
+
+  it("pořadí je host, platforma, teprve pak Antam", () => {
+    expect(strip(cs.faq11_a)).toMatch(/AirCover/);
+    expect(strip(cs.faq11_a)).toMatch(/nepodaří získat/);
+    expect(strip(vi.faq11_a)).toMatch(/AirCover/);
+    expect(strip(vi.faq11_a)).toMatch(/không đòi được/);
+  });
+
+  it("nemíchá škody od hostů s opotřebením a opravami", () => {
+    // QA-03: rozlišení zůstává, jen se neopírá o roční strop, který VOP nemají.
+    // Hranicí mezi "řešíme hned" a "až po vašem souhlasu" je 5 000 Kč na případ.
+    expect(strip(cs.faq11_a)).toMatch(/[Oo]potřebení/);
+    expect(strip(cs.faq11_a)).toMatch(/5 000 Kč za případ/);
+    expect(strip(cs.faq11_a)).toMatch(/po vašem souhlasu/);
+    expect(strip(vi.faq11_a)).toMatch(/5 000 Kč/);
+    expect(strip(vi.faq11_a)).toMatch(/hư hỏng|bảo trì|sửa chữa/);
+  });
+
+  it("není to pojištění a nikde se tak nejmenuje", () => {
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(value, `${lang}.${key}`).not.toMatch(/pojiš|bảo hiểm/i);
+      }
+    }
+  });
+});
+
+describe("dělící pruh v ceníku", () => {
+  it("se nekreslí vůbec: poměr je vypsaný v korunách", () => {
+    // Pruh v ceníku už jednou zůstal na starém poměru, zatímco popisky vedle něj
+    // říkaly nový. AD 2. 9. 2026 ho odstranila: 70/30 je o dva řádky níž v korunách,
+    // takže obrázek nic neměřil a mohl jen zestárnout. Test hlídá, ať se nevrátí.
+    const src = readFileSync("src/components/PricingSection.tsx", "utf8");
+    expect(src).not.toMatch(/w-\[\d{1,3}%\]/);
+  });
+});
+
+describe("kopie v obou jazycích", () => {
+  it("každý klíč z češtiny existuje i ve vietnamštině", () => {
+    const missing = Object.keys(cs).filter((k) => !(k in vi));
+    expect(missing).toEqual([]);
+  });
+
+  it("neobsahuje pomlčky em dash (čtou se jako AI text)", () => {
+    for (const [lang, dict] of [["cs", cs], ["vi", vi]] as const) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (typeof value !== "string") continue;
+        expect(value, `${lang}.${key}`).not.toMatch(/—/);
       }
     }
   });
@@ -1057,7 +1588,9 @@ describe("obsazenost na kartách portfolia", () => {
   });
 
   it("poznámka pod kartami vysvětluje obsazenost i trh po lokalitách", () => {
+    expect(portfolio).toContain("45 dní");
     expect(portfolio).toContain("PriceLabs");
+    expect(portfolio).toContain("platí pro celou městskou část");
     expect(portfolio).not.toContain("—");
   });
 

@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, act, waitFor } from "@testing-library/react";
 import ContactSection from "../components/ContactSection";
-import { LanguageProvider } from "../contexts/LanguageContext";
 import translations from "../i18n/translations";
 import type { LeadCalcPayload } from "../lib/leadBand";
 
@@ -35,34 +34,12 @@ const prefill = () => act(() => {
   window.dispatchEvent(new CustomEvent("antam:prefill-contact", { detail: { location: "Praha 1", ctvrt: "stare_mesto", size: "2+kk", m2: 63, calc: payload } }));
 });
 const form = () => document.querySelector("#kontakt form") as HTMLFormElement;
-/** 5. 11. 2026: plný majitelský formulář (ulice, stav bytu, počet bytů) žije
- *  jen na /vlastni-provoz. Homepage (nájem) má jméno, telefon, e-mail, odkaz
- *  na inzerát a zprávu. Testy níž popisují ten plný, tak ho renderují tam. */
-const renderOwn = () => {
-  window.history.replaceState(null, "", "/vlastni-provoz");
-  return render(<LanguageProvider><ContactSection /></LanguageProvider>);
-};
 const ftext = () => strip(form().textContent ?? "");
 const fill = () => {
   fireEvent.change(document.getElementById("c-name")!, { target: { value: "Jan Test" } });
   fireEvent.change(document.getElementById("c-phone")!, { target: { value: "+420 777 000 111" } });
   fireEvent.click(form().querySelector("input[type=checkbox]")!);
 };
-
-describe("formular na homepage (najem, 5. 11. 2026)", () => {
-  it("ma jmeno, telefon, e-mail, odkaz na inzerat a zpravu; stav bytu ani ulice ne", () => {
-    window.history.replaceState(null, "", "/");
-    render(<LanguageProvider><ContactSection /></LanguageProvider>);
-    expect(document.getElementById("c-name")).toBeTruthy();
-    expect(document.getElementById("c-phone")).toBeTruthy();
-    expect(document.getElementById("c-email")).toBeTruthy();
-    expect(document.getElementById("c-link")).toBeTruthy();
-    expect(document.getElementById("c-msg")).toBeTruthy();
-    expect(document.getElementById("c-street")).toBeNull();
-    expect(document.querySelectorAll("[aria-labelledby='c-status-label'] button")).toHaveLength(0);
-    expect(strip(form().querySelector("button[type=submit]")?.textContent ?? "")).toContain("Poslat byt k posouzení");
-  });
-});
 
 describe("formular po patchi 2", () => {
   beforeEach(() => {
@@ -71,7 +48,7 @@ describe("formular po patchi 2", () => {
   });
 
   it("pole: jmeno, telefon s duvodem, e-mail, ulice s duvodem, stav bytu jako prepinace, zprava; energie pryc, stav uz neni v rozbalovaku", () => {
-    renderOwn();
+    render(<ContactSection />);
     expect(document.getElementById("c-name")).toBeTruthy();
     expect(document.getElementById("c-phone")?.getAttribute("required")).not.toBeNull();
     expect(ftext()).toContain(strip(cs.contact_phone_help));
@@ -89,11 +66,11 @@ describe("formular po patchi 2", () => {
   });
 
   it("echo z kalkulacky stoji nad poli, citelne, s cislem a odkazem zpet; zprava zustava prazdna", () => {
-    renderOwn();
+    render(<ContactSection />);
     prefill();
     const echo = [...form().querySelectorAll("p")].find((p) => /Z kalkulačky/.test(strip(p.textContent ?? "")))!;
     expect(strip(echo.textContent ?? "")).toContain("Praha 1 · Staré Město · 2+kk · kolem 63 m² · ~63 000 Kč / měsíc");
-    expect(strip(echo.querySelector("a[href$='#kalkulacka']")?.textContent ?? "")).toContain(strip(cs.contact_edit_calc));
+    expect(strip(echo.querySelector("a[href='#kalkulacka']")?.textContent ?? "")).toContain(strip(cs.contact_edit_calc));
     expect(echo.textContent).not.toMatch(/praha1|stare_mesto|strong/);
     // echo je první věc ve formuláři
     expect(form().firstElementChild).toBe(echo);
@@ -104,7 +81,7 @@ describe("formular po patchi 2", () => {
   });
 
   it("stav bytu je povinny: bez nej se nic neposle a ukaze se duvod", async () => {
-    renderOwn();
+    render(<ContactSection />);
     fill();
     fireEvent.submit(form());
     await waitFor(() => expect(ftext()).toContain(strip(cs.contact_status_required)));
@@ -112,7 +89,7 @@ describe("formular po patchi 2", () => {
   });
 
   it("odeslani: e-mail zacina radkem z kalkulacky, portal nese cely snapshot, pak stav po odeslani", async () => {
-    renderOwn();
+    render(<ContactSection />);
     prefill();
     fill();
     fireEvent.click(screen.getByRole("button", { name: strip(cs.contact_status_long) }));

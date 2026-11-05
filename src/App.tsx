@@ -20,6 +20,7 @@ const isGuidePath = (p: string) => p === "/guide" || p.startsWith("/guide/");
  * provider owns the URL. Kept deliberately small: no query client, toasts,
  * tooltips, motion or head library either.
  */
+const Sprava = lazy(() => import("./pages/Sprava.tsx"));
 const VlastniProvoz = lazy(() => import("./pages/VlastniProvoz.tsx"));
 
 const App = () => {
@@ -61,9 +62,11 @@ const App = () => {
   }
   const pageEl = !resolved
     ? <NotFound />
-    : resolved.page === "vlastni-provoz"
-      ? <VlastniProvoz />
-      : <Index />;
+    : resolved.page === "sprava"
+      ? <Sprava />
+      : resolved.page === "vlastni-provoz"
+        ? <VlastniProvoz />
+        : <Index />;
   return (
     <LanguageProvider>
       <Suspense fallback={null}>{pageEl}</Suspense>

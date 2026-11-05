@@ -63,7 +63,7 @@ const SelectField = ({
 
 const ContactSection = () => {
   const { lang, page } = useLanguage();
-  const pageLabel = page === "vlastni-provoz" ? "Vlastní provoz" : "Nájem 36";
+  const pageLabel = page === "sprava" ? "Správa" : page === "vlastni-provoz" ? "Vlastní provoz" : "Úvod";
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [sendError, setSendError] = useState(false);
@@ -71,9 +71,6 @@ const ContactSection = () => {
   // kbelíků nedá zpětně zjistit, jaké číslo majitel v tu chvíli viděl.
   // Od 7. 9. 2026 nese i čitelné popisky, pásmo, násobek a okno dat (lib/leadBand).
   const [calcSnapshot, setCalcSnapshot] = useState<Partial<LeadCalcPayload> | null>(null);
-  // 5. 11. 2026: řádek z kalkulačky splátky (lib/lease): „Nájem 36: Praha 1 · Nové
-  // Město · 2+kk · cena … · splátka … · pokryjeme celou“. Jde do e-mailu i portálu.
-  const [leaseLine, setLeaseLine] = useState<string | null>(null);
   // form_start jednou za život formuláře: první fokus do libovolného pole.
   const formStarted = useRef(false);
   const onFormFocus = () => {
@@ -91,7 +88,7 @@ const ContactSection = () => {
   // formulář podruhé. Pole zůstávají za rozbalovákem, předvyplněná.
   // Čitelně (Praha 1 · Staré Město · 2+kk · kolem 63 m² · ~63 000 Kč / měsíc);
   // do 7. 9. 2026 tu stálo „praha1 · stare_mesto“, surová id z payloadu.
-  const calcSummary = calcSnapshot ? calcEchoLabel(calcSnapshot, lang) : leaseLine ? leaseLine.replace(/^Nájem 36: /, "") : "";
+  const calcSummary = calcSnapshot ? calcEchoLabel(calcSnapshot, lang) : "";
 
   // The calculator CTA pre-fills district + layout so the owner doesn't type them
   // twice. Patch 2 (7. 9. 2026): kalkulačka už do zprávy NEPÍŠE „Z kalkulačky:
@@ -99,9 +96,8 @@ const ContactSection = () => {
   // a úplný snapshot jde do e-mailu i portálu. Pole zprávy patří jen majiteli.
   useEffect(() => {
     const onPrefill = (e: Event) => {
-      const d = (e as CustomEvent<{ location?: string; size?: string; m2?: number; calc?: LeadCalcPayload | null; leaseLine?: string }>).detail || {};
+      const d = (e as CustomEvent<{ location?: string; size?: string; m2?: number; calc?: LeadCalcPayload | null }>).detail || {};
       if (d.calc) setCalcSnapshot(d.calc);
-      if (d.leaseLine) setLeaseLine(d.leaseLine);
       setFormData((f) => ({
         ...f,
         location: d.location && LOCATIONS.includes(d.location) ? d.location : f.location,
@@ -158,7 +154,7 @@ const ContactSection = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting || !formData.consent) return;
-    if (!formData.status && page !== "home") {
+    if (!formData.status) {
       setStatusMissing(true);
       document.getElementById("c-status-label")?.scrollIntoView({ block: "center" });
       return;
@@ -185,7 +181,6 @@ const ContactSection = () => {
           // template keys. The calculator line goes FIRST: the inbox has to see
           // the band and the number before the owner's free text.
           message: [
-            leaseLine ?? "",
             calcSnapshot ? leadSummaryLine(calcSnapshot) : "",
             // 2. 11. 2026: ze které stránky poptávka přišla (správa / vlastní provoz / úvod).
             `Stránka: ${pageLabel}`,
@@ -208,7 +203,7 @@ const ContactSection = () => {
         status: labelOf(statusOptions, formData.status),
         contact_pref: labelOf(prefOptions, formData.contactPref),
         energy: formData.energy,
-        message: [leaseLine ?? "", `Stránka: ${pageLabel}`, formData.message, formData.units ? `Počet bytů: ${labelOf(unitsOptions, formData.units)}` : ""]
+        message: [`Stránka: ${pageLabel}`, formData.message, formData.units ? `Počet bytů: ${labelOf(unitsOptions, formData.units)}` : ""]
           .filter(Boolean)
           .join("\n"),
         lang,
@@ -277,8 +272,7 @@ const ContactSection = () => {
         <Reveal className="section-head">
           {/* 2. 11. 2026: titulek podle stránky. Správa slibuje propočet do 24 hodin,
               vlastní provoz poctivou odpověď, jestli to dává smysl. Homepage drží původní. */}
-          {page === "home" && <p className="font-body text-[11px] tracking-[0.2em] uppercase text-gold mb-5">Kontakt</p>}
-          <h2 className={page === "home" ? "font-display font-medium text-[1.9rem] sm:text-[2.1rem] leading-[1.1] tracking-[-0.01em] text-foreground max-w-[22ch] text-balance" : "h-section text-foreground"}>
+          <h2 className="h-section text-foreground">
             {t(lang, page === "sprava" ? "contact_title_managed" : page === "vlastni-provoz" ? "contact_title_own" : "contact_fallback_title")}
           </h2>
           <p className="lead">
@@ -327,11 +321,11 @@ const ContactSection = () => {
             <>
               {/* Co už kalkulačka ví, stojí NAD poli, čitelně a s číslem, které majitel
                   viděl (spec §4). Neptáme se podruhé; kdo chce jiný byt, jde zpět. */}
-              {(calcSnapshot || leaseLine) && (
+              {calcSnapshot && (
                 <p className="font-body text-[13.5px] text-muted-foreground flex flex-wrap items-center gap-x-2 gap-y-1 pb-1">
                   <span className="text-gold-deep">{t(lang, "contact_from_calc")}</span>
                   <span className="text-foreground">{calcSummary}</span>
-                  <a href={sectionHref(leaseLine ? "splatka" : "kalkulacka", page, lang)} className="underline underline-offset-4 decoration-gold/40 text-gold-deep hover:text-primary transition-colors">
+                  <a href={sectionHref("kalkulacka", page, lang)} className="underline underline-offset-4 decoration-gold/40 text-gold-deep hover:text-primary transition-colors">
                     {t(lang, "contact_edit_calc")}
                   </a>
                 </p>
@@ -380,7 +374,6 @@ const ContactSection = () => {
                 </div>
               </div>
 
-              {page !== "home" && (<>
               {/* The apartment */}
               <div className="pt-1">
                 <label htmlFor="c-street" className={labelCls}>
@@ -467,21 +460,6 @@ const ContactSection = () => {
                     Pole ve stavu a v payloadu zůstává prázdné, ať se nic nerozejde. */}
               </div>
               </details>
-              </>)}
-
-              {page === "home" && (
-                <div>
-                  <label htmlFor="c-link" className={labelCls}>
-                    {"Odkaz na inzerát, pokud byt inzerujete"}{" "}
-                    <span className="text-muted-foreground font-normal">{t(lang, "contact_optional")}</span>
-                  </label>
-                  <input
-                    id="c-link" type="url" inputMode="url" value={formData.street}
-                    onChange={(e) => set("street", e.target.value)} className={inputCls}
-                    placeholder="https://www.sreality.cz/…"
-                  />
-                </div>
-              )}
 
               <div>
                 <label htmlFor="c-msg" className={labelCls}>
