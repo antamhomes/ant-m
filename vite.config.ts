@@ -62,6 +62,11 @@ function ssgPrerenderPlugin(): Plugin {
           await fs.writeFile(file, out);
           console.log(`antam-ssg: prerendered ${file} (${Math.round(app.length / 1024)} kB of content${mod.SITE_LOCK_ENABLED ? ", LOCKED" : ""})`);
         }
+        // /llms.txt pro AI asistenty: stejná fakta jako web, skládá lib/llmsTxt.ts.
+        if (!mod.SITE_LOCK_ENABLED) {
+          await fs.writeFile("dist/llms.txt", mod.buildLlmsTxt());
+          console.log("antam-ssg: wrote dist/llms.txt");
+        }
       } finally {
         await server.close();
       }
@@ -84,15 +89,28 @@ function prerenderPagesPlugin(): Plugin {
     generateBundle(_options, bundle) {
       const indexAsset = bundle["index.html"];
       if (!indexAsset || indexAsset.type !== "asset") return;
-      const base = typeof indexAsset.source === "string"
-        ? indexAsset.source
-        : new TextDecoder().decode(indexAsset.source as Uint8Array);
+      const esc = (x: string) => x.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+      // Česká homepage bere title a description taky z META, aby se statické
+      // HTML (co čtou boti bez JS) nikdy nerozešlo s tím, co nastaví SEO.tsx.
+      const setHead = (html: string, title: string, desc: string) =>
+        html
+          .replace(/<title>[\s\S]*?<\/title>/i, `<title>${title}</title>`)
+          .replace(/<meta\s+name="description"\s+content="[^"]*"\s*\/?>/i, `<meta name="description" content="${desc}" />`)
+          .replace(/<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:title" content="${title}" />`)
+          .replace(/<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:description" content="${desc}" />`)
+          .replace(/<meta\s+name="twitter:title"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:title" content="${title}" />`)
+          .replace(/<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/?>/i, `<meta name="twitter:description" content="${desc}" />`);
+      const base = setHead(
+        typeof indexAsset.source === "string" ? indexAsset.source : new TextDecoder().decode(indexAsset.source as Uint8Array),
+        esc(META.home.cs.title),
+        esc(META.home.cs.desc),
+      );
+      indexAsset.source = base;
       const PATHS: Record<string, { cs: string; vi: string }> = {
         home: { cs: "/", vi: "/vn" },
         sprava: { cs: "/sprava", vi: "/vn/sprava" },
         "vlastni-provoz": { cs: "/vlastni-provoz", vi: "/vn/vlastni-provoz" },
       };
-      const esc = (x: string) => x.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
       const pages: Array<[string, "cs" | "vi", string]> = [
         ["home", "vi", "vn/index.html"],
         ["sprava", "cs", "sprava/index.html"],

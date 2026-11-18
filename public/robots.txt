@@ -1,22 +1,28 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
+# Antam Homes: web je veřejný pro vyhledávače i AI asistenty.
+# Pravidla platí pro všechny roboty; interní části se neprocházejí.
 User-agent: *
 Allow: /
 Disallow: /portal
-
-Sitemap: https://www.antamhomes.com/sitemap.xml
-
-# Interní nástroj, nikdy neindexovat.
-User-agent: *
 Disallow: /nastroj
 Disallow: /admin/
+
+# Vyhledávání v AI asistentech (ChatGPT, Perplexity, Claude, Gemini, Copilot).
+# Vyjmenováno výslovně, ať je jasné, že sem smějí. Stejné výjimky jako výše.
+User-agent: OAI-SearchBot
+User-agent: ChatGPT-User
+User-agent: GPTBot
+User-agent: PerplexityBot
+User-agent: Perplexity-User
+User-agent: ClaudeBot
+User-agent: Claude-SearchBot
+User-agent: Claude-User
+User-agent: Google-Extended
+User-agent: Applebot-Extended
+User-agent: bingbot
+User-agent: Googlebot
+Allow: /
+Disallow: /portal
+Disallow: /nastroj
+Disallow: /admin/
+
+Sitemap: https://www.antamhomes.com/sitemap.xml

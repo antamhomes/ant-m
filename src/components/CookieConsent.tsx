@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { analyticsEnabled, getStoredConsent, setConsent } from "@/lib/analytics";
+import { adsEnabled, analyticsEnabled, getStoredConsent, setConsent } from "@/lib/analytics";
 
 const copy = {
   cs: {
     text: "Používáme analytické cookies (Google Analytics), abychom věděli, jak návštěvníci web používají a co zlepšit. Žádná reklama, žádné sdílení s třetími stranami.",
+    // Platí, jen když běží Google Ads (VITE_GOOGLE_ADS_ID): věta výš by pak nebyla pravda.
+    textAds: "Používáme cookies pro analytiku (Google Analytics) a měření reklamy (Google Ads): jak návštěvníci web používají a která reklama je přivedla.",
     more: "Více o zpracování údajů",
     accept: "Přijmout",
     decline: "Odmítnout",
   },
   vi: {
     text: "Chúng tôi dùng cookie phân tích (Google Analytics) để biết khách truy cập dùng trang web như thế nào và cần cải thiện gì. Không quảng cáo, không chia sẻ với bên thứ ba.",
+    textAds: "Chúng tôi dùng cookie phân tích (Google Analytics) và đo lường quảng cáo (Google Ads) để biết khách dùng trang web thế nào và quảng cáo nào đưa khách đến.",
     more: "Thông tin về xử lý dữ liệu",
     accept: "Đồng ý",
     decline: "Từ chối",
@@ -44,7 +47,7 @@ const CookieConsent = () => {
     >
       <div className="max-w-3xl mx-auto bg-card border border-border rounded-md shadow-[var(--shadow-elegant)] p-5 md:p-6 md:flex md:items-center md:gap-6">
         <p className="font-body text-sm text-foreground/85 leading-relaxed md:flex-1">
-          {c.text}{" "}
+          {adsEnabled() ? c.textAds : c.text}{" "}
           <a
             href="/gdpr-informacni-memorandum.pdf"
             target="_blank"

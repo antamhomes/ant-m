@@ -11,7 +11,7 @@ const CONTACT_PHONE = {
   vi: { href: "tel:+420776607003", label: "+420\u00a0776\u00a0607\u00a0003" },
 } as const;
 import { mirrorInquiryToPortal } from "@/lib/portalLead";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackLeadConversion } from "@/lib/analytics";
 import { calcEchoLabel, leadSummaryLine, type LeadCalcPayload } from "@/lib/leadBand";
 import { sectionHref } from "@/lib/pages";
 
@@ -252,6 +252,7 @@ const ContactSection = () => {
         ctvrt: calcSnapshot?.ctvrt ?? "?",
         size: calcSnapshot?.dispozice ?? formData.size ?? "",
       });
+      trackLeadConversion();
       setSuccess(true);
       setFormData(emptyForm);
     } catch (err) {

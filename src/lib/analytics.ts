@@ -24,6 +24,18 @@
 export const GA_MEASUREMENT_ID: string =
   (import.meta.env.VITE_GA_MEASUREMENT_ID as string | undefined)?.trim() || "";
 
+/**
+ * Google Ads (18. 11. 2026). Dokud je VITE_GOOGLE_ADS_ID prázdné, nic se nemění:
+ * souhlas povoluje jen analytiku a banner dál říká „žádná reklama“.
+ *   VITE_GOOGLE_ADS_ID          „AW-XXXXXXXXXX“ z Google Ads → Cíle → Konverze → značka Google
+ *   VITE_GOOGLE_ADS_LEAD_LABEL  štítek konverze „Odeslaný formulář“ (část za lomítkem)
+ * S ID se po souhlasu povolí i reklamní úložiště (Consent Mode v2) a odeslaný
+ * formulář se pošle jako konverze. Bez souhlasu se nenačte nic.
+ */
+export const ADS_ID: string = (import.meta.env.VITE_GOOGLE_ADS_ID as string | undefined)?.trim() || "";
+const ADS_LEAD_LABEL: string = (import.meta.env.VITE_GOOGLE_ADS_LEAD_LABEL as string | undefined)?.trim() || "";
+export const adsEnabled = () => ADS_ID.length > 0;
+
 const CONSENT_KEY = "antam-cookie-consent"; // "granted" | "denied"
 
 type ConsentState = "granted" | "denied";
@@ -35,7 +47,7 @@ declare global {
   }
 }
 
-export const analyticsEnabled = () => GA_MEASUREMENT_ID.length > 0;
+export const analyticsEnabled = () => GA_MEASUREMENT_ID.length > 0 || adsEnabled();
 
 export const getStoredConsent = (): ConsentState | null => {
   try {
@@ -63,11 +75,18 @@ const loadGaScript = () => {
   scriptLoaded = true;
   const s = document.createElement("script");
   s.async = true;
-  s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+  s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID || ADS_ID}`;
   document.head.appendChild(s);
   window.gtag("js", new Date());
-  window.gtag("config", GA_MEASUREMENT_ID, { anonymize_ip: true });
+  if (GA_MEASUREMENT_ID) window.gtag("config", GA_MEASUREMENT_ID, { anonymize_ip: true });
+  if (ADS_ID) window.gtag("config", ADS_ID);
 };
+
+/** Co souhlas povoluje: analytiku vždy, reklamní úložiště jen když Ads běží. */
+const consentUpdate = (state: ConsentState) => ({
+  analytics_storage: state,
+  ...(adsEnabled() ? { ad_storage: state, ad_user_data: state, ad_personalization: state } : {}),
+});
 
 /** Call once on app start. Sets Consent Mode defaults and honours a stored choice. */
 export const initAnalytics = () => {
@@ -81,7 +100,7 @@ export const initAnalytics = () => {
     wait_for_update: 500,
   });
   if (getStoredConsent() === "granted") {
-    window.gtag("consent", "update", { analytics_storage: "granted" });
+    window.gtag("consent", "update", consentUpdate("granted"));
     loadGaScript();
   }
 };
@@ -95,7 +114,7 @@ export const setConsent = (state: ConsentState) => {
   }
   if (!analyticsEnabled()) return;
   ensureGtag();
-  window.gtag("consent", "update", { analytics_storage: state });
+  window.gtag("consent", "update", consentUpdate(state));
   if (state === "granted") loadGaScript();
 };
 
@@ -103,4 +122,13 @@ export const setConsent = (state: ConsentState) => {
 export const trackEvent = (name: string, params: Record<string, string | number | boolean> = {}) => {
   if (!analyticsEnabled() || !scriptLoaded || typeof window.gtag !== "function") return;
   window.gtag("event", name, params);
+};
+
+/**
+ * Konverze pro Google Ads: úspěšně odeslaný formulář. Volá se vedle
+ * trackEvent("lead_submit"). Bez ID, štítku nebo souhlasu nedělá nic.
+ */
+export const trackLeadConversion = () => {
+  if (!adsEnabled() || !ADS_LEAD_LABEL || !scriptLoaded || typeof window.gtag !== "function") return;
+  window.gtag("event", "conversion", { send_to: `${ADS_ID}/${ADS_LEAD_LABEL}` });
 };
