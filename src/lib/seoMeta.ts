@@ -1,5 +1,5 @@
 /** Meta per page and language; the cesty are in lib/pages.ts. Plain TS: vite.config.ts imports it at build time. */
-export const META: Record<"home" | "sprava" | "vlastni-provoz", { cs: { title: string; desc: string }; vi: { title: string; desc: string } }> = {
+export const META: Record<"home" | "sprava" | "vlastni-provoz" | "kalkulacka", { cs: { title: string; desc: string }; vi: { title: string; desc: string } }> = {
   home: {
     cs: {
       title: "Správa krátkodobých pronájmů a Airbnb v Praze | Antam Homes",
@@ -28,6 +28,17 @@ export const META: Record<"home" | "sprava" | "vlastni-provoz", { cs: { title: s
     vi: {
       title: "Tự vận hành căn hộ cho thuê ngắn hạn: Antam dựng và bàn giao | Antam Homes",
       desc: "Antam dựng hệ thống vận hành cho thuê ngắn hạn trên tài khoản của anh chị rồi bàn giao: 180 000 đến 360 000 Kč một lần, sau đó không mất phần trăm. 60 ngày hỗ trợ.",
+    },
+  },
+  // 18. 11. 2026: kalkulačka jako vlastní stránka, ať se dá najít na „kalkulačka výnosu Airbnb Praha“.
+  kalkulacka: {
+    cs: {
+      title: "Kalkulačka výnosu Airbnb bytu v Praze | Antam Homes",
+      desc: "Spočítejte si, kolik může váš byt v Praze vydělat krátkodobým pronájmem. Výsledek z realizovaných cen celé čtvrti, vedle dlouhodobého nájmu.",
+    },
+    vi: {
+      title: "Tính thử thu nhập cho thuê ngắn hạn tại Praha | Antam Homes",
+      desc: "Chọn quận và loại căn hộ. Con số lấy từ giá thực tế trong khu, không phải giá rao.",
     },
   },
 };

@@ -39,13 +39,15 @@ function ssgPrerenderPlugin(): Plugin {
         const mod = await server.ssrLoadModule("/src/entry-ssg.tsx");
         const safe = (data: unknown) => JSON.stringify(data).replace(/</g, "\\u003c");
         // Šest stránek (lib/pages.ts): homepage a dvě podstránky, každá v obou jazycích.
-        const targets: Array<[string, string, "cs" | "vi", "home" | "sprava" | "vlastni-provoz"]> = [
+        const targets: Array<[string, string, "cs" | "vi", "home" | "sprava" | "vlastni-provoz" | "kalkulacka"]> = [
           ["dist/index.html", "/", "cs", "home"],
           ["dist/vn/index.html", "/vn", "vi", "home"],
           ["dist/sprava/index.html", "/sprava", "cs", "sprava"],
           ["dist/vn/sprava/index.html", "/vn/sprava", "vi", "sprava"],
           ["dist/vlastni-provoz/index.html", "/vlastni-provoz", "cs", "vlastni-provoz"],
           ["dist/vn/vlastni-provoz/index.html", "/vn/vlastni-provoz", "vi", "vlastni-provoz"],
+          ["dist/kalkulacka/index.html", "/kalkulacka", "cs", "kalkulacka"],
+          ["dist/vn/kalkulacka/index.html", "/vn/kalkulacka", "vi", "kalkulacka"],
         ];
         for (const [file, route, lang, page] of targets) {
           const html = await fs.readFile(file, "utf8");
@@ -110,6 +112,7 @@ function prerenderPagesPlugin(): Plugin {
         home: { cs: "/", vi: "/vn" },
         sprava: { cs: "/sprava", vi: "/vn/sprava" },
         "vlastni-provoz": { cs: "/vlastni-provoz", vi: "/vn/vlastni-provoz" },
+        kalkulacka: { cs: "/kalkulacka", vi: "/vn/kalkulacka" },
       };
       const pages: Array<[string, "cs" | "vi", string]> = [
         ["home", "vi", "vn/index.html"],
@@ -117,6 +120,8 @@ function prerenderPagesPlugin(): Plugin {
         ["sprava", "vi", "vn/sprava/index.html"],
         ["vlastni-provoz", "cs", "vlastni-provoz/index.html"],
         ["vlastni-provoz", "vi", "vn/vlastni-provoz/index.html"],
+        ["kalkulacka", "cs", "kalkulacka/index.html"],
+        ["kalkulacka", "vi", "vn/kalkulacka/index.html"],
       ];
       for (const [page, lang, fileName] of pages) {
         const m = META[page as keyof typeof META][lang];

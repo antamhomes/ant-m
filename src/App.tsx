@@ -22,6 +22,7 @@ const isGuidePath = (p: string) => p === "/guide" || p.startsWith("/guide/");
  */
 const Sprava = lazy(() => import("./pages/Sprava.tsx"));
 const VlastniProvoz = lazy(() => import("./pages/VlastniProvoz.tsx"));
+const Kalkulacka = lazy(() => import("./pages/Kalkulacka.tsx"));
 
 const App = () => {
   // Závora před spuštěním: při prerenderu (bez window) je vždy zamčeno,
@@ -66,7 +67,9 @@ const App = () => {
       ? <Sprava />
       : resolved.page === "vlastni-provoz"
         ? <VlastniProvoz />
-        : <Index />;
+        : resolved.page === "kalkulacka"
+          ? <Kalkulacka />
+          : <Index />;
   return (
     <LanguageProvider>
       <Suspense fallback={null}>{pageEl}</Suspense>

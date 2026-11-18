@@ -31,7 +31,7 @@ const PageHero = ({ page }: { page: "sprava" | "vlastni-provoz" }) => {
       <div className="container-wide pt-32 pb-14 sm:pt-36 sm:pb-16 lg:pt-40 lg:pb-20">
         <h1
           {...enter(20, 0.45, 0.8)}
-          className="font-display text-[clamp(2.1rem,3.5vw,3.3rem)] font-medium leading-[1.08] tracking-[-0.018em] text-balance text-[#F7F1E8] max-w-[22ch]"
+          className="font-display text-[clamp(2.1rem,3.5vw,3.3rem)] font-medium leading-[1.08] tracking-[-0.018em] text-balance whitespace-pre-line text-[#F7F1E8] max-w-[22ch]"
         >
           {t(lang, c.title)}
         </h1>

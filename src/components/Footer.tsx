@@ -39,7 +39,7 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href={sectionHref("kalkulacka", page, lang)} className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
+                <a href={pathFor("kalkulacka", lang)} className="font-body text-sm text-primary-foreground/65 hover:text-gold transition-colors">
                   {t(lang, "footer_link_services")}
                 </a>
               </li>

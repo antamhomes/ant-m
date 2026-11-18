@@ -140,6 +140,8 @@ const translations = {
     calc_title1: "Kolik může vydělávat ",
     calc_title2: "váš byt?",
     calc_desc: "Lokalita a\u00a0dispozice. Výsledek z\u00a0realizovaných cen celé čtvrti, ne\u00a0z\u00a0ceníků.",
+    // Nadpis samostatné stránky /kalkulacka (18. 11. 2026).
+    calcpage_title: "Kalkulačka výnosu z krátkodobého pronájmu v Praze",
     calc_location: "Lokalita",
     calc_loc_other: "Jinde / mimo Prahu",
     // Prázdný start (7. 9. 2026): bez lokality karta nic nepočítá.
@@ -703,7 +705,8 @@ const translations = {
     contact_title_own: "Pošlete byt. Řekneme, jestli dává smysl ho provozovat sám.",
     contact_desc_own: "Adresa, dispozice a kolik času týdně na to máte. Do 24 hodin dostanete propočet pro obě cesty a naše doporučení.",
     sprava_hero_label: "ANTAM HOMES · SPRÁVA KRÁTKODOBÉHO PRONÁJMU",
-    sprava_hero_title: "Byt připravíme a provozujeme za vás.",
+    // 18. 11. 2026: hledaná slova do H1 (dřív „Byt připravíme a provozujeme za vás.“).
+    sprava_hero_title: "Správa Airbnb bytu v Praze.\nPřipravíme ho a provozujeme za vás.",
     sprava_hero_desc: "Hosté, úklid, ceny i vyúčtování jsou naše. Vy dostáváte výnos s písemným minimem.",
     sprava_hero_line: "Příprava 39\u00a0000\u00a0Kč · vybavení za pořizovací ceny\u00a0+\u00a012\u00a0% · správa 20\u00a0%\u00a0+\u00a0DPH z příjmu po poplatcích · 12\u00a0měsíců, bez výstupního poplatku",
     sprava_hero_cta: "Spočítat výnos bytu",
@@ -897,6 +900,7 @@ const translations = {
     calc_title1: "Mỗi tháng căn hộ của anh chị ",
     calc_title2: "có thể thu được bao nhiêu?",
     calc_desc: "Chọn quận và loại căn hộ. Con số lấy từ giá thực tế trong khu, không phải giá rao.",
+    calcpage_title: "Tính thử thu nhập cho thuê ngắn hạn tại Praha",
     calc_location: "Quận",
     calc_loc_other: "Nơi khác / ngoài Praha",
     // Prázdný start (7. 9. 2026). VI věty jsou návrh (Claude), ne Vuongova slova.

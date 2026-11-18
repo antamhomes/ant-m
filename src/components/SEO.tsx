@@ -15,6 +15,7 @@ export const FAQ_KEYS: Record<PageKey, readonly string[]> = {
   home: ["faq18", "faq5", "faq9", "faq16", "faq19", "faq13"],
   sprava: ["faq18", "faq5", "faq9", "faq4", "faq6", "faq16", "faq1", "faq11", "faq12", "faq10", "faq15", "faq3", "faq7", "faq13"],
   "vlastni-provoz": ["faq20", "faq21", "faq22", "faq19", "faq10", "faq12", "faq14"],
+  kalkulacka: ["faq9", "faq18", "faq5", "faq13"],
 };
 
 /** FAQPage JSON-LD from the same translations as the on-page accordion. */

@@ -13,7 +13,7 @@ type Key = Parameters<typeof t>[1];
  * v translations, takže se nemůže rozejít s tím, co je na stránkách.
  */
 export const buildLlmsTxt = (): string => {
-  const pages: PageKey[] = ["home", "sprava", "vlastni-provoz"];
+  const pages: PageKey[] = ["home", "sprava", "vlastni-provoz", "kalkulacka"];
   const faq = (page: PageKey) =>
     FAQ_KEYS[page]
       .map((k) => `### ${plain(t("cs", `${k}_q` as Key))}\n${plain(t("cs", `${k}_a` as Key))}`)
