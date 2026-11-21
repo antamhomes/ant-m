@@ -110,16 +110,35 @@ var OPERATOR_EVIDENCE = {
   // měsíců 2025_08..2026_07, tržba za ubytování PO SLEVÁCH proti avg_revenue
   // okresu z data/pricelabs-2026-08/praha1.json.
   praha1: { measured: 1.032, weight: 1, sample: "3 byty \xD7 12 m\u011Bs\xEDc\u016F (402 1,126 \xB7 405 1,028 \xB7 302 0,942)" },
-  praha3: { measured: 1.21, weight: 0.5, sample: "2 byty (Modern AC 1,31 / 139 dn\xED \xB7 Garden APT 1,21 / 54 dn\xED)" },
+  // PŘEMĚŘENO 4. 11. 2026: okno 2025_10..2026_09 proti avg_revenue 2BR polygonu
+  // „Praha 3 official boundary" (PriceLabs market_research 3. 11. 2026), vlastní
+  // tržba za ubytování z PriceLabs bookings reportu, u Booking.com VČETNĚ 12% DPH
+  // (Booking ho vede zvlášť, tržní ceny z Airbnb ho v sobě mají; bez toho by
+  // vlastní strana vycházela o 4–8 % níž). 12 bytoměsíců, váha zůstává 0,50.
+  praha3: { measured: 1.34, weight: 0.5, sample: "2 byty, 12 bytom\u011Bs\xEDc\u016F 3\u20139/2026 (Modern AC 1,46 \xB7 free movies 1,17)" },
   praha5: { measured: 1.08, weight: 1, sample: "1 byt (Mozart, 113 dn\xED)" }
 };
 var publicFactorFrom = (measured, weight) => measured <= OPERATOR_FACTOR_DEFAULT_PUBLIC ? measured : Math.round((OPERATOR_FACTOR_DEFAULT_PUBLIC + weight * (measured - OPERATOR_FACTOR_DEFAULT_PUBLIC)) * 1e3) / 1e3;
+var OPERATOR_TARGET_PUBLIC = {
+  praha4: 1.25,
+  praha6: 1.25,
+  praha7: 1.25,
+  praha8: 1.25,
+  praha9: 1.25,
+  praha10: 1.25
+};
 var OPERATOR_FACTOR_PUBLIC = {
+  ...OPERATOR_TARGET_PUBLIC,
   // Praha 2 tu měla ruční 0,95. Zrušeno 2. 9. 2026: bez měření platí výchozí
   // 1,10 jako pro každý jiný neměřený okres (viz operatorFactor níž).
   ...Object.fromEntries(
     Object.entries(OPERATOR_EVIDENCE).map(([loc, e]) => [loc, publicFactorFrom(e.measured, e.weight)])
-  )
+  ),
+  // Rozhodnutí 4. 11. 2026: Praha 3 veřejně 1,28 = naměřených 1,34 s vahou
+  // 0,75, aby změřený okres nestál pod cílovými 1,25 okresů bez měření. Plných
+  // 1,34 neprošlo backtestem: vršek by byl o 23 % nad publikovanou kartou
+  // Moderního apartmánu se zahradou (pojistka v testu je 20 %). Interně 1,17.
+  praha3: 1.28
 };
 var internalFactorFrom = (measured, weight) => measured <= OPERATOR_FACTOR_DEFAULT ? measured : Math.round((OPERATOR_FACTOR_DEFAULT + weight * (measured - OPERATOR_FACTOR_DEFAULT)) * 1e3) / 1e3;
 var OPERATOR_FACTOR_INTERNAL = Object.fromEntries(
@@ -712,13 +731,13 @@ var MGMT_VAT = 0.21;
 var MGMT_FEE_GROSS = Math.round(MGMT_FEE * (1 + MGMT_VAT) * 1e3) / 1e3;
 var PLATFORM_FEE = 0.17;
 var DAYS = 30.44;
-var split = (gross, occupancy) => {
+var split = (gross, occupancy, fee = MGMT_FEE_GROSS) => {
   const platformFee = Math.round(PLATFORM_FEE * gross);
   const netRevenue = gross - platformFee;
-  const mgmt = Math.round(netRevenue * MGMT_FEE_GROSS);
+  const mgmt = Math.round(netRevenue * fee);
   return { occupancy, gross, platformFee, netRevenue, mgmt, net: netRevenue - mgmt };
 };
-function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope = "public", config } = {}) {
+function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope = "public", config, vatPayer = false } = {}) {
   const guests = guestsFor(size);
   const area = m2 ?? typicalArea(location, size);
   if (!isMeasured(location)) return { supported: false, band: bandForSize(size, area), guests };
@@ -751,9 +770,10 @@ function ownerMonthly(location, size, { season = "year", m2, ctvrt = null, scope
     highGross = mid * (1 + SPREAD.minWidth / 2);
   }
   const k = operatorFactor(location, scope);
-  const market = split(Math.round(lowGross * k * AVAILABILITY), marketOcc);
-  const antam = split(Math.round(highGross * k * AVAILABILITY), marketOcc);
-  const marketAnchor = split(Math.round(highGross * AVAILABILITY), marketOcc);
+  const fee = vatPayer ? MGMT_FEE : MGMT_FEE_GROSS;
+  const market = split(Math.round(lowGross * k * AVAILABILITY), marketOcc, fee);
+  const antam = split(Math.round(highGross * k * AVAILABILITY), marketOcc, fee);
+  const marketAnchor = split(Math.round(highGross * AVAILABILITY), marketOcc, fee);
   return {
     supported: true,
     band,
