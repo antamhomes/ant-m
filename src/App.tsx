@@ -5,6 +5,7 @@ import { SITE_LOCK_ENABLED, isUnlocked } from "@/lib/siteLock";
 import Index from "./pages/Index.tsx";
 import { resolvePath } from "@/lib/pages";
 import NotFound from "./pages/NotFound.tsx";
+import NewWebsiteAnnouncement from "@/components/NewWebsiteAnnouncement";
 
 /** Interní vyhodnocovač. Vlastní chunk, ať se do veřejného balíku nepřidává. */
 const Nastroj = lazy(() => import("./pages/Nastroj.tsx"));
@@ -24,7 +25,7 @@ const Sprava = lazy(() => import("./pages/Sprava.tsx"));
 const VlastniProvoz = lazy(() => import("./pages/VlastniProvoz.tsx"));
 const Kalkulacka = lazy(() => import("./pages/Kalkulacka.tsx"));
 
-const App = () => {
+const SiteContent = () => {
   // Závora před spuštěním: při prerenderu (bez window) je vždy zamčeno,
   // takže do statického HTML nejde žádný obsah.
   const [unlocked, setUnlocked] = useState(() => !SITE_LOCK_ENABLED || isUnlocked());
@@ -76,5 +77,12 @@ const App = () => {
     </LanguageProvider>
   );
 };
+
+const App = () => (
+  <>
+    <SiteContent />
+    <NewWebsiteAnnouncement />
+  </>
+);
 
 export default App;
